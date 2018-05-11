@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="EditorFrame">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="EditorFrame\Common">
+      <UniqueIdentifier>{9646ff5c-7538-4183-a381-842fa4b7c468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorFrame\Dialog">
+      <UniqueIdentifier>{c4a6f50f-3cda-4fc9-ae04-086010210a67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorFrame\Panel">
+      <UniqueIdentifier>{c474a21d-5243-4a1e-bf22-03d203f9ee80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorFrame\Command">
+      <UniqueIdentifier>{8b1080b4-f4e2-49ae-bfdc-43ab17434f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorFrame\Command\CommandEditorFrame">
+      <UniqueIdentifier>{c8db7508-1391-48f1-a86e-1ce02eb8558f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源">
+      <UniqueIdentifier>{2e62e660-5b9d-4d74-8378-a4a3f435ac3b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EditorFrame\EditorApp.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\EditorFrame.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Common\EditorBase.cpp">
+      <Filter>EditorFrame\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Common\EditorUtility.cpp">
+      <Filter>EditorFrame\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Dialog\EditorDialog.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Panel\EditorPanel.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Panel\SpeedDataPanel.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.cpp">
+      <Filter>EditorFrame\Command\CommandEditorFrame</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorFrame\EditorApp.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorFrame.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Common\EditorBase.h">
+      <Filter>EditorFrame\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Common\EditorHeader.h">
+      <Filter>EditorFrame\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Common\EditorUtility.h">
+      <Filter>EditorFrame\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Dialog\EditorDialog.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Panel\EditorPanel.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Panel\SpeedDataPanel.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.h">
+      <Filter>EditorFrame\Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Command\EditorCommand.h">
+      <Filter>EditorFrame\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Command\EditorCommandHeader.h">
+      <Filter>EditorFrame\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>资源</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RiseFreeTool_USB.rc">
+      <Filter>资源</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

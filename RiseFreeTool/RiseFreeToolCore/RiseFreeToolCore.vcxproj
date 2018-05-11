@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandSystem\Command.cpp" />
+    <ClCompile Include="CommandSystem\CommandReceiver.cpp" />
+    <ClCompile Include="CommandSystem\CommandSystem.cpp" />
+    <ClCompile Include="Common\Serialize\txSerializedData.cpp" />
+    <ClCompile Include="Common\Serialize\txSerializer.cpp" />
+    <ClCompile Include="Common\EditorCoreBase.cpp" />
+    <ClCompile Include="Common\txMemeryTrace.cpp" />
+    <ClCompile Include="Common\txThreadLock.cpp" />
+    <ClCompile Include="Common\Utility\BinaryUtility.cpp" />
+    <ClCompile Include="Common\Utility\EditorCoreUtility.cpp" />
+    <ClCompile Include="Common\Utility\FileUtility.cpp" />
+    <ClCompile Include="Common\Utility\MathUtility.cpp" />
+    <ClCompile Include="Common\Utility\StringUtility.cpp" />
+    <ClCompile Include="Common\Utility\txUtility.cpp" />
+    <ClCompile Include="dependence\json\json_reader.cpp" />
+    <ClCompile Include="dependence\json\json_value.cpp" />
+    <ClCompile Include="dependence\json\json_writer.cpp" />
+    <ClCompile Include="dependence\md5\md5.cpp" />
+    <ClCompile Include="RiseFreeToolCore\ComManager.cpp" />
+    <ClCompile Include="RiseFreeToolCore\RiseFreeToolCore.cpp" />
+    <ClCompile Include="EventSystem\EventSystem.cpp" />
+    <ClCompile Include="Socket\SocketNetManager.cpp" />
+    <ClCompile Include="Socket\SocketPacketFactoryManager.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFriction.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFrictionRet.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketSpeed.cpp" />
+    <ClCompile Include="SpeedData\DataPacket.cpp" />
+    <ClCompile Include="SpeedData\DeviceData.cpp" />
+    <ClCompile Include="SpeedData\HeaderData.cpp" />
+    <ClCompile Include="SpeedData\SpeedDataManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandSystem\CommandHeader.h" />
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h" />
+    <ClInclude Include="CommandSystem\Command.h" />
+    <ClInclude Include="CommandSystem\CommandReceiver.h" />
+    <ClInclude Include="CommandSystem\CommandSystem.h" />
+    <ClInclude Include="Common\CommonDefine.h" />
+    <ClInclude Include="Common\EngineDefine.h" />
+    <ClInclude Include="Common\Serialize\txSerializedData.h" />
+    <ClInclude Include="Common\Serialize\txSerializer.h" />
+    <ClInclude Include="Common\EditorCoreBase.h" />
+    <ClInclude Include="Common\EditorCoreLog.h" />
+    <ClInclude Include="Common\txFactoryManager.h" />
+    <ClInclude Include="Common\txLog.h" />
+    <ClInclude Include="Common\txMemeryTrace.h" />
+    <ClInclude Include="Common\txSingleton.h" />
+    <ClInclude Include="Common\txThreadLock.h" />
+    <ClInclude Include="Common\Utility\BinaryUtility.h" />
+    <ClInclude Include="Common\Utility\EditorCoreUtility.h" />
+    <ClInclude Include="Common\Utility\FileUtility.h" />
+    <ClInclude Include="Common\Utility\MathUtility.h" />
+    <ClInclude Include="Common\Utility\StringUtility.h" />
+    <ClInclude Include="Common\Utility\txUtility.h" />
+    <ClInclude Include="Common\Utility\Utility.h" />
+    <ClInclude Include="dependence\json\assertions.h" />
+    <ClInclude Include="dependence\json\autolink.h" />
+    <ClInclude Include="dependence\json\config.h" />
+    <ClInclude Include="dependence\json\features.h" />
+    <ClInclude Include="dependence\json\forwards.h" />
+    <ClInclude Include="dependence\json\json-forwards.h" />
+    <ClInclude Include="dependence\json\json.h" />
+    <ClInclude Include="dependence\json\json_batchallocator.h" />
+    <ClInclude Include="dependence\json\json_tool.h" />
+    <ClInclude Include="dependence\json\reader.h" />
+    <ClInclude Include="dependence\json\value.h" />
+    <ClInclude Include="dependence\json\version.h" />
+    <ClInclude Include="dependence\json\writer.h" />
+    <ClInclude Include="dependence\md5\md5.h" />
+    <ClInclude Include="EventSystem\txEventHandler.h" />
+    <ClInclude Include="EventSystem\txEventSystemBase.h" />
+    <ClInclude Include="RiseFreeToolCore\ComManager.h" />
+    <ClInclude Include="RiseFreeToolCore\RiseFreeToolCore.h" />
+    <ClInclude Include="EventSystem\EventHandler.h" />
+    <ClInclude Include="EventSystem\EventSystem.h" />
+    <ClInclude Include="Socket\SocketNetManager.h" />
+    <ClInclude Include="Socket\SocketPacketFactory.h" />
+    <ClInclude Include="Socket\SocketPacketFactoryManager.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacket.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFriction.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFrictionRet.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketSpeed.h" />
+    <ClInclude Include="SpeedData\DataKey.h" />
+    <ClInclude Include="SpeedData\DataPacket.h" />
+    <ClInclude Include="SpeedData\DeviceData.h" />
+    <ClInclude Include="SpeedData\HeaderData.h" />
+    <ClInclude Include="SpeedData\Payload.h" />
+    <ClInclude Include="SpeedData\SpeedDataManager.h" />
+    <ClInclude Include="STL\txMap.h" />
+    <ClInclude Include="STL\txSet.h" />
+    <ClInclude Include="STL\txSTLBase.h" />
+    <ClInclude Include="STL\txVector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependence\json\json_internalarray.inl" />
+    <None Include="dependence\json\json_internalmap.inl" />
+    <None Include="dependence\json\json_valueiterator.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F024FEE7-0F53-435C-B61C-4BA34EBA7D9C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>RiseFreeToolCore</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_USE_SOCKET_UDP;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./RiseFreeToolCore;./Common;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./Common/Utility;./Common/Serialize;./STL;./dependence;./SpeedData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_USE_SOCKET_UDP;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./RiseFreeToolCore;./Common;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./Common/Utility;./Common/Serialize;./STL;./dependence;./SpeedData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

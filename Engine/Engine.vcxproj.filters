@@ -1,0 +1,3098 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Dependences">
+      <UniqueIdentifier>{8710070a-9513-4b2f-b376-14f44d2b4421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg">
+      <UniqueIdentifier>{f18f12ee-33c7-40a0-966a-4ab0d51666a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libavcodec">
+      <UniqueIdentifier>{97175024-754c-4ec5-896a-db8d7fdc18c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libavdevice">
+      <UniqueIdentifier>{d0300eb6-74bd-4003-83ee-2729bfb1d7d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libavfilter">
+      <UniqueIdentifier>{12252cf7-a539-48b4-b997-6a13ca4bea97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libavformat">
+      <UniqueIdentifier>{88b15117-cd14-4b7d-8171-42f0bf2475f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libavutil">
+      <UniqueIdentifier>{eb5f97dc-e323-4e84-8fae-aa24394bb3f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libpostproc">
+      <UniqueIdentifier>{af39268d-4972-41ae-bf19-97ed4efd8fc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libswresample">
+      <UniqueIdentifier>{501e8a43-c648-407f-a27c-0621d99f070b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\ffmpeg\libswscale">
+      <UniqueIdentifier>{724ba84e-210c-4619-aa45-6457a7411f60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\freetype">
+      <UniqueIdentifier>{bf688490-aa1c-4864-9645-ff65923e5e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\freetype\custom_config">
+      <UniqueIdentifier>{18cc5af7-1ab7-421e-b76a-a9fd776f08f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\glm">
+      <UniqueIdentifier>{9144b05f-c1bb-40cc-87b0-39ea4fc968cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\glm\gtx">
+      <UniqueIdentifier>{0d4edff0-f92b-4f33-8923-18359fe87fbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\glm\gtc">
+      <UniqueIdentifier>{3a465761-dc8a-41f1-a7fa-199d760f27f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\glm\detail">
+      <UniqueIdentifier>{77280a37-ce64-4f94-8ec9-568c75ba059d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\json">
+      <UniqueIdentifier>{5245af28-3a5c-4349-8f93-cb522cc3b1f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\magic">
+      <UniqueIdentifier>{c22b081c-dbf4-49f3-a1ba-b9c0ccdbee1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\mongoose">
+      <UniqueIdentifier>{a12476b2-91e3-4954-b7e3-8acd7cb09f78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\opcode">
+      <UniqueIdentifier>{2b50399a-283e-451c-a052-497b5a78e251}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\opcode\Ice">
+      <UniqueIdentifier>{d5f202ce-31c3-4466-a6e0-eceb0238490e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\pngimage">
+      <UniqueIdentifier>{1e4da2e5-a698-41a5-9d96-4ab61b3aabbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\freeimage">
+      <UniqueIdentifier>{7e1b3b5a-df11-42a8-91c1-1f5c2ee41a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependences\md5">
+      <UniqueIdentifier>{e3e78ebc-a53c-43e7-8cc6-14487cb58f58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ActionTree">
+      <UniqueIdentifier>{5646da2f-3347-4226-b24c-a92c31e58770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{d8c02ecd-aefb-4190-bbd9-a5512e98d956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{eef225c4-f868-46b7-ba36-f61a380572c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem">
+      <UniqueIdentifier>{17abc9fe-0b56-4717-9661-68f4825dae66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{04be2c87-46c8-4c65-af17-660b3f5dea85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{886cb192-a133-4be9-bf06-0b763063ee85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{36ad39ce-3c2e-4ce8-a1a8-1d83406fcc2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{eac25fc9-2a79-4883-b969-99e5457eaf54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Font">
+      <UniqueIdentifier>{af39d192-adc9-4538-af96-fe3bab9b6ceb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{bc3fce40-1cc4-4a38-a1df-d5b9cee8ecf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Net">
+      <UniqueIdentifier>{503cdc15-5b08-4095-aa07-6108c7b8da5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Particle">
+      <UniqueIdentifier>{3766d41d-3ac3-47a8-b2db-d0ef69778b02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{cf0584c5-8394-402a-8bf0-4260fd89dbff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{62ca6ee9-c336-4e4b-acd5-fd24b15ece04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Root">
+      <UniqueIdentifier>{8611cbf3-ec56-4331-a1a9-8ac406be445a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{fdab79ae-5301-405c-8af7-0000d6cbe7d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialize">
+      <UniqueIdentifier>{df3d45b7-d11d-4367-b456-82d1e4d73586}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL">
+      <UniqueIdentifier>{6630ef95-47bd-4056-a746-51b15b159b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texture">
+      <UniqueIdentifier>{15e333ba-eaa6-4795-8c84-02e9fb183ea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{8abc80a1-12ff-48c2-8125-c5b8d27ed692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Trembling">
+      <UniqueIdentifier>{45217f64-d6e7-4fc7-b90f-9b1c0b333213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Type">
+      <UniqueIdentifier>{43d61a9c-af4a-4b61-b262-ae8fd4d0cd50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{2f9e9cde-312c-4576-99df-1738fc7c72c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Video">
+      <UniqueIdentifier>{dd2d1023-a1a1-4fed-b204-03099b02f1df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\CameraComponent">
+      <UniqueIdentifier>{932ea464-3b15-4aac-8016-3cbfb38e2d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\CameraComponent\CameraLinkerSwitch">
+      <UniqueIdentifier>{61b27c5b-b5f6-4691-b73e-e89e1bbc6f09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{dc3253d3-aa42-4095-916a-d2e4bb1ad112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommnadCamera">
+      <UniqueIdentifier>{d2790975-7969-45f0-a34e-53e8dcb9984e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LayoutSystem">
+      <UniqueIdentifier>{f4f97f49-3c75-4b84-b731-9285908f34cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandWindow">
+      <UniqueIdentifier>{2abad2e1-653f-4f26-be21-752d99a42f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\WindowComponent">
+      <UniqueIdentifier>{badcd383-f8a5-4356-ae3a-26d2dad3eafa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LayoutSystem\Window">
+      <UniqueIdentifier>{42762b6b-1070-444e-bd69-f65c1c4e5d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LayoutSystem\WindowFactory">
+      <UniqueIdentifier>{06a5f2f5-4f4f-48c0-8171-903e0254bb14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LayoutSystem\WindowPerfab">
+      <UniqueIdentifier>{2049d9a5-f629-4a01-9f67-c8961a6e4e4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ActionTree\WindowAction">
+      <UniqueIdentifier>{d257e41f-e3c6-4a2a-9f7c-4f067a602898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Property">
+      <UniqueIdentifier>{95981ae7-9b37-41bd-aa0b-56698bbbf360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Property\ComponentProperty">
+      <UniqueIdentifier>{818be83c-b3ba-4691-bcdd-d99f9f69c142}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Property\WindowProperty">
+      <UniqueIdentifier>{1ab92f4e-0169-4b44-9ba2-6324981e49cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Property\ActionProperty">
+      <UniqueIdentifier>{03b11b09-ce20-41a8-b72f-b12acc937d95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\BaseComponent">
+      <UniqueIdentifier>{fd8971b8-e344-494d-8359-b1bd10e1c9fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandLayoutManager">
+      <UniqueIdentifier>{34be57fc-a5b8-4413-b25a-38eb2863a50e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameScene">
+      <UniqueIdentifier>{299b5e53-5ae0-470b-94c5-28050ff92f9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandGameScene">
+      <UniqueIdentifier>{ce623eb2-e812-4c22-8bd8-77eacec711ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{53225260-a370-4984-be8e-5ef93e7e6412}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\dependence\glm\common.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\exponential.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\ext.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\fwd.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\geometric.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\glm.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\integer.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat2x2.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat2x3.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat2x4.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat3x2.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat3x3.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat3x4.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat4x2.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat4x3.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\mat4x4.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\matrix.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\packing.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\trigonometric.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\vec2.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\vec3.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\vec4.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\vector_relational.hpp">
+      <Filter>Dependences\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\associated_min_max.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\bit.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\closest_point.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\color_space.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\color_space_YCoCg.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\common.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\compatibility.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\component_wise.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\dual_quaternion.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\euler_angles.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\extend.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\extented_min_max.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\fast_exponential.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\fast_square_root.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\fast_trigonometry.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\gradient_paint.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\handed_coordinate_space.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\hash.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\integer.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\intersect.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\io.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\log_base.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_cross_product.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_decompose.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_interpolation.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_major_storage.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_operation.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_query.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\matrix_transform_2d.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\mixed_product.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\multiple.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\norm.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\normal.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\normalize_dot.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\number_precision.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\optimum_pow.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\orthonormalize.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\perpendicular.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\polar_coordinates.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\projection.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\quaternion.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\range.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\raw_data.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\rotate_normalized_axis.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\rotate_vector.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\scalar_multiplication.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\scalar_relational.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\simd_mat4.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\simd_quat.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\simd_vec4.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\spline.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\std_based_type.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\string_cast.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\transform.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\transform2.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\type_aligned.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\vector_angle.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\vector_query.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtx\wrap.hpp">
+      <Filter>Dependences\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\bitfield.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\color_space.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\constants.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\epsilon.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\integer.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\matrix_access.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\matrix_integer.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\matrix_inverse.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\matrix_transform.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\noise.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\packing.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\quaternion.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\random.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\reciprocal.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\round.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\type_precision.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\type_ptr.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\ulp.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\gtc\vec1.hpp">
+      <Filter>Dependences\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\_features.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\_fixes.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\_noise.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\_swizzle.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\_swizzle_func.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\_vectorize.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_common.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_exponential.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_geometric.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_integer.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_matrix.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_noise.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_packing.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_trigonometric.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\func_vector_relational.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_common.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_exponential.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_geometric.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_integer.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_matrix.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_trigonometric.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\intrinsic_vector_relational.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\precision.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\setup.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_float.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_gentype.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_half.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_int.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat2x2.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat2x3.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat2x4.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat3x2.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat3x3.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat3x4.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat4x2.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat4x3.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_mat4x4.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_vec.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_vec1.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_vec2.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_vec3.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\glm\detail\type_vec4.hpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\assertions.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\autolink.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\config.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\features.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\forwards.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\json.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\json_batchallocator.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\json_tool.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\json-forwards.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\reader.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\value.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\version.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\json\writer.h">
+      <Filter>Dependences\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\magic\magic.h">
+      <Filter>Dependences\magic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceAABB.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceAxes.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceBoundingSphere.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceContainer.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceFPU.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceHPoint.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceIndexedTriangle.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceLSS.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceMatrix3x3.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceMatrix4x4.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceMemoryMacros.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceOBB.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IcePairs.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IcePlane.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IcePoint.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IcePreprocessor.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceRandom.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceRay.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceRevisitedRadix.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceSegment.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceTriangle.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceTrilist.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceTypes.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Ice\IceUtils.h">
+      <Filter>Dependences\opcode\Ice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_AABBCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_AABBTree.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_BaseModel.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_BoxBoxOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_BoxPruning.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_Collider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_Common.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_HybridModel.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_IceHook.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_LSSAABBOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_LSSCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_LSSTriOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_MeshInterface.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_Model.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_OBBCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_OptimizedTree.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_Picking.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_PlanesAABBOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_PlanesCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_PlanesTriOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_RayAABBOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_RayCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_RayTriOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_Settings.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_SphereAABBOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_SphereCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_SphereTriOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_SweepAndPrune.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_TreeBuilders.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_TreeCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_TriBoxOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_TriTriOverlap.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\OPC_VolumeCollider.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\opcode\Opcode.h">
+      <Filter>Dependences\opcode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\mongoose\mongoose.h">
+      <Filter>Dependences\mongoose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\avcodec.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\avfft.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\dxva2.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\vaapi.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\vda.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\vdpau.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\version.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavcodec\xvmc.h">
+      <Filter>Dependences\ffmpeg\libavcodec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavdevice\avdevice.h">
+      <Filter>Dependences\ffmpeg\libavdevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\asrc_abuffer.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\avcodec.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\avfilter.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\avfiltergraph.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\buffersink.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\buffersrc.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\version.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavfilter\vsrc_buffer.h">
+      <Filter>Dependences\ffmpeg\libavfilter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavformat\avformat.h">
+      <Filter>Dependences\ffmpeg\libavformat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavformat\avio.h">
+      <Filter>Dependences\ffmpeg\libavformat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavformat\version.h">
+      <Filter>Dependences\ffmpeg\libavformat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\adler32.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\aes.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\attributes.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\audio_fifo.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\audioconvert.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\avassert.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\avconfig.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\avstring.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\avutil.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\base64.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\bprint.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\bswap.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\common.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\cpu.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\crc.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\dict.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\error.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\eval.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\fifo.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\file.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\imgutils.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\intfloat.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\intfloat_readwrite.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\intreadwrite.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\lfg.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\log.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\lzo.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\mathematics.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\md5.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\mem.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\opt.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\parseutils.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\pixdesc.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\pixfmt.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\random_seed.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\rational.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\samplefmt.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\sha.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\timecode.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libavutil\timestamp.h">
+      <Filter>Dependences\ffmpeg\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libpostproc\postprocess.h">
+      <Filter>Dependences\ffmpeg\libpostproc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libswresample\swresample.h">
+      <Filter>Dependences\ffmpeg\libswresample</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\ffmpeg\libswscale\swscale.h">
+      <Filter>Dependences\ffmpeg\libswscale</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\custom_config\ftconfig.h">
+      <Filter>Dependences\freetype\custom_config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\custom_config\ftheader.h">
+      <Filter>Dependences\freetype\custom_config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\custom_config\ftmodule.h">
+      <Filter>Dependences\freetype\custom_config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\custom_config\ftoption.h">
+      <Filter>Dependences\freetype\custom_config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\custom_config\ftstdlib.h">
+      <Filter>Dependences\freetype\custom_config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\freetype.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ft2build.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftadvanc.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftautoh.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftbbox.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftbdf.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftbitmap.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftbzip2.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftcache.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftcffdrv.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftchapters.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftcid.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\fterrdef.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\fterrors.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftfntfmt.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftgasp.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftglyph.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftgxval.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftgzip.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftimage.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftincrem.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftlcdfil.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftlist.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftlzw.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftmac.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftmm.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftmodapi.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftmoderr.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftotval.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftoutln.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftpfr.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftrender.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftsizes.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftsnames.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftstroke.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftsynth.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftsystem.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\fttrigon.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftttdrv.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\fttypes.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ftwinfnt.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\t1tables.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ttnameid.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\tttables.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\tttags.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freetype\ttunpat.h">
+      <Filter>Dependences\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\freeimage\FreeImage.h">
+      <Filter>Dependences\freeimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependence\md5\md5.h">
+      <Filter>Dependences\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ActionTree\txAction.h">
+      <Filter>ActionTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ActionTree\txActionFactory.h">
+      <Filter>ActionTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ActionTree\txActionFactoryManager.h">
+      <Filter>ActionTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ActionTree\txActionTree.h">
+      <Filter>ActionTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\ActionTree\txActionTreeManager.h">
+      <Filter>ActionTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Audio\txAudio.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Audio\txAudioManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Audio\txWavRecorder.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Audio\txWavSound.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Camera\txCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Camera\txRenderWindow.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Camera\txSkyBox.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Camera\txViewport.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\CommandSystem\txCommand.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\CommandSystem\txCommandReceiver.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\CommandSystem\txCommandSystem.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txEngineBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txEngineDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txEngineLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txFactoryManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txRegisterTool.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txSingleton.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txSpring.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Common\txSystemInfo.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txAnimation.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txAnimationNode.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txBillboard.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txBillboardManager.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txBone.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txBoneHook.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txEntityManager.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txMaterial.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txMesh.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txMovableObject.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txObjectBoneHook.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txSkeleton.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txSkin.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txSkinBone.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txSubEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Entity\txSubMesh.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\EventSystem\txEventSystemBase.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Font\txFreeTypeFont.h">
+      <Filter>Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Memory\txMemoryCheck.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Net\txNetNotify.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Net\txNetProtocol.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Net\txNetSocket.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Net\txNetSystem.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Video\txVideoManager.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Video\txVideoPlayer.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txMathUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txPhysicsUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Type\txComplex.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Type\txDim.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Type\txIPoint.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Type\txPoint.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Type\txRect.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Type\txURect.h">
+      <Filter>Type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Trembling\txTrembling.h">
+      <Filter>Trembling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Trembling\txTremblingKeyFrame.h">
+      <Filter>Trembling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Trembling\txTremblingManager.h">
+      <Filter>Trembling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Trembling\txTremblingNode.h">
+      <Filter>Trembling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Tool\txAABox.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Tool\txDirLight.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Tool\txFrustumR.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Tool\txPlane.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Texture\txTexture.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Texture\txTextureManager.h">
+      <Filter>Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\STL\txMap.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\STL\txSet.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\STL\txSTLBase.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\STL\txVector.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Serialize\txSerializedData.h">
+      <Filter>Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Serialize\txSerializer.h">
+      <Filter>Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Scene\txNode.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Scene\txNodeManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Scene\txObject.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Scene\txRouteRender.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Scene\txScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Scene\txSceneManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Root\txEngineRoot.h">
+      <Filter>Root</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_Color.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_Light.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_ShadowMap.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_ShadowMapLight.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_ShadowMapSkinAnim.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_SkinAnimation.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_Skybox.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_Texture.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_UI.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRenderer_Water.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Renderer\txRendererInstance.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txGeometry.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txGeometryBox.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txGeometryCapsule.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txGeometryCylinder.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txGeometryPlane.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txGeometrySphere.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txODEPhysics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Physics\txRigidBody.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txMagicParticleSystem.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txMP.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txMP_Atlas.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txMP_Device.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txMP_wrap.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txOpenGLBuffer.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txPlatform_android.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Particle\txPlatform_win_posix.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txBinaryUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txFileUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txStringUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Memory\txMemoryTrace.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Memory\txShareMemoryServer.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine\Utility\txLoadUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\txEngineEventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\txEngineEventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\txRendererManager.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\txRenderUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitch.h">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitchAroundTarget.h">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitchCircle.h">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitchLinear.h">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinker.h">
+      <Filter>Component\CameraComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerAcceleration.h">
+      <Filter>Component\CameraComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerFixed.h">
+      <Filter>Component\CameraComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerFixedTime.h">
+      <Filter>Component\CameraComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraLinkerSpring.h">
+      <Filter>Component\CameraComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent\CameraTrembling.h">
+      <Filter>Component\CameraComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\CameraManager.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\GameCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputSystem.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandCamera\CommandCameraTremble.h">
+      <Filter>CommandSystem\CommnadCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\txCommandHeader.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandPool.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowHSL.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowMove.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowRotateSpeed.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowScale.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentAlpha.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentHSL.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentMove.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentRotateSpeed.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentScale.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentSelffitScale.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\WindowPrefab\WindowPrefab.h">
+      <Filter>LayoutSystem\WindowPerfab</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\WindowPrefab\WindowPrefabManager.h">
+      <Filter>LayoutSystem\WindowPerfab</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\WindowFactory\WindowFactory.h">
+      <Filter>LayoutSystem\WindowFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\WindowFactory\WindowFactoryManager.h">
+      <Filter>LayoutSystem\WindowFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\Button.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\CheckBox.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\ComplexWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\EditBox.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\NumberWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\ProgressWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\TextureAnimWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\TextureWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\TextWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\VideoWindow.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\Window.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\ActionWindow.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\ActionWindowAlpha.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\ActionWindowHSL.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\ActionWindowMove.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\ActionWindowRotate.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\ActionWindowScale.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionTree\WindowAction\WindowActionHeader.h">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Layout.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\LayoutManager.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\WindowTemplateManager.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\LayoutUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\Window\WindowHeader.h">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txAlphaProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txCollisionBoxProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txCollisionCapsuleProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txCollisionCylinderProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txCollisionPlaneProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txCollisionProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txCollisionSphereProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txComponentProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txDynamicMeshProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txEffectProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txHSLProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txMeshProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txPhysicsProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txRotateProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txRotateSpeedProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txScaleProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txStaticMeshProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txTransformProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ActionProperty\ActionPropertyAlpha.h">
+      <Filter>Property\ActionProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ActionProperty\ActionPropertyHSL.h">
+      <Filter>Property\ActionProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ActionProperty\ActionPropertyMove.h">
+      <Filter>Property\ActionProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ActionProperty\ActionPropertyRotate.h">
+      <Filter>Property\ActionProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ActionProperty\ActionPropertyScale.h">
+      <Filter>Property\ActionProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ActionProperty\WindowActionProperty.h">
+      <Filter>Property\ActionProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\ButtonProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\CheckBoxProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\EditBoxProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\NumberWindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\ProgressWindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\TextureAnimWindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\TextureWindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\TextWindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\VideoWindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\WindowProperty\WindowProperty.h">
+      <Filter>Property\WindowProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\txBaseProperty.h">
+      <Filter>Property</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\txProperty.h">
+      <Filter>Property</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\txPropertyManager.h">
+      <Filter>Property</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\txPropertyReceiver.h">
+      <Filter>Property</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\PropertyHeader.h">
+      <Filter>Property</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponent.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentActivity.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentAlpha.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentAudio.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentCollision.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentCollisionBox.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentCollisionCapsule.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentCollisionCylinder.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentCollisionPlane.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentCollisionSphere.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentDynamicMesh.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentEffect.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentFactory.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentFactoryManager.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentHeader.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentMesh.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentMove.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentOwner.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentPhysics.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentRotate.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentRotateSpeed.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentScale.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentStaticMesh.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentTransform.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BaseComponent\txComponentKeyFrame.h">
+      <Filter>Component\BaseComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentMoveRelative.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentRotate.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowRotate.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Property\ComponentProperty\txKeyFrameProperty.h">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowMoveRelative.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowAlpha.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\LayoutScript.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowActive.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowPlayAudio.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowStopAudio.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\LayoutTool.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\LayoutScriptAutoHide.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\LayoutScriptFactoryManager.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutSystem\LayoutScriptFactory.h">
+      <Filter>LayoutSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandLayoutManager\CommandLayoutManagerUnloadLayout.h">
+      <Filter>CommandSystem\CommandLayoutManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandLayoutManager\CommandLayoutManagerLoadLayout.h">
+      <Filter>CommandSystem\CommandLayoutManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandLayoutManager\CommandLayoutManagerLayoutVisible.h">
+      <Filter>CommandSystem\CommandLayoutManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene\GameScene.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene\GameSceneFactory.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene\GameSceneFactoryManager.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene\GameSceneManager.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene\SceneProcedure.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandGameScene\CommandGameSceneChangeProcedure.h">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandGameScene\CommandGameScenePlayAudio.h">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandGameScene\CommandGameSceneStopAudio.h">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WindowComponent\WindowComponentColour.h">
+      <Filter>Component\WindowComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandGameScene\CommandGameSceneBackToLastProcedure.h">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandGameScene\CommandGameScenePrepareChangeProcedure.h">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandGameScene\CommandGameSceneChangeAudioVolume.h">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Utility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\CustomThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\TimeLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\ThreadLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\dependence\glm\detail\dummy.cpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\glm\detail\glm.cpp">
+      <Filter>Dependences\glm\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\json\json_reader.cpp">
+      <Filter>Dependences\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\json\json_value.cpp">
+      <Filter>Dependences\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\json\json_writer.cpp">
+      <Filter>Dependences\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\pngimage\stb_image.c">
+      <Filter>Dependences\pngimage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\mongoose\mongoose.c">
+      <Filter>Dependences\mongoose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependence\md5\md5.cpp">
+      <Filter>Dependences\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\ActionTree\txAction.cpp">
+      <Filter>ActionTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\ActionTree\txActionFactoryManager.cpp">
+      <Filter>ActionTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\ActionTree\txActionTree.cpp">
+      <Filter>ActionTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\ActionTree\txActionTreeManager.cpp">
+      <Filter>ActionTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Audio\txAudio.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Audio\txAudioManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Audio\txWavRecorder.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Audio\txWavSound.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Camera\txCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Camera\txRenderWindow.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Camera\txSkyBox.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Camera\txViewport.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\CommandSystem\txCommand.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\CommandSystem\txCommandReceiver.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\CommandSystem\txCommandSystem.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Common\txEngineBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Common\txRegisterTool.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Common\txSpring.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Common\txSystemInfo.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txAnimation.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txAnimationNode.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txBillboard.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txBillboardManager.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txBone.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txBoneHook.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txEntityManager.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txMaterial.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txMesh.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txMovableObject.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txObjectBoneHook.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txSkeleton.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txSkin.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txSkinBone.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txSubEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Entity\txSubMesh.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Font\txFreeTypeFont.cpp">
+      <Filter>Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Memory\txMemoryCheck.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Net\txNetSocket.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Net\txNetSystem.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Video\txVideoManager.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Video\txVideoPlayer.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txMathUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txPhysicsUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Trembling\txTrembling.cpp">
+      <Filter>Trembling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Trembling\txTremblingKeyFrame.cpp">
+      <Filter>Trembling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Trembling\txTremblingManager.cpp">
+      <Filter>Trembling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Trembling\txTremblingNode.cpp">
+      <Filter>Trembling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Tool\txAABox.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Tool\txFrustumR.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Tool\txPlane.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Texture\txTexture.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Texture\txTextureManager.cpp">
+      <Filter>Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Serialize\txSerializedData.cpp">
+      <Filter>Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Serialize\txSerializer.cpp">
+      <Filter>Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Scene\txNode.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Scene\txNodeManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Scene\txRouteRender.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Scene\txScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Scene\txSceneManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Root\txEngineRoot.cpp">
+      <Filter>Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_Color.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_Light.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_ShadowMap.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_ShadowMapLight.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_ShadowMapSkinAnim.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_SkinAnimation.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_Skybox.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_Texture.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_UI.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRenderer_Water.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Renderer\txRendererInstance.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txGeometry.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txGeometryBox.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txGeometryCapsule.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txGeometryCylinder.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txGeometryPlane.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txGeometrySphere.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txODEPhysics.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Physics\txRigidBody.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txMagicParticleSystem.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txMP.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txMP_Atlas.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txMP_Device.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txMP_wrap.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txOpenGLBuffer.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txPlatform_android.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Particle\txPlatform_win_posix.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txBinaryUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txFileUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txStringUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Memory\txMemoryTrace.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Memory\txShareMemoryServer.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Type\txDim.cpp">
+      <Filter>Type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Type\txPoint.cpp">
+      <Filter>Type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\Utility\txLoadUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\txEngineEventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\txRendererManager.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\txRenderUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitch.cpp">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitchAroundTarget.cpp">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitchCircle.cpp">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerSwitch\CameraLinkerSwitchLinear.cpp">
+      <Filter>Component\CameraComponent\CameraLinkerSwitch</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinker.cpp">
+      <Filter>Component\CameraComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerAcceleration.cpp">
+      <Filter>Component\CameraComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerFixed.cpp">
+      <Filter>Component\CameraComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerFixedTime.cpp">
+      <Filter>Component\CameraComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraLinkerSpring.cpp">
+      <Filter>Component\CameraComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\CameraComponent\CameraTrembling.cpp">
+      <Filter>Component\CameraComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\CameraManager.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputSystem.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandCamera\CommandCameraTremble.cpp">
+      <Filter>CommandSystem\CommnadCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandPool.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowHSL.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowMove.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowRotateSpeed.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowScale.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentAlpha.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentHSL.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentMove.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentRotateSpeed.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentScale.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentSelffitScale.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\WindowPrefab\WindowPrefab.cpp">
+      <Filter>LayoutSystem\WindowPerfab</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\WindowPrefab\WindowPrefabManager.cpp">
+      <Filter>LayoutSystem\WindowPerfab</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\WindowFactory\WindowFactoryManager.cpp">
+      <Filter>LayoutSystem\WindowFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\Button.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\CheckBox.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\ComplexWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\EditBox.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\NumberWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\ProgressWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\TextureAnimWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\TextureWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\TextWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\VideoWindow.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Window\Window.cpp">
+      <Filter>LayoutSystem\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionTree\WindowAction\ActionWindow.cpp">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionTree\WindowAction\ActionWindowAlpha.cpp">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionTree\WindowAction\ActionWindowHSL.cpp">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionTree\WindowAction\ActionWindowMove.cpp">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionTree\WindowAction\ActionWindowRotate.cpp">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionTree\WindowAction\ActionWindowScale.cpp">
+      <Filter>ActionTree\WindowAction</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\Layout.cpp">
+      <Filter>LayoutSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\LayoutManager.cpp">
+      <Filter>LayoutSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\WindowTemplateManager.cpp">
+      <Filter>LayoutSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\LayoutUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txAlphaProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txCollisionBoxProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txCollisionCapsuleProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txCollisionCylinderProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txCollisionPlaneProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txCollisionProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txCollisionSphereProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txComponentProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txDynamicMeshProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txEffectProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txHSLProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txMeshProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txPhysicsProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txRotateProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txRotateSpeedProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txScaleProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txStaticMeshProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txTransformProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ActionProperty\ActionPropertyAlpha.cpp">
+      <Filter>Property\ActionProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ActionProperty\ActionPropertyHSL.cpp">
+      <Filter>Property\ActionProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ActionProperty\ActionPropertyMove.cpp">
+      <Filter>Property\ActionProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ActionProperty\ActionPropertyRotate.cpp">
+      <Filter>Property\ActionProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ActionProperty\ActionPropertyScale.cpp">
+      <Filter>Property\ActionProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ActionProperty\WindowActionProperty.cpp">
+      <Filter>Property\ActionProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\ButtonProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\CheckBoxProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\EditBoxProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\NumberWindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\ProgressWindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\TextureAnimWindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\TextureWindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\TextWindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\VideoWindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\WindowProperty\WindowProperty.cpp">
+      <Filter>Property\WindowProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\txBaseProperty.cpp">
+      <Filter>Property</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\txPropertyManager.cpp">
+      <Filter>Property</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\txPropertyReceiver.cpp">
+      <Filter>Property</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponent.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentActivity.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentAlpha.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentAudio.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentCollision.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentCollisionBox.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentCollisionCapsule.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentCollisionCylinder.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentCollisionPlane.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentCollisionSphere.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentDynamicMesh.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentEffect.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentFactoryManager.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentMesh.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentMove.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentOwner.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentPhysics.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentRotate.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentRotateSpeed.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentScale.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentStaticMesh.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentTransform.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BaseComponent\txComponentKeyFrame.cpp">
+      <Filter>Component\BaseComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentMoveRelative.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentRotate.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowRotate.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Property\ComponentProperty\txKeyFrameProperty.cpp">
+      <Filter>Property\ComponentProperty</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowMoveRelative.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowAlpha.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\LayoutScript.cpp">
+      <Filter>LayoutSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowActive.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowPlayAudio.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowStopAudio.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\LayoutTool.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutSystem\LayoutScriptAutoHide.cpp">
+      <Filter>LayoutSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandLayoutManager\CommandLayoutManagerUnloadLayout.cpp">
+      <Filter>CommandSystem\CommandLayoutManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandLayoutManager\CommandLayoutManagerLoadLayout.cpp">
+      <Filter>CommandSystem\CommandLayoutManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandLayoutManager\CommandLayoutManagerLayoutVisible.cpp">
+      <Filter>CommandSystem\CommandLayoutManager</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene\GameScene.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene\GameSceneManager.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene\SceneProcedure.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandGameScene\CommandGameSceneChangeProcedure.cpp">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandGameScene\CommandGameScenePlayAudio.cpp">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandGameScene\CommandGameSceneStopAudio.cpp">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WindowComponent\WindowComponentColour.cpp">
+      <Filter>Component\WindowComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandGameScene\CommandGameSceneBackToLastProcedure.cpp">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandGameScene\CommandGameScenePrepareChangeProcedure.cpp">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandGameScene\CommandGameSceneChangeAudioVolume.cpp">
+      <Filter>CommandSystem\CommandGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\CustomThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\TimeLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\ThreadLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\dependence\glm\gtx\associated_min_max.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\bit.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\closest_point.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\color_space.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\color_space_YCoCg.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\common.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\compatibility.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\component_wise.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\dual_quaternion.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\euler_angles.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\extend.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\extented_min_max.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\fast_exponential.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\fast_square_root.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\fast_trigonometry.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\gradient_paint.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\handed_coordinate_space.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\hash.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\integer.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\intersect.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\io.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\log_base.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_cross_product.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_decompose.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_interpolation.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_major_storage.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_operation.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_query.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\matrix_transform_2d.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\mixed_product.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\multiple.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\norm.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\normal.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\normalize_dot.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\number_precision.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\optimum_pow.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\orthonormalize.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\perpendicular.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\polar_coordinates.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\projection.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\quaternion.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\raw_data.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\rotate_normalized_axis.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\rotate_vector.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\scalar_relational.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\simd_mat4.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\simd_quat.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\simd_vec4.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\spline.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\std_based_type.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\string_cast.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\transform.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\transform2.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\type_aligned.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\vector_angle.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\vector_query.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtx\wrap.inl">
+      <Filter>Dependences\glm\gtx</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\bitfield.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\color_space.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\constants.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\epsilon.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\integer.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\matrix_access.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\matrix_inverse.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\matrix_transform.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\noise.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\packing.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\quaternion.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\random.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\reciprocal.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\round.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\type_precision.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\type_ptr.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\ulp.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\gtc\vec1.inl">
+      <Filter>Dependences\glm\gtc</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_common.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_exponential.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_geometric.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_integer.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_matrix.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_noise.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_packing.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_trigonometric.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\func_vector_relational.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_common.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_exponential.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_geometric.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_integer.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_matrix.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_trigonometric.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\intrinsic_vector_relational.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_gentype.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_half.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat2x2.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat2x3.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat2x4.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat3x2.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat3x3.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat3x4.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat4x2.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat4x3.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_mat4x4.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec1.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec2.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec3.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec4.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec4_avx.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec4_avx2.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\glm\detail\type_vec4_sse2.inl">
+      <Filter>Dependences\glm\detail</Filter>
+    </None>
+    <None Include="..\dependence\json\json_internalarray.inl">
+      <Filter>Dependences\json</Filter>
+    </None>
+    <None Include="..\dependence\json\json_internalmap.inl">
+      <Filter>Dependences\json</Filter>
+    </None>
+    <None Include="..\dependence\json\json_valueiterator.inl">
+      <Filter>Dependences\json</Filter>
+    </None>
+  </ItemGroup>
+</Project>

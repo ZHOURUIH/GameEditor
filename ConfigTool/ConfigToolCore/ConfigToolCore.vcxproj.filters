@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{ca002639-45be-4d32-b520-d2b47713105a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket">
+      <UniqueIdentifier>{ec03abcd-92b7-4b38-8ada-571760e2d2b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{929ae0f7-4a32-4b58-bf67-1bbc381853f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket\SocketPacket">
+      <UniqueIdentifier>{acd6729e-6898-40d2-89e7-710bbed81395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConfigToolCore">
+      <UniqueIdentifier>{4ee02202-78ba-4997-88b0-993612ecab5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem">
+      <UniqueIdentifier>{635597d6-b01f-4c0d-963b-cbe9f8a022ed}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\txMemeryTrace.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txSerializedData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFriction.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFrictionRet.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketSpeed.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketNetManager.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacketFactoryManager.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\CTEventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ToolCoreUtility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ToolCoreBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigToolCore\ConfigToolCore.cpp">
+      <Filter>ConfigToolCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txCommand.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txCommandReceiver.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txCommandSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigToolCore\SpeedDataManager.cpp">
+      <Filter>ConfigToolCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txUtility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txSerializer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketCard.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketHeartRate.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketColour.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\CommonDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txFactoryManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txMemeryTrace.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSerializedData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacket.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFriction.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFrictionRet.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketSpeed.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketNetManager.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacketFactory.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacketFactoryManager.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CTEventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CTEventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txEventHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txEventSystemBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ToolCoreLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ToolCoreUtility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSingleton.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ToolCoreBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\ConfigToolCore.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txCommand.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txCommandReceiver.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txCommandSystem.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandHeader.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\ToolCoreCommand.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\SpeedDataManager.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txUtility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSerializer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketCard.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\SpeedData.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\HeartRateData.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\CardData.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketHeartRate.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketColour.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

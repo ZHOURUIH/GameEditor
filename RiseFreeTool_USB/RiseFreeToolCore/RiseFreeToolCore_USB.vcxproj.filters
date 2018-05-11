@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{ca002639-45be-4d32-b520-d2b47713105a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket">
+      <UniqueIdentifier>{ec03abcd-92b7-4b38-8ada-571760e2d2b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{929ae0f7-4a32-4b58-bf67-1bbc381853f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket\SocketPacket">
+      <UniqueIdentifier>{acd6729e-6898-40d2-89e7-710bbed81395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RiseFreeToolCore">
+      <UniqueIdentifier>{4ee02202-78ba-4997-88b0-993612ecab5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem">
+      <UniqueIdentifier>{635597d6-b01f-4c0d-963b-cbe9f8a022ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Utility">
+      <UniqueIdentifier>{57856e4e-e842-491b-adce-0b04ad2db133}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Serialize">
+      <UniqueIdentifier>{4a147d6f-f5d7-45e9-8d45-61d8a13a80ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL">
+      <UniqueIdentifier>{d55ae224-daf8-4b5a-be76-2f139ea6b8c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence">
+      <UniqueIdentifier>{1c1778c3-21fd-421a-88ed-d5769d22626d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence\json">
+      <UniqueIdentifier>{c1a25931-8345-4329-b1a5-f521db93be83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence\md5">
+      <UniqueIdentifier>{f6afd991-3688-4d96-ad9a-93a9d02e12b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpeedData">
+      <UniqueIdentifier>{1b352662-8f4c-4839-972a-39e367e8bcb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libusb">
+      <UniqueIdentifier>{251fcf53-e62a-422e-ab52-660bfc73083c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandUSBManager">
+      <UniqueIdentifier>{0aef312e-7bd1-4f8b-938a-ca6df2b9b0f9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\txMemeryTrace.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFriction.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFrictionRet.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketSpeed.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketNetManager.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacketFactoryManager.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="RiseFreeToolCore\RiseFreeToolCore.cpp">
+      <Filter>RiseFreeToolCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txThreadLock.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Serialize\txSerializedData.cpp">
+      <Filter>Common\Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Serialize\txSerializer.cpp">
+      <Filter>Common\Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\BinaryUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\EditorCoreUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\FileUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\MathUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\StringUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\txUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\EditorCoreBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\md5\md5.cpp">
+      <Filter>dependence\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\json\json_reader.cpp">
+      <Filter>dependence\json</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\json\json_value.cpp">
+      <Filter>dependence\json</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\json\json_writer.cpp">
+      <Filter>dependence\json</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\EventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandSystem.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandReceiver.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\Command.cpp">
+      <Filter>CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedData\SpeedDataManager.cpp">
+      <Filter>SpeedData</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedData\DeviceData.cpp">
+      <Filter>SpeedData</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedData\DataPacket.cpp">
+      <Filter>SpeedData</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedData\HeaderData.cpp">
+      <Filter>SpeedData</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Utility\SystemUtility.cpp">
+      <Filter>Common\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="RiseFreeToolCore\USBManager.cpp">
+      <Filter>RiseFreeToolCore</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandUSBManager\CommandUSBManagerOpenDevice.cpp">
+      <Filter>CommandSystem\CommandUSBManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandUSBManager\CommandUSBManagerCloseDevice.cpp">
+      <Filter>CommandSystem\CommandUSBManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\CommonDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txFactoryManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txMemeryTrace.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacket.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFriction.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFrictionRet.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketSpeed.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketNetManager.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacketFactory.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacketFactoryManager.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSingleton.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RiseFreeToolCore\RiseFreeToolCore.h">
+      <Filter>RiseFreeToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandHeader.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txThreadLock.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Serialize\txSerializedData.h">
+      <Filter>Common\Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Serialize\txSerializer.h">
+      <Filter>Common\Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\BinaryUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\EditorCoreUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\FileUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\MathUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\StringUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\txUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\Utility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\txEventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\txEventSystemBase.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txMap.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txSet.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txSTLBase.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txVector.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EngineDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\md5\md5.h">
+      <Filter>dependence\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\assertions.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\autolink.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\config.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\features.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\forwards.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json_batchallocator.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json_tool.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json-forwards.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\reader.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\value.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\version.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\writer.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\EventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\EventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandSystem.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandReceiver.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\Command.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedData\SpeedDataManager.h">
+      <Filter>SpeedData</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedData\HeaderData.h">
+      <Filter>SpeedData</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedData\DataPacket.h">
+      <Filter>SpeedData</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedData\Payload.h">
+      <Filter>SpeedData</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedData\DeviceData.h">
+      <Filter>SpeedData</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedData\DataKey.h">
+      <Filter>SpeedData</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Utility\SystemUtility.h">
+      <Filter>Common\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="RiseFreeToolCore\USBManager.h">
+      <Filter>RiseFreeToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="libusb\libusb.h">
+      <Filter>libusb</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandUSBManager\CommandUSBManagerOpenDevice.h">
+      <Filter>CommandSystem\CommandUSBManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandUSBManager\CommandUSBManagerCloseDevice.h">
+      <Filter>CommandSystem\CommandUSBManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependence\json\json_internalarray.inl">
+      <Filter>dependence\json</Filter>
+    </None>
+    <None Include="dependence\json\json_internalmap.inl">
+      <Filter>dependence\json</Filter>
+    </None>
+    <None Include="dependence\json\json_valueiterator.inl">
+      <Filter>dependence\json</Filter>
+    </None>
+  </ItemGroup>
+</Project>

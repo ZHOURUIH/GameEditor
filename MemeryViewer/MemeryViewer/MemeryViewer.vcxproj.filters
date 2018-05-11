@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="EditorFrame">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="MemeryViewer">
+      <UniqueIdentifier>{b5ffec8f-5910-4bc4-9ec7-d58921751d20}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EditorFrame\EditorApp.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\EditorFrame.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\EditorUtility.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\KeywordDialog.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\MemeryDetailWindow.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\MemeryTypeStatisticsWindow.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="MemeryViewer\MemeryViewer.cpp">
+      <Filter>MemeryViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="MemeryViewer\ShareMemeryClient.cpp">
+      <Filter>MemeryViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="MemeryViewer\txSerializer.cpp">
+      <Filter>MemeryViewer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorFrame\EditorApp.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorFrame.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorHeader.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorUtility.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\KeywordDialog.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\MemeryDetailWindow.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\MemeryTypeStatisticsWindow.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="MemeryViewer\MemeryViewer.h">
+      <Filter>MemeryViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="MemeryViewer\ShareMemeryClient.h">
+      <Filter>MemeryViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="MemeryViewer\txSerializer.h">
+      <Filter>MemeryViewer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

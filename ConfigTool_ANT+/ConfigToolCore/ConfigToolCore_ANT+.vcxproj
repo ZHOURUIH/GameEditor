@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandSystem\txCommand.cpp" />
+    <ClCompile Include="CommandSystem\txCommandReceiver.cpp" />
+    <ClCompile Include="CommandSystem\txCommandSystem.cpp" />
+    <ClCompile Include="Common\ToolCoreBase.cpp" />
+    <ClCompile Include="Common\ToolCoreUtility.cpp" />
+    <ClCompile Include="Common\txSerializedData.cpp" />
+    <ClCompile Include="Common\txSerializer.cpp" />
+    <ClCompile Include="Common\txThreadLock.cpp" />
+    <ClCompile Include="Common\Utility\BinaryUtility.cpp" />
+    <ClCompile Include="Common\Utility\FileUtility.cpp" />
+    <ClCompile Include="Common\Utility\MathUtility.cpp" />
+    <ClCompile Include="Common\Utility\StringUtility.cpp" />
+    <ClCompile Include="Common\Utility\txUtility.cpp" />
+    <ClCompile Include="ConfigToolCore\ANTPlusData.cpp" />
+    <ClCompile Include="ConfigToolCore\ANTPlusPacket.cpp" />
+    <ClCompile Include="ConfigToolCore\ConfigToolCore.cpp" />
+    <ClCompile Include="ConfigToolCore\DataManager.cpp" />
+    <ClCompile Include="EventSystem\CTEventSystem.cpp" />
+    <ClCompile Include="Memory\txMemoryCheck.cpp" />
+    <ClCompile Include="Memory\txMemoryTrace.cpp" />
+    <ClCompile Include="Memory\txShareMemoryServer.cpp" />
+    <ClCompile Include="Socket\SocketNetManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandSystem\CommandHeader.h" />
+    <ClInclude Include="CommandSystem\ToolCoreCommand.h" />
+    <ClInclude Include="CommandSystem\txCommand.h" />
+    <ClInclude Include="CommandSystem\txCommandReceiver.h" />
+    <ClInclude Include="CommandSystem\txCommandSystem.h" />
+    <ClInclude Include="Common\CommonDefine.h" />
+    <ClInclude Include="Common\EngineDefine.h" />
+    <ClInclude Include="Common\ToolCoreBase.h" />
+    <ClInclude Include="Common\ToolCoreLog.h" />
+    <ClInclude Include="Common\ToolCoreUtility.h" />
+    <ClInclude Include="Common\txEventHandler.h" />
+    <ClInclude Include="Common\txEventSystemBase.h" />
+    <ClInclude Include="Common\txFactoryManager.h" />
+    <ClInclude Include="Common\txLog.h" />
+    <ClInclude Include="Common\txSerializedData.h" />
+    <ClInclude Include="Common\txSerializer.h" />
+    <ClInclude Include="Common\txSingleton.h" />
+    <ClInclude Include="Common\txThreadLock.h" />
+    <ClInclude Include="Common\Utility\BinaryUtility.h" />
+    <ClInclude Include="Common\Utility\FileUtility.h" />
+    <ClInclude Include="Common\Utility\MathUtility.h" />
+    <ClInclude Include="Common\Utility\StringUtility.h" />
+    <ClInclude Include="Common\Utility\txUtility.h" />
+    <ClInclude Include="Common\Utility\Utility.h" />
+    <ClInclude Include="ConfigToolCore\ANTPlusData.h" />
+    <ClInclude Include="ConfigToolCore\ANTPlusPacket.h" />
+    <ClInclude Include="ConfigToolCore\ConfigToolCore.h" />
+    <ClInclude Include="ConfigToolCore\DataManager.h" />
+    <ClInclude Include="EventSystem\CTEventHandler.h" />
+    <ClInclude Include="EventSystem\CTEventSystem.h" />
+    <ClInclude Include="Memory\txMemoryCheck.h" />
+    <ClInclude Include="Memory\txMemoryTrace.h" />
+    <ClInclude Include="Memory\txShareMemoryServer.h" />
+    <ClInclude Include="Socket\SocketNetManager.h" />
+    <ClInclude Include="STL\txMap.h" />
+    <ClInclude Include="STL\txSet.h" />
+    <ClInclude Include="STL\txSTLBase.h" />
+    <ClInclude Include="STL\txVector.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F024FEE7-0F53-435C-B61C-4BA34EBA7D9C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ConfigToolCore_ANT+</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_USE_SOCKET_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./ConfigToolCore;./Common;./Common/Utility;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./STL;./Memory;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_USE_SOCKET_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./ConfigToolCore;./Common;./Common/Utility;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./STL;./Memory;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

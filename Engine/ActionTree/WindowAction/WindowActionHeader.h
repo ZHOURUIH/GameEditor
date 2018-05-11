@@ -1,0 +1,5 @@
+#include "ActionWindowAlpha.h"
+#include "ActionWindowHSL.h"
+#include "ActionWindowMove.h"
+#include "ActionWindowRotate.h"
+#include "ActionWindowScale.h"

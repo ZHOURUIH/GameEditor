@@ -1,0 +1,14 @@
+﻿<Window x:Class="GameUpdate.BusyInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameUpdate"
+        mc:Ignorable="d" Height="197" Width="398.794" WindowStyle="None">
+    <Grid>
+        <Label x:Name="mInfo" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="375" Height="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+            <TextBlock x:Name="mInfoBlock" TextWrapping="Wrap" Width="365" TextAlignment="Center"/>
+        </Label>
+
+    </Grid>
+</Window>

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="EditorFrame\Panel\EditorPanel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\EditorFrame.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\EditorApp.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Common\EditorBase.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Common\EditorUtility.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Dialog\EditorDialog.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Dialog\EditorBusyInfo.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Dialog\EditorBusyInfoFrame.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Panel\DownloadPanel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Dialog\OKDialog.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\Dialog\YesNODialog.cpp">
+      <Filter>Dialog</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorFrame\Panel\EditorPanel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorFrame.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorApp.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Common\EditorBase.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Common\EditorUtility.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Dialog\EditorDialog.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Common\EditorHeader.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Command\EditorCommand.h">
+      <Filter>Command</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Command\EditorCommandHeader.h">
+      <Filter>Command</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Dialog\EditorBusyInfo.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Dialog\EditorBusyInfoFrame.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Panel\DownloadPanel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Dialog\OKDialog.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\Dialog\YesNODialog.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Panel">
+      <UniqueIdentifier>{4f800fd5-8153-46b0-b021-0b8e1b63fe74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorFrame">
+      <UniqueIdentifier>{c59d4f63-e38e-43c5-a7d5-a1260e9785d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{09bbb4c5-2f82-4044-b0b7-aa3581601fa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Command">
+      <UniqueIdentifier>{848e29aa-570d-4d41-905b-a419444a4d41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{9b43ca8e-ce46-4e5d-bc40-e94cf7101c78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Command\CommandEditorFrame">
+      <UniqueIdentifier>{8deacb74-a8e2-4a2a-aa52-f06e4c63c9df}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SyncTool.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+#ifndef _PROPERTY_HEADER_H_
+#define _PROPERTY_HEADER_H_
+
+#include "txTransformProperty.h"
+#include "txComponentProperty.h"
+#include "txMeshProperty.h"
+#include "txStaticMeshProperty.h"
+#include "txDynamicMeshProperty.h"
+#include "txEffectProperty.h"
+#include "txKeyFrameProperty.h"
+#include "txPhysicsProperty.h"
+#include "txCollisionProperty.h"
+#include "txCollisionBoxProperty.h"
+#include "txCollisionCapsuleProperty.h"
+#include "txCollisionCylinderProperty.h"
+#include "txCollisionSphereProperty.h"
+#include "txCollisionPlaneProperty.h"
+#include "txAlphaProperty.h"
+#include "txScaleProperty.h"
+#include "txRotateProperty.h"
+#include "txRotateSpeedProperty.h"
+#include "txRotateProperty.h"
+#include "txHSLProperty.h"
+
+#include "WindowActionProperty.h"
+#include "ActionPropertyAlpha.h"
+#include "ActionPropertyHSL.h"
+#include "ActionPropertyMove.h"
+#include "ActionPropertyRotate.h"
+#include "ActionPropertyScale.h"
+
+#include "ButtonProperty.h"
+#include "CheckBoxProperty.h"
+#include "EditBoxProperty.h"
+#include "NumberWindowProperty.h"
+#include "ProgressWindowProperty.h"
+#include "TextureAnimWindowProperty.h"
+#include "TextureWindowProperty.h"
+#include "TextWindowProperty.h"
+#include "VideoWindowProperty.h"
+#include "WindowProperty.h"
+
+#endif

@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{ca002639-45be-4d32-b520-d2b47713105a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{929ae0f7-4a32-4b58-bf67-1bbc381853f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem">
+      <UniqueIdentifier>{635597d6-b01f-4c0d-963b-cbe9f8a022ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore">
+      <UniqueIdentifier>{4ee02202-78ba-4997-88b0-993612ecab5c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\txMemeryTrace.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txSerializedData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\CTEventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txCommand.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txCommandReceiver.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txCommandSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txUtility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txSerializer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\EditorCoreBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\EditorCoreUtility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\EditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txRegisterTool.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\txSystemInfo.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\md5.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\CommonDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txFactoryManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txMemeryTrace.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSerializedData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CTEventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CTEventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txEventHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txEventSystemBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSingleton.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txCommand.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txCommandReceiver.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txCommandSystem.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandHeader.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\ToolCoreCommand.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txUtility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSerializer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreUtility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\EditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txRegisterTool.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSystemInfo.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\md5.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

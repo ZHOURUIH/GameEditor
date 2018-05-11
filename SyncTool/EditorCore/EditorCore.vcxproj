@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandSystem\CommandDownloadManager\CommandDownloadManagerCancel.cpp" />
+    <ClCompile Include="CommandSystem\CommandSystem.cpp" />
+    <ClCompile Include="CommandSystem\Command.cpp" />
+    <ClCompile Include="CommandSystem\CommandReceiver.cpp" />
+    <ClCompile Include="Common\EditorCoreBase.cpp" />
+    <ClCompile Include="Common\Serialize\txSerializedData.cpp" />
+    <ClCompile Include="Common\Serialize\txSerializer.cpp" />
+    <ClCompile Include="Common\txMemeryTrace.cpp" />
+    <ClCompile Include="Common\txThreadLock.cpp" />
+    <ClCompile Include="Common\Utility\BinaryUtility.cpp" />
+    <ClCompile Include="Common\Utility\EditorCoreUtility.cpp" />
+    <ClCompile Include="Common\Utility\FileUtility.cpp" />
+    <ClCompile Include="Common\Utility\MathUtility.cpp" />
+    <ClCompile Include="Common\Utility\StringUtility.cpp" />
+    <ClCompile Include="Common\Utility\txUtility.cpp" />
+    <ClCompile Include="dependence\json\json_reader.cpp" />
+    <ClCompile Include="dependence\json\json_value.cpp" />
+    <ClCompile Include="dependence\json\json_writer.cpp" />
+    <ClCompile Include="dependence\md5\md5.cpp" />
+    <ClCompile Include="EditorCore\EditorCore.cpp" />
+    <ClCompile Include="EventSystem\EventSystem.cpp" />
+    <ClCompile Include="File\DownloadManager.cpp" />
+    <ClCompile Include="File\File.cpp" />
+    <ClCompile Include="File\UploadManager.cpp" />
+    <ClCompile Include="LibCurl\LibCurlDownloadManager.cpp" />
+    <ClCompile Include="Socket\SocketNetManager.cpp" />
+    <ClCompile Include="Socket\SocketPacketFactoryManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandSystem\CommandDownloadManager\CommandDownloadManagerCancel.h" />
+    <ClInclude Include="CommandSystem\CommandHeader.h" />
+    <ClInclude Include="CommandSystem\CommandSystem.h" />
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h" />
+    <ClInclude Include="CommandSystem\Command.h" />
+    <ClInclude Include="CommandSystem\CommandReceiver.h" />
+    <ClInclude Include="Common\CommonDefine.h" />
+    <ClInclude Include="Common\EditorCoreBase.h" />
+    <ClInclude Include="Common\EditorCoreLog.h" />
+    <ClInclude Include="Common\EngineDefine.h" />
+    <ClInclude Include="Common\Serialize\txSerializedData.h" />
+    <ClInclude Include="Common\Serialize\txSerializer.h" />
+    <ClInclude Include="Common\txFactoryManager.h" />
+    <ClInclude Include="Common\txLog.h" />
+    <ClInclude Include="Common\txMemeryTrace.h" />
+    <ClInclude Include="Common\txSingleton.h" />
+    <ClInclude Include="Common\txThreadLock.h" />
+    <ClInclude Include="Common\Utility\BinaryUtility.h" />
+    <ClInclude Include="Common\Utility\EditorCoreUtility.h" />
+    <ClInclude Include="Common\Utility\FileUtility.h" />
+    <ClInclude Include="Common\Utility\MathUtility.h" />
+    <ClInclude Include="Common\Utility\StringUtility.h" />
+    <ClInclude Include="Common\Utility\txUtility.h" />
+    <ClInclude Include="Common\Utility\Utility.h" />
+    <ClInclude Include="dependence\curl_windows\curl.h" />
+    <ClInclude Include="dependence\curl_windows\curlbuild.h" />
+    <ClInclude Include="dependence\curl_windows\curlrules.h" />
+    <ClInclude Include="dependence\curl_windows\curlver.h" />
+    <ClInclude Include="dependence\curl_windows\easy.h" />
+    <ClInclude Include="dependence\curl_windows\mprintf.h" />
+    <ClInclude Include="dependence\curl_windows\multi.h" />
+    <ClInclude Include="dependence\curl_windows\stdcheaders.h" />
+    <ClInclude Include="dependence\curl_windows\typecheck-gcc.h" />
+    <ClInclude Include="dependence\curl_windows\types.h" />
+    <ClInclude Include="dependence\json\assertions.h" />
+    <ClInclude Include="dependence\json\autolink.h" />
+    <ClInclude Include="dependence\json\config.h" />
+    <ClInclude Include="dependence\json\features.h" />
+    <ClInclude Include="dependence\json\forwards.h" />
+    <ClInclude Include="dependence\json\json-forwards.h" />
+    <ClInclude Include="dependence\json\json.h" />
+    <ClInclude Include="dependence\json\json_batchallocator.h" />
+    <ClInclude Include="dependence\json\json_tool.h" />
+    <ClInclude Include="dependence\json\reader.h" />
+    <ClInclude Include="dependence\json\value.h" />
+    <ClInclude Include="dependence\json\version.h" />
+    <ClInclude Include="dependence\json\writer.h" />
+    <ClInclude Include="dependence\md5\md5.h" />
+    <ClInclude Include="EditorCore\EditorCore.h" />
+    <ClInclude Include="EventSystem\EventHandler.h" />
+    <ClInclude Include="EventSystem\EventSystem.h" />
+    <ClInclude Include="EventSystem\txEventHandler.h" />
+    <ClInclude Include="EventSystem\txEventSystemBase.h" />
+    <ClInclude Include="File\DownloadManager.h" />
+    <ClInclude Include="File\File.h" />
+    <ClInclude Include="File\UploadManager.h" />
+    <ClInclude Include="LibCurl\LibCurlDownloadManager.h" />
+    <ClInclude Include="Socket\SocketNetManager.h" />
+    <ClInclude Include="Socket\SocketPacketFactory.h" />
+    <ClInclude Include="Socket\SocketPacketFactoryManager.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacket.h" />
+    <ClInclude Include="STL\txMap.h" />
+    <ClInclude Include="STL\txSet.h" />
+    <ClInclude Include="STL\txSTLBase.h" />
+    <ClInclude Include="STL\txVector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependence\json\json_internalarray.inl" />
+    <None Include="dependence\json\json_internalmap.inl" />
+    <None Include="dependence\json\json_valueiterator.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F024FEE7-0F53-435C-B61C-4BA34EBA7D9C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ConfigToolCore</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_USE_SOCKET_UDP;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BUILDING_LIBCURL;HTTP_ONLY;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./EditorCore;./Common;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./dependence;./LibCurl;./LibCurl/Packet;./STL;./File;./Common/Utility;./Common/Serialize;./CommandSystem/CommandDownloadManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>libcurl_d.lib;ws2_32.lib;winmm.lib;wldap32.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_USE_SOCKET_UDP;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BUILDING_LIBCURL;HTTP_ONLY;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;./EditorCore;./Common;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./dependence;./LibCurl;./LibCurl/Packet;./STL;./File;./Common/Utility;./Common/Serialize;./CommandSystem/CommandDownloadManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>libcurl.lib;ws2_32.lib;winmm.lib;wldap32.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
