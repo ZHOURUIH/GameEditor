@@ -28,12 +28,12 @@ std::string getTypeStr(CODE_TYPE type)
 int main(int argc, char* argv[])
 {
 	std::cout << "请输入要转换为什么类型 : 0 == ANSI, 1== UTF8, 2 == UNICODE" << std::endl;
-	int typeNumber = -1;
-	while (typeNumber < 0 || typeNumber > 2)
+	int input = -1;
+	while (input < 0 || input > 2)
 	{
-		std::cin >> typeNumber;
+		std::cin >> input;
 	}
-
+	CODE_TYPE targetType = (CODE_TYPE)(input);
 	std::vector<std::string> files;
 	std::vector<std::string> patterns;
 	patterns.push_back(".h");
@@ -46,23 +46,20 @@ int main(int argc, char* argv[])
 		char* buffer = NULL;
 		int fileLength = 0;
 		Utility::readFile(files[i], buffer, fileLength);
-
-		if (NULL != buffer)
+		if (buffer != NULL)
 		{
 			// 判断文件类型
-			CODE_TYPE ct = Utility::getFileCodeType(buffer, fileLength);
-
-			std::cout << "原文件名:" << files[i] << ",原文件类型:" << getTypeStr(ct) 
-				<< "转换为 : " << getTypeStr((CODE_TYPE)typeNumber) << std::endl;
-			if (CT_MAX == ct)
+			CODE_TYPE sourceType = Utility::getFileCodeType(buffer, fileLength);
+			if (sourceType == CT_MAX)
 			{
-				std::cout << "转换失败" << std::endl;
+				std::cout << files[i] << "转换失败 : 无法获取源文件编码格式" << std::endl;
 			}
-			else 
-			{ 
-				if (CT_ANSI == ct)
+			else if (sourceType != targetType)
+			{
+				std::cout << "原文件名:" << files[i] << ",原文件类型:" << getTypeStr(sourceType) << "转换为 : " << getTypeStr(targetType) << std::endl;
+				if (sourceType == CT_ANSI)
 				{
-					if (1 == typeNumber)
+					if (targetType == CT_UTF8)
 					{
 						int strLength;
 						char* utf8Buffer = Utility::ANSIToUTF8(buffer, strLength);
@@ -73,7 +70,7 @@ int main(int argc, char* argv[])
 						delete[] utf8Buffer;
 						delete[] bomBuffer;
 					}
-					else if (2 == typeNumber)
+					else if (targetType == CT_UNICODE)
 					{
 						int length;
 						wchar_t* unicodeBuffer = Utility::ANSIToUnicode(buffer, length);
@@ -83,14 +80,13 @@ int main(int argc, char* argv[])
 
 						delete[] unicodeBuffer;
 						delete[] bomBuffer;
-
 					}
 				}
-				else if (CT_UTF8 == ct)
+				else if (sourceType == CT_UTF8)
 				{
 					int dBomBufferByte;
 					char* dBomBuffer = Utility::deleteUTF8BOM(buffer, fileLength, dBomBufferByte, true);
-					if (0 == typeNumber)
+					if (targetType == CT_ANSI)
 					{
 						int strLength;
 						char* ansiBuffer = Utility::UTF8ToANSI(dBomBuffer, strLength);
@@ -98,7 +94,7 @@ int main(int argc, char* argv[])
 
 						delete[] ansiBuffer;
 					}
-					else if (2 == typeNumber)
+					else if (targetType == CT_UNICODE)
 					{
 						int strLength;
 						wchar_t* unicodeBuffer = Utility::UTF8ToUnicode(dBomBuffer, strLength);
@@ -109,25 +105,23 @@ int main(int argc, char* argv[])
 						delete[] unicodeBuffer;
 						delete[] bomBuffer;
 					}
-
 					delete[] dBomBuffer;
 				}
-				else if (CT_UNICODE == ct)
+				else if (sourceType == CT_UNICODE)
 				{
 					wchar_t* endNullBuffer = (wchar_t*)new char[fileLength + sizeof(wchar_t)];
 					memset(endNullBuffer, 0, fileLength + sizeof(wchar_t));
 					memcpy(endNullBuffer, buffer, fileLength);
 					int dBomBufferByte;
 					wchar_t* dBomBuffer = Utility::deleteUNICODEBOM((char*)endNullBuffer, fileLength, dBomBufferByte, true);
-					if (0 == typeNumber)
+					if (targetType == CT_ANSI)
 					{
 						int strLength;
 						char* ansiBuffer = Utility::UnicodeToANSI(dBomBuffer, strLength);
 						Utility::writeFile(files[i], strLength, ansiBuffer);
-
 						delete[] ansiBuffer;
 					}
-					else if (1 == typeNumber)
+					else if (targetType == CT_UTF8)
 					{
 						int strLength;
 						char* utf8Buffer = Utility::UnicodeToUTF8(dBomBuffer, strLength);
@@ -139,7 +133,6 @@ int main(int argc, char* argv[])
 					}
 					delete[] dBomBuffer;
 				}
-				std::cout << "转换成功" << std::endl;
 			}
 			delete[] buffer;
 		}
