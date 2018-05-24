@@ -761,7 +761,7 @@ bool txMath::replaceStringKeyword(std::string& str, const std::string& keyword, 
 		// 找到匹配的)
 		txStringUtility::findSubstr(str, std::string(")"), true, &expressionEnd, 0, false);
 		// expressionBegin + 1 去掉 /
-		std::string calculateValue = str.substr(expressionBegin + 1, expressionEnd - expressionBegin + 1);
+		std::string calculateValue = str.substr(expressionBegin + 1, expressionEnd - (expressionBegin + 1) + 1);
 		replaceKeywordAndCalculate(calculateValue, keyword, keyValue, floatOrInt);
 		// 替换掉最后一个\\()之间的内容
 		str = txStringUtility::strReplace(str, expressionBegin, expressionEnd + 1, calculateValue);
