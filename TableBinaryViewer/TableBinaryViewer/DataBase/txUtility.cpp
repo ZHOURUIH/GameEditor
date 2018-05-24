@@ -783,49 +783,6 @@ int txUtility::calculateInt(std::string str)
 	}
 }
 
-int txUtility::strFind(const std::string& res, const std::string& sub, int startPos, bool fromStart)
-{
-	int subLen = (int)sub.length();
-	int searchLength = res.length() - subLen;
-	if (fromStart)
-	{
-		int j = 0;
-		for (int i = startPos; i < searchLength; ++i)
-		{
-			for (j = 0; j != subLen; ++j)
-			{
-				if (res[i + j] != sub[j])
-				{
-					break;
-				}
-			}
-			if (j == subLen)
-			{
-				return i;
-			}
-		}
-	}
-	else
-	{
-		int j = 0;
-		for (int i = searchLength; i != startPos; --i)
-		{
-			for (j = 0; j != subLen; ++j)
-			{
-				if (res[i + j] != sub[j])
-				{
-					break;
-				}
-			}
-			if (j == subLen)
-			{
-				return i;
-			}
-		}
-	}
-	return -1;
-}
-
 bool txUtility::findSubstr(std::string res, std::string dst, bool sensitive, int* pos, int startPose, bool firstOrLast)
 {
 	// 如果不区分大小写
@@ -835,16 +792,37 @@ bool txUtility::findSubstr(std::string res, std::string dst, bool sensitive, int
 		strToLower(res);
 		strToLower(dst);
 	}
-	int posFind = strFind(res, dst, startPose, firstOrLast);
-	if (NULL != pos)
+	int posFind = -1;
+	int subLen = (int)dst.length();
+	int searchLength = res.length() - subLen;
+	if (searchLength < 0)
+	{
+		return false;
+	}
+	int start = firstOrLast ? startPose : searchLength;
+	int delta = firstOrLast ? 1 : -1;
+	int end = firstOrLast ? searchLength : startPose;
+	end += delta;
+	for (int i = start; i != end; i += delta)
+	{
+		int j = 0;
+		for (j = 0; j != subLen; ++j)
+		{
+			if (res[i + j] != dst[j])
+			{
+				break;
+			}
+		}
+		if (j == subLen)
+		{
+			posFind = i;
+		}
+	}
+	if (pos != NULL)
 	{
 		*pos = posFind;
 	}
-	if (-1 != posFind)
-	{
-		return true;
-	}
-	return false;
+	return posFind != -1;
 }
 
 void txUtility::strToLower(std::string& str)

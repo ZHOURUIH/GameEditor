@@ -92,7 +92,15 @@ bool txSerializedData::writeData(const std::string& dataString, const int& param
 	}
 	const DataParameter& dataParam = mDataParameterList[paramIndex];
 	const std::string& paramType = dataParam.mDataType;
-	if (paramType == mIntType)
+	if (paramType == mCharType)
+	{
+		*(dataParam.mDataPtr) = (char)txUtility::stringToInt(dataString);
+	}
+	else if (paramType == mUCharType)
+	{
+		*(dataParam.mDataPtr) = (unsigned char)txUtility::stringToInt(dataString);
+	}
+	else if (paramType == mIntType)
 	{
 		*(int*)(dataParam.mDataPtr) = txUtility::stringToInt(dataString);
 	}
@@ -107,7 +115,7 @@ bool txSerializedData::writeData(const std::string& dataString, const int& param
 	else if (paramType == mCharArrayType)
 	{
 		memset(dataParam.mDataPtr, 0, dataParam.mDataSize);
-		int copySize = TX_MIN((int)dataString.length(), dataParam.mDataSize - 1);
+		int copySize = TX_MIN((int)dataString.length(), dataParam.mDataSize);
 		memcpy(dataParam.mDataPtr, dataString.c_str(), copySize);
 	}
 	else if (paramType == mShortArrayType)
@@ -189,7 +197,15 @@ std::string txSerializedData::getValueString(const int& paramIndex)
 	}
 	const DataParameter& dataParam = mDataParameterList[paramIndex];
 	std::string dataString;
-	if (dataParam.mDataType == mIntType)
+	if (dataParam.mDataType == mCharType)
+	{
+		dataString = txUtility::intToString(*(dataParam.mDataPtr));
+	}
+	else if (dataParam.mDataType == mUCharType)
+	{
+		dataString = txUtility::intToString(*((unsigned char*)dataParam.mDataPtr));
+	}
+	else if (dataParam.mDataType == mIntType)
 	{
 		dataString = txUtility::intToString(*((int*)dataParam.mDataPtr));
 	}
@@ -203,7 +219,10 @@ std::string txSerializedData::getValueString(const int& paramIndex)
 	}
 	else if (dataParam.mDataType == mCharArrayType)
 	{
-		dataString = dataParam.mDataPtr;
+		char* temp = TRACE_NEW_ARRAY(char, dataParam.mDataSize + 1, temp);
+		memcpy(temp, dataParam.mDataPtr, dataParam.mDataSize);
+		dataString = temp;
+		TRACE_DELETE_ARRAY(temp);
 	}
 	else if (dataParam.mDataType == mShortArrayType)
 	{

@@ -360,6 +360,11 @@ void MainViewerWindow::OnToItemText(wxCommandEvent& event)
 
 void MainViewerWindow::OnSetItemButton(wxCommandEvent& event)
 {
+	if (mSelectColumn < 0)
+	{
+		EditorFrame::errorMessage("请选择要设置的列");
+		return;
+	}
 	// 此处所要修改的选中项不是依据列表中选中的来决定
 	// 与mSelectItemList无关,只与文本框中填写的起始行和终止行有关
 	// 因为在修改起始行和终止行文本框时再判断并修改选中列表会很麻烦
@@ -400,7 +405,7 @@ void MainViewerWindow::OnSetItemButton(wxCommandEvent& event)
 					txUtility::findSubstr(finalValue, std::string(")"), true, &expressionEnd, 0, false);
 
 					// expressionBegin + 1 去掉 /
-					std::string calculateValue = finalValue.substr(expressionBegin + 1, expressionEnd - expressionBegin + 1);
+					std::string calculateValue = finalValue.substr(expressionBegin + 1, expressionEnd - (expressionBegin + 1) + 1);
 
 					// 如果最后的表达式中存在i,则需要把i替换为i具体的值,然后计算出最后的表达式的值
 					int iPos = 0;

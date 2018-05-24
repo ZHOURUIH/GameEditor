@@ -30,7 +30,6 @@ public:
 	static std::string strReplace(const std::string& str, int begin, int end, const std::string& reStr);
 	static float calculateFloat(std::string str);	// 以浮点数的计算法则计算一个表达式,只支持加减乘除和括号
 	static int calculateInt(std::string str);		// 以整数的计算法则计算一个表达式,支持取余,加减乘除和括号
-	static int strFind(const std::string& res, const std::string& sub, int startPos, bool fromStart);
 	static bool findSubstr(std::string res, std::string dst, bool sensitive, int* pos = NULL, int startPose = 0, bool firstOrLast = true);
 	static void strToLower(std::string& str);
 	static void strToUpper(std::string& str);
