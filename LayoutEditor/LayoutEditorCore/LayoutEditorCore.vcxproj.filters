@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="CommandSystem">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="EditorCore">
+      <UniqueIdentifier>{7813ee29-3fb5-44ac-8b6a-02bc29d730f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{ffa6ed14-773b-4385-921f-dc68ac5a08b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Undo">
+      <UniqueIdentifier>{8692fa6d-8d08-46b8-84e5-ee4274c7d0e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandWindow">
+      <UniqueIdentifier>{1acacfa0-ecd7-42d5-9c14-7526380c3dc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandAction">
+      <UniqueIdentifier>{9079c7c7-198b-42bf-90d6-7fc0c8ed2e83}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowRename.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowSetProperty.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoAddWindow.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoChangeWindowProperty.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoDeleteWindow.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoLayoutVisible.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoManager.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoMoveWindowPos.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoWindowRename.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ECUtility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\EditorCoreBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ECRenderWindowCoordinate.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoCutWindow.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowSetComponentProperty.cpp">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoChangeWindowComponentProperty.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandAction\CommandActionSetProperty.cpp">
+      <Filter>CommandSystem\CommandAction</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\CoreEventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\TremblingEditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\LayoutEditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\ActionTreeEditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\ComponentEditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\EditorCoreRoot.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowRename.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowSetProperty.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandHeader.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndo.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoAddWindow.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoChangeWindowProperty.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoDeleteWindow.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoLayoutVisible.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoManager.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoMoveWindowPos.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoWindowRename.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\CommonDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ECLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ECUtility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ECRenderWindowCoordinate.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoCutWindow.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowSetComponentProperty.h">
+      <Filter>CommandSystem\CommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoChangeWindowComponentProperty.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandAction\CommandActionSetProperty.h">
+      <Filter>CommandSystem\CommandAction</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CoreEventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CoreEventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\TremblingEditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\LayoutEditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\ActionTreeEditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\ComponentEditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoHeader.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\EditorCoreRoot.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

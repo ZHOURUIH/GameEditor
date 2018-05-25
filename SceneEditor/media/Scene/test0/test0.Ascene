@@ -1,0 +1,232 @@
+[
+	[
+		{
+			"name": "ball"
+		},
+		{
+			"name": "transform",
+			"type": "txComponentTransform",
+			"parent": "",
+			"Active": "True",
+			"Position": "0.0000,1.4951,5.0000",
+			"Rotation": "2.2577,1.9186,0.1896",
+			"Scale": "1.0000,1.0000,1.0000"
+		},
+		{
+			"name": "physics",
+			"type": "txComponentPhysics",
+			"parent": "",
+			"Active": "True",
+			"AngularVelocity": "0.0000,0.0000,0.0000",
+			"ConstantForce": "0.0000,0.0000,0.0000",
+			"ConstantTorque": "0.0000,0.0000,0.0000",
+			"InstantForce": "0.0000,0.0000,0.0000",
+			"InstantTorque": "0.0000,0.0000,0.0000",
+			"Kinematic": "True",
+			"LinearVelocity": "0.0000,0.0000,0.0000",
+			"ShowAllGeometry": "True"
+		},
+		{
+			"name": "txComponentCollisionSphere0",
+			"type": "txComponentCollisionSphere",
+			"parent": "physics",
+			"Active": "True",
+			"GeometryMass": "1.0000",
+			"GeometryRelativePosition": "0.0000,0.0000,0.0000",
+			"GeometryRelativeRotation": "0.0000,0.0000,0.0000",
+			"ShowGeometry": "True",
+			"SphereRadius": "1.0000"
+		}
+	],
+	[
+		{
+			"name": "box0"
+		},
+		{
+			"name": "transform",
+			"type": "txComponentTransform",
+			"parent": "",
+			"Active": "True",
+			"Position": "1.5000,1.3488,-0.5623",
+			"Rotation": "0.0000,0.0000,0.0000",
+			"Scale": "1.0000,1.0000,1.0000"
+		},
+		{
+			"name": "physics",
+			"type": "txComponentPhysics",
+			"parent": "",
+			"Active": "True",
+			"AngularVelocity": "0.0000,-0.0000,0.0000",
+			"ConstantForce": "0.0000,0.0000,0.0000",
+			"ConstantTorque": "0.0000,0.0000,0.0000",
+			"InstantForce": "0.0000,0.0000,0.0000",
+			"InstantTorque": "0.0000,0.0000,0.0000",
+			"Kinematic": "False",
+			"LinearVelocity": "0.0000,-0.0000,0.0000",
+			"ShowAllGeometry": "True"
+		},
+		{
+			"name": "txComponentCollisionBox3",
+			"type": "txComponentCollisionBox",
+			"parent": "physics",
+			"Active": "True",
+			"BoxHeight": "1.7000",
+			"BoxLength": "0.8000",
+			"BoxWidth": "0.8000",
+			"GeometryMass": "1.0000",
+			"GeometryRelativePosition": "0.0000,0.0000,0.0000",
+			"GeometryRelativeRotation": "0.0000,0.0000,0.0000",
+			"ShowGeometry": "True"
+		},
+		{
+			"name": "txComponentStaticMesh0",
+			"type": "txComponentStaticMesh",
+			"parent": "",
+			"Active": "True",
+			"MeshPosition": "0.0000,-0.9000,0.0000",
+			"MeshRotation": "0.0000,1.5708,0.0000",
+			"MeshScale": "0.0100,0.0100,0.0100",
+			"StaticMesh": "geometry.Untitled.014Geometry.mesh"
+		}
+	],
+	[
+		{
+			"name": "box1"
+		},
+		{
+			"name": "transform",
+			"type": "txComponentTransform",
+			"parent": "",
+			"Active": "True",
+			"Position": "-0.0000,0.8988,1.2248",
+			"Rotation": "0.0000,-1.5708,0.0000",
+			"Scale": "1.0000,1.0000,1.0000"
+		},
+		{
+			"name": "physics",
+			"type": "txComponentPhysics",
+			"parent": "",
+			"Active": "True",
+			"AngularVelocity": "0.0000,0.0000,0.0000",
+			"ConstantForce": "0.0000,0.0000,0.0000",
+			"ConstantTorque": "0.0000,0.0000,0.0000",
+			"InstantForce": "0.0000,0.0000,0.0000",
+			"InstantTorque": "0.0000,0.0000,0.0000",
+			"Kinematic": "True",
+			"LinearVelocity": "0.0000,0.0000,0.0000",
+			"ShowAllGeometry": "True"
+		},
+		{
+			"name": "txComponentCollisionBox4",
+			"type": "txComponentCollisionBox",
+			"parent": "physics",
+			"Active": "True",
+			"BoxHeight": "1.7000",
+			"BoxLength": "0.8000",
+			"BoxWidth": "0.8000",
+			"GeometryMass": "1.0000",
+			"GeometryRelativePosition": "0.0000,0.0000,0.0000",
+			"GeometryRelativeRotation": "0.0000,0.0000,0.0000",
+			"ShowGeometry": "True"
+		},
+		{
+			"name": "txComponentStaticMesh2",
+			"type": "txComponentStaticMesh",
+			"parent": "",
+			"Active": "True",
+			"MeshPosition": "0.0000,-0.9000,0.0000",
+			"MeshRotation": "0.0000,1.5708,0.0000",
+			"MeshScale": "0.0100,0.0100,0.0100",
+			"StaticMesh": "geometry.Untitled.014Geometry.mesh"
+		}
+	],
+	[
+		{
+			"name": "ground"
+		},
+		{
+			"name": "transform",
+			"type": "txComponentTransform",
+			"parent": "",
+			"Active": "True",
+			"Position": "0.0000,0.0000,0.0000",
+			"Rotation": "0.0000,0.0000,0.0000",
+			"Scale": "1.0000,1.0000,1.0000"
+		},
+		{
+			"name": "physics",
+			"type": "txComponentPhysics",
+			"parent": "",
+			"Active": "True",
+			"AngularVelocity": "0.0000,0.0000,0.0000",
+			"ConstantForce": "0.0000,0.0000,0.0000",
+			"ConstantTorque": "0.0000,0.0000,0.0000",
+			"InstantForce": "0.0000,0.0000,0.0000",
+			"InstantTorque": "0.0000,0.0000,0.0000",
+			"Kinematic": "True",
+			"LinearVelocity": "0.0000,0.0000,0.0000",
+			"ShowAllGeometry": "True"
+		},
+		{
+			"name": "txComponentCollisionBox1",
+			"type": "txComponentCollisionBox",
+			"parent": "physics",
+			"Active": "True",
+			"BoxHeight": "1.0000",
+			"BoxLength": "100.0000",
+			"BoxWidth": "100.0000",
+			"GeometryMass": "1.0000",
+			"GeometryRelativePosition": "0.0000,0.0000,0.0000",
+			"GeometryRelativeRotation": "0.0000,0.0000,0.0000",
+			"ShowGeometry": "True"
+		},
+		{
+			"name": "txComponentStaticMesh1",
+			"type": "txComponentStaticMesh",
+			"parent": "",
+			"Active": "True",
+			"MeshPosition": "0.0000,0.0000,-50.0000",
+			"MeshRotation": "0.0000,0.0000,0.0000",
+			"MeshScale": "1.2500,0.0100,0.5750",
+			"StaticMesh": "geometry.Untitled.014Geometry.mesh"
+		}
+	],
+	[
+		{
+			"name": "vehicle"
+		},
+		{
+			"name": "transform",
+			"type": "txComponentTransform",
+			"parent": "",
+			"Active": "True",
+			"Position": "0.0000,0.0000,0.0000",
+			"Rotation": "0.0000,0.0000,0.0000",
+			"Scale": "1.0000,1.0000,1.0000"
+		},
+		{
+			"name": "physics",
+			"type": "txComponentPhysics",
+			"parent": "",
+			"Active": "True",
+			"AngularVelocity": "0.0000,0.0000,0.0000",
+			"ConstantForce": "0.0000,0.0000,0.0000",
+			"ConstantTorque": "0.0000,0.0000,0.0000",
+			"InstantForce": "0.0000,0.0000,0.0000",
+			"InstantTorque": "0.0000,0.0000,0.0000",
+			"Kinematic": "True",
+			"LinearVelocity": "0.0000,0.0000,0.0000",
+			"ShowAllGeometry": "True"
+		},
+		{
+			"name": "txComponentStaticMesh0",
+			"type": "txComponentStaticMesh",
+			"parent": "",
+			"Active": "True",
+			"MeshPosition": "10.0000,0.0000,0.0000",
+			"MeshRotation": "2.7416,1.5716,3.1416",
+			"MeshScale": "0.0100,0.0100,0.0100",
+			"StaticMesh": "geometry.Untitled.015Geometry.mesh"
+		}
+	]
+]

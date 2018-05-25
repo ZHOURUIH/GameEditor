@@ -1,0 +1,52 @@
+// 注意
+// 该文件中可使用双斜杠来对单行进行注释
+// 可以添加任意的换行和空格
+// 变量命名应与代码中枚举命名相同
+
+// 结算界面的各个学员图标的开始移动间隔
+GDF_START_INTERVAL = 0.1
+
+// 结算界面的每个学员图标从开始移动到完成移动所需要的时间				
+GDF_REACH_TIME = 0.1
+
+// 结算界面每页显示的持续时间				
+GDF_PAGE_TIME = 10.0
+
+// 超时未操作踢出玩家的时限					
+GDF_KICK_OUT_TIME = 5.0
+
+// 游戏开始倒计时			
+GDF_RUNNING_COUNT_DOWN = 4.0
+
+// 特效的冷却时间	
+GDF_EFFECT_COOL_DOWN = 20.0
+
+// http端口
+GDF_HTTP_PORT = 8080
+
+// socket端口
+GDF_SOCKET_PORT = 60060
+
+// 车轮转的圈数
+GDF_CIRCLE_COUNT = 1.0
+
+// 电流传导的间隔时间
+GDF_ELECTRICITY_PASS_TIME = 0.1
+
+// 教练的超时踢出时间
+GDF_COACH_KICK_OUT_TIME = 60.0
+
+// 全部匹配的持续时间,当达到这个持续时间时才会出现全部匹配字样
+GDF_ALL_MATCH_MAX_LAST_TIME = 1.0
+
+// 是否输出显示命令调试信息,0为不显示,1为显示
+GDF_SHOW_COMMAND_DEBUG_INFO = 1
+
+// 阻力图标第一次移动时的移动时间
+GDF_FRICTION_ICON_FIRST_MOVE_TIME = 0.4;
+	
+// 阻力图标第二次移动展开的移动时间	
+GDF_FRICTION_ICON_SECOND_EXPAND_TIME = 0.4;
+
+// 阻力窗口横向光的移动时间
+GDF_FRICTION_HORIZON_LIGHT_MOVE_TIME = 0.4;

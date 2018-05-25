@@ -1,0 +1,59 @@
+// 注意
+// 该文件中可使用双斜杠来对单行进行注释
+// 可以添加任意的换行和空格
+// 变量命名应与代码中枚举命名相同
+
+// 重力加速度
+ACCELERATION_GRAVITY = 9.8
+
+// 物理检测中忽略的最小坡度
+MIN_HILL_ANGLE = 0.314
+
+// 物理检测中忽略的最小坡长
+MIN_HILL_LENGTH = 1.0
+
+// 当前场景跑到此距离时设置下个场景
+DISTANCE_SETUP_NEXT_SCENE = 200.0
+
+// 当前场景跑到此距离时销毁上个场景中的全部碰撞物
+DISTANCE_DESTORY_LAST_SCENE_OBJECTS = 50.0
+
+// 创建随机生成物的时间间隔
+TIME_LIMIT_TO_CREATE_SCENE_OBJECT = 0.2
+
+// 生成物的距离间隔范围,暂时只能是整数
+MIN_CREATE_INTERVAL = 20
+MAX_CREATE_INTERVAL = 30
+
+// 最大连续加分间隔时间,单位为秒
+MAX_SCORE_INTERVAL = 1.5
+
+// 加分过程持续时间
+SCORE_ELAPSED_TIME = 0.3
+
+// 最小的加分速度
+MIN_ADD_SPEED = 3.0
+
+// 每隔多少秒计算一次卡路里
+KCAL_ADD_INTERVAL = 0.5
+
+// 界面上显示的最大的面具数量
+MAX_MASK_COUNT = 3
+
+// 摄像机最小距离判断
+MIN_CAMERA_DISTANCE = 0.01
+
+// 加速到目标速度所需要的时间
+ADD_SPEED_ELAPSED = 0.2
+
+// 获取硬件速度时间间隔
+INTERVAL_GET_HARDWARE_SPEED = 0.3
+
+// 硬件值到M/S的转换比值
+RATIO_HARDWARE_TO_MS = 129.6
+
+// 连续加分的分数等级
+SUCCESSIVE_LEVEL_VALUE = 1000.0
+
+// 碰撞多久后物体销毁
+SCENE_OBJECT_DESTROY_TIME = 1.0

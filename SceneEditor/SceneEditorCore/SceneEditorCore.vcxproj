@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandSystem\CommandEditorManager\CommandEditorManagerCreateEditor.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditorManager\CommandEditorManagerDestroyEditor.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorAddComponent.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorChangePosition.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorDeleteComponent.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorRename.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorRenameComponent.cpp" />
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorSetProperty.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneDestroyEditor.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneLoadHeightMap.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneNewEditor.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneRename.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneSaveHeightMap.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneSelectObject.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneShow.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneShowHeightMap.cpp" />
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneCalculateHeightMap.cpp" />
+    <ClCompile Include="Common\EditorCoreBase.cpp" />
+    <ClCompile Include="Common\ECUtility.cpp" />
+    <ClCompile Include="EditorCore\ComponentEditorCore.cpp" />
+    <ClCompile Include="EditorCore\EditorCoreRoot.cpp" />
+    <ClCompile Include="EditorCore\SceneEditorCore.cpp" />
+    <ClCompile Include="Editor\ECEditor.cpp" />
+    <ClCompile Include="Editor\ECEditorManager.cpp" />
+    <ClCompile Include="EventSystem\CoreEventSystem.cpp" />
+    <ClCompile Include="Scene\ECAxis.cpp" />
+    <ClCompile Include="Scene\ECGrid.cpp" />
+    <ClCompile Include="Scene\ECScene.cpp" />
+    <ClCompile Include="Scene\ECSceneManager.cpp" />
+    <ClCompile Include="Undo\ECUndoAddComponent.cpp" />
+    <ClCompile Include="Undo\ECUndoChangeComponentProperty.cpp" />
+    <ClCompile Include="Undo\ECUndoDeleteComponent.cpp" />
+    <ClCompile Include="Undo\ECUndoManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandSystem\CommandEditorManager\CommandEditorManagerCreateEditor.h" />
+    <ClInclude Include="CommandSystem\CommandEditorManager\CommandEditorManagerDestroyEditor.h" />
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorAddComponent.h" />
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorChangePosition.h" />
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorDeleteComponent.h" />
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorRename.h" />
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorRenameComponent.h" />
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorSetProperty.h" />
+    <ClInclude Include="CommandSystem\CoreCommandHeader.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneDestroyEditor.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneLoadHeightMap.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneNewEditor.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneRename.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneSaveHeightMap.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneSelectObject.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneShow.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneShowHeightMap.h" />
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneCalculateHeightMap.h" />
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h" />
+    <ClInclude Include="Common\CommonDefine.h" />
+    <ClInclude Include="Common\EditorCoreBase.h" />
+    <ClInclude Include="Common\ECUtility.h" />
+    <ClInclude Include="Common\GameLog.h" />
+    <ClInclude Include="EditorCore\ComponentEditorCore.h" />
+    <ClInclude Include="EditorCore\EditorCoreRoot.h" />
+    <ClInclude Include="EditorCore\SceneEditorCore.h" />
+    <ClInclude Include="Editor\ECEditor.h" />
+    <ClInclude Include="Editor\ECEditorManager.h" />
+    <ClInclude Include="EventSystem\CoreEventHandler.h" />
+    <ClInclude Include="EventSystem\CoreEventSystem.h" />
+    <ClInclude Include="Scene\ECAxis.h" />
+    <ClInclude Include="Scene\ECGrid.h" />
+    <ClInclude Include="Scene\ECScene.h" />
+    <ClInclude Include="Scene\ECSceneManager.h" />
+    <ClInclude Include="Undo\ECUndo.h" />
+    <ClInclude Include="Undo\ECUndoAddComponent.h" />
+    <ClInclude Include="Undo\ECUndoChangeComponentProperty.h" />
+    <ClInclude Include="Undo\ECUndoDeleteComponent.h" />
+    <ClInclude Include="Undo\ECUndoManager.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{39A1660A-20A6-458B-8658-1B0D7DCF1D86}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SceneEditorCore</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Include\gl;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Include\gl;$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;BAN_OPCODE_AUTOLINK;dIDESINGLE;_USE_MATH_DEFINES;CCD_IDESINGLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../dependence;./Common;./EventSystem;./Scene;./Editor;./CommandSystem/CommandScene;./CommandSystem/CommandEditor;./CommandSystem/CommandEditorManager;./CommandSystem;./EditorCore/InputSystem;./Editor/EditorProperty;./Editor/EditorComponent;./EditorCore;../../ode/ode/include;./CommonComponent/BaseComponent;./CommonComponent;./Undo;../../Engine/ActionTree;../../Engine/ActionTree/WindowAction;../../Engine/Audio;../../Engine/Camera;../../Engine/CommandSystem;../../Engine/CommandSystem/CommandGameScene;../../Engine/CommandSystem/CommandLayoutManager;../../Engine/CommandSystem/CommandCamera;../../Engine/CommandSystem/CommandWindow;../../Engine/Common;../../Engine/Component;../../Engine/Component/WindowComponent;../../Engine/Component/BaseComponent;../../Engine/Component/CameraComponent;../../Engine/Component/CameraComponent/CameraLinkerSwitch;../../Engine/Property/ComponentProperty;../../Engine/Entity;../../Engine/EventSystem;../../Engine/Font;../../Engine/Memory;../../Engine/Net;../../Engine/Particle;../../Engine/Physics;../../Engine/Renderer;../../Engine/Root;../../Engine/Scene;../../Engine/Serialize;../../Engine/STL;../../Engine/Texture;../../Engine/Tool;../../Engine/Trembling;../../Engine/Type;../../Engine/Utility;../../Engine/Video;../../Engine/Input;../../Engine/Property;../../Engine/Property/WindowProperty;../../Engine/Property/ActionProperty;../../Engine/LayoutSystem/Window;../../Engine/LayoutSystem/WindowFactory;../../Engine/LayoutSystem/WindowPrefab;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 /wd4005 /wd4006 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Engine_d.lib;Opcode_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../../EngineLib;../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_WINDOWS;BAN_OPCODE_AUTOLINK;dIDESINGLE;_USE_MATH_DEFINES;CCD_IDESINGLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../dependence;./Common;./EventSystem;./Scene;./Editor;./CommandSystem/CommandScene;./CommandSystem/CommandEditor;./CommandSystem/CommandEditorManager;./CommandSystem;./EditorCore/InputSystem;./Editor/EditorProperty;./Editor/EditorComponent;./EditorCore;../../ode/ode/include;./CommonComponent/BaseComponent;./CommonComponent;./Undo;../../Engine/ActionTree;../../Engine/ActionTree/WindowAction;../../Engine/Audio;../../Engine/Camera;../../Engine/CommandSystem;../../Engine/CommandSystem/CommandGameScene;../../Engine/CommandSystem/CommandLayoutManager;../../Engine/CommandSystem/CommandCamera;../../Engine/CommandSystem/CommandWindow;../../Engine/Common;../../Engine/Component;../../Engine/Component/WindowComponent;../../Engine/Component/BaseComponent;../../Engine/Component/CameraComponent;../../Engine/Component/CameraComponent/CameraLinkerSwitch;../../Engine/Property/ComponentProperty;../../Engine/Entity;../../Engine/EventSystem;../../Engine/Font;../../Engine/Memory;../../Engine/Net;../../Engine/Particle;../../Engine/Physics;../../Engine/Renderer;../../Engine/Root;../../Engine/Scene;../../Engine/Serialize;../../Engine/STL;../../Engine/Texture;../../Engine/Tool;../../Engine/Trembling;../../Engine/Type;../../Engine/Utility;../../Engine/Video;../../Engine/Input;../../Engine/Property;../../Engine/Property/WindowProperty;../../Engine/Property/ActionProperty;../../Engine/LayoutSystem/Window;../../Engine/LayoutSystem/WindowFactory;../../Engine/LayoutSystem/WindowPrefab;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 /wd4005 /wd4006 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>../../EngineLib;../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;Opcode.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
