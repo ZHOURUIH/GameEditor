@@ -648,9 +648,14 @@ bool txStringUtility::findSubstr(std::string res, std::string dst, const bool& s
 	int posFind = -1;
 	int subLen = (int)dst.length();
 	int searchLength = res.length() - subLen;
+	if (searchLength < 0)
+	{
+		return false;
+	}
 	int start = firstOrLast ? startPose : searchLength;
-	int end = firstOrLast ? searchLength : startPose;
 	int delta = firstOrLast ? 1 : -1;
+	int end = firstOrLast ? searchLength : startPose;
+	end += delta;
 	for (int i = start; i != end; i += delta)
 	{
 		int j = 0;

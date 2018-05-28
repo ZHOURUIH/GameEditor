@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandSystem\CommandAction\CommandActionSetProperty.cpp" />
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowRename.cpp" />
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowSetComponentProperty.cpp" />
+    <ClCompile Include="CommandSystem\CommandWindow\CommandWindowSetProperty.cpp" />
+    <ClCompile Include="Common\ECRenderWindowCoordinate.cpp" />
+    <ClCompile Include="Common\ECUtility.cpp" />
+    <ClCompile Include="Common\EditorCoreBase.cpp" />
+    <ClCompile Include="EditorCore\ActionTreeEditorCore.cpp" />
+    <ClCompile Include="EditorCore\ComponentEditorCore.cpp" />
+    <ClCompile Include="EditorCore\EditorCoreRoot.cpp" />
+    <ClCompile Include="EditorCore\LayoutEditorCore.cpp" />
+    <ClCompile Include="EditorCore\TremblingEditorCore.cpp" />
+    <ClCompile Include="EventSystem\CoreEventSystem.cpp" />
+    <ClCompile Include="Undo\ECUndoAddWindow.cpp" />
+    <ClCompile Include="Undo\ECUndoChangeWindowComponentProperty.cpp" />
+    <ClCompile Include="Undo\ECUndoChangeWindowProperty.cpp" />
+    <ClCompile Include="Undo\ECUndoCutWindow.cpp" />
+    <ClCompile Include="Undo\ECUndoDeleteWindow.cpp" />
+    <ClCompile Include="Undo\ECUndoLayoutVisible.cpp" />
+    <ClCompile Include="Undo\ECUndoManager.cpp" />
+    <ClCompile Include="Undo\ECUndoMoveWindowPos.cpp" />
+    <ClCompile Include="Undo\ECUndoWindowRename.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandSystem\CommandAction\CommandActionSetProperty.h" />
+    <ClInclude Include="CommandSystem\CommandHeader.h" />
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowRename.h" />
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowSetComponentProperty.h" />
+    <ClInclude Include="CommandSystem\CommandWindow\CommandWindowSetProperty.h" />
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h" />
+    <ClInclude Include="Common\CommonDefine.h" />
+    <ClInclude Include="Common\ECLog.h" />
+    <ClInclude Include="Common\ECRenderWindowCoordinate.h" />
+    <ClInclude Include="Common\ECUtility.h" />
+    <ClInclude Include="Common\EditorCoreBase.h" />
+    <ClInclude Include="EditorCore\ActionTreeEditorCore.h" />
+    <ClInclude Include="EditorCore\ComponentEditorCore.h" />
+    <ClInclude Include="EditorCore\EditorCoreRoot.h" />
+    <ClInclude Include="EditorCore\LayoutEditorCore.h" />
+    <ClInclude Include="EditorCore\TremblingEditorCore.h" />
+    <ClInclude Include="EventSystem\CoreEventHandler.h" />
+    <ClInclude Include="EventSystem\CoreEventSystem.h" />
+    <ClInclude Include="Undo\ECUndo.h" />
+    <ClInclude Include="Undo\ECUndoAddWindow.h" />
+    <ClInclude Include="Undo\ECUndoChangeWindowComponentProperty.h" />
+    <ClInclude Include="Undo\ECUndoChangeWindowProperty.h" />
+    <ClInclude Include="Undo\ECUndoCutWindow.h" />
+    <ClInclude Include="Undo\ECUndoDeleteWindow.h" />
+    <ClInclude Include="Undo\ECUndoLayoutVisible.h" />
+    <ClInclude Include="Undo\ECUndoManager.h" />
+    <ClInclude Include="Undo\ECUndoMoveWindowPos.h" />
+    <ClInclude Include="Undo\ECUndoWindowRename.h" />
+    <ClInclude Include="Undo\UndoHeader.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C5E7838E-6C9D-4E59-B9D2-C90DA6B99256}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>LayoutEditorCore</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Include\gl;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Include\gl;$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;ENABLE_ODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../dependence;../../Engine;./Common;./EventSystem;./CommandSystem;./CommandSystem/CommandAction;./CommandSystem/CommandWindow;./EditorCore/InputSystem;./CommonComponent/BaseComponent;./CommonComponent;./EditorLayoutSystem/WindowComponent;./EditorLayoutSystem;./Undo;./EditorCore;./Camera/CameraLinkerSwitch;./Camera/CameraComponentFactory;./Camera/CameraComponent;./Camera;../../dependence/opcode;../../Engine/LayoutSystem/WindowFactory;../../Engine/Property/WindowProperty;../../Engine/LayoutSystem/Window;../../Engine/Component/WindowComponent;../../Engine/Component/GameSceneComponent;../../Engine/ActionTree/WindowAction;../../Engine/Property/ActionProperty;../../Engine/LayoutSystem/WindowPrefab;../../Engine/LayoutSystem;../../dependence/opcode/Ice;../../Engine/ActionTree;../../Engine/Audio;../../Engine/Camera;../../Engine/CommandSystem;../../Engine/CommandSystem/CommandCamera;../../Engine/CommandSystem/CommandWindow;../../Engine/CommandSystem/CommandLayoutManager;../../Engine/CommandSystem/CommandGameScene;../../Engine/Common;../../Engine/Component;../../Engine/Component/BaseComponent;../../Engine/Component/CameraComponent;../../Engine/Property/ComponentProperty;../../Engine/Entity;../../Engine/EventSystem;../../Engine/Font;../../Engine/Memory;../../Engine/Net;../../Engine/Input;../../Engine/Particle;../../Engine/Physics;../../Engine/Renderer;../../Engine/Root;../../Engine/Scene;../../Engine/Serialize;../../Engine/STL;../../Engine/Texture;../../Engine/Tool;../../Engine/Trembling;../../Engine/Type;../../Engine/Utility;../../Engine/Video;../../Engine/Property;../../Engine/GameScene;../../Engine/Thread;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Engine_d.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../../EngineLib</AdditionalLibraryDirectories>
+    </Lib>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_WINDOWS;ENABLE_ODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../dependence;../../Engine;./Common;./EventSystem;./CommandSystem;./CommandSystem/CommandAction;./CommandSystem/CommandWindow;./EditorCore/InputSystem;./CommonComponent/BaseComponent;./CommonComponent;./EditorLayoutSystem/WindowComponent;./EditorLayoutSystem;./Undo;./EditorCore;./Camera/CameraLinkerSwitch;./Camera/CameraComponentFactory;./Camera/CameraComponent;./Camera;../../dependence/opcode;../../Engine/LayoutSystem/WindowFactory;../../Engine/Property/WindowProperty;../../Engine/LayoutSystem/Window;../../Engine/Component/WindowComponent;../../Engine/Component/GameSceneComponent;../../Engine/ActionTree/WindowAction;../../Engine/Property/ActionProperty;../../Engine/LayoutSystem/WindowPrefab;../../Engine/LayoutSystem;../../dependence/opcode/Ice;../../Engine/ActionTree;../../Engine/Audio;../../Engine/Camera;../../Engine/CommandSystem;../../Engine/CommandSystem/CommandCamera;../../Engine/CommandSystem/CommandWindow;../../Engine/CommandSystem/CommandLayoutManager;../../Engine/CommandSystem/CommandGameScene;../../Engine/Common;../../Engine/Component;../../Engine/Component/BaseComponent;../../Engine/Component/CameraComponent;../../Engine/Property/ComponentProperty;../../Engine/Entity;../../Engine/EventSystem;../../Engine/Font;../../Engine/Memory;../../Engine/Net;../../Engine/Input;../../Engine/Particle;../../Engine/Physics;../../Engine/Renderer;../../Engine/Root;../../Engine/Scene;../../Engine/Serialize;../../Engine/STL;../../Engine/Texture;../../Engine/Tool;../../Engine/Trembling;../../Engine/Type;../../Engine/Utility;../../Engine/Video;../../Engine/Property;../../Engine/GameScene;../../Engine/Thread;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Engine.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../../EngineLib</AdditionalLibraryDirectories>
+    </Lib>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

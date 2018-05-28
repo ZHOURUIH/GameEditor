@@ -1,0 +1,39 @@
+[
+	{
+		"Type": "TextWindow",
+		"Name": "speed_text",
+		"Active": "True",
+		"Alpha": "1.0000",
+		"Colour": "0.0000,0.0000,0.0000",
+		"ColourBlendMode": "BM_ADD",
+		"HandleInput": "True",
+		"Position": "0.5000,-108,1.0000,-40",
+		"Prefab": "",
+		"ScaleCenter": "SC_TOP_CENTER,",
+		"Size": "0.0000,18,0.0000,26",
+		"Text": "SPEED:",
+		"TextDockingPosition": "WDP_LEFT",
+		"TextRenderSize": "18.0000,26.0000",
+		"Visible": "True"
+	},
+	{
+		"Type": "NumberWindow",
+		"Name": "speed_number",
+		"Parent": "speed_text",
+		"Active": "True",
+		"Alpha": "1.0000",
+		"Colour": "0.0000,0.0000,0.0000",
+		"ColourBlendMode": "BM_ADD",
+		"HandleInput": "True",
+		"MaxNumberCount": "10",
+		"Number": "0000.00",
+		"NumberDockingPosition": "WDP_LEFT",
+		"NumberInterval": "0",
+		"NumberStyle": "info_num",
+		"Position": "0.0000,108,0.0000,0",
+		"Prefab": "",
+		"ScaleCenter": "SC_RIGHT_BOTTOM",
+		"Size": "0.0000,18,0.0000,26",
+		"Visible": "True"
+	}
+]

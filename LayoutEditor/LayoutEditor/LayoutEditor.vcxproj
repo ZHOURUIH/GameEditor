@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CE5FFD1C-F860-48DC-A5FB-13282C00AE7E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>LayoutEditor</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(WX_HOME)/include;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Include\gl;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(WX_HOME)/include;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Include\gl;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../Engine/LayoutSystem/WindowFactory;../../Engine/Property/WindowProperty;../../Engine/LayoutSystem/Window;../../Engine/Component/WindowComponent;../../Engine/Component/GameSceneComponent;../../Engine/CommandSystem/CommandWindow;../../Engine/CommandSystem/CommandCamera;../../Engine/CommandSystem/CommandLayoutManager;../../Engine/CommandSystem/CommandGameScene;../../Engine/ActionTree/WindowAction;../../Engine/Property/ActionProperty;../../Engine/LayoutSystem/WindowPrefab;../../Engine/LayoutSystem;../../Engine/GameScene;../../dependence/opcode/Ice;../../dependence/opcode;../../dependence;../../Engine;../LayoutEditorCore/EditorLayoutSystem/WindowComponent;../LayoutEditorCore/EditorLayoutSystem;../LayoutEditorCore/CommonComponent/BaseComponent;../LayoutEditorCore/CommonComponent;../LayoutEditorCore/Common;../LayoutEditorCore/EditorCore;../LayoutEditorCore/EventSystem;../LayoutEditorCore/Undo;../LayoutEditorCore/CommandSystem;../LayoutEditorCore/CommandSystem/CommandAction;../LayoutEditorCore/CommandSystem/CommandWindow;../LayoutEditorCore/EditorCore/InputSystem;./;./Command;./Command/CommandLayoutHierarchy;./Command/CommandInnerChildHierarchy;./Command/CommandEditorFrame;./Dialog;./Panel;../../Engine/ActionTree;../../Engine/Audio;../../Engine/Camera;../../Engine/CommandSystem;../../Engine/Common;../../Engine/Component;../../Engine/Component/BaseComponent;../../Engine/Component/CameraComponent;../../Engine/Property/ComponentProperty;../../Engine/Entity;../../Engine/EventSystem;../../Engine/Font;../../Engine/Input;../../Engine/Memory;../../Engine/Net;../../Engine/Particle;../../Engine/Physics;../../Engine/Renderer;../../Engine/Root;../../Engine/Scene;../../Engine/Serialize;../../Engine/STL;../../Engine/Texture;../../Engine/Tool;../../Engine/Trembling;../../Engine/Type;../../Engine/Utility;../../Engine/Video;../../Engine/Property;../../Engine/Thread</AdditionalIncludeDirectories>
+      <SDLCheck>
+      </SDLCheck>
+      <AdditionalOptions>/wd4819 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(WX_HOME)/lib/vc_lib;../../EngineLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw30ud_aui.lib;wxmsw30ud_html.lib;wxmsw30ud_adv.lib;wxmsw30ud_core.lib;wxbase30ud_xml.lib;wxbase30ud.lib;wxmsw30ud_propgrid.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;wininet.lib;Engine_d.lib;LayoutEditorCore_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../Engine/LayoutSystem/WindowFactory;../../Engine/Property/WindowProperty;../../Engine/LayoutSystem/Window;../../Engine/Component/WindowComponent;../../Engine/Component/GameSceneComponent;../../Engine/CommandSystem/CommandWindow;../../Engine/CommandSystem/CommandCamera;../../Engine/CommandSystem/CommandLayoutManager;../../Engine/CommandSystem/CommandGameScene;../../Engine/ActionTree/WindowAction;../../Engine/Property/ActionProperty;../../Engine/LayoutSystem/WindowPrefab;../../Engine/LayoutSystem;../../Engine/GameScene;../../dependence/opcode/Ice;../../dependence/opcode;../../dependence;../../Engine;../LayoutEditorCore/EditorLayoutSystem/WindowComponent;../LayoutEditorCore/EditorLayoutSystem;../LayoutEditorCore/CommonComponent/BaseComponent;../LayoutEditorCore/CommonComponent;../LayoutEditorCore/Common;../LayoutEditorCore/EditorCore;../LayoutEditorCore/EventSystem;../LayoutEditorCore/Undo;../LayoutEditorCore/CommandSystem;../LayoutEditorCore/CommandSystem/CommandAction;../LayoutEditorCore/CommandSystem/CommandWindow;../LayoutEditorCore/EditorCore/InputSystem;./;./Command;./Command/CommandLayoutHierarchy;./Command/CommandInnerChildHierarchy;./Command/CommandEditorFrame;./Dialog;./Panel;../../Engine/ActionTree;../../Engine/Audio;../../Engine/Camera;../../Engine/CommandSystem;../../Engine/Common;../../Engine/Component;../../Engine/Component/BaseComponent;../../Engine/Component/CameraComponent;../../Engine/Property/ComponentProperty;../../Engine/Entity;../../Engine/EventSystem;../../Engine/Font;../../Engine/Input;../../Engine/Memory;../../Engine/Net;../../Engine/Particle;../../Engine/Physics;../../Engine/Renderer;../../Engine/Root;../../Engine/Scene;../../Engine/Serialize;../../Engine/STL;../../Engine/Texture;../../Engine/Tool;../../Engine/Trembling;../../Engine/Type;../../Engine/Utility;../../Engine/Video;../../Engine/Property;../../Engine/Thread</AdditionalIncludeDirectories>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(WX_HOME)/lib/vc_lib;../../EngineLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw30u_aui.lib;wxmsw30u_html.lib;wxmsw30u_adv.lib;wxmsw30u_core.lib;wxbase30u_xml.lib;wxbase30u.lib;wxmsw30u_propgrid.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;wininet.lib;Engine.lib;odbc32.lib;odbccp32.lib;LayoutEditorCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyActionSelectionChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentPropertyChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentSelectionChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutAdded.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutClosed.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutRename.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutVisibleChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPrefabResourceChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyRedoEnableChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyTemplateResourceChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyUndoEnableChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowAdded.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifySelectionChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowCuted.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPosChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPrefabChanged.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowRename.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPropertyChanged.h" />
+    <ClInclude Include="Command\EditorCommand.h" />
+    <ClInclude Include="Command\EditorCommandHeader.h" />
+    <ClInclude Include="CustomProperty.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowDelete.h" />
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutDestroied.h" />
+    <ClInclude Include="CustomPropertyEditor.h" />
+    <ClInclude Include="Dialog\ConnectWindowDialog.h" />
+    <ClInclude Include="Dialog\EditorBusyInfo.h" />
+    <ClInclude Include="Dialog\EditorBusyInfoFrame.h" />
+    <ClInclude Include="Dialog\EditorDialog.h" />
+    <ClInclude Include="Dialog\ExpressionEditor.h" />
+    <ClInclude Include="Dialog\SymmetryWindowDialog.h" />
+    <ClInclude Include="EditorBase.h" />
+    <ClInclude Include="EditorApp.h" />
+    <ClInclude Include="EditorFrame.h" />
+    <ClInclude Include="Panel\ActionPropertyPanel.h" />
+    <ClInclude Include="Panel\ActionTreeGraph.h" />
+    <ClInclude Include="Panel\ActionTreeResource.h" />
+    <ClInclude Include="Panel\GraphPanelBase.h" />
+    <ClInclude Include="Panel\KeyFrameGraph.h" />
+    <ClInclude Include="Panel\KeyFrameResource.h" />
+    <ClInclude Include="Panel\ComponentPropertyPanel.h" />
+    <ClInclude Include="Panel\ComponentViewer.h" />
+    <ClInclude Include="Panel\PropertyPanelBase.h" />
+    <ClInclude Include="wxEditorHeader.h" />
+    <ClInclude Include="EditorUtility.h" />
+    <ClInclude Include="Panel\EditorPanel.h" />
+    <ClInclude Include="Panel\InnerChildHierarchy.h" />
+    <ClInclude Include="Panel\LayoutHierarchy.h" />
+    <ClInclude Include="Panel\LayoutResource.h" />
+    <ClInclude Include="Panel\LoadedLayout.h" />
+    <ClInclude Include="Panel\PrefabResource.h" />
+    <ClInclude Include="Panel\PropertyWindow.h" />
+    <ClInclude Include="Panel\RenderCanvas.h" />
+    <ClInclude Include="Panel\WindowResource.h" />
+    <ClInclude Include="Panel\WindowTemplate.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\button.bmp" />
+    <Image Include="Resources\buttonHide.bmp" />
+    <Image Include="Resources\center.bmp" />
+    <Image Include="Resources\checkbox.bmp" />
+    <Image Include="Resources\checkboxHide.bmp" />
+    <Image Include="Resources\DockRenderWindow.bmp" />
+    <Image Include="Resources\dwonCenter.bmp" />
+    <Image Include="Resources\editbox.bmp" />
+    <Image Include="Resources\editboxHide.bmp" />
+    <Image Include="Resources\effectringwindow.bmp" />
+    <Image Include="Resources\effectringwindowHide.bmp" />
+    <Image Include="Resources\fill.bmp" />
+    <Image Include="Resources\layouthide.bmp" />
+    <Image Include="Resources\LayoutHierarchyPanel.bmp" />
+    <Image Include="Resources\LayoutResourcePanel.bmp" />
+    <Image Include="Resources\layoutshow.bmp" />
+    <Image Include="Resources\leftCenter.bmp" />
+    <Image Include="Resources\leftDown.bmp" />
+    <Image Include="Resources\leftTop.bmp" />
+    <Image Include="Resources\LoadedLayoutPanel.bmp" />
+    <Image Include="Resources\new.bmp" />
+    <Image Include="Resources\numberwindow.bmp" />
+    <Image Include="Resources\numberwindowHide.bmp" />
+    <Image Include="Resources\PrefabResourcePanel.bmp" />
+    <Image Include="Resources\progresswindow.bmp" />
+    <Image Include="Resources\progresswindowHide.bmp" />
+    <Image Include="Resources\PropertyPanel.bmp" />
+    <Image Include="Resources\RenderPanel.bmp" />
+    <Image Include="Resources\renderWindowCoordinate.bmp" />
+    <Image Include="Resources\rightCenter.bmp" />
+    <Image Include="Resources\rightDown.bmp" />
+    <Image Include="Resources\rightTop.bmp" />
+    <Image Include="Resources\save.bmp" />
+    <Image Include="Resources\textureanimwindow.bmp" />
+    <Image Include="Resources\textureanimwindowHide.bmp" />
+    <Image Include="Resources\texturewindow.bmp" />
+    <Image Include="Resources\texturewindowHide.bmp" />
+    <Image Include="Resources\textwindow.bmp" />
+    <Image Include="Resources\textwindowHide.bmp" />
+    <Image Include="Resources\topCenter.bmp" />
+    <Image Include="Resources\waveeffectwindowHide.bmp" />
+    <Image Include="Resources\window.bmp" />
+    <Image Include="Resources\windowCoordinate.bmp" />
+    <Image Include="Resources\windowHide.bmp" />
+    <Image Include="Resources\windowPosBottom.bmp" />
+    <Image Include="Resources\windowPosDown.bmp" />
+    <Image Include="Resources\windowPosTop.bmp" />
+    <Image Include="Resources\windowPosUP.bmp" />
+    <Image Include="Resources\WindowResourcePanel.bmp" />
+    <Image Include="resources\wireframe.bmp" />
+    <Image Include="Resources\copy.bmp" />
+    <Image Include="Resources\cut.bmp" />
+    <Image Include="Resources\paste.bmp" />
+    <Image Include="Resources\redo.bmp" />
+    <Image Include="Resources\refresh.bmp" />
+    <Image Include="Resources\resetcamera.bmp" />
+    <Image Include="Resources\showgrid.bmp" />
+    <Image Include="Resources\showmodel.bmp" />
+    <Image Include="Resources\showscene.bmp" />
+    <Image Include="Resources\showsceneheightmap.bmp" />
+    <Image Include="Resources\showsky.bmp" />
+    <Image Include="Resources\undo.bmp" />
+    <Image Include="Resources\windowproperty.bmp" />
+    <Image Include="Resources\windowresource.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LayoutEditor.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyActionSelectionChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentPropertyChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentSelectionChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutAdded.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutClosed.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutRename.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutVisibleChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPrefabResourceChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyRedoEnableChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyTemplateResourceChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyUndoEnableChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowAdded.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifySelectionChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowCuted.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPosChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPrefabChanged.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowRename.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPropertyChanged.cpp" />
+    <ClCompile Include="CustomProperty.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowDelete.cpp" />
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutDestroied.cpp" />
+    <ClCompile Include="CustomPropertyEditor.cpp" />
+    <ClCompile Include="Dialog\ConnectWindowDialog.cpp" />
+    <ClCompile Include="Dialog\EditorBusyInfo.cpp" />
+    <ClCompile Include="Dialog\EditorBusyInfoFrame.cpp" />
+    <ClCompile Include="Dialog\EditorDialog.cpp" />
+    <ClCompile Include="Dialog\ExpressionEditor.cpp" />
+    <ClCompile Include="Dialog\SymmetryWindowDialog.cpp" />
+    <ClCompile Include="EditorBase.cpp" />
+    <ClCompile Include="EditorApp.cpp" />
+    <ClCompile Include="EditorFrame.cpp" />
+    <ClCompile Include="Panel\ActionPropertyPanel.cpp" />
+    <ClCompile Include="Panel\ActionTreeGraph.cpp" />
+    <ClCompile Include="Panel\ActionTreeResource.cpp" />
+    <ClCompile Include="Panel\EditorPanel.cpp" />
+    <ClCompile Include="Panel\GraphPanelBase.cpp" />
+    <ClCompile Include="Panel\InnerChildHierarchy.cpp" />
+    <ClCompile Include="Panel\KeyFrameGraph.cpp" />
+    <ClCompile Include="Panel\KeyFrameResource.cpp" />
+    <ClCompile Include="Panel\LayoutHierarchy.cpp" />
+    <ClCompile Include="Panel\LayoutResource.cpp" />
+    <ClCompile Include="Panel\LoadedLayout.cpp" />
+    <ClCompile Include="Panel\PrefabResource.cpp" />
+    <ClCompile Include="Panel\PropertyPanelBase.cpp" />
+    <ClCompile Include="Panel\PropertyWindow.cpp" />
+    <ClCompile Include="Panel\RenderCanvas.cpp" />
+    <ClCompile Include="Panel\ComponentPropertyPanel.cpp" />
+    <ClCompile Include="Panel\ComponentViewer.cpp" />
+    <ClCompile Include="Panel\WindowResource.cpp" />
+    <ClCompile Include="Panel\WindowTemplate.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

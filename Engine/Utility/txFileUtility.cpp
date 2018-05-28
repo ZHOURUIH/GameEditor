@@ -327,13 +327,6 @@ bool txFileUtility::writeFile(std::string filePath, int length, const char* buff
 #ifdef LOAD_FROM_ASSETMANAGER
 	return false;
 #else
-
-	if (length <= 0 || NULL == buffer)
-	{
-		ENGINE_ERROR("error : file length is 0 or buffer is NULL! can not write file! file path : %s", filePath.c_str());
-		return false;
-	}
-
 	txStringUtility::rightToLeft(filePath);
 	int pos = filePath.find_last_of('/');
 	if (-1 != pos)
@@ -365,7 +358,10 @@ bool txFileUtility::writeFile(std::string filePath, int length, const char* buff
 		ENGINE_ERROR("error : can not write file, name : %s", filePath.c_str());
 		return false;
 	}
-	fwrite(buffer, sizeof(char), length, pFile);
+	if (buffer != NULL && length > 0)
+	{
+		fwrite(buffer, sizeof(char), length, pFile);
+	}
 	fclose(pFile);
 #endif
 	return true;

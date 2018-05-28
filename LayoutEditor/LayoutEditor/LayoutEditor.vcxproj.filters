@@ -1,0 +1,553 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Command">
+      <UniqueIdentifier>{94446a14-4fe9-46a2-a6c3-341c91101c3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Command\CommandEditorFrame">
+      <UniqueIdentifier>{b4b0909b-3213-47d0-a1dd-16302821a9b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorFrame">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="EditorFrame\Dialog">
+      <UniqueIdentifier>{cba99755-b3de-41cf-a010-760d764ca4dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="EditorFrame\Panel">
+      <UniqueIdentifier>{68c862b9-e870-49e4-b875-9735f516797a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorApp.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUtility.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutDestroied.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomProperty.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifySelectionChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowDelete.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowAdded.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutRename.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowRename.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutAdded.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutVisibleChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutClosed.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPosChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPropertyChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPrefabChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyUndoEnableChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyRedoEnableChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\EditorCommandHeader.h">
+      <Filter>Command</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorBase.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\ConnectWindowDialog.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\EditorBusyInfo.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\EditorBusyInfoFrame.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\EditorDialog.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\ExpressionEditor.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\EditorPanel.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\LayoutHierarchy.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\LayoutResource.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\LoadedLayout.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\PrefabResource.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\PropertyWindow.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\WindowResource.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\WindowTemplate.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\InnerChildHierarchy.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPrefabResourceChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyTemplateResourceChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="wxEditorHeader.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowCuted.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomPropertyEditor.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\KeyFrameGraph.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\KeyFrameResource.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\ComponentViewer.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\ComponentPropertyPanel.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\PropertyPanelBase.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentPropertyChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentSelectionChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\GraphPanelBase.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\ActionTreeGraph.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\ActionTreeResource.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog\SymmetryWindowDialog.h">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\ActionPropertyPanel.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\CommandEditorFrame\CommandEditorFrameNotifyActionSelectionChanged.h">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel\RenderCanvas.h">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Command\EditorCommand.h">
+      <Filter>Command</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\copy.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\cut.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\paste.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\redo.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\refresh.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\resetcamera.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\showgrid.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\showmodel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\showscene.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\showsceneheightmap.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\showsky.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\undo.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowproperty.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowresource.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\wireframe.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\center.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\layoutshow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\layouthide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\dwonCenter.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\leftCenter.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\leftDown.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\leftTop.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\rightCenter.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\rightDown.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\rightTop.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\topCenter.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\fill.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\renderWindowCoordinate.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowCoordinate.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowPosUP.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowPosDown.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\new.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\save.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\button.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\checkbox.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\editbox.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\effectringwindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\numberwindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\progresswindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\textureanimwindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\texturewindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\textwindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\window.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\LayoutHierarchyPanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\LayoutResourcePanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\LoadedLayoutPanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\PrefabResourcePanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\PropertyPanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\RenderPanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\WindowResourcePanel.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowPosTop.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowPosBottom.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\DockRenderWindow.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\buttonHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\checkboxHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\editboxHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\effectringwindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\numberwindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\progresswindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\textureanimwindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\texturewindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\textwindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\waveeffectwindowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Resources\windowHide.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LayoutEditor.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EditorApp.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutDestroied.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomProperty.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifySelectionChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowDelete.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowAdded.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutRename.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowRename.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutAdded.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutVisibleChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyLayoutClosed.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPosChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPropertyChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowPrefabChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPanelShow.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyUndoEnableChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyRedoEnableChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorBase.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\ConnectWindowDialog.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\EditorBusyInfo.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\EditorBusyInfoFrame.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\EditorDialog.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\ExpressionEditor.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\EditorPanel.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\LayoutHierarchy.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\LayoutResource.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\LoadedLayout.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\PrefabResource.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\PropertyWindow.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\WindowResource.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\WindowTemplate.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\InnerChildHierarchy.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyPrefabResourceChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyTemplateResourceChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyWindowCuted.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomPropertyEditor.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\KeyFrameGraph.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\KeyFrameResource.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\ComponentViewer.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\ComponentPropertyPanel.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\PropertyPanelBase.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentPropertyChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyComponentSelectionChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\GraphPanelBase.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\ActionTreeGraph.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\ActionTreeResource.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog\SymmetryWindowDialog.cpp">
+      <Filter>EditorFrame\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\ActionPropertyPanel.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Command\CommandEditorFrame\CommandEditorFrameNotifyActionSelectionChanged.cpp">
+      <Filter>Command\CommandEditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel\RenderCanvas.cpp">
+      <Filter>EditorFrame\Panel</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

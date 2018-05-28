@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="EditorCore">
+      <UniqueIdentifier>{5380446d-d600-435d-989c-5ca1db06e509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor">
+      <UniqueIdentifier>{32f73c68-2e8f-477e-9bee-984daadf7f98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{76159ce9-ed66-4ba4-9477-704cf08618ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem">
+      <UniqueIdentifier>{931f73d6-594d-45a2-900b-ed29e5720350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandEditorManager">
+      <UniqueIdentifier>{55723a87-0d4c-4dc5-b681-b45729fbed8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandEditor">
+      <UniqueIdentifier>{c5cfaa8a-07aa-41bd-9f1d-d2fcc4c01805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{82fd5bd2-b6ab-4228-9101-52c8ed54466d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandSystem\CommandScene">
+      <UniqueIdentifier>{01cb0765-43c6-4e27-8975-6bd84d7dde01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Undo">
+      <UniqueIdentifier>{ae415e01-229c-4d8b-8dc0-8e5327ee23fc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Editor\ECEditorManager.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ECUtility.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\ECEditor.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ECScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorChangePosition.cpp">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditorManager\CommandEditorManagerCreateEditor.cpp">
+      <Filter>CommandSystem\CommandEditorManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneCalculateHeightMap.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneLoadHeightMap.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneSaveHeightMap.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneSelectObject.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneShow.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneShowHeightMap.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\EditorCoreRoot.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ECAxis.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ECGrid.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneNewEditor.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditorManager\CommandEditorManagerDestroyEditor.cpp">
+      <Filter>CommandSystem\CommandEditorManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneDestroyEditor.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorAddComponent.cpp">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorDeleteComponent.cpp">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorSetProperty.cpp">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ECSceneManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorRenameComponent.cpp">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandEditor\CommandEditorRename.cpp">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandScene\CommandSceneRename.cpp">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoManager.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoChangeComponentProperty.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\EditorCoreBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoAddComponent.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\ECUndoDeleteComponent.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem\CoreEventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\SceneEditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\ComponentEditorCore.cpp">
+      <Filter>EditorCore</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Editor\ECEditorManager.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ECUtility.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\ECEditor.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ECScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorChangePosition.h">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditorManager\CommandEditorManagerCreateEditor.h">
+      <Filter>CommandSystem\CommandEditorManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneCalculateHeightMap.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneLoadHeightMap.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneSaveHeightMap.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneSelectObject.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneShow.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneShowHeightMap.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\EditorCoreRoot.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\GameLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\CommonDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\EditorCoreCommand.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ECAxis.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ECGrid.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneNewEditor.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditorManager\CommandEditorManagerDestroyEditor.h">
+      <Filter>CommandSystem\CommandEditorManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneDestroyEditor.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorAddComponent.h">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorDeleteComponent.h">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorSetProperty.h">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ECSceneManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorRenameComponent.h">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandEditor\CommandEditorRename.h">
+      <Filter>CommandSystem\CommandEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandScene\CommandSceneRename.h">
+      <Filter>CommandSystem\CommandScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndo.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoManager.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoChangeComponentProperty.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\EditorCoreBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoAddComponent.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\ECUndoDeleteComponent.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CoreEventHandler.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem\CoreEventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CoreCommandHeader.h">
+      <Filter>CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\SceneEditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\ComponentEditorCore.h">
+      <Filter>EditorCore</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
