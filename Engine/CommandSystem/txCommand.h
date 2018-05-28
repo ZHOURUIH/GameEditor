@@ -3,6 +3,7 @@
 
 #include "Utility.h"
 #include "txEngineBase.h"
+#include "CommandDefine.h"
 
 class txCommandReceiver;
 class txCommand : public txEngineBase
