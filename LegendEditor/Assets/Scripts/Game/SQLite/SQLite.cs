@@ -67,6 +67,21 @@ public class SQLite : FrameComponent
 		mCommand.CommandText = queryString;
 		return mCommand.ExecuteReader();
 	}
+	public void update(string queryString)
+	{
+		mCommand.CommandText = queryString;
+		mCommand.ExecuteNonQuery();
+	}
+	public void insert(string queryString)
+	{
+		mCommand.CommandText = queryString;
+		mCommand.ExecuteNonQuery();
+	}
+	public void delete(string queryString)
+	{
+		mCommand.CommandText = queryString;
+		mCommand.ExecuteNonQuery();
+	}
 	// 增加数据
 	public void insertData(string table_name, object[] values)
 	{

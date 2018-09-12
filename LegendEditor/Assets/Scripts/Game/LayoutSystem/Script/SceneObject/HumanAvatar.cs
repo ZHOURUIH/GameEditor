@@ -20,8 +20,8 @@ public class HumanAvatar
 {
 	protected ScriptScene mScript;
 	public txUIObject mHumanRoot;
-	protected txNGUITextureAnim mHuman;
-	protected txNGUITextureAnim mWeapon;
+	public txNGUITextureAnim mHuman;
+	public txNGUITextureAnim mWeapon;
 	public WeaponHit mWeaponHit;
 	public BoxCollider mWeaponBoxCollider;
 	protected ActionEnd mActionEnd;

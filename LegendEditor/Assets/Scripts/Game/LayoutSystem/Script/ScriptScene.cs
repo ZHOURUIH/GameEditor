@@ -13,6 +13,9 @@ public class ScriptScene : LayoutScript
 	protected int mCurDirection;
 	protected string[] mAnimation;
 	protected int mAnimIndex;
+	protected int mClothID;
+	protected int mOccupation;
+	protected int mWeaponID;
 	public ScriptScene(string name, GameLayout layout)
 		:
 		base(name, layout)
@@ -20,6 +23,9 @@ public class ScriptScene : LayoutScript
 		mHumanList = new Dictionary<int, HumanAvatar>();
 		mMonsterList = new Dictionary<int, MonsterAvatar>();
 		mAnimation = new string[] { "attack", "death", "hit", "run", "skill", "stand" };
+		mClothID = 1;
+		mOccupation = 3;
+		mWeaponID = 1;
 	}
 	public override void assignWindow()
 	{
@@ -50,12 +56,29 @@ public class ScriptScene : LayoutScript
 			mCurDirection = (++mCurDirection) % GameDefine.DIRECTION_COUNT;
 			changed = true;
 		}
-		if (mInputManager.getKeyCurrentDown(KeyCode.W))
+		else if (mInputManager.getKeyCurrentDown(KeyCode.W))
 		{
 			mAnimIndex = (++mAnimIndex) % mAnimation.Length;
 			changed = true;
 		}
-		if(changed)
+		// 按S键保存
+		else if (mInputManager.getKeyCurrentDown(KeyCode.S))
+		{
+			WeaponFrameData weaponData = new WeaponFrameData();
+			weaponData.mID = mWeaponID;
+			weaponData.mDirection = mCurDirection;
+			weaponData.mAction = mAnimation[mAnimIndex];
+			weaponData.mFrameCount = mCurID;
+			weaponData.mPosX = new float[mCurID];
+			weaponData.mPosY = new float[mCurID];
+			for (int i = 0; i < mCurID; ++i)
+			{
+				weaponData.mPosX[i] = mHumanList[i].mWeapon.getPosition().x;
+				weaponData.mPosY[i] = mHumanList[i].mWeapon.getPosition().y;
+			}
+			mSQLite.mSQLiteWeaponFrame.updateData(weaponData);
+		}
+		if (changed)
 		{
 			mInfo.setLabel("当前动作:dir" + mCurDirection + "_" + mAnimation[mAnimIndex]);
 			List<ClothFrameData> frameData = null;
@@ -76,18 +99,22 @@ public class ScriptScene : LayoutScript
 				}
 			}
 			mCurID = frameCount;
-		}
-		// A键添加预设
-		if (mInputManager.getKeyCurrentDown(KeyCode.A))
-		{
-			createHumanAvatar(mCurID++);
-		}
-		// D键删除预设
-		else if (mInputManager.getKeyCurrentDown(KeyCode.D))
-		{
-			if(mCurID > 0)
+			// 设置每一帧的图片
+			for(int i = 0; i < frameCount; ++i)
 			{
-				destroyHumanAvatar(--mCurID);
+				// 人物
+				string humanAnimName = "human_occup" + mOccupation + "_dir" + mCurDirection + "_cloth" + mClothID + "_" + mAnimation[mAnimIndex];
+				mHumanList[i].mHuman.setTextureSet(humanAnimName);
+				mHumanList[i].mHuman.mControl.setCurFrameIndex(i);
+				Texture curHumanTexture = mHumanList[i].mHuman.getTexture();
+				mHumanList[i].mHuman.setWindowSize(new Vector2(curHumanTexture.width, curHumanTexture.height));
+				mHumanList[i].mHuman.setLocalPosition(new Vector3(frameData[0].mPosX[i], frameData[0].mPosY[i], 0.0f));
+				// 武器
+				string weaponAnimName = "weapon_id" + mWeaponID + "_dir" + mCurDirection + "_" + mAnimation[mAnimIndex];
+				mHumanList[i].mWeapon.setTextureSet(weaponAnimName);
+				mHumanList[i].mWeapon.mControl.setCurFrameIndex(i);
+				Texture curWeaponTexture = mHumanList[i].mWeapon.getTexture();
+				mHumanList[i].mWeapon.setWindowSize(new Vector2(curWeaponTexture.width, curWeaponTexture.height));
 			}
 		}
 	}
