@@ -1,0 +1,49 @@
+﻿using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Net;
+using UnityEngine.SceneManagement;
+
+public class SceneInstance : GameBase
+{
+	public string mName;
+	public LOAD_STATE mState;
+	public Scene mScene;
+	public AsyncOperation mOperation;
+	public GameObject mRoot;
+	public bool mInited;
+	public SceneInstance(string name)
+	{
+		mName = name;
+	}
+	public virtual void init()
+	{
+		findGameObject();
+		initGameObject();
+		mInited = true;
+	}
+	public virtual void destroy()
+	{
+		mInited = false;
+	}
+	public virtual void update(float elapsedTime)
+	{
+		;
+	}
+	public void setActive(bool active)
+	{
+		if (mRoot != null && mRoot.activeSelf != active)
+		{
+			mRoot.SetActive(active);
+		}
+	}
+	public bool getActive()
+	{
+		return mRoot != null && mRoot.activeSelf;
+	}
+	//-------------------------------------------------------------------------------------------
+	protected virtual void findGameObject() { }
+	protected virtual void initGameObject() { }
+}
