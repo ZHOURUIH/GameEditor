@@ -26,13 +26,13 @@ void EditorCore::init()
 	checkErrorInfoBuffer();
 
 	mCommandSystem = TRACE_NEW(CommandSystem, mCommandSystem);
-	mSocketNetManager = TRACE_NEW(SocketNetManager, mSocketNetManager);
+	//mSocketNetManager = TRACE_NEW(SocketNetManager, mSocketNetManager);
 	mLibCurlDownloadManager = TRACE_NEW(LibCurlDownloadManager, mLibCurlDownloadManager);
 
 	EditorCoreBase::notifyConstructDone();
 	
 	mCommandSystem->init();
-	mSocketNetManager->init(60060, 5000);
+	//mSocketNetManager->init(60060, 5000);
 	mLibCurlDownloadManager->init();
 }
 
@@ -40,7 +40,7 @@ void EditorCore::update(float elapsedTime)
 {
 	mEventSystem->update(elapsedTime);
 	mCommandSystem->update(elapsedTime);
-	mSocketNetManager->update(elapsedTime);
+	//mSocketNetManager->update(elapsedTime);
 	mLibCurlDownloadManager->update(elapsedTime);
 }
 
@@ -77,7 +77,7 @@ void EditorCore::sendDelayEvent(const CORE_EVENT_TYPE& type, const txVector<std:
 void EditorCore::destroy()
 {
 	TRACE_DELETE(mCommandSystem);
-	TRACE_DELETE(mSocketNetManager);
+	//TRACE_DELETE(mSocketNetManager);
 	TRACE_DELETE(mEventSystem);
 	TRACE_DELETE(mLibCurlDownloadManager);
 }
