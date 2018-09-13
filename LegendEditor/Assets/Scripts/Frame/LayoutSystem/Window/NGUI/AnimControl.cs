@@ -16,7 +16,7 @@ public class AnimControl
 	protected int mStartIndex = 0;          // 序列帧的起始帧下标,默认为0,即从头开始
 	protected int mEndIndex = -1;           // 序列帧的终止帧下标,默认为-1,即播放到尾部
 	protected bool mPlayDirection = true;   // 播放方向,true为正向播放(从mStartIndex到mEndIndex),false为返向播放(从mEndIndex到mStartIndex)
-	protected int mCurTextureIndex = -1;
+	protected int mCurTextureIndex = 0;
 	protected LOOP_MODE mLoopMode = LOOP_MODE.LM_ONCE;
 	protected string mTextureSetName = "";
 	protected float mCurTimeCount = 0.0f;
@@ -106,7 +106,7 @@ public class AnimControl
 			}
 			else
 			{
-				mCurTextureIndex = -1;
+				mCurTextureIndex = 0;
 			}
 			if(mPlayingCallback != null)
 			{
