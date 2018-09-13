@@ -16,7 +16,8 @@ public class ShaderManager : FrameComponent
 	}
 	public override void init()
 	{
-		;
+		registeSingleShader("NGUIDefault");
+		registeSingleShader("UGUIDefault");
 	}
 	public override void destroy()
 	{

@@ -25,7 +25,7 @@ public class MonsterAvatar
 	}
 	public void assignWindow(string rootName)
 	{
-		mScript.newObject(out mMonsterRoot, rootName);
+		mScript.newObject(out mMonsterRoot, rootName, 1);
 		mScript.newObject(out mFrame, mMonsterRoot, "Frame");
 	}	
 	public void init(int instanceID, int typeID, string label)

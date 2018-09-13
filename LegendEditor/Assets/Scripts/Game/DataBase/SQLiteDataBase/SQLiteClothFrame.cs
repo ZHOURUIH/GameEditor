@@ -52,6 +52,29 @@ public class SQLiteClothFrame : SQLiteTable
 					COL_ACTION + " = " + "\"" + action + "\"";
 		parseReader(mSQLite.query(queryStr), out dataList);
 	}
+	public void updateData(ClothFrameData data)
+	{
+		string posXStr = "";
+		string posYStr = "";
+		for (int i = 0; i < data.mFrameCount; ++i)
+		{
+			posXStr += data.mPosX[i];
+			posYStr += data.mPosY[i];
+			if (i != data.mFrameCount - 1)
+			{
+				posXStr += ", ";
+				posYStr += ", ";
+			}
+		}
+		string queryStr = "UPDATE " + mTableName + " SET " +
+							COL_FRAME_COUNT + " = " + data.mFrameCount + ", " +
+							COL_POSX + " = " + "\"" + posXStr + "\"" + ", " +
+							COL_POSY + " = " + "\"" + posYStr + "\"" +
+							" WHERE " + COL_ID + " = " + data.mID + " and " +
+							COL_DIRECTION + " = " + data.mDirection + " and " +
+							COL_ACTION + " = " + "\"" + data.mAction + "\"";
+		mSQLite.update(queryStr);
+	}
 	//------------------------------------------------------------------------------------------------------------------------
 	protected void parseReader(SqliteDataReader reader, out List<ClothFrameData> dataList)
 	{

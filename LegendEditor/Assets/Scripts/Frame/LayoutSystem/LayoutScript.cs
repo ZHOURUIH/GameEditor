@@ -177,7 +177,7 @@ public abstract class LayoutScript : CommandReceiver
 		GameObject gameObject = mLayoutSubPrefabManager.instantiate(name, parent.mObject, name);
 		gameObject.SetActive(false);
 	}
-	public void destroyObject(txUIObject obj)
+	public void destroyObject(txUIObject obj, bool immediately = false)
 	{
 		// 查找该节点下的所有窗口,从布局中注销
 		List<GameObject> children = new List<GameObject>();
@@ -187,7 +187,7 @@ public abstract class LayoutScript : CommandReceiver
 		{
 			mLayout.unregisterUIObject(mLayout.getUIObject(children[i]));
 		}
-		UnityUtility.destroyGameObject(obj.mObject);
+		UnityUtility.destroyGameObject(obj.mObject, immediately);
 	}
 	public void interruptCommand(int assignID)
 	{

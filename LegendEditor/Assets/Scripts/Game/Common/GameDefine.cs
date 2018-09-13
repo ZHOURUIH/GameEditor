@@ -97,4 +97,5 @@ public class GameDefine : CommonDefine
 	// 常量定义
 	//-----------------------------------------------------------------------------------------------------------------
 	public const int DIRECTION_COUNT = 8;
+	public const int MAX_OCCUPATION = 6;
 }
