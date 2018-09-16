@@ -7,7 +7,9 @@ public class LayoutRegister : GameBase
 {
 	public static void registeAllLayout()
 	{
-		registeLayout<ScriptScene>(LAYOUT_TYPE.LT_SCENE, "UIScene");
+		registeLayout<ScriptObjectEditor>(LAYOUT_TYPE.LT_OBJECT_EDITOR, "UIObjectEditor");
+		registeLayout<ScriptSceneEditor>(LAYOUT_TYPE.LT_SCENE_EDITOR, "UISceneEditor");
+		registeLayout<ScriptEditorSelect>(LAYOUT_TYPE.LT_EDITOR_SELECT, "UIEditorSelect");
 		if (mLayoutManager.getLayoutCount() < (int)LAYOUT_TYPE.LT_MAX)
 		{
 			UnityUtility.logError("error : not all script added! max count : " + (int)LAYOUT_TYPE.LT_MAX + ", added count :" + mLayoutManager.getLayoutCount());
@@ -20,7 +22,9 @@ public class LayoutRegister : GameBase
 		{
 			return;
 		}
-		if (assign(ref mScriptScene, script, created)) return;
+		if (assign(ref mScriptObjectEditor, script, created)) return;
+		if (assign(ref mScriptSceneEditor, script, created)) return;
+		if (assign(ref mScriptEditorSelect, script, created)) return;
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	protected static void registeLayout<T>(LAYOUT_TYPE layout, string name) where T : LayoutScript
