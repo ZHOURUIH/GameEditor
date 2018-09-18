@@ -18,7 +18,7 @@ public enum HUMAN_ACTION
 
 public class HumanAvatar
 {
-	protected ScriptScene mScript;
+	protected ScriptObjectEditor mScript;
 	public txUIObject mHumanRoot;
 	public txNGUITextureAnim mHuman;
 	public txNGUITextureAnim mWeapon;
@@ -31,7 +31,7 @@ public class HumanAvatar
 	protected List<Vector2> mWeaponPosList;
 	protected List<Vector2> mHumanPosList;
 	protected int mCharGUID;
-	public HumanAvatar(ScriptScene script)
+	public HumanAvatar(ScriptObjectEditor script)
 	{
 		mScript = script;
 	}

@@ -16,7 +16,7 @@ public class CharacterAvatar : GameComponent
 		base.init(owner);
 		mPlayer = owner as CharacterOther;
 		mData = mPlayer.getCharacterData();
-		mHumanAvatar = mScriptScene.createHumanAvatar(mData.mGUID);
+		mHumanAvatar = mScriptObjectEditor.createHumanAvatar(mData.mGUID);
 	}
 	public override void destroy()
 	{

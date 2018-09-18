@@ -13,19 +13,19 @@ public enum ATTACK_STATE
 
 public class MonsterAvatar
 {
-	public ScriptScene mScript;
+	public ScriptObjectEditor mScript;
 	public txUIObject mMonsterRoot;	// 怪物的根节点
 	public txNGUITextureAnim mFrame;
 	public int mMonsterGUID;	// 怪物实例ID
 	public int mTypeGUID;       // 怪物类型ID
 	public string mMonsterLabel;
-	public MonsterAvatar(ScriptScene script)
+	public MonsterAvatar(ScriptObjectEditor script)
 	{
 		mScript = script;
 	}
 	public void assignWindow(string rootName)
 	{
-		mScript.newObject(out mMonsterRoot, rootName);
+		mScript.newObject(out mMonsterRoot, rootName, 1);
 		mScript.newObject(out mFrame, mMonsterRoot, "Frame");
 	}	
 	public void init(int instanceID, int typeID, string label)

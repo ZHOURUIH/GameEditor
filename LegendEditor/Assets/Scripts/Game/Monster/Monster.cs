@@ -19,7 +19,7 @@ public class Monster : ComponentOwner
 		initComponents();
 		mData.mTypeID = typeID;
 		mData.mInstanceID = instanceID;
-		mMonsterAvatar = mScriptScene.createMonsterAvatar(mData.mInstanceID, mData.mTypeID, "Deer", mData.mName);
+		mMonsterAvatar = mScriptObjectEditor.createMonsterAvatar(mData.mInstanceID, mData.mTypeID, "Deer", mData.mName);
 	}
 	public override void initComponents()
 	{

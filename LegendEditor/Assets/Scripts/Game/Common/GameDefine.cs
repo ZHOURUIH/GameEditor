@@ -7,7 +7,9 @@ using System.Collections.Generic;
 // 界面布局定义
 public enum LAYOUT_TYPE
 {
-	LT_SCENE,
+	LT_OBJECT_EDITOR,
+	LT_SCENE_EDITOR,
+	LT_EDITOR_SELECT,
 	LT_MAX,
 };
 // 音效定义
@@ -29,7 +31,9 @@ public enum PROCEDURE_TYPE
 	PT_NONE,
 
 	PT_START_MIN,
-	PT_START_LOADING,
+	PT_START_EDITOR_SELECT,
+	PT_START_OBJECT_EDITOR,
+	PT_START_SCENE_EDITOR,
 	PT_START_EXIT,
 	PT_START_MAX,
 };
@@ -97,4 +101,5 @@ public class GameDefine : CommonDefine
 	// 常量定义
 	//-----------------------------------------------------------------------------------------------------------------
 	public const int DIRECTION_COUNT = 8;
+	public const int MAX_OCCUPATION = 6;
 }

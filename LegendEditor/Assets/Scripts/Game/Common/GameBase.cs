@@ -13,7 +13,9 @@ public class GameBase : FrameBase
 	public static SQLite mSQLite;
 	public static MonsterManager mMonsterManager;
 	// 以下是用于快速访问的布局脚本
-	public static ScriptScene mScriptScene;
+	public static ScriptObjectEditor mScriptObjectEditor;
+	public static ScriptSceneEditor mScriptSceneEditor;
+	public static ScriptEditorSelect mScriptEditorSelect;
 	public override void notifyConstructDone()
 	{
 		base.notifyConstructDone();
