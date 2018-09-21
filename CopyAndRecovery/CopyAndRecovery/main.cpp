@@ -78,12 +78,32 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << "1.备份资源" << std::endl;
 	std::cout << "2.恢复资源" << std::endl;
 	int a = 0;
-	std::cin >> a;
-	std::vector<std::string> folderList;
 	std::string backupPath = GameConfig::getStringParam(GDS_COPY_FILE_DEST_DIR);
+	// 目标目录存在且有文件,则需要询问是否恢复
+	if (!Utility::isFolderEmpty(backupPath))
+	{
+		std::cout << "备份目标目录不为空,是否想要恢复文件?(y(恢复文件)/n(继续备份文件))";
+		char input = 0;
+		std::cin >> input;
+		if (input == 'y')
+		{
+			a = 2;
+		}
+		else
+		{
+			a = 1;
+		}
+	}
+	else
+	{
+		std::cout << "请选择:";
+		std::cin >> a;
+	}
 	long startTime = timeGetTime();
+	std::vector<std::string> folderList;
 	if (a == 1)
 	{
+		std::cout << "正在备份..." << std::endl;
 		std::string sourcePath = GameConfig::getStringParam(GDS_COPY_FILE_DIR);
 		std::vector<std::string> backupFileList;
 		// 查找需要备份的全部文件
@@ -129,6 +149,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	else
 	{
+		std::cout << "正在恢复..." << std::endl;
 		std::vector<std::string> backupFileList;
 		Utility::findFiles(backupPath.c_str(), backupFileList);
 		moveResources(backupFileList, backupPath + "/", "../");

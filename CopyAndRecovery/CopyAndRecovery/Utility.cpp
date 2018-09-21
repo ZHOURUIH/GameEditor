@@ -245,6 +245,54 @@ bool Utility::deleteFile(const std::string& fullname)
 
 #endif
 
+bool Utility::isFolderEmpty(const std::string& path)
+{
+	const char * pathName = path.c_str();
+	CHAR PathBuffer[_MAX_PATH];
+
+	strcpy_s(PathBuffer, _MAX_PATH, pathName);
+	if (pathName[strlen(pathName) - 1] != '/')
+	{
+		strcat_s(PathBuffer, _MAX_PATH, "/");
+	}
+	strcat_s(PathBuffer, _MAX_PATH, "*");
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA(PathBuffer, &FindFileData);
+	// 如果找不到文件夹就直接返回
+	if (INVALID_HANDLE_VALUE == hFind)
+	{
+		return true;
+	}
+	bool empty = true;
+	while (::FindNextFileA(hFind, &FindFileData))
+	{
+		// 过滤.和..
+		if (strcmp(FindFileData.cFileName, ".") == 0
+			|| strcmp(FindFileData.cFileName, "..") == 0)
+		{
+			continue;
+		}
+		// 构造完整路径
+		std::string fullname = std::string(pathName) + "/" + std::string(FindFileData.cFileName);
+		// 是文件夹,则递归继续查找
+		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			empty = isFolderEmpty(fullname) && empty;
+		}
+		// 有文件则直接判断为非空文件夹
+		else
+		{
+			empty = false;
+		}
+		if (!empty)
+		{
+			break;
+		}
+	}
+	::FindClose(hFind);
+	return empty;
+}
+
 bool Utility::copyFile(const std::string& sourceFile, const std::string& destFile, bool overWrite)
 {
 	//std::cout << "copy : " << sourceFile << " to :" << destFile << std::endl;
