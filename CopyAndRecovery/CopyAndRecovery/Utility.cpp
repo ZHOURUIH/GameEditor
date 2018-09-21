@@ -146,7 +146,7 @@ void Utility::findFiles(const char * pathName, std::vector<std::string>& files, 
 	::FindClose(hFind);
 }
 
-bool Utility::deleteEmptyFolder(std::string path, std::vector<std::string>& emptyFolder)
+bool Utility::deleteEmptyFolder(const std::string& path, std::vector<std::string>& emptyFolder)
 {
 	const char * pathName = path.c_str();
 	WIN32_FIND_DATAA FindFileData;
@@ -192,7 +192,7 @@ bool Utility::deleteEmptyFolder(std::string path, std::vector<std::string>& empt
 	::FindClose(hFind);
 	return empty;
 }
-void Utility::deleteFolder(std::string path, bool deleteFolderSelf)
+void Utility::deleteFolder(const std::string& path, bool deleteFolderSelf)
 {
 	WIN32_FIND_DATAA FindData;
 	// ¹¹ÔìÂ·¾¶
@@ -232,7 +232,7 @@ void Utility::deleteFolder(std::string path, bool deleteFolderSelf)
 	}
 }
 
-bool Utility::deleteFile(std::string fullname)
+bool Utility::deleteFile(const std::string& fullname)
 {
 	BOOL ret = DeleteFileA(fullname.c_str());
 	if (ret != TRUE)
@@ -245,9 +245,9 @@ bool Utility::deleteFile(std::string fullname)
 
 #endif
 
-bool Utility::copyFile(std::string sourceFile, std::string destFile, bool overWrite)
+bool Utility::copyFile(const std::string& sourceFile, const std::string& destFile, bool overWrite)
 {
-	std::cout << "copy : " << sourceFile << " to :" << destFile << std::endl;
+	//std::cout << "copy : " << sourceFile << " to :" << destFile << std::endl;
 	BOOL ret = CopyFileA(sourceFile.c_str(), destFile.c_str(), !overWrite);
 	if (ret != TRUE)
 	{
@@ -257,7 +257,19 @@ bool Utility::copyFile(std::string sourceFile, std::string destFile, bool overWr
 	return ret == TRUE;
 }
 
-bool Utility::createFolder(std::string path)
+bool Utility::moveFile(const std::string& sourceFile, const std::string& destFile)
+{
+	//std::cout << "move : " << sourceFile << " to : " << destFile << std::endl;
+	BOOL ret = MoveFileA(sourceFile.c_str(), destFile.c_str());
+	if (ret != TRUE)
+	{
+		int error = GetLastError();
+		std::cout << "error code : " << error << std::endl;
+	}
+	return ret == TRUE;
+}
+
+bool Utility::createFolder(const std::string& path)
 {
 	std::string parenDir = getParentDir(path);
 	if (parenDir != path)
@@ -334,7 +346,7 @@ bool Utility::writeFile(std::string filePath, int length, const char* buffer)
 	return true;
 }
 
-bool Utility::isFileExist(std::string fullPath)
+bool Utility::isFileExist(const std::string& fullPath)
 {
 #if RUN_PLATFORM == PLATFORM_WINDOWS
 	int ret = _access(fullPath.c_str(), 0);
@@ -444,26 +456,26 @@ std::string Utility::floatToString(float f, int precision)
 	}
 }
 
-void Utility::split(std::string str, const char* deli, std::vector<std::string>* vec)
+void Utility::split(std::string str, const char* deli, std::vector<std::string>& vec)
 {
 	while (true)
 	{
 		int devidePos = str.find_first_of(deli);
 		if (devidePos == -1)
 		{
-			vec->push_back(str);
+			vec.push_back(str);
 			break;
 		}
 		else
 		{
 			std::string curString = str.substr(0, devidePos);
-			vec->push_back(curString);
+			vec.push_back(curString);
 			str = str.substr(devidePos + strlen(deli), str.length() - devidePos - strlen(deli));
 		}
 	}
 }
 
-char* Utility::openFile(std::string filePath, int* bufferSize, const bool& addZero)
+char* Utility::openFile(const std::string& filePath, int* bufferSize, const bool& addZero)
 {
 	FILE* pFile = NULL;
 	fopen_s(&pFile, filePath.c_str(), "rb");

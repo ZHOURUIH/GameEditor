@@ -40,26 +40,22 @@ void moveResources(const std::vector<std::string>& fileList, const std::string& 
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
-		std::string fileName = fileList[i];
-		std::string sourceFile = fileName;
+		const std::string& fileName = fileList[i];
+		std::string sourceFile;
 		if (Utility::startWith(fileName, sourcePrePath))
 		{
 			sourceFile = fileName.substr(sourcePrePath.length(), fileName.length() - sourcePrePath.length());
 		}
-		std::string destFile = destPrePath + sourceFile;
-		Utility::createFolder(Utility::getParentDir(destFile));
-		if (!Utility::copyFile(fileName, destFile))
-		{
-			std::cout << "拷贝" << fileName << "失败" << std::endl;
-			system("pause");
-		}
 		else
 		{
-			if (!Utility::deleteFile(fileName))
-			{
-				std::cout << "删除" << fileName << "失败" << std::endl;
-				system("pause");
-			}
+			sourceFile = fileName;
+		}
+		std::string destFile = destPrePath + sourceFile;
+		Utility::createFolder(Utility::getParentDir(destFile));
+		if (!Utility::moveFile(fileName, destFile))
+		{
+			std::cout << "移动" << fileName << "失败" << std::endl;
+			system("pause");
 		}
 	}
 }
@@ -85,13 +81,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cin >> a;
 	std::vector<std::string> folderList;
 	std::string backupPath = GameConfig::getStringParam(GDS_COPY_FILE_DEST_DIR);
+	long startTime = timeGetTime();
 	if (a == 1)
 	{
 		std::string sourcePath = GameConfig::getStringParam(GDS_COPY_FILE_DIR);
 		std::vector<std::string> backupFileList;
 		// 查找需要备份的全部文件
 		std::vector<std::string> pathList;
-		Utility::split(sourcePath, ",", &pathList);
+		Utility::split(sourcePath, ",", pathList);
 		int count = pathList.size();
 		for (int i = 0; i < count; ++i)
 		{
@@ -100,7 +97,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		// 排除不备份的文件
 		std::string exceptPath = GameConfig::getStringParam(GDS_EXCEPT_FILE);
 		std::vector<std::string> exceptPathList;
-		Utility::split(exceptPath, ",", &exceptPathList);
+		Utility::split(exceptPath, ",", exceptPathList);
 		int exceptPathCount = (int)exceptPathList.size();
 		for (int i = 0; i < (int)backupFileList.size();)
 		{
@@ -137,7 +134,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		moveResources(backupFileList, backupPath + "/", "../");
 		deleteFolder(backupPath, folderList);
 	}
-	std::cout << "完成!" << std::endl;
+	long deltaTime = timeGetTime() - startTime;
+	std::cout << "完成! 耗时 : " << deltaTime / 1000.0f << "秒" << std::endl;
 	system("pause");
 	return 0;
 }
