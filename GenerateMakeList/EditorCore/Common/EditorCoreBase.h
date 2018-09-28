@@ -12,7 +12,7 @@ public:
 	static void notifyConstructDone();
 protected:
 	static EditorCore* mEditorCore;
-	static SocketNetManager* mSocketNetManager;
+	//static SocketNetManager* mSocketNetManager;
 	static EventSystem* mEventSystem;
 	static CommandSystem* mCommandSystem;
 	static LibCurlDownloadManager* mLibCurlDownloadManager;

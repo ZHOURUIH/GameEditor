@@ -89,7 +89,7 @@ void GameConfig::readConfig(const std::string& fileName, const bool& floatParam)
 		if (newString.length() > 0 && newString.substr(0, 2) != std::string("//"))
 		{
 			std::vector<std::string> valueVector;
-			Utility::split(newString, "=", &valueVector);
+			Utility::split(newString, "=", valueVector);
 			if (valueVector.size() == 2)
 			{
 				valueList.insert(std::pair<std::string, std::string>(valueVector[0], valueVector[1]));
