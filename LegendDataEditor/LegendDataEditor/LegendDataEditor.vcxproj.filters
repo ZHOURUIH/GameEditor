@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{c4812f77-04da-426d-9613-1a0dfcdef1f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FreeImage">
+      <UniqueIdentifier>{34a9c1f0-c495-44c7-830e-511df080ea56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL">
+      <UniqueIdentifier>{4b5ede1d-fb6d-4273-bf4b-0a5122c52f60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{ffdc7a54-7f92-4054-860d-18e9043d63d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{ff39ed26-1561-4170-93a8-de4fa8a4f813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialize">
+      <UniqueIdentifier>{dddc0fcc-c08b-4519-9aba-79c75c41dea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sqlite">
+      <UniqueIdentifier>{9726e374-1ecd-4c4c-bc6c-79c38d015034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sqlite\Table">
+      <UniqueIdentifier>{3ef8c080-43e5-45c6-a0d0-8f5c3b98473e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sqlite\sqlite3">
+      <UniqueIdentifier>{fe2f7597-6e26-4ca4-bbae-b652d73df5a4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\BinaryUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\FileUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\MathUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\StringUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\SystemUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\txMemoryCheck.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\txMemoryTrace.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\txShareMemoryServer.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\CustomThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\ThreadLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\TimeLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\ServerBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialize\txSerializedData.cpp">
+      <Filter>Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialize\txSerializer.cpp">
+      <Filter>Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\ImageUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\HumanImage.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\SQLite.cpp">
+      <Filter>Sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\SQLiteDataReader.cpp">
+      <Filter>Sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteCloth.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteClothFrame.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteMonster.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteMonsterFrame.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteWeapon.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteWeaponFrame.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\sqlite3\sqlite3.c">
+      <Filter>Sqlite\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\SQLiteTable.cpp">
+      <Filter>Sqlite</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Utility\BinaryUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\FileUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\MathUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\StringUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\SystemUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Utility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ServerDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeImage\FreeImage.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txMap.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txSet.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txSTLBase.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\txVector.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryDefine.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryInfo.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\txMemoryCheck.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\txMemoryTrace.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\txShareMemoryServer.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\CustomThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\ThreadLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\TimeLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ServerBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ServerCallback.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ServerEnum.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\StreamBuffer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\txSingleton.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ImageDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialize\txSerializedData.h">
+      <Filter>Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialize\txSerializer.h">
+      <Filter>Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ImageUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\HumanImage.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\SQLite.h">
+      <Filter>Sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\SQLiteTable.h">
+      <Filter>Sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\SQLiteDataReader.h">
+      <Filter>Sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteCloth.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteClothFrame.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteMonster.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteMonsterFrame.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteWeapon.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteWeaponFrame.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\sqlite3\sqlite3.h">
+      <Filter>Sqlite\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\sqlite3\sqlite3ext.h">
+      <Filter>Sqlite\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\HumanAction.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
