@@ -23,13 +23,28 @@ public class SQLiteCloth : SQLiteTable
 	}
 	public void query(int clothID, out ClothData data)
 	{
+		string condition = "";
+		appendConditionInt(ref condition, COL_ID, clothID, "");
+		parseReader(doQuery(condition), out data);
+	}
+
+	public void insert(ClothData data)
+	{
+		string valueString = "";
+		appendValueString(ref valueString, data.mLabel);
+		appendValueInt(ref valueString, data.mID);
+		appendValueString(ref valueString, data.mDesc, true);
+		doInsert(valueString);
+	}
+	protected void parseReader(SqliteDataReader reader, out ClothData data)
+	{
 		data = new ClothData();
-		SqliteDataReader reader = mSQLite.query("SELECT * FROM " + mTableName + " WHERE " + COL_ID + " = " + StringUtility.intToString(clothID));
 		while (reader.Read())
 		{
 			data.mLabel = reader[COL_LABEL].ToString();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 			data.mDesc = reader[COL_DESC].ToString();
+			break;
 		}
 		reader.Close();
 	}

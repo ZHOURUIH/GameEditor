@@ -155,7 +155,7 @@ public class ScriptObjectEditor : LayoutScript
 				Texture curHumanTexture = mHumanList[i].mHuman.getTexture();
 				mHumanList[i].mHuman.setWindowSize(new Vector2(curHumanTexture.width, curHumanTexture.height));
 				Vector3 curHumanFramePos = Vector3.zero;
-				if (i < frameData[0].mPosX.Length && i < frameData[0].mPosY.Length)
+				if (i < frameData[0].mPosX.Count && i < frameData[0].mPosY.Count)
 				{
 					curHumanFramePos.x = frameData[0].mPosX[i];
 					curHumanFramePos.y = frameData[0].mPosY[i];
@@ -198,7 +198,7 @@ public class ScriptObjectEditor : LayoutScript
 				Texture curHumanTexture = mHumanList[i].mHuman.getTexture();
 				mHumanList[i].mHuman.setWindowSize(new Vector2(curHumanTexture.width, curHumanTexture.height));
 				Vector3 curHumanFramePos = Vector3.zero;
-				if (i < clothFrameData[0].mPosX.Length && i < clothFrameData[0].mPosY.Length)
+				if (i < clothFrameData[0].mPosX.Count && i < clothFrameData[0].mPosY.Count)
 				{
 					curHumanFramePos.x = clothFrameData[0].mPosX[i];
 					curHumanFramePos.y = clothFrameData[0].mPosY[i];
@@ -211,7 +211,7 @@ public class ScriptObjectEditor : LayoutScript
 				mHumanList[i].mWeapon.setWindowSize(new Vector2(curWeaponTexture.width, curWeaponTexture.height));
 
 				Vector3 curWeaponFramePos = Vector3.zero;
-				if (i < weaponFrameData[0].mPosX.Length && i < weaponFrameData[0].mPosY.Length)
+				if (i < weaponFrameData[0].mPosX.Count && i < weaponFrameData[0].mPosY.Count)
 				{
 					curWeaponFramePos.x = weaponFrameData[0].mPosX[i];
 					curWeaponFramePos.y = weaponFrameData[0].mPosY[i];
@@ -244,7 +244,7 @@ public class ScriptObjectEditor : LayoutScript
 				Texture curMonsterTexture = mMonsterList[i].mFrame.getTexture();
 				mMonsterList[i].mFrame.setWindowSize(new Vector2(curMonsterTexture.width, curMonsterTexture.height));
 				Vector3 curFramePos = Vector3.zero;
-				if(i < frameData[0].mPosX.Length && i < frameData[0].mPosY.Length)
+				if(i < frameData[0].mPosX.Count && i < frameData[0].mPosY.Count)
 				{
 					curFramePos.x = frameData[0].mPosX[i];
 					curFramePos.y = frameData[0].mPosY[i];
@@ -425,12 +425,12 @@ public class ScriptObjectEditor : LayoutScript
 			weaponData.mDirection = mDirection;
 			weaponData.mAction = mAction;
 			weaponData.mFrameCount = mFrameCount;
-			weaponData.mPosX = new float[mFrameCount];
-			weaponData.mPosY = new float[mFrameCount];
+			weaponData.mPosX = new List<float>();
+			weaponData.mPosY = new List<float>();
 			for (int i = 0; i < mFrameCount; ++i)
 			{
-				weaponData.mPosX[i] = mHumanList[i].mWeapon.getPosition().x;
-				weaponData.mPosY[i] = mHumanList[i].mWeapon.getPosition().y;
+				weaponData.mPosX.Add(mHumanList[i].mWeapon.getPosition().x);
+				weaponData.mPosY.Add(mHumanList[i].mWeapon.getPosition().y);
 			}
 			mSQLite.mSQLiteWeaponFrame.updateData(weaponData);
 		}
@@ -441,12 +441,12 @@ public class ScriptObjectEditor : LayoutScript
 			clothData.mDirection = mDirection;
 			clothData.mAction = mAction;
 			clothData.mFrameCount = mFrameCount;
-			clothData.mPosX = new float[mFrameCount];
-			clothData.mPosY = new float[mFrameCount];
+			clothData.mPosX = new List<float>();
+			clothData.mPosY = new List<float>();
 			for (int i = 0; i < mFrameCount; ++i)
 			{
-				clothData.mPosX[i] = mHumanList[i].mWeapon.getPosition().x;
-				clothData.mPosY[i] = mHumanList[i].mWeapon.getPosition().y;
+				clothData.mPosX.Add(mHumanList[i].mWeapon.getPosition().x);
+				clothData.mPosY.Add(mHumanList[i].mWeapon.getPosition().y);
 			}
 			mSQLite.mSQLiteClothFrame.updateData(clothData);
 		}
@@ -457,12 +457,12 @@ public class ScriptObjectEditor : LayoutScript
 			monsterData.mDirection = mDirection;
 			monsterData.mAction = mAction;
 			monsterData.mFrameCount = mFrameCount;
-			monsterData.mPosX = new float[mFrameCount];
-			monsterData.mPosY = new float[mFrameCount];
+			monsterData.mPosX = new List<float>();
+			monsterData.mPosY = new List<float>();
 			for (int i = 0; i < mFrameCount; ++i)
 			{
-				monsterData.mPosX[i] = mMonsterList[i].mFrame.getPosition().x;
-				monsterData.mPosY[i] = mMonsterList[i].mFrame.getPosition().y;
+				monsterData.mPosX.Add(mMonsterList[i].mFrame.getPosition().x);
+				monsterData.mPosY.Add(mMonsterList[i].mFrame.getPosition().y);
 			}
 			mSQLite.mSQLiteMonsterFrame.updateData(monsterData);
 		}

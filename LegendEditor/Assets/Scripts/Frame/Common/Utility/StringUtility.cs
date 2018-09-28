@@ -325,10 +325,43 @@ public class StringUtility : GameBase
 			values[i] = stringToFloat(rangeList[i]);
 		}
 	}
+	public static void stringToFloatArray(string str, ref List<float> values, string seperate = ",")
+	{
+		string[] rangeList = split(str, true, seperate);
+		int len = rangeList.Length;
+		if (values != null && len != values.Count)
+		{
+			logError("count is not equal " + str.Length);
+			return;
+		}
+		if (values == null)
+		{
+			values = new List<float>();
+		}
+
+		for (int i = 0; i < len; ++i)
+		{
+			values[i] = stringToFloat(rangeList[i]);
+		}
+	}
 	public static string floatArrayToString(float[] values, string seperate = ",")
 	{
 		string str = "";
 		int count = values.Length;
+		for (int i = 0; i < count; ++i)
+		{
+			str += floatToString(values[i], 2);
+			if (i != count - 1)
+			{
+				str += seperate;
+			}
+		}
+		return str;
+	}
+	public static string floatArrayToString(List<float> values, string seperate = ",")
+	{
+		string str = "";
+		int count = values.Count;
 		for (int i = 0; i < count; ++i)
 		{
 			str += floatToString(values[i], 2);
