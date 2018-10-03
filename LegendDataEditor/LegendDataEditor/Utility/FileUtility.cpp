@@ -270,6 +270,49 @@ void FileUtility::deleteFolder(const std::string& path)
 	RemoveDirectoryA(path.c_str());
 }
 
+bool FileUtility::deleteEmptyFolder(const std::string& path)
+{
+	WIN32_FIND_DATAA FindData;
+	// 构造路径
+	std::string pathName = path + "/*.*";
+	HANDLE hFind = FindFirstFileA(pathName.c_str(), &FindData);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return true;
+	}
+	bool isEmpty = true;
+	while (::FindNextFileA(hFind, &FindData))
+	{
+		// 过虑.和..
+		if (strcmp(FindData.cFileName, ".") == 0
+			|| strcmp(FindData.cFileName, "..") == 0)
+		{
+			continue;
+		}
+
+		// 构造完整路径
+		std::string fullname = path + "/" + std::string(FindData.cFileName);
+		// 如果是文件夹,则递归删除空文件夹
+		if (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			// 如果删除该空文件夹时,返回该文件夹不为空,则当前文件夹也不为空
+			isEmpty = deleteEmptyFolder(fullname) && isEmpty;
+		}
+		// 如果是文件,则该文件夹不为空
+		else
+		{
+			isEmpty = false;
+		}
+	}
+	::FindClose(hFind);
+	// 删除文件夹自身
+	if (isEmpty)
+	{
+		RemoveDirectoryA(path.c_str());
+	}
+	return isEmpty;
+}
+
 void FileUtility::deleteFile(const std::string& path)
 {
 	DeleteFileA(path.c_str());
@@ -288,6 +331,11 @@ bool FileUtility::isFileExist(const std::string& fullPath)
 #endif
 #endif
 	return ret == 0;
+}
+
+void FileUtility::renameFile(const std::string& curName, const std::string& newName)
+{
+	rename(curName.c_str(), newName.c_str());
 }
 
 void FileUtility::moveFile(const std::string& sourceFile, const std::string& destFile)

@@ -12,22 +12,24 @@ public:
 	txSerializer(char* buffer, int bufferSize);
 	virtual ~txSerializer();
 	template<typename T>
-	void write(T value)
+	bool write(T value)
 	{
 		if (!writeCheck(sizeof(T)))
 		{
-			return;
+			return false;
 		}
 		BinaryUtility::write<T>(mBuffer, mBufferSize, mIndex, value);
+		return true;
 	}
 	template<typename T>
-	void read(T& value, bool inverse = false)
+	bool read(T& value, bool inverse = false)
 	{
 		if (!checkRead(sizeof(T)))
 		{
-			return;
+			return false;
 		}
 		value = BinaryUtility::read<T>(mBuffer, mBufferSize, mIndex, inverse);
+		return true;
 	}
 	void writeBuffer(char* buffer, int bufferSize);
 	void readBuffer(char* buffer, int readLen);

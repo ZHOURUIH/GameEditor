@@ -6,17 +6,19 @@
 class ClothFrameData
 {
 public:
+	std::string mLabel;
 	int mID;
 	int mDirection;
 	std::string mAction;
 	int mFrameCount;
-	txVector<float> mPosX;
-	txVector<float> mPosY;
+	txVector<int> mPosX;
+	txVector<int> mPosY;
 };
 
 class SQLiteClothFrame : public SQLiteTable
 {
 	std::string COL_ID = "ClothID";
+	std::string COL_LABEL = "Label";
 	std::string COL_DIRECTION = "Direction";
 	std::string COL_ACTION = "Action";
 	std::string COL_FRAME_COUNT = "FrameCount";
@@ -27,6 +29,7 @@ public:
 		:SQLiteTable("ClothFrame", sqlite)
 	{
 		registeColumn(COL_ID);
+		registeColumn(COL_LABEL);
 		registeColumn(COL_DIRECTION);
 		registeColumn(COL_ACTION);
 		registeColumn(COL_FRAME_COUNT);

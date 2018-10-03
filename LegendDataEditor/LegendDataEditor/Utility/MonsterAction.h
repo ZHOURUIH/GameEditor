@@ -1,17 +1,17 @@
-﻿#ifndef _HUMAN_ACTION_H_
-#define _HUMAN_ACTION_H_
+﻿#ifndef _MONSTER_ACTION_H_
+#define _MONSTER_ACTION_H_
 
 #include "ServerDefine.h"
-#include "HumanImage.h"
+#include "MonsterImage.h"
 #include "ImageDefine.h"
 
 // 一个动作的所有序列帧
-class HumanActionAnim
+class MonsterActionAnim
 {
 public:
-	txVector<HumanImage> mImageFrame;
+	txVector<MonsterImage> mImageFrame;
 public:
-	void addFrame(const HumanImage& frame)
+	void addFrame(const MonsterImage& frame)
 	{
 		// 只添加有效的序列帧
 		if (frame.isValidImage())
@@ -22,28 +22,28 @@ public:
 };
 
 // 动作所有方向的序列帧
-class HumanActionSet
+class MonsterActionSet
 {
 public:
-	HumanActionAnim mDirectionAction[DIRECTION_COUNT];
+	MonsterActionAnim mDirectionAction[DIRECTION_COUNT];
 public:
-	void addFrame(const HumanImage& frame)
+	void addFrame(const MonsterImage& frame)
 	{
 		mDirectionAction[frame.mDirection].addFrame(frame);
 	}
 };
 
 // 表示一套衣服的所有动作
-class HumanImageGroup
+class MonsterImageGroup
 {
 public:
-	txMap<std::string, HumanActionSet> mAllAction;
+	txMap<std::string, MonsterActionSet> mAllAction;
 public:
-	void addImage(const HumanImage& image)
+	void addImage(const MonsterImage& image)
 	{
 		if (!mAllAction.contains(image.mActionName))
 		{
-			mAllAction.insert(image.mActionName, HumanActionSet());
+			mAllAction.insert(image.mActionName, MonsterActionSet());
 		}
 		mAllAction[image.mActionName].addFrame(image);
 	}

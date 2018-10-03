@@ -14,8 +14,10 @@ public:
 	static void findFiles(const std::string& path, txVector<std::string>& files, const txVector<std::string>& patterns = txVector<std::string>(), bool recursive = true);
 	static void findFolders(const std::string& path, txVector<std::string>& folders, bool recursive = false);
 	static void deleteFolder(const std::string& path);
+	static bool deleteEmptyFolder(const std::string& path);
 	static void deleteFile(const std::string& path);
 	static bool isFileExist(const std::string& fullPath);
+	static void renameFile(const std::string& curName, const std::string& newName);
 	static void moveFile(const std::string& sourceFile, const std::string& destFile);
 	// 将sourceFile拷贝到destFile,sourceFile和destFile都是带可直接访问的路径的文件名,overWrite指定当目标文件已经存在时是否要覆盖文件
 	static bool copyFile(const std::string& sourceFile, const std::string& destFile, bool overWrite = true);

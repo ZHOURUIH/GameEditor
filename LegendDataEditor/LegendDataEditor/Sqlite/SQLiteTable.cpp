@@ -49,9 +49,9 @@ void SQLiteTable::appendValueInt(std::string& queryStr, int value, bool isEnd)
 		queryStr += ",";
 	}
 }
-void SQLiteTable::appendValueFloatArray(std::string& queryStr, const txVector<float>& floatArray, bool isEnd)
+void SQLiteTable::appendValueIntArray(std::string& queryStr, const txVector<int>& intArray, bool isEnd)
 {
-	appendValueString(queryStr, StringUtility::floatArrayToString(floatArray), isEnd);
+	appendValueString(queryStr, StringUtility::intArrayToString(intArray), isEnd);
 }
 void SQLiteTable::appendConditionString(std::string& condition, const std::string& col, const std::string& str, const std::string& operate)
 {
@@ -77,7 +77,7 @@ void SQLiteTable::appendUpdateInt(std::string& updateInfo, const std::string& co
 		updateInfo += ",";
 	}
 }
-void SQLiteTable::appendUpdateFloatArray(std::string& updateInfo, const std::string& col, const txVector<float>& floatArray, bool isEnd)
+void SQLiteTable::appendUpdateIntArray(std::string& updateInfo, const std::string& col, const txVector<int>& intArray, bool isEnd)
 {
-	appendUpdateString(updateInfo, col, StringUtility::floatArrayToString(floatArray), isEnd);
+	appendUpdateString(updateInfo, col, StringUtility::intArrayToString(intArray), isEnd);
 }

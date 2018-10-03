@@ -1,7 +1,7 @@
-#include "HumanImage.h"
+#include "WeaponImage.h"
 #include "Utility.h"
 
-void HumanImage::setFileName(const std::string& fileName)
+void WeaponImage::setFileName(const std::string& fileName)
 {
 	txVector<std::string> elemList;
 	StringUtility::split(fileName, "_", elemList);

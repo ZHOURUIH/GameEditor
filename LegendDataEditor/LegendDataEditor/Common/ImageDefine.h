@@ -38,8 +38,9 @@ struct ActionInfo
 
 const int DIRECTION_COUNT = 8;
 const int ACTION_COUNT = 11;
-const int GROUP_SIZE = 600;
-static ActionInfo Action[ACTION_COUNT] =
+const int HUMAN_GROUP_SIZE = 600;
+const int WEAPON_GROUP_SIZE = 1200;
+static ActionInfo HUMAN_ACTION[ACTION_COUNT] =
 {
 	{ "stand", 8, 4 },
 	{ "walk", 8, 6 },
@@ -52,6 +53,23 @@ static ActionInfo Action[ACTION_COUNT] =
 	{ "search", 2, 2 },
 	{ "hit", 8, 3 },
 	{ "die", 8, 4 },
+};
+
+struct MonsterActionInfo 
+{
+	std::string mName;
+	int mFrameCount;
+};
+
+const int MONSTER_ACTION_COUNT = 5;
+const int MONSTER_GROUP_SIZE = 360;
+static MonsterActionInfo MONSTER_ACTION[MONSTER_ACTION_COUNT] =
+{
+	{ "attack", 4 },
+	{ "die", 10 },
+	{ "hit", 2 },
+	{ "stand", 4 },
+	{ "walk", 6 },
 };
 
 enum IMAGE_TYPE

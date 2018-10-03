@@ -24,6 +24,13 @@ void StringUtility::removeLastComma(std::string& stream)
 	removeLast(stream, ",");
 }
 
+std::string StringUtility::getFolderName(std::string str)
+{
+	std::string path = getFilePath(str);
+	std::string folder = getFileName(path);
+	return folder;
+}
+
 std::string StringUtility::getFileName(std::string str)
 {
 	rightToLeft(str);
@@ -50,6 +57,11 @@ std::string StringUtility::getFileNameNoSuffix(std::string str)
 std::string StringUtility::getFilePath(std::string dir)
 {
 	rightToLeft(dir);
+	// 如果最后一个字符是斜杠,则需要将最后的斜杠去掉
+	if (dir[dir.length() - 1] == '/')
+	{
+		dir.erase(dir.length() - 1, 1);
+	}
 	int pos = dir.find_last_of('/');
 	std::string tempDir = dir;
 	if (-1 != pos)
@@ -59,12 +71,17 @@ std::string StringUtility::getFilePath(std::string dir)
 	return tempDir;
 }
 
-std::string StringUtility::getFileSuffix(const std::string& fileName)
+std::string StringUtility::getFileSuffix(const std::string& fileName, bool includeDot)
 {
 	int dotPos = fileName.find_last_of('.');
 	if (dotPos != -1)
 	{
-		return fileName.substr(dotPos + 1, fileName.length() - dotPos - 1);
+		int startPos = dotPos;
+		if (!includeDot)
+		{
+			startPos += 1;
+		}
+		return fileName.substr(startPos, fileName.length() - startPos);
 	}
 	return fileName;
 }
@@ -146,6 +163,29 @@ std::string StringUtility::intToString(int i, int limitLen)
 		retString = std::string(addStr) + retString;
 	}
 	return retString;
+}
+
+std::string StringUtility::intArrayToString(const txVector<int>& intArray, int limitLen, const std::string& key)
+{
+	std::string str;
+	int count = intArray.size();
+	for (int i = 0; i < count; ++i)
+	{
+		str += intToString(intArray[i]) + key;
+	}
+	removeLast(str, key);
+	return str;
+}
+
+void StringUtility::stringToIntArray(const std::string& str, txVector<int>& intArray, const std::string& key)
+{
+	txVector<std::string> strList;
+	split(str, key, strList);
+	int count = strList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		intArray.push_back(stringToInt(strList[i]));
+	}
 }
 
 std::string StringUtility::floatToString(float f, int precision, bool removeZero)

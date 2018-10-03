@@ -16,7 +16,9 @@ bool SQLiteWeapon::insert(const WeaponData& data)
 	std::string valueString;
 	appendValueString(valueString, data.mLabel);
 	appendValueInt(valueString, data.mID);
-	appendValueString(valueString, data.mDesc, true);
+	appendValueString(valueString, data.mDesc);
+	appendValueString(valueString, data.mOccupation);
+	appendValueString(valueString, data.mResource, true);
 	return doInsert(valueString);
 }
 
@@ -27,6 +29,8 @@ void SQLiteWeapon::parseReader(SQLiteDataReader* reader, WeaponData& data)
 		data.mLabel = reader->getString(getCol(COL_LABLE));
 		data.mID = reader->getInt(getCol(COL_ID));
 		data.mDesc = reader->getString(getCol(COL_DESC));
+		data.mOccupation = reader->getString(getCol(COL_OCCUPATION));
+		data.mResource = reader->getString(getCol(COL_RESOURCE));
 		break;
 	}
 	mSQLite->releaseReader(reader);

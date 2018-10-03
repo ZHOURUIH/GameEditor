@@ -123,6 +123,12 @@
     <ClCompile Include="Sqlite\SQLiteTable.cpp">
       <Filter>Sqlite</Filter>
     </ClCompile>
+    <ClCompile Include="Utility\WeaponImage.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\MonsterImage.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility\BinaryUtility.h">
@@ -249,6 +255,18 @@
       <Filter>Sqlite\sqlite3</Filter>
     </ClInclude>
     <ClInclude Include="Utility\HumanAction.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\WeaponImage.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\WeaponAction.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\MonsterImage.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\MonsterAction.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

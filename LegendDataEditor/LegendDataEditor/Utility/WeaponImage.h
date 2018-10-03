@@ -1,10 +1,10 @@
-#ifndef _HUMAN_IMAGE_H_
-#define _HUMAN_IMAGE_H_
+#ifndef _WEAPON_IMAGE_H_
+#define _WEAPON_IMAGE_H_
 
 #include "ServerDefine.h"
 #include "ImageDefine.h"
 
-class HumanImage
+class WeaponImage
 {
 public:
 	std::string mLabel;
@@ -13,7 +13,7 @@ public:
 	std::string mActionName;
 	int mDirection;
 	int mFrameIndex;		// 在当前动作中的下标
-	int mClothID;
+	int mWeaponID;
 	int mActionIndex;		// 动作在数组中的下标
 public:
 	void setFileName(const std::string& fileName);

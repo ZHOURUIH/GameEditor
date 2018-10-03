@@ -4,7 +4,18 @@
 
 void main()
 {
-	std::cout << "选择功能(1:解析wix和wil文件. 2:分组角色动作):";
+	std::cout << "选择功能\n\
+1:解析wix和wil文件. \n\
+2:整理角色文件结构 \n\
+3:整理武器文件结构 \n\
+4:整理怪物文件结构0 \n\
+5:整理怪物文件结构1 \n\
+6:将角色文件帧数据写入SQLite \n\
+7:将武器文件帧数据写入SQLite \n\
+8:将怪物文件帧数据写入SQLite \n\
+17:自动计算方向并分组 \n\
+18:拆分位置文件 \n\
+19:重命名图片" << std::endl;
 	int input;
 	std::cin >> input;
 	if (input == 1)
@@ -13,25 +24,134 @@ void main()
 		std::string fileName;
 		std::cin >> fileName;
 		std::cout << "开始解析...";
+		long startTime = timeGetTime();
 		std::string filePath = "../media/" + fileName;
 		std::string outputPath = "../media/" + fileName + "/";
 		std::string WIX_SUFFIX = ".wix";
 		std::string WIL_SUFFIX = ".wil";
 		ImageUtility::wixWilToPNG(filePath + WIX_SUFFIX, filePath + WIL_SUFFIX, outputPath);
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 	}
 	else if(input == 2)
 	{
 		std::cout << "输入文件夹名:";
 		std::string fileName;
 		std::cin >> fileName;
-		std::cout << "开始解析..." << std::endl;
+		std::cout << "开始整理角色文件结构..." << std::endl;
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::autoGroupHumanImage(filePath);
+		std::cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << std::endl;
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 3)
+	{
+		std::cout << "输入文件夹名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始整理武器文件结构..." << std::endl;
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::autoGroupWeaponImage(filePath);
+		std::cout << "文件整理完毕,建议先给每个武器手动命名后再将帧数据写入SQLite" << std::endl;
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 4)
+	{
+		std::cout << "输入文件名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始整理怪物文件结构0...";
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::autoGroupMonsterImage0(filePath);
+		std::cout << "请手动为每一个怪物进行动作分组,然后选择整理怪物文件结构1" << std::endl;
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 5)
+	{
+		std::cout << "输入文件名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始整理怪物文件结构1...";
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::autoGroupMonsterImage1(filePath);
+		std::cout << "文件整理完毕,建议先给每个怪物手动命名后再将帧数据写入SQLite" << std::endl;
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 6)
+	{
+		std::cout << "输入文件名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始将角色文件帧数据写入SQLite...";
 		long startTime = timeGetTime();
 		std::string filePath = "../media/" + fileName;
 		SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
-		ImageUtility::groupImage(filePath, IT_HUMAN, mSQLite);
+		ImageUtility::saveFrameInfo(filePath, IT_HUMAN, mSQLite);
 		TRACE_DELETE(mSQLite);
 		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 	}
-	//system("pause");
+	else if (input == 7)
+	{
+		std::cout << "输入文件名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始将武器文件帧数据写入SQLite...";
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+		ImageUtility::saveFrameInfo(filePath, IT_WEAPON, mSQLite);
+		TRACE_DELETE(mSQLite);
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 8)
+	{
+		std::cout << "输入文件名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始将怪物文件帧数据写入SQLite...";
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+		ImageUtility::saveFrameInfo(filePath, IT_MONSTER, mSQLite);
+		TRACE_DELETE(mSQLite);
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 17)
+	{
+		std::cout << "输入文件夹名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始自动计算方向并分组..." << std::endl;
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::renameByDirection(filePath);
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 18)
+	{
+		std::cout << "输入文件夹名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始拆分位置文件..." << std::endl;
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::splitPositionFile(filePath);
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	else if (input == 19)
+	{
+		std::cout << "输入文件夹名:";
+		std::string fileName;
+		std::cin >> fileName;
+		std::cout << "开始重命名..." << std::endl;
+		long startTime = timeGetTime();
+		std::string filePath = "../media/" + fileName;
+		ImageUtility::renameImage(filePath);
+		std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+	}
+	system("pause");
 	return;
 }

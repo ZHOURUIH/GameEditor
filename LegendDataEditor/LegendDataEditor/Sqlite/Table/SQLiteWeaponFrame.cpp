@@ -31,8 +31,8 @@ bool SQLiteWeaponFrame::updateData(const WeaponFrameData& data)
 {
 	std::string updateString;
 	appendUpdateInt(updateString, COL_FRAME_COUNT, data.mFrameCount);
-	appendUpdateFloatArray(updateString, COL_POSX, data.mPosX);
-	appendUpdateFloatArray(updateString, COL_POSY, data.mPosY, true);
+	appendUpdateIntArray(updateString, COL_POSX, data.mPosX);
+	appendUpdateIntArray(updateString, COL_POSY, data.mPosY, true);
 	std::string conditionString;
 	appendConditionInt(conditionString, COL_ID, data.mID, " and ");
 	appendConditionInt(conditionString, COL_DIRECTION, data.mDirection, " and ");
@@ -44,12 +44,29 @@ bool SQLiteWeaponFrame::insert(const WeaponFrameData& data)
 {
 	std::string valueString;
 	appendValueInt(valueString, data.mID);
+	appendValueString(valueString, data.mLabel);
 	appendValueInt(valueString, data.mDirection);
 	appendValueString(valueString, data.mAction);
 	appendValueInt(valueString, data.mFrameCount);
-	appendValueFloatArray(valueString, data.mPosX);
-	appendValueFloatArray(valueString, data.mPosY, true);
+	appendValueIntArray(valueString, data.mPosX);
+	appendValueIntArray(valueString, data.mPosY, true);
 	return doInsert(valueString);
+}
+
+bool SQLiteWeaponFrame::insertOrUpdate(const WeaponFrameData& data)
+{
+	bool ret = false;
+	txVector<WeaponFrameData> tempList;
+	query(data.mID, data.mDirection, data.mAction, tempList);
+	if (tempList.size() == 0)
+	{
+		ret = insert(data);
+	}
+	else
+	{
+		ret = updateData(data);
+	}
+	return ret;
 }
 
 void SQLiteWeaponFrame::parseReader(SQLiteDataReader* reader, txVector<WeaponFrameData>& dataList)
@@ -58,11 +75,12 @@ void SQLiteWeaponFrame::parseReader(SQLiteDataReader* reader, txVector<WeaponFra
 	{
 		WeaponFrameData data;
 		data.mID = reader->getInt(getCol(COL_ID));
+		data.mLabel = reader->getString(getCol(COL_LABEL));
 		data.mDirection = reader->getInt(getCol(COL_DIRECTION));
 		data.mAction = reader->getString(getCol(COL_ACTION));
 		data.mFrameCount = reader->getInt(getCol(COL_FRAME_COUNT));
-		StringUtility::stringToFloatArray(reader->getString(getCol(COL_POSX)), data.mPosX);
-		StringUtility::stringToFloatArray(reader->getString(getCol(COL_POSY)), data.mPosY);
+		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSX)), data.mPosX);
+		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSY)), data.mPosY);
 		dataList.push_back(data);
 	}
 	mSQLite->releaseReader(reader);

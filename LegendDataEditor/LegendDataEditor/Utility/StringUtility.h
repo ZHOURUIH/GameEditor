@@ -11,10 +11,11 @@ public:
 	static void removeLast(std::string& stream, const std::string& key);
 	// 去掉最后一个逗号
 	static void removeLastComma(std::string& stream);
+	static std::string getFolderName(std::string str);
 	static std::string getFileName(std::string str);
 	static std::string getFileNameNoSuffix(std::string str);
 	static std::string getFilePath(std::string dir);
-	static std::string getFileSuffix(const std::string& fileName);
+	static std::string getFileSuffix(const std::string& fileName, bool includeDot = false);
 	// 获得字符串最后不是数字的下标
 	static int getLastNotNumberPos(const std::string& str);
 	// 获得字符串结尾的数字
@@ -26,7 +27,9 @@ public:
 	static std::string strReplace(const std::string& str, int begin, int end, const std::string& reStr);
 	// limitLen是字符串的最小长度,如果整数的位数不足最小长度,则会在前面加0
 	static std::string intToString(int i, int limitLen = 0); 
+	static std::string intArrayToString(const txVector<int>& intArray, int limitLen = 0, const std::string& key = ",");
 	static int stringToInt(const std::string& str){return atoi(str.c_str());}
+	static void stringToIntArray(const std::string& str, txVector<int>& intArray, const std::string& key = ",");
 	//precision为精度,保留的小数的位数,removeZero为是否去除末尾无用的0
 	static std::string floatToString(float f, int precision = 4, bool removeZero = true);
 	static float stringToFloat(const std::string& str){return (float)atof(str.c_str());}

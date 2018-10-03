@@ -19,12 +19,12 @@ public:
 	bool doInsert(const std::string& valueString);
 	void appendValueString(std::string& queryStr, const std::string& str, bool isEnd = false);
 	void appendValueInt(std::string& queryStr, int value, bool isEnd = false);
-	void appendValueFloatArray(std::string& queryStr, const txVector<float>& floatArray, bool isEnd = false);
+	void appendValueIntArray(std::string& queryStr, const txVector<int>& intArray, bool isEnd = false);
 	void appendConditionString(std::string& condition, const std::string& col, const std::string& str, const std::string& operate);
 	void appendConditionInt(std::string& condition, const std::string& col, int value, const std::string& operate);
 	void appendUpdateString(std::string& updateInfo, const std::string& col, const std::string& str, bool isEnd = false);
 	void appendUpdateInt(std::string& updateInfo, const std::string& col, int value, bool isEnd = false);
-	void appendUpdateFloatArray(std::string& updateInfo, const std::string& col, const txVector<float>& floatArray, bool isEnd = false);
+	void appendUpdateIntArray(std::string& updateInfo, const std::string& col, const txVector<int>& intArray, bool isEnd = false);
 };
 
 #endif
