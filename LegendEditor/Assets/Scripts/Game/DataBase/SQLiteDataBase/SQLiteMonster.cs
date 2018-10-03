@@ -9,6 +9,7 @@ public class MonsterData
 	public string mLabel;
 	public int mID;
 	public string mDesc;
+	public string mResource;
 }
 
 public class SQLiteMonster : SQLiteTable
@@ -16,6 +17,7 @@ public class SQLiteMonster : SQLiteTable
 	string COL_LABEL = "MonsterLabel";
 	string COL_ID = "MonsterID";
 	string COL_DESC = "Desc";
+	string COL_RESOURCE = "Resource";
 	public SQLiteMonster(SQLite sqlite)
 		:base("Monster", sqlite)
 	{}
@@ -30,7 +32,8 @@ public class SQLiteMonster : SQLiteTable
 		string valueString = "";
 		appendValueString(ref valueString, data.mLabel);
 		appendValueInt(ref valueString, data.mID);
-		appendValueString(ref valueString, data.mDesc, true);
+		appendValueString(ref valueString, data.mDesc);
+		appendValueString(ref valueString, data.mResource, true);
 		doInsert(valueString);
 	}
 	//----------------------------------------------------------------------------------------------------------------
@@ -42,6 +45,7 @@ public class SQLiteMonster : SQLiteTable
 			data.mLabel = reader[COL_LABEL].ToString();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 			data.mDesc = reader[COL_DESC].ToString();
+			data.mResource = reader[COL_RESOURCE].ToString();
 			break;
 		}
 		reader.Close();

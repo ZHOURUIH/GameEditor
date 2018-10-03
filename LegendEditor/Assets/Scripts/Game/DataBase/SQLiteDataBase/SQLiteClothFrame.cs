@@ -7,6 +7,7 @@ using System.Text;
 public class ClothFrameData
 {
 	public int mID;
+	public string mLabel;
 	public int mDirection;
 	public string mAction;
 	public int mFrameCount;
@@ -17,6 +18,7 @@ public class ClothFrameData
 public class SQLiteClothFrame : SQLiteTable
 {
 	string COL_ID = "ClothID";
+	string COL_LABEL = "Label";
 	string COL_DIRECTION = "Direction";
 	string COL_ACTION = "Action";
 	string COL_FRAME_COUNT = "FrameCount";
@@ -64,6 +66,7 @@ public class SQLiteClothFrame : SQLiteTable
 	{
 		string valueString = "";
 		appendValueInt(ref valueString, data.mID);
+		appendValueString(ref valueString, data.mLabel);
 		appendValueInt(ref valueString, data.mDirection);
 		appendValueString(ref valueString, data.mAction);
 		appendValueInt(ref valueString, data.mFrameCount);
@@ -79,6 +82,7 @@ protected void parseReader(SqliteDataReader reader, out List<ClothFrameData> dat
 		{
 			ClothFrameData data = new ClothFrameData();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
+			data.mLabel = reader[COL_LABEL].ToString();
 			data.mDirection = StringUtility.stringToInt(reader[COL_DIRECTION].ToString());
 			data.mAction = reader[COL_ACTION].ToString();
 			data.mFrameCount = StringUtility.stringToInt(reader[COL_FRAME_COUNT].ToString());

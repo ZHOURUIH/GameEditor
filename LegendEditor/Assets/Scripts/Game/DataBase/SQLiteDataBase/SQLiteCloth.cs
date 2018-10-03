@@ -9,6 +9,8 @@ public class ClothData
 	public string mLabel;
 	public int mID;
 	public string mDesc;
+	public string mOccupation;
+	public string mResource;
 }
 
 public class SQLiteCloth : SQLiteTable
@@ -16,6 +18,8 @@ public class SQLiteCloth : SQLiteTable
 	string COL_LABEL = "ClothLabel";
 	string COL_ID = "ClothID";
 	string COL_DESC = "Desc";
+	string COL_OCCUPATION = "Occupation";
+	string COL_RESOURCE = "Resource";
 	public SQLiteCloth(SQLite sqlite)
 		:base("Cloth", sqlite)
 	{
@@ -33,7 +37,9 @@ public class SQLiteCloth : SQLiteTable
 		string valueString = "";
 		appendValueString(ref valueString, data.mLabel);
 		appendValueInt(ref valueString, data.mID);
-		appendValueString(ref valueString, data.mDesc, true);
+		appendValueString(ref valueString, data.mDesc);
+		appendValueString(ref valueString, data.mOccupation);
+		appendValueString(ref valueString, data.mResource, true);
 		doInsert(valueString);
 	}
 	protected void parseReader(SqliteDataReader reader, out ClothData data)
@@ -44,6 +50,8 @@ public class SQLiteCloth : SQLiteTable
 			data.mLabel = reader[COL_LABEL].ToString();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 			data.mDesc = reader[COL_DESC].ToString();
+			data.mOccupation = reader[COL_OCCUPATION].ToString();
+			data.mResource = reader[COL_RESOURCE].ToString();
 			break;
 		}
 		reader.Close();
