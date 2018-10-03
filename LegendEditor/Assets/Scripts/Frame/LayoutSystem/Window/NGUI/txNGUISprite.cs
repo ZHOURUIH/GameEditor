@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class txNGUISprite : txUIObject
 {
-	public UISprite mSprite;
+	protected UISprite mSprite;
 	public txNGUISprite()
 	{
 		mType = UI_TYPE.UT_NGUI_SPRITE;
@@ -32,9 +32,14 @@ public class txNGUISprite : txUIObject
 	{
 		mSprite.atlas = atlas;
 	}
-	public void setSpriteName(string name)
+	public void setSpriteName(string name, bool useSize = false)
 	{
 		mSprite.spriteName = name;
+		if(useSize && name != "")
+		{
+			UISpriteData spriteData = mSprite.GetAtlasSprite();
+			setWindowSize(new Vector2(spriteData.width, spriteData.height));
+		}
 	}
 	public Vector2 getWindowSize()
 	{

@@ -8,7 +8,7 @@ using UnityEngine;
 
 // isPlaying表示是否是在播放过程中触发的该回调
 public delegate void onPlayingCallback(AnimControl control, int frame, bool isPlaying);
-public delegate void onPlayEndCallback(AnimControl control, bool isBreak);
+public delegate void onPlayEndCallback(AnimControl control, bool callback, bool isBreak);
 
 public class AnimControl
 {
@@ -18,7 +18,6 @@ public class AnimControl
 	protected bool mPlayDirection = true;   // 播放方向,true为正向播放(从mStartIndex到mEndIndex),false为返向播放(从mEndIndex到mStartIndex)
 	protected int mCurTextureIndex = 0;
 	protected LOOP_MODE mLoopMode = LOOP_MODE.LM_ONCE;
-	protected string mTextureSetName = "";
 	protected float mCurTimeCount = 0.0f;
 	protected PLAY_STATE mPlayState = PLAY_STATE.PS_STOP;
 	protected float mInterval = 0.03f;  // 隔多少秒切换图片
@@ -115,7 +114,6 @@ public class AnimControl
 		}
 	}
 	public LOOP_MODE getLoop() { return mLoopMode; }
-	public string getTextureSetName() { return mTextureSetName; }
 	public float getInterval() { return mInterval; }
 	public int getStartIndex() { return mStartIndex; }
 	public PLAY_STATE getPlayState() { return mPlayState; }
@@ -152,6 +150,7 @@ public class AnimControl
 		}
 		if (getTextureFrameCount() > 0 && mStartIndex >= 0 && mStartIndex < getTextureFrameCount())
 		{
+			mCurTextureIndex = mStartIndex;
 			if (mPlayingCallback != null)
 			{
 				mPlayingCallback(this, mCurTextureIndex, false);
@@ -181,12 +180,9 @@ public class AnimControl
 			setCurFrameIndex(mStartIndex);
 		}
 		// 中断序列帧播放时调用回调函数,只在非循环播放时才调用
-		if (callback && mLoopMode == LOOP_MODE.LM_ONCE)
+		if (mPlayEndCallback != null)
 		{
-			if (mPlayEndCallback != null)
-			{
-				mPlayEndCallback(this, isBreak);
-			}
+			mPlayEndCallback(this, callback, isBreak);
 		}
 	}
 	public void play() { mPlayState = PLAY_STATE.PS_PLAY; }
