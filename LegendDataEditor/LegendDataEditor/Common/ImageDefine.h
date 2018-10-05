@@ -40,6 +40,7 @@ const int DIRECTION_COUNT = 8;
 const int ACTION_COUNT = 11;
 const int HUMAN_GROUP_SIZE = 600;
 const int WEAPON_GROUP_SIZE = 1200;
+const int EFFECT_GROUP_SIZE = 10;
 static ActionInfo HUMAN_ACTION[ACTION_COUNT] =
 {
 	{ "stand", 8, 4 },

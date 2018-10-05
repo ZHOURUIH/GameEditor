@@ -265,6 +265,16 @@ void ImageUtility::autoGroupMonsterImage1(const std::string& path)
 	ImageUtility::renameByDirection(path);
 }
 
+void ImageUtility::autoGroupEffectImage(const std::string& path)
+{
+	// 先拆分位置文件
+	splitPositionFile(path);
+	// 按照10个文件一组,放入单独的文件夹中
+	autoMoveFile(path, EFFECT_GROUP_SIZE);
+	// 删除无效图片
+	deleteInvalidImage(path);
+}
+
 void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, SQLite* sqlite)
 {
 	if (imageType == IT_MONSTER)
@@ -491,6 +501,29 @@ void ImageUtility::renameImage(const std::string& path)
 	}
 }
 
+void ImageUtility::renameImageToAnim(const std::string& path)
+{
+	// 将目录中的文件按文件名排序后,重命名为序列帧格式的名字,以文件夹名开头,以从0开始的数字结尾
+	txVector<std::string> folderList;
+	FileUtility::findFolders(path, folderList, true);
+	int folderCount = folderList.size();
+	for (int i = 0; i < folderCount; ++i)
+	{
+		txVector<std::string> fileList;
+		FileUtility::findFiles(folderList[i], fileList, ".png");
+		// 先根据文件名重新排列
+		sortByFileNumber(fileList);
+		int count = fileList.size();
+		for (int j = 0; j < count; ++j)
+		{
+			std::string folderName = StringUtility::getFolderName(fileList[j]);
+			std::string curFilePath = StringUtility::getFilePath(fileList[j]) + "/";
+			std::string suffix = StringUtility::getFileSuffix(fileList[j]);
+			renameImageWithPosition(fileList[j], curFilePath + folderName + "_" + StringUtility::intToString(j) + "." + suffix);
+		}
+	}
+}
+
 void ImageUtility::splitPositionFile(const std::string& path)
 {
 	// 将position.txt文件拆分为单个的txt文件,每个txt文件中只包含一个坐标
@@ -568,7 +601,7 @@ void ImageUtility::autoMoveFile(const std::string& path, int groupSize)
 	for (int i = 0; i < fileCount; ++i)
 	{
 		int groupIndex = i / groupSize;
-		std::string destFolderName = StringUtility::intToString(groupIndex);
+		std::string destFolderName = StringUtility::intToString(groupIndex, 3);
 		std::string destPath = StringUtility::getFilePath(fileList[i]) + "/" + destFolderName + "/";
 		moveImageWithPosition(fileList[i], destPath + StringUtility::getFileName(fileList[i]));
 	}
@@ -633,4 +666,32 @@ void ImageUtility::deleteImageWithPosition(const std::string& fullFileName)
 	{
 		FileUtility::deleteFile(positionFileName);
 	}
+}
+
+void ImageUtility::deleteInvalidImage(const std::string& path)
+{
+	txVector<std::string> fileList;
+	FileUtility::findFiles(path, fileList, ".png");
+	sortByFileNumber(fileList);
+	int count = fileList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (!isInvalidImage(fileList[i]))
+		{
+			deleteImageWithPosition(fileList[i]);
+		}
+	}
+	FileUtility::deleteEmptyFolder(path);
+}
+
+bool ImageUtility::isInvalidImage(const std::string& fileName)
+{
+	FreeImage_Initialise(1);
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* bitmap = FreeImage_Load(format, fileName.c_str());
+	int width = FreeImage_GetWidth(bitmap);
+	int height = FreeImage_GetHeight(bitmap);
+	FreeImage_Unload(bitmap);
+	FreeImage_DeInitialise();
+	return width * height > 4;
 }

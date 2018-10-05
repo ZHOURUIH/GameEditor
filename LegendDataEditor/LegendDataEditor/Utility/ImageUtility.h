@@ -19,6 +19,7 @@ public:
 	static POINT* readPositionFile(const std::string& positionFile, int& posCount);
 	static void saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, SQLite* sqlite);
 	static void renameImage(const std::string& path);
+	static void renameImageToAnim(const std::string& path);
 	static void splitPositionFile(const std::string& path);
 	static void renameByDirection(const std::string& path);
 	static void sortByFileNumber(txVector<std::string>& fileList);
@@ -30,10 +31,13 @@ public:
 	static void autoGroupWeaponImage(const std::string& path);
 	static void autoGroupMonsterImage0(const std::string& path);
 	static void autoGroupMonsterImage1(const std::string& path);
+	static void autoGroupEffectImage(const std::string& path);
 	static bool getHumanActionInfo(int index, std::string& actionName, int& dir, int& frameIndex);
 	static void moveImageWithPosition(const std::string& fullFileName, const std::string& destFullFileName);
 	static void renameImageWithPosition(const std::string& fullFileName, const std::string& destFullFileName);
 	static void deleteImageWithPosition(const std::string& fullFileName);
+	static void deleteInvalidImage(const std::string& path);
+	static bool isInvalidImage(const std::string& fileName);
 };
 
 #endif
