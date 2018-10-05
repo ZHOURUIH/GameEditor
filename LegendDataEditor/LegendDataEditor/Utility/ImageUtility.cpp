@@ -632,11 +632,13 @@ void ImageUtility::moveImageWithPosition(const std::string& fullFileName, const 
 	std::string destFileNameNoSuffix = StringUtility::getFileNameNoSuffix(destFullFileName);
 	std::string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
 	std::string destPath = StringUtility::getFilePath(destFullFileName) + "/";
-	FileUtility::moveFile(fullFileName, destFullFileName);
+	moveFileWithMeta(fullFileName, destFullFileName);
+	// 如果有同名位置文件,也需要一起移动
 	std::string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
 	if (FileUtility::isFileExist(positionFileName))
 	{
-		FileUtility::moveFile(positionFileName, destPath + destFileNameNoSuffix + ".txt");
+		std::string destPosFileName = destPath + destFileNameNoSuffix + ".txt";
+		moveFileWithMeta(positionFileName, destPosFileName);
 	}
 }
 
@@ -646,12 +648,13 @@ void ImageUtility::renameImageWithPosition(const std::string& fullFileName, cons
 	std::string destFileNameNoSuffix = StringUtility::getFileNameNoSuffix(destFullFileName);
 	std::string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
 	std::string destPath = StringUtility::getFilePath(destFullFileName) + "/";
-	FileUtility::renameFile(fullFileName, destFullFileName);
-	// 如果有同名位置文件,则也需要一起重命名
+	renameFileWithMeta(fullFileName, destFullFileName);
+	// 如果有同名位置文件,也需要一起重命名
 	std::string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
 	if (FileUtility::isFileExist(positionFileName))
 	{
-		FileUtility::renameFile(positionFileName, destPath + destFileNameNoSuffix  + ".txt");
+		std::string destPosFileName = destPath + destFileNameNoSuffix + ".txt";
+		renameFileWithMeta(positionFileName, destPosFileName);
 	}
 }
 
@@ -659,12 +662,45 @@ void ImageUtility::deleteImageWithPosition(const std::string& fullFileName)
 {
 	std::string sourceFileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
 	std::string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
-	FileUtility::deleteFile(fullFileName);
-	// 如果有同名位置文件,则也需要一起重命名
+	deleteFileWithMeta(fullFileName);
+	// 如果有同名位置文件,也需要一起删除
 	std::string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
 	if (FileUtility::isFileExist(positionFileName))
 	{
-		FileUtility::deleteFile(positionFileName);
+		deleteFileWithMeta(positionFileName);
+	}
+}
+
+void ImageUtility::moveFileWithMeta(const std::string& fullFileName, const std::string& destFullFileName)
+{
+	// 移动文件和同名meta文件
+	FileUtility::moveFile(fullFileName, destFullFileName);
+	std::string metaFile = fullFileName + ".meta";
+	if (FileUtility::isFileExist(metaFile))
+	{
+		FileUtility::moveFile(metaFile, destFullFileName + ".meta");
+	}
+}
+
+void ImageUtility::renameFileWithMeta(const std::string& fullFileName, const std::string& destFullFileName)
+{
+	// 重命名文件和同名meta文件
+	FileUtility::renameFile(fullFileName, destFullFileName);
+	std::string metaFile = fullFileName + ".meta";
+	if (FileUtility::isFileExist(metaFile))
+	{
+		FileUtility::renameFile(metaFile, destFullFileName + ".meta");
+	}
+}
+
+void ImageUtility::deleteFileWithMeta(const std::string& fullFileName)
+{
+	// 删除文件和同名meta文件
+	FileUtility::deleteFile(fullFileName);
+	std::string metaFile = fullFileName + ".meta";
+	if (FileUtility::isFileExist(metaFile))
+	{
+		FileUtility::deleteFile(metaFile);
 	}
 }
 

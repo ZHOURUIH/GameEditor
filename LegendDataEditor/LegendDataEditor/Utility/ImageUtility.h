@@ -36,6 +36,9 @@ public:
 	static void moveImageWithPosition(const std::string& fullFileName, const std::string& destFullFileName);
 	static void renameImageWithPosition(const std::string& fullFileName, const std::string& destFullFileName);
 	static void deleteImageWithPosition(const std::string& fullFileName);
+	static void moveFileWithMeta(const std::string& fullFileName, const std::string& destFullFileName);
+	static void renameFileWithMeta(const std::string& fullFileName, const std::string& destFullFileName);
+	static void deleteFileWithMeta(const std::string& fullFileName);
 	static void deleteInvalidImage(const std::string& path);
 	static bool isInvalidImage(const std::string& fileName);
 };

@@ -42,11 +42,21 @@ std::string StringUtility::getFileName(std::string str)
 	return str;
 }
 
-std::string StringUtility::getFileNameNoSuffix(std::string str)
+std::string StringUtility::getFileNameNoSuffix(std::string str, bool endSuffix)
 {
 	rightToLeft(str);
 	int namePos = str.find_last_of('/');
-	int dotPos = str.find_last_of('.');
+	int dotPos = -1;
+	// 从最后一个.到文件名结尾认为是后缀名
+	if (endSuffix)
+	{
+		dotPos = str.find_last_of('.');
+	}
+	// 从第一个.到文件名结尾认为是后缀名
+	else
+	{
+		dotPos = str.find_first_of('.', namePos);
+	}
 	if (dotPos != -1)
 	{
 		return str.substr(namePos + 1, dotPos - namePos - 1);
