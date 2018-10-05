@@ -5,22 +5,28 @@ void EffectImage::setFileName(const std::string& fileName)
 {
 	txVector<std::string> elemList;
 	StringUtility::split(fileName, "_", elemList);
-	if (elemList.size() == 3)
+	if (elemList.size() > 2)
 	{
-		// 包含方向信息的,计算方向
-		if (StringUtility::getNotNumberSubString(elemList[1]) == "dir")
-		{
-			mEffectName = elemList[0];
-			mDirection = StringUtility::getLastNumber(elemList[1]);
-			mFrameIndex = StringUtility::stringToInt(elemList[2]);
+		int nameElemCount = 0;
+		// 倒数第二个是方向信息的,计算方向,方向前面是特效名
+		if (StringUtility::getNotNumberSubString(elemList[elemList.size() - 2]) == "dir")
+		{	
+			nameElemCount = elemList.size() - 2;
+			mDirection = StringUtility::getLastNumber(elemList[elemList.size() - 2]);
 		}
-		// 不包含方向信息的,前两部分作为特效名
+		// 不包含方向信息,下标前都是特效名
 		else
 		{
-			mEffectName = elemList[0] + "_" + elemList[1];
+			nameElemCount = elemList.size() - 1;
 			mDirection = 0;
-			mFrameIndex = StringUtility::stringToInt(elemList[2]);
 		}
+		mEffectName = "";
+		for (int i = 0; i < nameElemCount; ++i)
+		{
+			mEffectName += elemList[0] + "_";
+		}
+		StringUtility::removeLast(mEffectName, "_");
+		mFrameIndex = StringUtility::stringToInt(elemList[elemList.size() - 1]);
 	}
 	else if (elemList.size() == 2)
 	{
