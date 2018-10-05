@@ -6,6 +6,7 @@
 #include "WeaponAction.h"
 #include "HumanAction.h"
 #include "MonsterAction.h"
+#include "EffectFrame.h"
 
 class SQLite;
 class ImageUtility
@@ -27,6 +28,7 @@ public:
 	static void writeSQLite(txMap<std::string, WeaponActionSet>& actionSetList, SQLite* sqlite);
 	static void writeSQLite(txMap<std::string, HumanActionSet>& actionSetList, SQLite* sqlite);
 	static void writeSQLite(txMap<std::string, MonsterActionSet>& actionSetList, SQLite* sqlite);
+	static void writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQLite* sqlite);
 	static void autoGroupHumanImage(const std::string& path);
 	static void autoGroupWeaponImage(const std::string& path);
 	static void autoGroupMonsterImage0(const std::string& path);
@@ -41,6 +43,7 @@ public:
 	static void deleteFileWithMeta(const std::string& fullFileName);
 	static void deleteInvalidImage(const std::string& path);
 	static bool isInvalidImage(const std::string& fileName);
+	static POINT getImagePosition(const std::string& imagePath);
 };
 
 #endif

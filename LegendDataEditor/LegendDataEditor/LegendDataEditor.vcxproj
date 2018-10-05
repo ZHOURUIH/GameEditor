@@ -97,6 +97,8 @@
     <ClCompile Include="Sqlite\SQLiteTable.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteCloth.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteClothFrame.cpp" />
+    <ClCompile Include="Sqlite\Table\SQLiteEffect.cpp" />
+    <ClCompile Include="Sqlite\Table\SQLiteEffectFrame.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteMonster.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteMonsterFrame.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteWeapon.cpp" />
@@ -105,6 +107,7 @@
     <ClCompile Include="Thread\ThreadLock.cpp" />
     <ClCompile Include="Thread\TimeLock.cpp" />
     <ClCompile Include="Utility\BinaryUtility.cpp" />
+    <ClCompile Include="Utility\EffectImage.cpp" />
     <ClCompile Include="Utility\FileUtility.cpp" />
     <ClCompile Include="Utility\HumanImage.cpp" />
     <ClCompile Include="Utility\ImageUtility.cpp" />
@@ -137,6 +140,8 @@
     <ClInclude Include="Sqlite\SQLiteTable.h" />
     <ClInclude Include="Sqlite\Table\SQLiteCloth.h" />
     <ClInclude Include="Sqlite\Table\SQLiteClothFrame.h" />
+    <ClInclude Include="Sqlite\Table\SQLiteEffect.h" />
+    <ClInclude Include="Sqlite\Table\SQLiteEffectFrame.h" />
     <ClInclude Include="Sqlite\Table\SQLiteMonster.h" />
     <ClInclude Include="Sqlite\Table\SQLiteMonsterFrame.h" />
     <ClInclude Include="Sqlite\Table\SQLiteWeapon.h" />
@@ -149,6 +154,8 @@
     <ClInclude Include="Thread\ThreadLock.h" />
     <ClInclude Include="Thread\TimeLock.h" />
     <ClInclude Include="Utility\BinaryUtility.h" />
+    <ClInclude Include="Utility\EffectFrame.h" />
+    <ClInclude Include="Utility\EffectImage.h" />
     <ClInclude Include="Utility\FileUtility.h" />
     <ClInclude Include="Utility\HumanAction.h" />
     <ClInclude Include="Utility\HumanImage.h" />

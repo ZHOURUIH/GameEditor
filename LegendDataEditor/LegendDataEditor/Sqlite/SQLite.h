@@ -9,6 +9,8 @@ class SQLiteWeapon;
 class SQLiteWeaponFrame;
 class SQLiteMonster;
 class SQLiteMonsterFrame;
+class SQLiteEffect;
+class SQLiteEffectFrame;
 class SQLiteDataReader;
 class SQLite
 {
@@ -20,6 +22,8 @@ public:
 	SQLiteWeaponFrame* mSQLiteWeaponFrame;
 	SQLiteMonster* mSQLiteMonster;
 	SQLiteMonsterFrame* mSQLiteMonsterFrame;
+	SQLiteEffect* mSQLiteEffect;
+	SQLiteEffectFrame* mSQLiteEffectFrame;
 public:
 	SQLite(const std::string& dbFileName);
 	~SQLite() { destroy(); }

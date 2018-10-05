@@ -9,6 +9,8 @@
 #include "SQLiteMonsterFrame.h"
 #include "SQLiteWeapon.h"
 #include "SQLiteWeaponFrame.h"
+#include "SQLiteEffect.h"
+#include "SQLiteEffectFrame.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 
@@ -279,6 +281,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 {
 	if (imageType == IT_MONSTER)
 	{
+		// 第一级文件夹是每个怪物的分类,每个怪物文件夹中有该怪物所有动作的所有方向的序列帧
 		// 查找文件夹中的所有图片
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
@@ -291,19 +294,11 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 			int fileCount = fileList.size();
 			for (int j = 0; j < fileCount; ++j)
 			{
-				std::string posFileName = StringUtility::getFilePath(fileList[j]) + "/" + StringUtility::getFileNameNoSuffix(fileList[j]) + ".txt";
-				std::string posFile = FileUtility::openTxtFile(posFileName);
-				txVector<int> posValue;
-				StringUtility::stringToIntArray(posFile, posValue);
-				if (posValue.size() != 2)
-				{
-					std::cout << "位置文件内容错误 : " << fileList[j] << std::endl;
-					break;
-				}
+				POINT pos = getImagePosition(fileList[j]);
 				MonsterImage monsterImage;
 				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
-				monsterImage.mPosX = posValue[0];
-				monsterImage.mPosY = posValue[1];
+				monsterImage.mPosX = pos.x;
+				monsterImage.mPosY = pos.y;
 				monsterImage.mMonsterID = i + 1;
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
@@ -314,6 +309,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 	}
 	else if (imageType == IT_HUMAN)
 	{
+		// 第一级文件夹是每个衣服的分类,每个衣服文件夹中有该衣服所有动作的所有方向的序列帧
 		// 查找文件夹中的所有图片
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
@@ -326,19 +322,11 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 			int fileCount = fileList.size();
 			for (int j = 0; j < fileCount; ++j)
 			{
-				std::string posFileName = StringUtility::getFilePath(fileList[j]) + "/" + StringUtility::getFileNameNoSuffix(fileList[j]) + ".txt";
-				std::string posFile = FileUtility::openTxtFile(posFileName);
-				txVector<int> posValue;
-				StringUtility::stringToIntArray(posFile, posValue);
-				if (posValue.size() != 2)
-				{
-					std::cout << "位置文件内容错误 : " << fileList[j] << std::endl;
-					break;
-				}
+				POINT pos = getImagePosition(fileList[j]);
 				HumanImage monsterImage;
 				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
-				monsterImage.mPosX = posValue[0];
-				monsterImage.mPosY = posValue[1];
+				monsterImage.mPosX = pos.x;
+				monsterImage.mPosY = pos.y;
 				monsterImage.mClothID = i + 1;
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
@@ -349,6 +337,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 	}
 	else if (imageType == IT_WEAPON)
 	{
+		// 第一级文件夹是每个武器的分类,每个武器文件夹中有该武器所有动作的所有方向的序列帧
 		// 查找文件夹中的所有图片
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
@@ -361,25 +350,45 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 			int fileCount = fileList.size();
 			for (int j = 0; j < fileCount; ++j)
 			{
-				std::string posFileName = StringUtility::getFilePath(fileList[j]) + "/" + StringUtility::getFileNameNoSuffix(fileList[j]) + ".txt";
-				std::string posFile = FileUtility::openTxtFile(posFileName);
-				txVector<int> posValue;
-				StringUtility::stringToIntArray(posFile, posValue);
-				if (posValue.size() != 2)
-				{
-					std::cout << "位置文件内容错误 : " << fileList[j] << std::endl;
-					break;
-				}
+				POINT pos = getImagePosition(fileList[j]);
 				WeaponImage monsterImage;
 				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
-				monsterImage.mPosX = posValue[0];
-				monsterImage.mPosY = posValue[1];
+				monsterImage.mPosX = pos.x;
+				monsterImage.mPosY = pos.y;
 				monsterImage.mWeaponID = i + 1;
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
 			// 按序列帧来分组,整理数据后写入数据库
 			writeSQLite(imageGroup.mAllAction, sqlite);
+		}
+	}
+	else if (imageType == IT_EFFECT)
+	{
+		// 第一级文件夹是每个特效的分类,每个特效文件夹中有该特效所有方向的序列帧,部分特效只有1个方向
+		// 查找文件夹中的所有图片
+		txVector<std::string> folderList;
+		FileUtility::findFolders(path, folderList);
+		int folderCount = folderList.size();
+		for (int i = 0; i < folderCount; ++i)
+		{
+			EffectImageGroup imageGroup;
+			txVector<std::string> fileList;
+			FileUtility::findFiles(folderList[i], fileList, ".png");
+			int fileCount = fileList.size();
+			for (int j = 0; j < fileCount; ++j)
+			{
+				POINT pos = getImagePosition(fileList[j]);
+				EffectImage effectImage;
+				effectImage.mLabel = StringUtility::getFileName(folderList[i]);
+				effectImage.mPosX = pos.x;
+				effectImage.mPosY = pos.y;
+				effectImage.mID = i + 1;
+				effectImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
+				imageGroup.addImage(effectImage);
+			}
+			// 按序列帧来分组,整理数据后写入数据库
+			writeSQLite(imageGroup.mAllEffect, sqlite);
 		}
 	}
 }
@@ -471,6 +480,38 @@ void ImageUtility::writeSQLite(txMap<std::string, MonsterActionSet>& actionSetLi
 				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
 			}
 			bool ret = sqlite->mSQLiteMonsterFrame->insertOrUpdate(data);
+			if (!ret)
+			{
+				break;
+			}
+		}
+	}
+}
+
+void ImageUtility::writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQLite* sqlite)
+{
+	auto iter = actionSetList.begin();
+	auto iterEnd = actionSetList.end();
+	for (; iter != iterEnd; ++iter)
+	{
+		// 遍历该动作的所有方向
+		auto iterDir = iter->second.mDirectionAction.begin();
+		auto iterDirEnd = iter->second.mDirectionAction.end();
+		for(; iterDir != iterDirEnd; ++iterDir)
+		{
+			EffectAnim& effectAnim = iterDir->second;
+			EffectFrameData data;
+			data.mID = effectAnim.mImageFrame[0].mID;
+			data.mLabel = StringUtility::ANSIToUTF8(effectAnim.mImageFrame[0].mLabel);
+			data.mDirection = iterDir->first;
+			data.mFrameCount = effectAnim.mImageFrame.size();
+			// 遍历该动作的所有帧数
+			for (int kk = 0; kk < data.mFrameCount; ++kk)
+			{
+				data.mPosX.push_back(effectAnim.mImageFrame[kk].mPosX);
+				data.mPosY.push_back(effectAnim.mImageFrame[kk].mPosY);
+			}
+			bool ret = sqlite->mSQLiteEffectFrame->insertOrUpdate(data);
 			if (!ret)
 			{
 				break;
@@ -730,4 +771,23 @@ bool ImageUtility::isInvalidImage(const std::string& fileName)
 	FreeImage_Unload(bitmap);
 	FreeImage_DeInitialise();
 	return width * height > 4;
+}
+
+POINT ImageUtility::getImagePosition(const std::string& imageFullPath)
+{
+	POINT pos;
+	std::string posFileName = StringUtility::getFilePath(imageFullPath) + "/" + StringUtility::getFileNameNoSuffix(imageFullPath) + ".txt";
+	std::string posFile = FileUtility::openTxtFile(posFileName);
+	txVector<int> posValue;
+	StringUtility::stringToIntArray(posFile, posValue);
+	if (posValue.size() == 2)
+	{
+		pos.x = posValue[0];
+		pos.y = posValue[1];
+	}
+	else
+	{
+		std::cout << "位置文件内容错误 : " << imageFullPath << std::endl;
+	}
+	return pos;
 }

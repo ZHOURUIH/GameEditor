@@ -109,6 +109,12 @@ int StringUtility::getLastNotNumberPos(const std::string& str)
 	return -1;
 }
 
+std::string StringUtility::getNotNumberSubString(const std::string& str)
+{
+	int notNumPos = getLastNotNumberPos(str);
+	return str.substr(0, notNumPos + 1);
+}
+
 int StringUtility::getLastNumber(const std::string& str)
 {
 	int lastPos = getLastNotNumberPos(str);

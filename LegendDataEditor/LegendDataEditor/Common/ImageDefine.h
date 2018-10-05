@@ -78,6 +78,7 @@ enum IMAGE_TYPE
 	IT_HUMAN,
 	IT_WEAPON,
 	IT_MONSTER,
+	IT_EFFECT,
 };
 
 #endif

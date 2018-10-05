@@ -18,6 +18,7 @@ public:
 	static std::string getFileSuffix(const std::string& fileName, bool includeDot = false);
 	// 获得字符串最后不是数字的下标
 	static int getLastNotNumberPos(const std::string& str);
+	static std::string getNotNumberSubString(const std::string& str);
 	// 获得字符串结尾的数字
 	static int getLastNumber(const std::string& str);
 	static void split(std::string str, const std::string& deli, txVector<std::string>& vec, bool removeEmpty = true);

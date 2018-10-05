@@ -16,6 +16,7 @@ void main()
 7:将角色文件帧数据写入SQLite \n\
 8:将武器文件帧数据写入SQLite \n\
 9:将怪物文件帧数据写入SQLite \n\
+10:将特效文件帧数据写入SQLite \n\
 17:自动计算方向并分组 \n\
 18:拆分位置文件 \n\
 19:删除无效图片 \n\
@@ -138,6 +139,19 @@ void main()
 			std::string filePath = "../media/" + fileName;
 			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
 			ImageUtility::saveFrameInfo(filePath, IT_MONSTER, mSQLite);
+			TRACE_DELETE(mSQLite);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 10)
+		{
+			std::cout << "输入文件名:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始将特效文件帧数据写入SQLite..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/" + fileName;
+			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+			ImageUtility::saveFrameInfo(filePath, IT_EFFECT, mSQLite);
 			TRACE_DELETE(mSQLite);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
