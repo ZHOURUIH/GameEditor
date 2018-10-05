@@ -18,6 +18,15 @@ void SQLiteEffectFrame::query(int ID, int direction, txVector<EffectFrameData>& 
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
+void SQLiteEffectFrame::query(int ID, int direction, const std::string& action, txVector<EffectFrameData>& dataList)
+{
+	std::string conditionString;
+	appendConditionInt(conditionString, COL_ID, ID, " and ");
+	appendConditionString(conditionString, COL_ACTION, action, " and ");
+	appendConditionInt(conditionString, COL_DIRECTION, direction, "");
+	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
+	parseReader(mSQLite->executeQuery(queryStr), dataList);
+}
 bool SQLiteEffectFrame::updateData(const EffectFrameData& data)
 {
 	std::string updateString;
@@ -27,6 +36,7 @@ bool SQLiteEffectFrame::updateData(const EffectFrameData& data)
 	std::string conditionString;
 	appendConditionInt(conditionString, COL_ID, data.mID, " and ");
 	appendConditionInt(conditionString, COL_DIRECTION, data.mDirection, " and ");
+	appendConditionString(conditionString, COL_ACTION, data.mAction, "");
 	return doUpdate(updateString, conditionString);
 }
 
@@ -36,6 +46,7 @@ bool SQLiteEffectFrame::insert(const EffectFrameData& data)
 	appendValueInt(valueString, data.mID);
 	appendValueString(valueString, data.mLabel);
 	appendValueInt(valueString, data.mDirection);
+	appendValueString(valueString, data.mAction);
 	appendValueInt(valueString, data.mFrameCount);
 	appendValueIntArray(valueString, data.mPosX);
 	appendValueIntArray(valueString, data.mPosY, true);
@@ -46,7 +57,7 @@ bool SQLiteEffectFrame::insertOrUpdate(const EffectFrameData& data)
 {
 	bool ret = false;
 	txVector<EffectFrameData> tempList;
-	query(data.mID, data.mDirection, tempList);
+	query(data.mID, data.mDirection, data.mAction, tempList);
 	if (tempList.size() == 0)
 	{
 		ret = insert(data);
@@ -66,6 +77,7 @@ void SQLiteEffectFrame::parseReader(SQLiteDataReader* reader, txVector<EffectFra
 		data.mID = reader->getInt(getCol(COL_ID));
 		data.mLabel = reader->getString(getCol(COL_LABEL));
 		data.mDirection = reader->getInt(getCol(COL_DIRECTION));
+		data.mAction = reader->getString(getCol(COL_ACTION));
 		data.mFrameCount = reader->getInt(getCol(COL_FRAME_COUNT));
 		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSX)), data.mPosX);
 		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSY)), data.mPosY);

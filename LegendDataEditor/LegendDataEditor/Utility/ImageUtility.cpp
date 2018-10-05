@@ -505,6 +505,7 @@ void ImageUtility::writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQL
 			data.mLabel = StringUtility::ANSIToUTF8(effectAnim.mImageFrame[0].mLabel);
 			data.mDirection = iterDir->first;
 			data.mFrameCount = effectAnim.mImageFrame.size();
+			data.mAction = iter->first;
 			// 遍历该动作的所有帧数
 			for (int kk = 0; kk < data.mFrameCount; ++kk)
 			{

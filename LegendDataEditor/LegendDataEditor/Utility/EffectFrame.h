@@ -41,11 +41,11 @@ public:
 public:
 	void addImage(const EffectImage& image)
 	{
-		if (!mAllEffect.contains(image.mEffectName))
+		if (!mAllEffect.contains(image.mActionName))
 		{
-			mAllEffect.insert(image.mEffectName, EffectSet());
+			mAllEffect.insert(image.mActionName, EffectSet());
 		}
-		mAllEffect[image.mEffectName].addFrame(image);
+		mAllEffect[image.mActionName].addFrame(image);
 	}
 };
 
