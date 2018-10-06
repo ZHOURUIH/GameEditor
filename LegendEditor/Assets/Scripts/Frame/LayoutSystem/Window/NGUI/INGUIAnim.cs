@@ -10,11 +10,13 @@ public interface INGUIAnimation
 {
 	string getTextureSet();
 	int getTextureFrameCount();
+	void setTexturePosList(List<Vector2> posList);
 	void setUseTextureSize(bool useSize);
 	void setTextureSet(string textureSetName);
 	void setTextureSet(string textureSetName, string subPath);
 	LOOP_MODE getLoop();
 	float getInterval();
+	float getSpeed();
 	int getStartIndex();
 	PLAY_STATE getPlayState();
 	bool getPlayDirection();
@@ -27,6 +29,7 @@ public interface INGUIAnimation
 	void setAutoHide(bool autoHide);
 	void setStartIndex(int startIndex);
 	void setEndIndex(int endIndex);
+	void setSpeed(float speed);
 	void stop(bool resetStartIndex = true, bool callback = true, bool isBreak = true);
 	void play();
 	void pause();

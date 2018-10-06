@@ -10,6 +10,8 @@ public enum LAYOUT_TYPE
 	LT_OBJECT_EDITOR,
 	LT_SCENE_EDITOR,
 	LT_EDITOR_SELECT,
+	LT_EFFECT_TEXTURE_EDITOR,
+	LT_EFFECT_SPRITE_EDITOR,
 	LT_MAX,
 };
 // 音效定义
@@ -33,6 +35,8 @@ public enum PROCEDURE_TYPE
 	PT_START_MIN,
 	PT_START_EDITOR_SELECT,
 	PT_START_OBJECT_EDITOR,
+	PT_START_EFFECT_TEXTURE_EDITOR,
+	PT_START_EFFECT_SPRITE_EDITOR,
 	PT_START_SCENE_EDITOR,
 	PT_START_EXIT,
 	PT_START_MAX,
@@ -102,4 +106,5 @@ public class GameDefine : CommonDefine
 	//-----------------------------------------------------------------------------------------------------------------
 	public const int DIRECTION_COUNT = 8;
 	public const int MAX_OCCUPATION = 6;
+	public const float NORMAL_ANIM_SPEED = 0.25f;   // 动作的正常播放速度
 }

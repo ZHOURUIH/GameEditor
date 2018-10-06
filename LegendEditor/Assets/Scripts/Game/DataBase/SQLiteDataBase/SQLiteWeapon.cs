@@ -23,10 +23,10 @@ public class SQLiteWeapon : SQLiteTable
 	public SQLiteWeapon(SQLite sqlite)
 		:base("Weapon", sqlite)
 	{}
-	public void query(int weaponID, out WeaponData data)
+	public void query(int id, out WeaponData data)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, weaponID, "");
+		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
 	public void insert(WeaponData data)

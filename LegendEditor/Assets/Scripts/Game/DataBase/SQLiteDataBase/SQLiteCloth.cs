@@ -25,10 +25,10 @@ public class SQLiteCloth : SQLiteTable
 	{
 		;
 	}
-	public void query(int clothID, out ClothData data)
+	public void query(int id, out ClothData data)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, clothID, "");
+		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
 

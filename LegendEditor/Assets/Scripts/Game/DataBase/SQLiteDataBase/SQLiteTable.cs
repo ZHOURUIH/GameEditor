@@ -13,6 +13,11 @@ public class SQLiteTable
 		mTableName = name;
 		mSQLite = sqlite;
 	}
+	public SqliteDataReader doQuery()
+	{
+		string queryStr = "SELECT * FROM " + mTableName;
+		return mSQLite.queryReader(queryStr);
+	}
 	public SqliteDataReader doQuery(string condition)
 	{
 		string queryStr = "SELECT * FROM " + mTableName + " WHERE " + condition;
@@ -52,6 +57,10 @@ public class SQLiteTable
 	{
 		appendValueString(ref queryStr, StringUtility.floatArrayToString(floatArray), isEnd);
 	}
+	public void appendValueIntArray(ref string queryStr, List<int> intArray, bool isEnd = false)
+	{
+		appendValueString(ref queryStr, StringUtility.intArrayToString(intArray), isEnd);
+	}
 	public void appendConditionString(ref string condition, string col, string str, string operate)
 	{
 		condition += col + " = " + "\"" + str + "\"" + operate;
@@ -75,6 +84,10 @@ public class SQLiteTable
 		{
 			updateInfo += ",";
 		}
+	}
+	public void appendUpdateIntArray(ref string updateInfo, string col, List<int> intArray, bool isEnd = false)
+	{
+		appendUpdateString(ref updateInfo, col, StringUtility.intArrayToString(intArray), isEnd);
 	}
 	public void appendUpdateFloatArray(ref string updateInfo, string col, List<float> floatArray, bool isEnd = false)
 	{

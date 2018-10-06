@@ -35,7 +35,7 @@ public class UITextureInspector : UIBasicSpriteEditor
 		{
 			NGUIEditorTools.DrawProperty("Shader", serializedObject, "mShader");
 		}
-		mTex.mUserData = EditorGUILayout.TextField("UserData", mTex.mUserData);
+		mTex.mSubPath = EditorGUILayout.TextField("SubPath", mTex.mSubPath);
 
 		EditorGUI.BeginDisabledGroup(mTex == null || mTex.mainTexture == null || serializedObject.isEditingMultipleObjects);
 

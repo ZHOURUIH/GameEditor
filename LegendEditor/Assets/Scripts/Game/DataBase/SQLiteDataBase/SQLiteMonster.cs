@@ -21,10 +21,10 @@ public class SQLiteMonster : SQLiteTable
 	public SQLiteMonster(SQLite sqlite)
 		:base("Monster", sqlite)
 	{}
-	public void query(int monsterID, out MonsterData data)
+	public void query(int id, out MonsterData data)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, monsterID, "");
+		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
 	public void insert(MonsterData data)

@@ -16,6 +16,8 @@ public class GameBase : FrameBase
 	public static ScriptObjectEditor mScriptObjectEditor;
 	public static ScriptSceneEditor mScriptSceneEditor;
 	public static ScriptEditorSelect mScriptEditorSelect;
+	public static ScriptEffectTextureEditor mScriptEffectTextureEditor;
+	public static ScriptEffectSpriteEditor mScriptEffectSpriteEditor;
 	public override void notifyConstructDone()
 	{
 		base.notifyConstructDone();

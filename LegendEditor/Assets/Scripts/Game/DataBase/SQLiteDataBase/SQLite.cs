@@ -13,6 +13,8 @@ public class SQLite : FrameComponent
 	public SQLiteWeaponFrame mSQLiteWeaponFrame;
 	public SQLiteMonster mSQLiteMonster;
 	public SQLiteMonsterFrame mSQLiteMonsterFrame;
+	public SQLiteEffect mSQLiteEffect;
+	public SQLiteEffectFrame mSQLiteEffectFrame;
 	public SQLite(string name)
 		:base(name)
 	{
@@ -26,6 +28,8 @@ public class SQLite : FrameComponent
 		mSQLiteWeaponFrame = new SQLiteWeaponFrame(this);
 		mSQLiteMonster = new SQLiteMonster(this);
 		mSQLiteMonsterFrame = new SQLiteMonsterFrame(this);
+		mSQLiteEffect = new SQLiteEffect(this);
+		mSQLiteEffectFrame = new SQLiteEffectFrame(this);
 }
 	public override void init()
 	{

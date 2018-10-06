@@ -9,6 +9,7 @@ using UnityEngine;
 public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 {
 	protected List<Texture> mTextureNameList;
+	protected List<Vector2> mTexturePosList;
 	protected string mTextureSetName;
 	protected string mSubPath;
 	protected bool mUseTextureSize;
@@ -51,6 +52,8 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 	public int getTextureFrameCount() { return mTextureNameList.Count; }
 	public void setUseTextureSize(bool useSize) { mUseTextureSize = useSize; }
 	public void setSubPath(string subPath) { mSubPath = subPath; }
+	public string getSubPath() { return mSubPath; }
+	public void setTexturePosList(List<Vector2> posList) { mTexturePosList = posList; }
 	public void setTextureSet(string textureSetName)
 	{
 		setTextureSet(textureSetName, mSubPath);
@@ -81,9 +84,14 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 			mTextureNameList.Add(tex);
 		}
 		mControl.setFrameCount(getTextureFrameCount());
+		if(mTextureNameList.Count == 0)
+		{
+			logError("invalid texture set! " + textureSetName + ", subPath : " + subPath);
+		}
 	}
 	public LOOP_MODE getLoop() { return mControl.getLoop(); }
 	public float getInterval() { return mControl.getInterval(); }
+	public float getSpeed() { return mControl.getSpeed(); }
 	public int getStartIndex() { return mControl.getStartIndex(); }
 	public PLAY_STATE getPlayState() { return mControl.getPlayState(); }
 	public bool getPlayDirection() { return mControl.getPlayDirection(); }
@@ -93,6 +101,7 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 	public int getRealEndIndex() { return mControl.getRealEndIndex(); }
 	public void setLoop(LOOP_MODE loop) { mControl.setLoop(loop); }
 	public void setInterval(float interval) { mControl.setInterval(interval); }
+	public void setSpeed(float speed) { mControl.setSpeed(speed); }
 	public void setPlayDirection(bool direction) { mControl.setPlayDirection(direction); }
 	public void setAutoHide(bool autoHide) { mControl.setAutoHide(autoHide); }
 	public void setStartIndex(int startIndex) { mControl.setStartIndex(startIndex); }
@@ -125,6 +134,11 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 	protected void onPlaying(AnimControl control, int frame, bool isPlaying)
 	{
 		setTexture(mTextureNameList[mControl.getCurFrameIndex()], mUseTextureSize);
+		if(mTexturePosList != null)
+		{
+			int positionIndex = (int)(frame / (float)mTextureNameList.Count * mTexturePosList.Count + 0.5f);
+			setLocalPosition(mTexturePosList[positionIndex]);
+		}
 		foreach (var item in mPlayingCallback)
 		{
 			item(this, false);

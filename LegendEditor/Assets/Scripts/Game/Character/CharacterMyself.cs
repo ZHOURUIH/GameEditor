@@ -8,12 +8,6 @@ public class CharacterMyself : CharacterOther
 		:
 		base(type, name)
 	{}
-	public override void initComponents()
-	{
-		base.initComponents();
-		addComponent<CharacterAvatar>("Avatar", true);
-		addComponent<CharacterControlMyself>("Control");
-	}
 	public override void update(float elapsedTime)
 	{
 		base.update(elapsedTime);

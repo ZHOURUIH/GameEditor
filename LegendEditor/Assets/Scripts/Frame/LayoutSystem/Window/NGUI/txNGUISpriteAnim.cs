@@ -7,6 +7,7 @@ using UnityEngine;
 public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 {
 	protected List<string> mTextureNameList;
+	protected List<Vector2> mTexturePosList;
 	protected string mTextureSetName;
 	protected bool mUseTextureSize;
 	protected List<TextureAnimCallBack> mPlayEndCallback;  // 一个序列播放完时的回调函数,只在非循环播放状态下有效
@@ -41,6 +42,7 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 	public string getTextureSet() { return mTextureSetName; }
 	public int getTextureFrameCount() { return mTextureNameList.Count; }
 	public void setUseTextureSize(bool useSize) { mUseTextureSize = useSize; }
+	public void setTexturePosList(List<Vector2> posList) { mTexturePosList = posList; }
 	public void setTextureSet(string textureSetName)
 	{
 		setTextureSet(textureSetName, "");
@@ -78,6 +80,7 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 	}
 	public LOOP_MODE getLoop() { return mControl.getLoop(); }
 	public float getInterval() { return mControl.getInterval(); }
+	public float getSpeed() { return mControl.getSpeed(); }
 	public int getStartIndex() { return mControl.getStartIndex(); }
 	public PLAY_STATE getPlayState() { return mControl.getPlayState(); }
 	public bool getPlayDirection() { return mControl.getPlayDirection(); }
@@ -87,6 +90,7 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 	public int getRealEndIndex() { return mControl.getRealEndIndex(); }
 	public void setLoop(LOOP_MODE loop) { mControl.setLoop(loop); }
 	public void setInterval(float interval) { mControl.setInterval(interval); }
+	public void setSpeed(float speed) { mControl.setSpeed(speed); }
 	public void setPlayDirection(bool direction) { mControl.setPlayDirection(direction); }
 	public void setAutoHide(bool autoHide) { mControl.setAutoHide(autoHide); }
 	public void setStartIndex(int startIndex) { mControl.setStartIndex(startIndex); }
@@ -118,6 +122,11 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 	protected void onPlaying(AnimControl control, int frame, bool isPlaying)
 	{
 		setSpriteName(mTextureNameList[mControl.getCurFrameIndex()], mUseTextureSize);
+		if (mTexturePosList != null)
+		{
+			int positionIndex = (int)(frame / (float)mTextureNameList.Count * mTexturePosList.Count + 0.5f);
+			setLocalPosition(mTexturePosList[positionIndex]);
+		}
 		foreach (var item in mPlayingCallback)
 		{
 			item(this, false);
