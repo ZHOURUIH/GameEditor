@@ -25,6 +25,7 @@ public class FrameBase
 	public static SceneSystem				mSceneSystem			= null;
 	public static IFrameLogSystem			mFrameLogSystem			= null;
 	public static ClassObjectPool			mClassObjectPool		= null;
+	public static LocalLog					mLocalLog				= null;
 	public virtual void notifyConstructDone()
 	{
 		if (mGameFramework == null)

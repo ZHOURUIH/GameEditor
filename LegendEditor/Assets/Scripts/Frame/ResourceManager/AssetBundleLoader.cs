@@ -33,6 +33,7 @@ public class AssetBundleLoader : GameBase
 			registeSuffix(typeof(AudioClip), ".wav");
 			registeSuffix(typeof(AudioClip), ".mp3");
 			registeSuffix(typeof(TextAsset), ".txt");
+			registeSuffix(typeof(UIAtlas), ".prefab");
 			registeSuffix(typeof(RuntimeAnimatorController), ".controller");
 		}
 	}
@@ -93,7 +94,7 @@ public class AssetBundleLoader : GameBase
 	{
 		if(mRequestBundleList.Count > 0 && mAssetBundleCoroutineCount < MAX_ASSET_BUNDLE_COROUTINE)
 		{
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_IPHONE || UNITY_IOS
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_IPHONE || UNITY_IOS || UNITY_STANDALONE_LINUX
 			bool loadFromWWW = false;
 #elif UNITY_ANDROID
 			bool loadFromWWW = true;
@@ -360,7 +361,7 @@ public class AssetBundleLoader : GameBase
 		// 通过www加载
 		if (loadFromWWW)
 		{
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_IPHONE || UNITY_IOS
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_IPHONE || UNITY_IOS || UNITY_STANDALONE_LINUX
 			string path = "file:\\" + CommonDefine.F_STREAMING_ASSETS_PATH + bundleInfo.mBundleName + CommonDefine.ASSET_BUNDLE_SUFFIX;
 #elif UNITY_ANDROID
 			string path = CommonDefine.F_STREAMING_ASSETS_PATH + bundleInfo.mBundleName + CommonDefine.ASSET_BUNDLE_SUFFIX;
