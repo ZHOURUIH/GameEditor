@@ -8,9 +8,12 @@ public class SQLiteTable
 {
 	protected string mTableName;
 	protected SQLite mSQLite;
-	public SQLiteTable(string name, SQLite sqlite)
+	public SQLiteTable(string name)
 	{
 		mTableName = name;
+	}
+	public virtual void init(SQLite sqlite)
+	{
 		mSQLite = sqlite;
 	}
 	public SqliteDataReader doQuery()
@@ -48,6 +51,14 @@ public class SQLiteTable
 	public void appendValueInt(ref string queryStr, int value, bool isEnd = false)
 	{
 		queryStr += StringUtility.intToString(value);
+		if (!isEnd)
+		{
+			queryStr += ",";
+		}
+	}
+	public void appendValueFloat(ref string queryStr, float value, bool isEnd = false)
+	{
+		queryStr += StringUtility.floatToString(value);
 		if (!isEnd)
 		{
 			queryStr += ",";

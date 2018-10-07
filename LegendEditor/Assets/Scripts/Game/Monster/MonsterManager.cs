@@ -31,7 +31,7 @@ public class MonsterManager : FrameComponent
 		}
 		// 从数据库中查询该类型的怪物的名字
 		MonsterData monsterData;
-		mSQLite.mSQLiteMonster.query(typeID, out monsterData);
+		mSQLiteMonster.query(typeID, out monsterData);
 		if(monsterData == null)
 		{
 			return null;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class EffectFrameData
+public class MonsterFrameData
 {
 	public int mID;
 	public string mLabel;
@@ -15,52 +15,52 @@ public class EffectFrameData
 	public List<int> mPosY;
 }
 
-public class SQLiteEffectFrame : SQLiteTable
+public class SQLiteMonsterFrame : SQLiteTable
 {
-	string COL_ID = "ID";
+	string COL_ID = "MonsterID";
 	string COL_LABEL = "Label";
 	string COL_DIRECTION = "Direction";
 	string COL_ACTION = "Action";
 	string COL_FRAME_COUNT = "FrameCount";
 	string COL_POSX = "PosX";
 	string COL_POSY = "PosY";
-	public SQLiteEffectFrame(SQLite sqlite)
-		:base("EffectFrame", sqlite)
+	public SQLiteMonsterFrame()
+		:base("MonsterFrame")
 	{}
-	public void query(int ID, out List<EffectFrameData> dataList)
+	public void query(int id, out List<MonsterFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, ID, "");
+		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void query(int ID, int direction, out List<EffectFrameData> dataList)
+	public void query(int id, int direction, out List<MonsterFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, ID, " and ");
+		appendConditionInt(ref condition, COL_ID, id, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, direction, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void query(int ID, int direction, string action, out List<EffectFrameData> dataList)
+	public void query(int id, int direction, string action, out List<MonsterFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, ID, " and ");
+		appendConditionInt(ref condition, COL_ID, id, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, direction, " and ");
 		appendConditionString(ref condition, COL_ACTION, action, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void updateData(EffectFrameData data)
+	public void updateData(MonsterFrameData data)
 	{
 		string updateString = "";
 		appendUpdateInt(ref updateString, COL_FRAME_COUNT, data.mFrameCount);
-		appendUpdateIntArray(ref updateString, COL_POSX, data.mPosX);
-		appendUpdateIntArray(ref updateString, COL_POSY, data.mPosY, true);
+		appendUpdateIntArray(ref updateString, COL_FRAME_COUNT, data.mPosX);
+		appendUpdateIntArray(ref updateString, COL_FRAME_COUNT, data.mPosY, true);
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, data.mID, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, data.mDirection, " and ");
 		appendConditionString(ref condition, COL_ACTION, data.mAction, "");
 		doUpdate(updateString, condition);
 	}
-	public void insert(EffectFrameData data)
+	public void insert(MonsterFrameData data)
 	{
 		string valueString = "";
 		appendValueInt(ref valueString, data.mID);
@@ -72,13 +72,13 @@ public class SQLiteEffectFrame : SQLiteTable
 		appendValueIntArray(ref valueString, data.mPosY, true);
 		doInsert(valueString);
 	}
-	//-------------------------------------------------------------------------------------------------------------------------------------
-	protected void parseReader(SqliteDataReader reader, out List<EffectFrameData> dataList)
+//--------------------------------------------------------------------------------------------------------------------
+protected void parseReader(SqliteDataReader reader, out List<MonsterFrameData> dataList)
 	{
-		dataList = new List<EffectFrameData>();
+		dataList = new List<MonsterFrameData>();
 		while (reader.Read())
 		{
-			EffectFrameData data = new EffectFrameData();
+			MonsterFrameData data = new MonsterFrameData();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 			data.mLabel = reader[COL_LABEL].ToString();
 			data.mDirection = StringUtility.stringToInt(reader[COL_DIRECTION].ToString());

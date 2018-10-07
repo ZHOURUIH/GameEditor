@@ -100,14 +100,14 @@ public class HumanAnimation : GameComponent
 		{
 			// 根据当前角色数据从数据库查询本地数据
 			List<WeaponFrameData> weaponDataList;
-			mSQLite.mSQLiteWeaponFrame.query(mData.mWeaponID, i, name, out weaponDataList);
+			mSQLiteWeaponFrame.query(mData.mWeaponID, i, name, out weaponDataList);
 			if (weaponDataList.Count != 1)
 			{
 				logError("weapon info error!");
 				return;
 			}
 			List<ClothFrameData> clothDataList;
-			mSQLite.mSQLiteClothFrame.query(mData.mClothID, i, name, out clothDataList);
+			mSQLiteClothFrame.query(mData.mClothID, i, name, out clothDataList);
 			if (clothDataList.Count != 1)
 			{
 				logError("cloth info error!");

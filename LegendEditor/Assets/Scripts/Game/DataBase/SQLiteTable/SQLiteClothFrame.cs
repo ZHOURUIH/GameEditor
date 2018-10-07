@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class MonsterFrameData
+public class ClothFrameData
 {
 	public int mID;
 	public string mLabel;
@@ -15,32 +15,34 @@ public class MonsterFrameData
 	public List<int> mPosY;
 }
 
-public class SQLiteMonsterFrame : SQLiteTable
+public class SQLiteClothFrame : SQLiteTable
 {
-	string COL_ID = "MonsterID";
+	string COL_ID = "ClothID";
 	string COL_LABEL = "Label";
 	string COL_DIRECTION = "Direction";
 	string COL_ACTION = "Action";
 	string COL_FRAME_COUNT = "FrameCount";
 	string COL_POSX = "PosX";
 	string COL_POSY = "PosY";
-	public SQLiteMonsterFrame(SQLite sqlite)
-		:base("MonsterFrame", sqlite)
-	{}
-	public void query(int id, out List<MonsterFrameData> dataList)
+	public SQLiteClothFrame()
+		:base("ClothFrame")
+	{
+		;
+	}
+	public void query(int id, out List<ClothFrameData> dataList)
 	{
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void query(int id, int direction, out List<MonsterFrameData> dataList)
+	public void query(int id, int direction, out List<ClothFrameData> dataList)
 	{
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, id, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, direction, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void query(int id, int direction, string action, out List<MonsterFrameData> dataList)
+	public void query(int id, int direction, string action, out List<ClothFrameData> dataList)
 	{
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, id, " and ");
@@ -48,19 +50,19 @@ public class SQLiteMonsterFrame : SQLiteTable
 		appendConditionString(ref condition, COL_ACTION, action, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void updateData(MonsterFrameData data)
+	public void updateData(ClothFrameData data)
 	{
-		string updateString = "";
-		appendUpdateInt(ref updateString, COL_FRAME_COUNT, data.mFrameCount);
-		appendUpdateIntArray(ref updateString, COL_FRAME_COUNT, data.mPosX);
-		appendUpdateIntArray(ref updateString, COL_FRAME_COUNT, data.mPosY, true);
+		string valueString = "";
+		appendUpdateInt(ref valueString, COL_FRAME_COUNT, data.mFrameCount);
+		appendUpdateIntArray(ref valueString, COL_POSX, data.mPosX);
+		appendUpdateIntArray(ref valueString, COL_POSY, data.mPosY);
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, data.mID, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, data.mDirection, " and ");
 		appendConditionString(ref condition, COL_ACTION, data.mAction, "");
-		doUpdate(updateString, condition);
+		doUpdate(valueString, condition);
 	}
-	public void insert(MonsterFrameData data)
+	public void insert(ClothFrameData data)
 	{
 		string valueString = "";
 		appendValueInt(ref valueString, data.mID);
@@ -72,13 +74,13 @@ public class SQLiteMonsterFrame : SQLiteTable
 		appendValueIntArray(ref valueString, data.mPosY, true);
 		doInsert(valueString);
 	}
-//--------------------------------------------------------------------------------------------------------------------
-protected void parseReader(SqliteDataReader reader, out List<MonsterFrameData> dataList)
+//------------------------------------------------------------------------------------------------------------------------
+protected void parseReader(SqliteDataReader reader, out List<ClothFrameData> dataList)
 	{
-		dataList = new List<MonsterFrameData>();
+		dataList = new List<ClothFrameData>();
 		while (reader.Read())
 		{
-			MonsterFrameData data = new MonsterFrameData();
+			ClothFrameData data = new ClothFrameData();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 			data.mLabel = reader[COL_LABEL].ToString();
 			data.mDirection = StringUtility.stringToInt(reader[COL_DIRECTION].ToString());

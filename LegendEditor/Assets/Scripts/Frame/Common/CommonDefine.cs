@@ -218,8 +218,7 @@ public class CommonDefine
 	// 无效ID值
 	public const int INVALID_ID = ~0;
 	//-----------------------------------------------------------------------------------------------------------------
-	// 表格数据文件后缀名
-	public const string DATA_SUFFIX = ".bytes";
+	// 后缀名
 	public const string ASSET_BUNDLE_SUFFIX = ".unity3d";
 	// dll插件的后缀名
 	public const string DLL_PLUGIN_SUFFIX = ".bytes";
@@ -236,4 +235,6 @@ public class CommonDefine
 	public static string[] SOUND_OWNER_NAME = new string[] { "Window", "Scene" };
 	public const string NGUI_DEFAULT_MATERIAL = "NGUIDefault";
 	public const string UGUI_DEFAULT_MATERIAL = "UGUIDefault";
+	// 数据库文件名
+	public const string DATA_BASE_FILE_NAME = "MicroLegend.db";
 }

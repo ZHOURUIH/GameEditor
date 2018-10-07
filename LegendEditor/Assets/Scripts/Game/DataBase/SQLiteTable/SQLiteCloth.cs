@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class WeaponData
+public class ClothData
 {
 	public string mLabel;
 	public int mID;
@@ -13,23 +13,26 @@ public class WeaponData
 	public string mResource;
 }
 
-public class SQLiteWeapon : SQLiteTable
+public class SQLiteCloth : SQLiteTable
 {
-	string COL_LABEL = "WeaponLabel";
-	string COL_ID = "WeaponID";
+	string COL_LABEL = "ClothLabel";
+	string COL_ID = "ClothID";
 	string COL_DESC = "Desc";
 	string COL_OCCUPATION = "Occupation";
 	string COL_RESOURCE = "Resource";
-	public SQLiteWeapon(SQLite sqlite)
-		:base("Weapon", sqlite)
-	{}
-	public void query(int id, out WeaponData data)
+	public SQLiteCloth()
+		:base("Cloth")
+	{
+		;
+	}
+	public void query(int id, out ClothData data)
 	{
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
-	public void insert(WeaponData data)
+
+	public void insert(ClothData data)
 	{
 		string valueString = "";
 		appendValueString(ref valueString, data.mLabel);
@@ -39,10 +42,9 @@ public class SQLiteWeapon : SQLiteTable
 		appendValueString(ref valueString, data.mResource, true);
 		doInsert(valueString);
 	}
-	//--------------------------------------------------------------------------------------------------------------------------
-	protected void parseReader(SqliteDataReader reader, out WeaponData data)
+	protected void parseReader(SqliteDataReader reader, out ClothData data)
 	{
-		data = new WeaponData();
+		data = new ClothData();
 		while (reader.Read())
 		{
 			data.mLabel = reader[COL_LABEL].ToString();

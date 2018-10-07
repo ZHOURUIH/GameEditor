@@ -18,8 +18,8 @@ public class SQLiteMonster : SQLiteTable
 	string COL_ID = "MonsterID";
 	string COL_DESC = "Desc";
 	string COL_RESOURCE = "Resource";
-	public SQLiteMonster(SQLite sqlite)
-		:base("Monster", sqlite)
+	public SQLiteMonster()
+		:base("Monster")
 	{}
 	public void query(int id, out MonsterData data)
 	{

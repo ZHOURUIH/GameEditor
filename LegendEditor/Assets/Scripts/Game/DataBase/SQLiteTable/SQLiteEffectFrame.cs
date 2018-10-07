@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class ClothFrameData
+public class EffectFrameData
 {
 	public int mID;
 	public string mLabel;
@@ -15,54 +15,52 @@ public class ClothFrameData
 	public List<int> mPosY;
 }
 
-public class SQLiteClothFrame : SQLiteTable
+public class SQLiteEffectFrame : SQLiteTable
 {
-	string COL_ID = "ClothID";
+	string COL_ID = "ID";
 	string COL_LABEL = "Label";
 	string COL_DIRECTION = "Direction";
 	string COL_ACTION = "Action";
 	string COL_FRAME_COUNT = "FrameCount";
 	string COL_POSX = "PosX";
 	string COL_POSY = "PosY";
-	public SQLiteClothFrame(SQLite sqlite)
-		:base("ClothFrame", sqlite)
-	{
-		;
-	}
-	public void query(int id, out List<ClothFrameData> dataList)
+	public SQLiteEffectFrame()
+		:base("EffectFrame")
+	{}
+	public void query(int ID, out List<EffectFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, "");
+		appendConditionInt(ref condition, COL_ID, ID, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void query(int id, int direction, out List<ClothFrameData> dataList)
+	public void query(int ID, int direction, out List<EffectFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, " and ");
+		appendConditionInt(ref condition, COL_ID, ID, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, direction, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void query(int id, int direction, string action, out List<ClothFrameData> dataList)
+	public void query(int ID, int direction, string action, out List<EffectFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, " and ");
+		appendConditionInt(ref condition, COL_ID, ID, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, direction, " and ");
 		appendConditionString(ref condition, COL_ACTION, action, "");
 		parseReader(doQuery(condition), out dataList);
 	}
-	public void updateData(ClothFrameData data)
+	public void updateData(EffectFrameData data)
 	{
-		string valueString = "";
-		appendUpdateInt(ref valueString, COL_FRAME_COUNT, data.mFrameCount);
-		appendUpdateIntArray(ref valueString, COL_POSX, data.mPosX);
-		appendUpdateIntArray(ref valueString, COL_POSY, data.mPosY);
+		string updateString = "";
+		appendUpdateInt(ref updateString, COL_FRAME_COUNT, data.mFrameCount);
+		appendUpdateIntArray(ref updateString, COL_POSX, data.mPosX);
+		appendUpdateIntArray(ref updateString, COL_POSY, data.mPosY, true);
 		string condition = "";
 		appendConditionInt(ref condition, COL_ID, data.mID, " and ");
 		appendConditionInt(ref condition, COL_DIRECTION, data.mDirection, " and ");
 		appendConditionString(ref condition, COL_ACTION, data.mAction, "");
-		doUpdate(valueString, condition);
+		doUpdate(updateString, condition);
 	}
-	public void insert(ClothFrameData data)
+	public void insert(EffectFrameData data)
 	{
 		string valueString = "";
 		appendValueInt(ref valueString, data.mID);
@@ -74,13 +72,13 @@ public class SQLiteClothFrame : SQLiteTable
 		appendValueIntArray(ref valueString, data.mPosY, true);
 		doInsert(valueString);
 	}
-//------------------------------------------------------------------------------------------------------------------------
-protected void parseReader(SqliteDataReader reader, out List<ClothFrameData> dataList)
+	//-------------------------------------------------------------------------------------------------------------------------------------
+	protected void parseReader(SqliteDataReader reader, out List<EffectFrameData> dataList)
 	{
-		dataList = new List<ClothFrameData>();
+		dataList = new List<EffectFrameData>();
 		while (reader.Read())
 		{
-			ClothFrameData data = new ClothFrameData();
+			EffectFrameData data = new EffectFrameData();
 			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 			data.mLabel = reader[COL_LABEL].ToString();
 			data.mDirection = StringUtility.stringToInt(reader[COL_DIRECTION].ToString());

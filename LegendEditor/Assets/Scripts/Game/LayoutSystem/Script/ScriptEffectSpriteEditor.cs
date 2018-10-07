@@ -165,7 +165,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 		// 从数据库中查找
 		mResourceList.Clear();
 		List<EffectData> dataList;
-		mSQLite.mSQLiteEffect.queryAll(out dataList);
+		mSQLiteEffect.queryAll(out dataList);
 		int count = dataList.Count;
 		for(int i = 0; i < count; ++i)
 		{
@@ -173,7 +173,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 			effectAtlas.mAtlasName = dataList[i].mResource;
 			effectAtlas.mAnimSetList = new List<EffectAnim>();
 			List<EffectFrameData> frameDataList;
-			mSQLite.mSQLiteEffectFrame.query(dataList[i].mID, out frameDataList);
+			mSQLiteEffectFrame.query(dataList[i].mID, out frameDataList);
 			int frameDataCount = frameDataList.Count;
 			for (int j = 0; j < frameDataCount; ++j)
 			{
@@ -238,7 +238,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 	protected List<Vector2> findPosList(EffectAnim anim)
 	{
 		List<EffectFrameData> effectDataList;
-		mSQLite.mSQLiteEffectFrame.query(anim.mID, anim.mDirection, anim.mAction, out effectDataList);
+		mSQLiteEffectFrame.query(anim.mID, anim.mDirection, anim.mAction, out effectDataList);
 		if (effectDataList.Count != 1)
 		{
 			logError("effect frame error!");

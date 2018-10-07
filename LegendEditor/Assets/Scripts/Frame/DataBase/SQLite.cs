@@ -2,35 +2,31 @@
 using System.Collections;
 using Mono.Data.Sqlite;
 using System.Data;
+using System.Collections.Generic;
+using System;
 
 public class SQLite : FrameComponent
 {
 	protected SqliteConnection mConnection;
 	protected SqliteCommand mCommand;
-	public SQLiteCloth mSQLiteCloth;
-	public SQLiteClothFrame mSQLiteClothFrame;
-	public SQLiteWeapon mSQLiteWeapon;
-	public SQLiteWeaponFrame mSQLiteWeaponFrame;
-	public SQLiteMonster mSQLiteMonster;
-	public SQLiteMonsterFrame mSQLiteMonsterFrame;
-	public SQLiteEffect mSQLiteEffect;
-	public SQLiteEffectFrame mSQLiteEffectFrame;
+	protected Dictionary<Type, SQLiteTable> mTableList;
 	public SQLite(string name)
 		:base(name)
 	{
-		string fullPath = CommonDefine.F_DATA_BASE_PATH + "MicroLegend.db";
+		mTableList = new Dictionary<Type, SQLiteTable>();
+		string fullPath = CommonDefine.F_DATA_BASE_PATH + CommonDefine.DATA_BASE_FILE_NAME;
 		FileUtility.createDir(StringUtility.getFilePath(fullPath));
 		mConnection = new SqliteConnection("DATA SOURCE = " + fullPath);   // 创建SQLite对象的同时，创建SqliteConnection对象  
-		mConnection.Open();                         // 打开数据库链接  
-		mSQLiteCloth = new SQLiteCloth(this);
-		mSQLiteClothFrame = new SQLiteClothFrame(this);
-		mSQLiteWeapon = new SQLiteWeapon(this);
-		mSQLiteWeaponFrame = new SQLiteWeaponFrame(this);
-		mSQLiteMonster = new SQLiteMonster(this);
-		mSQLiteMonsterFrame = new SQLiteMonsterFrame(this);
-		mSQLiteEffect = new SQLiteEffect(this);
-		mSQLiteEffectFrame = new SQLiteEffectFrame(this);
-}
+		mConnection.Open();                         // 打开数据库链接
+		registeTable<SQLiteSound>();
+	}
+	public T registeTable<T>() where T : SQLiteTable, new()
+	{
+		T table = new T();
+		table.init(this);
+		mTableList.Add(typeof(T), table);
+		return table;
+	}
 	public override void init()
 	{
 		base.init();
@@ -64,5 +60,13 @@ public class SQLite : FrameComponent
 	{
 		mCommand.CommandText = queryString;
 		mCommand.ExecuteNonQuery();
+	}
+	public T getTable<T>()where T : SQLiteTable
+	{
+		if(mTableList.ContainsKey(typeof(T)))
+		{
+			return mTableList[typeof(T)] as T;
+		}
+		return null;
 	}
 }

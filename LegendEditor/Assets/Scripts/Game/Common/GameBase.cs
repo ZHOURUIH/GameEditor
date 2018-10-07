@@ -10,8 +10,16 @@ public class GameBase : FrameBase
 	public static HeadTextureManager mHeadTextureManager;
 	public static LogSystem mLogSystem;
 	public static DataCenter mDataCenter;
-	public static SQLite mSQLite;
 	public static MonsterManager mMonsterManager;
+	// SQLiteTable
+	public static SQLiteCloth mSQLiteCloth;
+	public static SQLiteClothFrame mSQLiteClothFrame;
+	public static SQLiteWeapon mSQLiteWeapon;
+	public static SQLiteWeaponFrame mSQLiteWeaponFrame;
+	public static SQLiteMonster mSQLiteMonster;
+	public static SQLiteMonsterFrame mSQLiteMonsterFrame;
+	public static SQLiteEffect mSQLiteEffect;
+	public static SQLiteEffectFrame mSQLiteEffectFrame;
 	// 以下是用于快速访问的布局脚本
 	public static ScriptObjectEditor mScriptObjectEditor;
 	public static ScriptSceneEditor mScriptSceneEditor;
@@ -28,7 +36,6 @@ public class GameBase : FrameBase
 			mHeadTextureManager = mGame.getSystem<HeadTextureManager>();
 			mLogSystem = mGame.getSystem<LogSystem>();
 			mDataCenter = mGame.getSystem<DataCenter>();
-			mSQLite = mGame.getSystem<SQLite>();
 			mMonsterManager = mGame.getSystem<MonsterManager>();
 		}
 	}

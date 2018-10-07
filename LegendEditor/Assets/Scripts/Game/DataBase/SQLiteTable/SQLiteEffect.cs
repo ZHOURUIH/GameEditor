@@ -18,8 +18,8 @@ public class SQLiteEffect : SQLiteTable
 	public string COL_ID = "ID";
 	public string COL_DESC = "Desc";
 	public string COL_RESOURCE = "Resource";
-	public SQLiteEffect(SQLite sqlite)
-		:base("Effect", sqlite)
+	public SQLiteEffect()
+		:base("Effect")
 	{}
 	public void query(int id, out EffectData data)
 	{

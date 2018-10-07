@@ -15,7 +15,6 @@ public class Game : GameFramework
 		registeComponent<HeadTextureManager>();
 		registeComponent<LogSystem>();
 		registeComponent<DataCenter>();
-		registeComponent<SQLite>();
 		registeComponent<MonsterManager>();
 	}
 	protected override void notifyBase()
@@ -29,7 +28,7 @@ public class Game : GameFramework
 	{
 		LayoutRegister.registeAllLayout();
 		GameSceneRegister.registerAllGameScene();
-		DataRegister.registeAllData();
+		SQLiteRegister.registeAllTable();
 		CharacterRegister.registeAllCharacter();
 	}
 	protected override void launch()

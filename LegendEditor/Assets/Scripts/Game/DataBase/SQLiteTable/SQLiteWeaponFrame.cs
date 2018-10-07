@@ -24,8 +24,8 @@ public class SQLiteWeaponFrame : SQLiteTable
 	string COL_FRAME_COUNT = "FrameCount";
 	string COL_POSX = "PosX";
 	string COL_POSY = "PosY";
-	public SQLiteWeaponFrame(SQLite sqlite)
-		:base("WeaponFrame", sqlite)
+	public SQLiteWeaponFrame()
+		:base("WeaponFrame")
 	{}
 	public void query(int id, out List<WeaponFrameData> dataList)
 	{

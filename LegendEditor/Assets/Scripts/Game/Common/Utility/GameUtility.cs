@@ -25,25 +25,25 @@ public class GameUtility : GameBase
 	public static string getClothLabel(int id)
 	{
 		ClothData data;
-		mSQLite.mSQLiteCloth.query(id, out data);
+		mSQLiteCloth.query(id, out data);
 		return data.mLabel;
 	}
 	public static string getClothResource(int id)
 	{
 		ClothData data;
-		mSQLite.mSQLiteCloth.query(id, out data);
+		mSQLiteCloth.query(id, out data);
 		return data.mResource;
 	}
 	public static string getWeaponLabel(int id)
 	{
 		WeaponData data;
-		mSQLite.mSQLiteWeapon.query(id, out data);
+		mSQLiteWeapon.query(id, out data);
 		return data.mLabel;
 	}
 	public static string getWeaponResource(int id)
 	{
 		WeaponData data;
-		mSQLite.mSQLiteWeapon.query(id, out data);
+		mSQLiteWeapon.query(id, out data);
 		return data.mResource;
 	}
 	public static void sortByFileNumber(List<string> fileList)
