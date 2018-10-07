@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class EffectSpriteInstance
+public class EffectSpriteInstance : GameBase
 {
 	protected LayoutScript mScript;
 	public txUIObject mEffectRoot;
@@ -56,7 +56,7 @@ public class EffectSpriteInstance
 	public void play(string effect, List<Vector2> posList, bool loop, float animSpeed, bool forcePlay = false)
 	{
 		// 如果动作名相同,并且不是强制重新播放,则不播放动作
-		if(mEffectNode.getTextureSet() == effect && !forcePlay)
+		if(mEffectNode.getTextureSet() == effect && mEffectNode.getPlayState() == PLAY_STATE.PS_PLAY && !forcePlay)
 		{
 			return;
 		}

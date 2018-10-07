@@ -39,6 +39,12 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 		}
 		mControl.update(elapsedTime);
 	}
+	public override void setAtlas(UIAtlas atlas)
+	{
+		// 改变图集时先停止播放
+		stop();
+		base.setAtlas(atlas);
+	}
 	public string getTextureSet() { return mTextureSetName; }
 	public int getTextureFrameCount() { return mTextureNameList.Count; }
 	public void setUseTextureSize(bool useSize) { mUseTextureSize = useSize; }
@@ -74,6 +80,10 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 				{
 					break;
 				}
+			}
+			if(getTextureFrameCount() == 0)
+			{
+				logError("invalid sprite anim! atals : " + mSprite.atlas.name + ", anim set : " + textureSetName);
 			}
 		}
 		mControl.setFrameCount(getTextureFrameCount());
@@ -121,6 +131,10 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 	//--------------------------------------------------------------------------------------------------------
 	protected void onPlaying(AnimControl control, int frame, bool isPlaying)
 	{
+		if(mControl.getCurFrameIndex() >= mTextureNameList.Count)
+		{
+			return;
+		}
 		setSpriteName(mTextureNameList[mControl.getCurFrameIndex()], mUseTextureSize);
 		if (mTexturePosList != null)
 		{

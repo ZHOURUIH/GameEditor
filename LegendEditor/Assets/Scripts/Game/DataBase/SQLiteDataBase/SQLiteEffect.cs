@@ -10,7 +10,6 @@ public class EffectData
 	public int mID;
 	public string mDesc;
 	public string mResource;
-	public int mDirectionCount;
 }
 
 public class SQLiteEffect : SQLiteTable
@@ -19,7 +18,6 @@ public class SQLiteEffect : SQLiteTable
 	public string COL_ID = "ID";
 	public string COL_DESC = "Desc";
 	public string COL_RESOURCE = "Resource";
-	public string COL_DIRECITON_COUNT = "DirectionCount";
 	public SQLiteEffect(SQLite sqlite)
 		:base("Effect", sqlite)
 	{}
@@ -39,8 +37,7 @@ public class SQLiteEffect : SQLiteTable
 		appendValueString(ref valueString, data.mLabel);
 		appendValueInt(ref valueString, data.mID);
 		appendValueString(ref valueString, data.mDesc);
-		appendValueString(ref valueString, data.mResource);
-		appendValueInt(ref valueString, data.mDirectionCount, true);
+		appendValueString(ref valueString, data.mResource, true);
 		doInsert(valueString);
 	}
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -67,6 +64,5 @@ public class SQLiteEffect : SQLiteTable
 		data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
 		data.mDesc = reader[COL_DESC].ToString();
 		data.mResource = reader[COL_RESOURCE].ToString();
-		data.mDirectionCount = StringUtility.stringToInt(reader[COL_DIRECITON_COUNT].ToString());
 	}
 };

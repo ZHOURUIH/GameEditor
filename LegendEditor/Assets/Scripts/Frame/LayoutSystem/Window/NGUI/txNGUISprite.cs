@@ -28,7 +28,7 @@ public class txNGUISprite : txUIObject
 	{
 		return mSprite.spriteName;
 	}
-	public void setAtlas(UIAtlas atlas)
+	public virtual void setAtlas(UIAtlas atlas)
 	{
 		mSprite.atlas = atlas;
 	}

@@ -133,6 +133,10 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 	//---------------------------------------------------------------------------------------------------------------------------------------------------
 	protected void onPlaying(AnimControl control, int frame, bool isPlaying)
 	{
+		if (mControl.getCurFrameIndex() >= mTextureNameList.Count)
+		{
+			return;
+		}
 		setTexture(mTextureNameList[mControl.getCurFrameIndex()], mUseTextureSize);
 		if(mTexturePosList != null)
 		{
