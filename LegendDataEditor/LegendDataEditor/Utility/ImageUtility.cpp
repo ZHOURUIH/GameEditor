@@ -299,7 +299,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
 				monsterImage.mPosX = pos.x;
 				monsterImage.mPosY = pos.y;
-				monsterImage.mMonsterID = i + 1;
+				monsterImage.mMonsterID = -1;
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
@@ -327,7 +327,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
 				monsterImage.mPosX = pos.x;
 				monsterImage.mPosY = pos.y;
-				monsterImage.mClothID = i + 1;
+				monsterImage.mClothID = -1;
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
@@ -355,7 +355,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
 				monsterImage.mPosX = pos.x;
 				monsterImage.mPosY = pos.y;
-				monsterImage.mWeaponID = i + 1;
+				monsterImage.mWeaponID = -1;
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
@@ -383,7 +383,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				effectImage.mLabel = StringUtility::getFileName(folderList[i]);
 				effectImage.mPosX = pos.x;
 				effectImage.mPosY = pos.y;
-				effectImage.mID = i + 1;
+				effectImage.mID = -1;
 				effectImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(effectImage);
 			}
@@ -417,7 +417,7 @@ void ImageUtility::writeSQLite(txMap<std::string, WeaponActionSet>& actionSetLis
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
 				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
 			}
-			bool ret = sqlite->mSQLiteWeaponFrame->insertOrUpdate(data);
+			bool ret = sqlite->mSQLiteWeaponFrame->insert(data);
 			if (!ret)
 			{
 				break;
@@ -448,7 +448,7 @@ void ImageUtility::writeSQLite(txMap<std::string, HumanActionSet>& actionSetList
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
 				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
 			}
-			bool ret = sqlite->mSQLiteClothFrame->insertOrUpdate(data);
+			bool ret = sqlite->mSQLiteClothFrame->insert(data);
 			if (!ret)
 			{
 				break;
@@ -479,7 +479,7 @@ void ImageUtility::writeSQLite(txMap<std::string, MonsterActionSet>& actionSetLi
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
 				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
 			}
-			bool ret = sqlite->mSQLiteMonsterFrame->insertOrUpdate(data);
+			bool ret = sqlite->mSQLiteMonsterFrame->insert(data);
 			if (!ret)
 			{
 				break;
@@ -512,7 +512,7 @@ void ImageUtility::writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQL
 				data.mPosX.push_back(effectAnim.mImageFrame[kk].mPosX);
 				data.mPosY.push_back(effectAnim.mImageFrame[kk].mPosY);
 			}
-			bool ret = sqlite->mSQLiteEffectFrame->insertOrUpdate(data);
+			bool ret = sqlite->mSQLiteEffectFrame->insert(data);
 			if (!ret)
 			{
 				break;
