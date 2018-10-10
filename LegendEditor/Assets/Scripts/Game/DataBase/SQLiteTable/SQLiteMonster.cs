@@ -27,6 +27,10 @@ public class SQLiteMonster : SQLiteTable
 		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
+	public void queryAll(out List<MonsterData> dataList)
+	{
+		parseReader(doQuery(), out dataList);
+	}
 	public void insert(MonsterData data)
 	{
 		string valueString = "";
@@ -39,15 +43,26 @@ public class SQLiteMonster : SQLiteTable
 	//----------------------------------------------------------------------------------------------------------------
 	protected void parseReader(SqliteDataReader reader, out MonsterData data)
 	{
-		data = new MonsterData();
+		parseReaderOne(reader, out data);
+		reader.Close();
+	}
+	protected void parseReader(SqliteDataReader reader, out List<MonsterData> dataList)
+	{
+		dataList = new List<MonsterData>();
 		while (reader.Read())
 		{
-			data.mLabel = reader[COL_LABEL].ToString();
-			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
-			data.mDesc = reader[COL_DESC].ToString();
-			data.mResource = reader[COL_RESOURCE].ToString();
-			break;
+			MonsterData data;
+			parseReaderOne(reader, out data);
+			dataList.Add(data);
 		}
 		reader.Close();
+	}
+	protected void parseReaderOne(SqliteDataReader reader, out MonsterData data)
+	{
+		data = new MonsterData();
+		data.mLabel = reader[COL_LABEL].ToString();
+		data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
+		data.mDesc = reader[COL_DESC].ToString();
+		data.mResource = reader[COL_RESOURCE].ToString();
 	}
 };

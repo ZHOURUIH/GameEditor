@@ -6,10 +6,12 @@ using UnityEngine;
 
 public class ScriptEditorSelect : LayoutScript
 {
-	txNGUIButton mObjectEditor;
-	txNGUIButton mEffectTextureEditor;
-	txNGUIButton mEffectSpriteEditor;
-	txNGUIButton mSceneEditor;
+	protected txNGUIButton mObjectEditor;
+	protected txNGUIButton mEffectTextureEditor;
+	protected txNGUIButton mEffectSpriteEditor;
+	protected txNGUIButton mMonsterSpriteEditor;
+	protected txNGUIButton mHumanSpriteEditor;
+	protected txNGUIButton mSceneEditor;
 	public ScriptEditorSelect(string name, GameLayout layout)
 		:
 		base(name, layout)
@@ -21,6 +23,8 @@ public class ScriptEditorSelect : LayoutScript
 		newObject(out mObjectEditor, "ObjectEditor");
 		newObject(out mEffectTextureEditor, "EffectTextureEditor");
 		newObject(out mEffectSpriteEditor, "EffectSpriteEditor");
+		newObject(out mMonsterSpriteEditor, "MonsterSpriteEditor");
+		newObject(out mHumanSpriteEditor, "HumanSpriteEditor");
 		newObject(out mSceneEditor, "SceneEditor");
 	}
 	public override void init()
@@ -28,6 +32,8 @@ public class ScriptEditorSelect : LayoutScript
 		registeBoxColliderNGUI(mObjectEditor, onObjectEditorClick);
 		registeBoxColliderNGUI(mEffectTextureEditor, onEffectTextureEditorClick);
 		registeBoxColliderNGUI(mEffectSpriteEditor, onEffectSpriteEditorClick);
+		registeBoxColliderNGUI(mMonsterSpriteEditor, onMonsterSpriteEditorClick);
+		registeBoxColliderNGUI(mHumanSpriteEditor, onHumanSpriteEditorClick);
 		registeBoxColliderNGUI(mSceneEditor, onSceneEditorClick);
 	}
 	public override void onReset()
@@ -63,6 +69,18 @@ public class ScriptEditorSelect : LayoutScript
 	{
 		CommandGameSceneChangeProcedure cmd = newCmd(out cmd);
 		cmd.mProcedure = PROCEDURE_TYPE.PT_START_EFFECT_SPRITE_EDITOR;
+		pushCommand(cmd, mGameSceneManager.getCurScene());
+	}
+	protected void onMonsterSpriteEditorClick(GameObject go)
+	{
+		CommandGameSceneChangeProcedure cmd = newCmd(out cmd);
+		cmd.mProcedure = PROCEDURE_TYPE.PT_START_MONSTER_SPRITE_EDITOR;
+		pushCommand(cmd, mGameSceneManager.getCurScene());
+	}
+	protected void onHumanSpriteEditorClick(GameObject go)
+	{
+		CommandGameSceneChangeProcedure cmd = newCmd(out cmd);
+		cmd.mProcedure = PROCEDURE_TYPE.PT_START_HUMAN_SPRITE_EDITOR;
 		pushCommand(cmd, mGameSceneManager.getCurScene());
 	}
 	protected void onSceneEditorClick(GameObject go)

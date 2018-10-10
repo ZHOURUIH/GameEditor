@@ -29,6 +29,10 @@ public class SQLiteWeapon : SQLiteTable
 		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
+	public void queryAll(out List<WeaponData> dataList)
+	{
+		parseReader(doQuery(), out dataList);
+	}
 	public void insert(WeaponData data)
 	{
 		string valueString = "";
@@ -42,16 +46,27 @@ public class SQLiteWeapon : SQLiteTable
 	//--------------------------------------------------------------------------------------------------------------------------
 	protected void parseReader(SqliteDataReader reader, out WeaponData data)
 	{
-		data = new WeaponData();
+		parseReaderOne(reader, out data);
+		reader.Close();
+	}
+	protected void parseReader(SqliteDataReader reader, out List<WeaponData> dataList)
+	{
+		dataList = new List<WeaponData>();
 		while (reader.Read())
 		{
-			data.mLabel = reader[COL_LABEL].ToString();
-			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
-			data.mDesc = reader[COL_DESC].ToString();
-			data.mOccupation = reader[COL_OCCUPATION].ToString();
-			data.mResource = reader[COL_RESOURCE].ToString();
-			break;
+			WeaponData data;
+			parseReaderOne(reader, out data);
+			dataList.Add(data);
 		}
 		reader.Close();
+	}
+	protected void parseReaderOne(SqliteDataReader reader, out WeaponData data)
+	{
+		data = new WeaponData();
+		data.mLabel = reader[COL_LABEL].ToString();
+		data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
+		data.mDesc = reader[COL_DESC].ToString();
+		data.mOccupation = reader[COL_OCCUPATION].ToString();
+		data.mResource = reader[COL_RESOURCE].ToString();
 	}
 };

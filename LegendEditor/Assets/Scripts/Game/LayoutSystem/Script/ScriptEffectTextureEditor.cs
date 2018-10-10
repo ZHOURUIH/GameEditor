@@ -31,6 +31,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 	{
 		mResourceList = new List<string>();
 		mEffectTextureInstance = new EffectTextureInstance(this);
+		mLayout.setCheckBoxAnchor(false);
 	}
 	public override void assignWindow()
 	{
@@ -69,7 +70,6 @@ public class ScriptEffectTextureEditor : LayoutScript
 		mEffectTextureInstance.init();
 		mPlaySpeed.setText("0.25f");
 		mPlayLoop.setChecked(true);
-		mLayout.setCheckBoxAnchor(false);
 		mCurEffectNode = mEffectTextureInstance.mEffectNode;
 	}
 	public override void onReset()

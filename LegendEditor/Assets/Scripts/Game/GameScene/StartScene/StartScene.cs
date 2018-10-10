@@ -20,6 +20,8 @@ public class StartScene : GameScene
 		addProcedure<StartSceneObjectEditor>(PROCEDURE_TYPE.PT_START_OBJECT_EDITOR);
 		addProcedure<StartSceneEffectTextureEditor>(PROCEDURE_TYPE.PT_START_EFFECT_TEXTURE_EDITOR);
 		addProcedure<StartSceneEffectSpriteEditor>(PROCEDURE_TYPE.PT_START_EFFECT_SPRITE_EDITOR);
+		addProcedure<StartSceneMonsterSpriteEditor>(PROCEDURE_TYPE.PT_START_MONSTER_SPRITE_EDITOR);
+		addProcedure<StartSceneHumanSpriteEditor>(PROCEDURE_TYPE.PT_START_HUMAN_SPRITE_EDITOR);
 		addProcedure<StartSceneSceneEditor>(PROCEDURE_TYPE.PT_START_SCENE_EDITOR);
 		addProcedure<StartSceneExit>(PROCEDURE_TYPE.PT_START_EXIT);
 		if (mSceneProcedureList.Count != (int)PROCEDURE_TYPE.PT_START_MAX - (int)PROCEDURE_TYPE.PT_START_MIN - 1)

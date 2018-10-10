@@ -46,6 +46,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 	{
 		mResourceList = new List<EffectAtlas>();
 		mEffectSpriteInstance = new EffectSpriteInstance(this);
+		mLayout.setCheckBoxAnchor(false);
 	}
 	public override void assignWindow()
 	{
@@ -84,7 +85,6 @@ public class ScriptEffectSpriteEditor : LayoutScript
 		mEffectSpriteInstance.init();
 		mPlaySpeed.setText("0.25f");
 		mPlayLoop.setChecked(true);
-		mLayout.setCheckBoxAnchor(false);
 		mCurEffectNode = mEffectSpriteInstance.mEffectNode;
 		mCurEffectNode.setSpeed(0.25f);
 	}

@@ -31,7 +31,10 @@ public class SQLiteCloth : SQLiteTable
 		appendConditionInt(ref condition, COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
-
+	public void queryAll(out List<ClothData> dataList)
+	{
+		parseReader(doQuery(), out dataList);
+	}
 	public void insert(ClothData data)
 	{
 		string valueString = "";
@@ -42,18 +45,30 @@ public class SQLiteCloth : SQLiteTable
 		appendValueString(ref valueString, data.mResource, true);
 		doInsert(valueString);
 	}
+	//-------------------------------------------------------------------------------------------------------------
 	protected void parseReader(SqliteDataReader reader, out ClothData data)
 	{
-		data = new ClothData();
+		parseReaderOne(reader, out data);
+		reader.Close();
+	}
+	protected void parseReader(SqliteDataReader reader, out List<ClothData> dataList)
+	{
+		dataList = new List<ClothData>();
 		while (reader.Read())
 		{
-			data.mLabel = reader[COL_LABEL].ToString();
-			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
-			data.mDesc = reader[COL_DESC].ToString();
-			data.mOccupation = reader[COL_OCCUPATION].ToString();
-			data.mResource = reader[COL_RESOURCE].ToString();
-			break;
+			ClothData data;
+			parseReaderOne(reader, out data);
+			dataList.Add(data);
 		}
 		reader.Close();
+	}
+	protected void parseReaderOne(SqliteDataReader reader, out ClothData data)
+	{
+		data = new ClothData();
+		data.mLabel = reader[COL_LABEL].ToString();
+		data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
+		data.mDesc = reader[COL_DESC].ToString();
+		data.mOccupation = reader[COL_OCCUPATION].ToString();
+		data.mResource = reader[COL_RESOURCE].ToString();
 	}
 };

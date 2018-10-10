@@ -21,11 +21,13 @@ public class GameBase : FrameBase
 	public static SQLiteEffect mSQLiteEffect;
 	public static SQLiteEffectFrame mSQLiteEffectFrame;
 	// 以下是用于快速访问的布局脚本
-	public static ScriptObjectEditor mScriptObjectEditor;
+	//public static ScriptObjectEditor mScriptObjectEditor;
 	public static ScriptSceneEditor mScriptSceneEditor;
 	public static ScriptEditorSelect mScriptEditorSelect;
 	public static ScriptEffectTextureEditor mScriptEffectTextureEditor;
 	public static ScriptEffectSpriteEditor mScriptEffectSpriteEditor;
+	public static ScriptMonsterSpriteEditor mScriptMonsterSpriteEditor;
+	public static ScriptHumanSpriteEditor mScriptHumanSpriteEditor;
 	public override void notifyConstructDone()
 	{
 		base.notifyConstructDone();

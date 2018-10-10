@@ -34,7 +34,7 @@ public class HumanAnimation : GameComponent
 {
 	protected CharacterOther mPlayer;
 	protected CharacterData mData;
-	protected HumanAvatar mAvatar;
+	//protected HumanAvatar mAvatar;
 	protected Dictionary<HUMAN_ACTION, List<HumanAnimInfo>> mAnimationList;   // 第一个Key是行为类型,第二个List的下标是Direction
 	public HumanAnimation(Type type, string name)
 		:base(type, name)
@@ -46,7 +46,7 @@ public class HumanAnimation : GameComponent
 		base.init(owner);
 		mPlayer = owner as CharacterOther;
 		mData = mPlayer.getCharacterData();
-		mAvatar = mPlayer.getAvatar();
+		//mAvatar = mPlayer.getAvatar();
 	}
 	public int getFrameCount(HUMAN_ACTION action)
 	{
@@ -59,7 +59,7 @@ public class HumanAnimation : GameComponent
 	// 播放当前动作
 	public void playAnimation(HumanAnimInfo animInfo, float animSpeed = GameDefine.NORMAL_ANIM_SPEED)
 	{
-		mAvatar.play(animInfo, null, null, animInfo.mLoop, animSpeed);
+		//mAvatar.play(animInfo, null, null, animInfo.mLoop, animSpeed);
 	}
 	// 武器或外观改变时需要重新注册
 	public void registeAllAnimation()
@@ -67,8 +67,8 @@ public class HumanAnimation : GameComponent
 		// 根据当前外观和武器,设置资源图集
 		string clothResource = CommonDefine.R_ATLAS_TEXTURE_ANIM_PATH + "Human/" + GameUtility.getClothResource(mData.mClothID);
 		string weaponResource = CommonDefine.R_ATLAS_TEXTURE_ANIM_PATH + "Weapon/" + GameUtility.getWeaponResource(mData.mWeaponID);
-		mAvatar.getHuman().setAtlas(mResourceManager.loadResource<UIAtlas>(clothResource, true));
-		mAvatar.getWeapon().setAtlas(mResourceManager.loadResource<UIAtlas>(weaponResource, true));
+		//mAvatar.getHuman().setAtlas(mResourceManager.loadResource<UIAtlas>(clothResource, true));
+		//mAvatar.getWeapon().setAtlas(mResourceManager.loadResource<UIAtlas>(weaponResource, true));
 		registeAnimation(HUMAN_ACTION.HA_STAND, "stand", true);
 		registeAnimation(HUMAN_ACTION.HA_WALK, "walk", true);
 		registeAnimation(HUMAN_ACTION.HA_RUN, "run", true);
