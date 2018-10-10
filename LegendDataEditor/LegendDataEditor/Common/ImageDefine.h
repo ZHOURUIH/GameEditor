@@ -66,11 +66,11 @@ const int MONSTER_ACTION_COUNT = 5;
 const int MONSTER_GROUP_SIZE = 360;
 static MonsterActionInfo MONSTER_ACTION[MONSTER_ACTION_COUNT] =
 {
-	{ "attack", 4 },
-	{ "die", 10 },
-	{ "hit", 2 },
 	{ "stand", 4 },
 	{ "walk", 6 },
+	{ "attack", 6 },
+	{ "die", 10 },
+	{ "hit", 2 },
 };
 
 enum IMAGE_TYPE
