@@ -80,4 +80,9 @@ public class GameUtility : GameBase
 			}
 		}
 	}
+	public static Vector2 getPositionByFile(string fileNameNoSuffix)
+	{
+		string str = FileUtility.openTxtFile(fileNameNoSuffix + ".txt");
+		return StringUtility.stringToVector2(str);
+	}
 }

@@ -119,7 +119,7 @@ public class Serializer : GameBase
 		}
 		BinaryUtility.writeBytes(mBuffer, ref mIndex, buffer, -1, -1, bufferSize);
 	}
-	public void readBuffer(byte[] buffer, int bufferSize, int readLen)
+	public void readBuffer(byte[] buffer, int readLen, int bufferSize = -1)
 	{
 		if (!readCheck(readLen))
 		{
@@ -174,6 +174,8 @@ public class Serializer : GameBase
 	public byte[] getBuffer() { return mBuffer; }
 	public int getBufferSize() { return mBufferSize; }
 	public int getDataSize() { return mIndex; }
+	public int getIndex() { return mIndex; }
+	public void setIndex(int index) { mIndex = index; }
 	//-------------------------------------------------------------------------------------------------------------------------------------------
 	protected bool writeCheck(int writeLen)
 	{

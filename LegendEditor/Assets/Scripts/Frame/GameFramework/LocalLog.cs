@@ -24,7 +24,11 @@ public class LocalLog
 		mLogBufferList[mWriteIndex] = new List<string>();
 		mLogListLock = new ThreadLock();
 		mWriteLogThread = new CustomThread("WriteLocalLog");
+#if UNITY_EDITOR
+		mLogFilePath = CommonDefine.F_ASSETS_PATH + "../log.txt";
+#else
 		mLogFilePath = CommonDefine.F_ASSETS_PATH + "log.txt";
+#endif
 		// 清空已经存在的日志文件
 		FileUtility.writeTxtFile(mLogFilePath, "");
 	}
