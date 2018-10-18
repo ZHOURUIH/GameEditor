@@ -40,6 +40,7 @@ public:
 	int getBufferSize() { return mBufferSize; }
 	int getDataSize() { return mIndex; }
 	void setIndex(int index) { mIndex = index; }
+	int getIndex() { return mIndex; }
 protected:
 	void resizeBuffer(int maxSize);
 	void createBuffer(int bufferSize);

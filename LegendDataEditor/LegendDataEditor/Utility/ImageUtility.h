@@ -44,6 +44,10 @@ public:
 	static void deleteInvalidImage(const std::string& path);
 	static bool isInvalidImage(const std::string& fileName);
 	static POINT getImagePosition(const std::string& imagePath);
+	static void collectMapTexture(const std::string& fileName);
+	static void groupAtlas(const std::string& filePath);
+	static void texturePacker(const std::string& texturePath);
+	static void texturePackerAll(const std::string& texturePath);
 };
 
 #endif

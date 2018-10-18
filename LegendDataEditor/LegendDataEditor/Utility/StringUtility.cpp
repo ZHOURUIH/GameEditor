@@ -749,3 +749,14 @@ int StringUtility::getCharCount(const std::string& str, char key)
 	}
 	return count;
 }
+
+int StringUtility::numberStringAddInt(const std::string& str)
+{
+	int length = str.length();
+	int ret = 0;
+	for (int i = 0; i < length; ++i)
+	{
+		ret += str[i] - '0';
+	}
+	return ret;
+}

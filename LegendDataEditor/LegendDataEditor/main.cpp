@@ -22,6 +22,10 @@ void main()
 19:删除无效图片 \n\
 20:按序号重命名文件 \n\
 21:重命名为序列帧格式 \n\
+22:提取地图资源\n\
+23:分组图集\n\
+24:打包图集\n\
+25:打包全部图集\n\
 0:退出" << std::endl;
 		int input;
 		std::cin >> input;
@@ -208,6 +212,50 @@ void main()
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
 			ImageUtility::renameImageToAnim(filePath);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 22)
+		{
+			std::cout << "输入地图编号:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始提取地图资源..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/Map/" + fileName;
+			ImageUtility::collectMapTexture(filePath);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 23)
+		{
+			std::cout << "输入文件夹名:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始分组图集..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/" + fileName;
+			ImageUtility::groupAtlas(filePath);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 24)
+		{
+			std::cout << "输入media下相对路径:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始打包图集..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/" + fileName;
+			ImageUtility::texturePacker(filePath);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 25)
+		{
+			std::cout << "输入media下相对路径:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始打包全部图集..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/" + fileName;
+			ImageUtility::texturePackerAll(filePath);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		system("pause");

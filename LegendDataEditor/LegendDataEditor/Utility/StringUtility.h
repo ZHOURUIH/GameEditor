@@ -81,7 +81,8 @@ public:
 	static std::string checkIntString(const std::string& str, const std::string& valid = "");
 	static std::string charToHexString(unsigned char byte, bool upper = true);
 	static int getCharCount(const std::string& str, char key);
-	std::string charArrayToHexString(unsigned char* data, int dataCount, bool addSpace = true, bool upper = true);
+	static std::string charArrayToHexString(unsigned char* data, int dataCount, bool addSpace = true, bool upper = true);
+	static int numberStringAddInt(const std::string& str);
 };
 
 #endif

@@ -13,6 +13,9 @@
 #include "SQLiteEffectFrame.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
+#include "SceneMap.h"
+#include "MapHeader.h"
+#include "MapTile.h"
 
 void ImageUtility::encodePNG(const std::string& path, char* color, int width, int height, FREE_IMAGE_FORMAT format)
 {
@@ -791,4 +794,92 @@ POINT ImageUtility::getImagePosition(const std::string& imageFullPath)
 		std::cout << "位置文件内容错误 : " << imageFullPath << std::endl;
 	}
 	return pos;
+}
+
+void ImageUtility::collectMapTexture(const std::string& fileName)
+{
+	std::string file = StringUtility::getFileNameNoSuffix(fileName);
+	SceneMap* map = TRACE_NEW(SceneMap, map);
+	map->readFile(fileName + ".map");
+	int tileCount = map->mHeader->mWidth * map->mHeader->mHeight;
+	for (int i = 0; i < tileCount; ++i)
+	{
+		std::string srcFilePath = "../media/Objects" + StringUtility::intToString(map->mTileList[i].mObjFileIdx + 1) + "/";
+		std::string srcFileName = StringUtility::intToString(map->mTileList[i].mObjImgIdx) + ".png";
+		std::string destFilePath = "../media/MapTexture/" + file + "/";
+		if (FileUtility::isFileExist(srcFilePath + srcFileName))
+		{
+			FileUtility::copyFile(srcFilePath + srcFileName, destFilePath + srcFileName);
+			FileUtility::copyFile(srcFilePath + srcFileName + ".meta", destFilePath + srcFileName + ".meta");
+		}
+	}
+	TRACE_DELETE(map);
+}
+
+void ImageUtility::groupAtlas(const std::string& filePath)
+{
+	std::string atlasInfo;
+	txSerializer serializer;
+	const int TEXTURE_COUNT_PER_ATLAS = 100;
+	txVector<std::string> fileList;
+	FileUtility::findFiles(filePath, fileList, ".png", false);
+	sortByFileNumber(fileList);
+	int count = fileList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		int atlasIndex = i / TEXTURE_COUNT_PER_ATLAS;
+		std::string curFile = StringUtility::getFileNameNoSuffix(fileList[i]);
+		std::string folderName = StringUtility::intToString(atlasIndex);
+		std::string newPath = StringUtility::getFilePath(fileList[i]) + "/" + folderName + "/";
+		FileUtility::copyFile(fileList[i], newPath + curFile + ".png");
+		FileUtility::copyFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
+		// 每一行需要记录图片在图集中的位置
+		atlasInfo += StringUtility::getFileName(fileList[i]) + ":" + StringUtility::intToString(atlasIndex) + "\n";
+		serializer.write<short>(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])));
+		serializer.write<unsigned char>(atlasIndex);
+	}
+	FileUtility::writeFile(filePath + "/atlas.txt", atlasInfo);
+	FileUtility::writeFile(filePath + "/atlas.index", serializer.getBuffer(), serializer.getDataSize());
+}
+
+void ImageUtility::texturePacker(const std::string& texturePath)
+{
+	std::string outputFileName = StringUtility::getFileName(texturePath);
+	std::string outputPath = StringUtility::getFilePath(texturePath);
+	std::string cmdLine;
+	cmdLine += "--data " + outputPath + "/" + outputFileName + ".txt ";
+	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
+	cmdLine += "--format json ";
+	cmdLine += "--allow-free-size ";
+	cmdLine += "--maxrects-heuristics Best ";
+	cmdLine += "--trim-mode None ";
+	cmdLine += "--disable-rotation ";
+	cmdLine += "--size-constraints AnySize ";
+	cmdLine += "--max-size 2048 ";
+	cmdLine += "--padding 1 ";
+	cmdLine += texturePath;
+
+	SHELLEXECUTEINFOA ShExecInfo = { 0 };
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFOA);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = NULL;
+	ShExecInfo.lpVerb = NULL;
+	ShExecInfo.lpFile = "C:\\Program Files\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
+	ShExecInfo.lpParameters = cmdLine.c_str();
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_HIDE;
+	ShExecInfo.hInstApp = NULL;
+	BOOL ret = ShellExecuteExA(&ShExecInfo);
+	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+}
+
+void ImageUtility::texturePackerAll(const std::string& texturePath)
+{
+	txVector<std::string> folderList;
+	FileUtility::findFolders(texturePath, folderList);
+	int count = folderList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		texturePacker(folderList[i]);
+	}
 }
