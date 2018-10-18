@@ -30,7 +30,7 @@ public class ImagePacker
 			FileUtility.findFiles(srcFullPath, ref fileList, ".png", false);
 			for (int i = 0; i < fileList.Count; ++i)
 			{
-				EditorUtility.DisplayProgressBar("设置NGUI图集", "正在进行" + StringUtility.getFileName(fileList[i]), i / fileList.Count);
+				EditorUtility.DisplayProgressBar("设置NGUI图集", "正在进行" + StringUtility.getFileName(fileList[i]), i / (float)fileList.Count);
 
 				// 创建NGUI的3个图集文件
 				string atlasName = StringUtility.getFileNameNoSuffix(fileList[i], true);
