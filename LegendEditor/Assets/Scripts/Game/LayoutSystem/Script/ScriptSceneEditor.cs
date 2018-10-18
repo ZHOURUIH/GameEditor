@@ -58,6 +58,7 @@ public class ScriptSceneEditor : LayoutScript
 		{
 			int y = i % map.mHeader.mHeight;
 			int x = i / map.mHeader.mHeight;
+			Vector2 halfMap = new Vector2(map.mHeader.mWidth * 48 / 2.0f, map.mHeader.mHeight * 32 / 2.0f);
 			MapTile tile = map.mTileList[i];
 			// 偶数行偶数列才渲染大地砖
 			if(x % 2 == 0 && y % 2 == 0)
@@ -70,7 +71,7 @@ public class ScriptSceneEditor : LayoutScript
 					backTile.setTexture(backTex);
 					Vector2 textureSize = new Vector2(backTile.getTexture().width, backTile.getTexture().height);
 					backTile.setWindowSize(textureSize);
-					LayoutTools.MOVE_WINDOW(backTile, new Vector3(48 * x + 96 / 2, 32 * y + 64 / 2));
+					LayoutTools.MOVE_WINDOW(backTile, new Vector3(48 * x + textureSize.x / 2.0f - halfMap.x, 32 * y + textureSize.y / 2.0f - halfMap.y));
 					backTile.setDepth(1);
 					mTiles.Add(backTile);
 				}
@@ -84,7 +85,7 @@ public class ScriptSceneEditor : LayoutScript
 				midTile.setTexture(midTex);
 				Vector2 textureSize = new Vector2(midTile.getTexture().width, midTile.getTexture().height);
 				midTile.setWindowSize(textureSize);
-				LayoutTools.MOVE_WINDOW(midTile, new Vector3(48 * x + 48 / 2, 32 * y + 32 / 2));
+				LayoutTools.MOVE_WINDOW(midTile, new Vector3(48 * x + textureSize.x / 2.0f - halfMap.x, 32 * y + textureSize.y / 2.0f - halfMap.y));
 				midTile.setDepth(2);
 				mTiles.Add(midTile);
 			}
@@ -99,28 +100,10 @@ public class ScriptSceneEditor : LayoutScript
 				objTile.setWindowSize(textureSize);
 				Vector2 posOffset = new Vector2();
 				posOffset += new Vector2(textureSize.x / 2.0f, textureSize.y / 2.0f);
-				posOffset += new Vector2(48 * (x - map.mHeader.mWidth / 2.0f), 32 * (map.mHeader.mHeight / 2.0f - y));
+				posOffset += new Vector2(48 * x - halfMap.x, halfMap.y - 32 * y);
 				LayoutTools.MOVE_WINDOW(objTile, posOffset);
-				objTile.setDepth(10);
+				objTile.setDepth(3);
 				mTiles.Add(objTile);
-			}
-		}
-	}
-	public void createTiles(string sceneName, int width, int height)
-	{
-		clearTiles();
-		for (int i = 0; i < width; ++i)
-		{
-			for (int j = 0; j < height; ++j)
-			{
-				string name = "" + i + "_" + j;
-				txNGUITexture tile = createObject<txNGUITexture>(mSceneRoot, name);
-				tile.setTextureName(CommonDefine.R_GAME_TEXTURE_PATH + "Scene/" + sceneName + "/" + name);
-				// 设置图片位置和大小
-				Vector2 textureSize = new Vector2(tile.getTexture().width, tile.getTexture().height);
-				tile.setWindowSize(textureSize);
-				LayoutTools.MOVE_WINDOW(tile, new Vector3(textureSize.x * i + textureSize.x / 2.0f, -textureSize.y * j - textureSize.y / 2.0f, 0.0f));
-				mTiles.Add(tile);
 			}
 		}
 	}
