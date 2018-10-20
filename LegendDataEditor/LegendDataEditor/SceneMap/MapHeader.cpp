@@ -12,3 +12,12 @@ void MapHeader::parseHeader(char* buffer, int bufferSize, int& offset)
 	serializer.readBuffer(mReserved, RESERVED_LENGTH);
 	offset = serializer.getIndex();
 }
+
+void MapHeader::saveHeader(txSerializer* serializer)
+{
+	serializer->write(mWidth);
+	serializer->write(mHeight);
+	serializer->writeBuffer(mTitle, TITLE_LENGTH);
+	serializer->writeBuffer(mUpdateTime, UPDATE_TIME_LENGTH);
+	serializer->writeBuffer(mReserved, RESERVED_LENGTH);
+}

@@ -1,9 +1,6 @@
 ﻿#include "MapTile.h"
 #include "txSerializer.h"
 
-#define GET_HIGHEST_BIT(value) GET_BIT(value, sizeof(value) * 8 - 1)
-#define SET_HIGHEST_BIT(value, bit) SET_BIT(value, sizeof(value) * 8 - 1, bit);
-
 void MapTile::parseTile(char* buffer, int bufferSize, int& offset)
 {
 	txSerializer serializer(buffer, bufferSize);

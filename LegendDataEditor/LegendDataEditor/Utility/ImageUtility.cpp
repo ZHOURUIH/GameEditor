@@ -16,6 +16,8 @@
 #include "SceneMap.h"
 #include "MapHeader.h"
 #include "MapTile.h"
+#include "SceneMapAdvance.h"
+#include "MapTileAdvance.h"
 
 void ImageUtility::encodePNG(const std::string& path, char* color, int width, int height, FREE_IMAGE_FORMAT format)
 {
@@ -816,26 +818,25 @@ void ImageUtility::collectMapTexture(const std::string& fileName)
 	TRACE_DELETE(map);
 }
 
-void ImageUtility::groupAtlas(const std::string& filePath)
+void ImageUtility::groupAtlas(const std::string& filePath, int countInAltas)
 {
 	std::string atlasInfo;
 	txSerializer serializer;
-	const int TEXTURE_COUNT_PER_ATLAS = 100;
 	txVector<std::string> fileList;
 	FileUtility::findFiles(filePath, fileList, ".png", false);
 	sortByFileNumber(fileList);
 	int count = fileList.size();
 	for (int i = 0; i < count; ++i)
 	{
-		int atlasIndex = i / TEXTURE_COUNT_PER_ATLAS;
+		int atlasIndex = i / countInAltas;
 		std::string curFile = StringUtility::getFileNameNoSuffix(fileList[i]);
 		std::string folderName = StringUtility::intToString(atlasIndex);
 		std::string newPath = StringUtility::getFilePath(fileList[i]) + "/" + folderName + "/";
-		FileUtility::copyFile(fileList[i], newPath + curFile + ".png");
-		FileUtility::copyFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
+		FileUtility::moveFile(fileList[i], newPath + curFile + ".png");
+		FileUtility::moveFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
 		// 每一行需要记录图片在图集中的位置
 		atlasInfo += StringUtility::getFileName(fileList[i]) + ":" + StringUtility::intToString(atlasIndex) + "\n";
-		serializer.write<short>(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])));
+		serializer.write<unsigned short>(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])));
 		serializer.write<unsigned char>(atlasIndex);
 	}
 	FileUtility::writeFile(filePath + "/atlas.txt", atlasInfo);
@@ -881,5 +882,60 @@ void ImageUtility::texturePackerAll(const std::string& texturePath)
 	for (int i = 0; i < count; ++i)
 	{
 		texturePacker(folderList[i]);
+	}
+}
+
+void ImageUtility::readAtlasIndexFile(const std::string& fileName, txMap<int, int>& indexMap)
+{
+	int fileSize = 0;
+	char* fileBuffer = FileUtility::openBinaryFile(fileName, &fileSize);
+	txSerializer serializer(fileBuffer, fileSize);
+	int indexCount = fileSize / 3;
+	for (int j = 0; j < indexCount; ++j)
+	{
+		unsigned short imageIndex;
+		unsigned char atlasIndex;
+		serializer.read(imageIndex);
+		serializer.read(atlasIndex);
+		if (!indexMap.insert(imageIndex, atlasIndex).second)
+		{
+			SystemUtility::print("读取图集下标文件失败,有重复的图片文件! image index : " + StringUtility::intToString(imageIndex));
+		}
+	}
+	TRACE_DELETE_ARRAY(fileBuffer);
+}
+
+void ImageUtility::convertMapFile(const std::string& fileName)
+{
+	std::string fileNoSuffix = StringUtility::getFileNameNoSuffix(fileName, false);
+	SceneMap* map = TRACE_NEW(SceneMap, map);
+	map->readFile(fileNoSuffix + ".map");
+	// 物体图集下标
+	txMap<int, txMap<int, int>> objAtlasIndexMap;
+	// 目前只有7个总的物体图片文件夹
+	for (int i = 0; i < 7; ++i)
+	{
+		txMap<int, int> indexMap;
+		readAtlasIndexFile("../media/Objects" + StringUtility::intToString(i + 1) + "/atlas.index", indexMap);
+		objAtlasIndexMap.insert(i + 1, indexMap);
+	}
+	// 大地砖图集下标
+	txMap<int, int> bngAtlasIndexMap;
+	readAtlasIndexFile("../media/Tiles/atlas.index", bngAtlasIndexMap);
+	SceneMapAdvance* mapAdvance = TRACE_NEW(SceneMapAdvance, mapAdvance);
+	mapAdvance->initFromMap(map, objAtlasIndexMap, bngAtlasIndexMap);
+	mapAdvance->saveAdvanceMap(fileNoSuffix + ".amap");
+	TRACE_DELETE(map);
+	TRACE_DELETE(mapAdvance);
+}
+
+void ImageUtility::convertAllMapFile(const std::string& filePath)
+{
+	txVector<std::string> fileList;
+	FileUtility::findFiles(filePath, fileList, ".map", false);
+	int count = fileList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		convertMapFile(fileList[i]);
 	}
 }

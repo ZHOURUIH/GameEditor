@@ -26,6 +26,8 @@ void main()
 23:分组图集\n\
 24:打包图集\n\
 25:打包全部图集\n\
+26:转换地图文件\n\
+27:转换全部地图文件\n\
 0:退出" << std::endl;
 		int input;
 		std::cin >> input;
@@ -233,7 +235,7 @@ void main()
 			std::cout << "开始分组图集..." << std::endl;
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
-			ImageUtility::groupAtlas(filePath);
+			ImageUtility::groupAtlas(filePath, 100);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		else if (input == 24)
@@ -256,6 +258,28 @@ void main()
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
 			ImageUtility::texturePackerAll(filePath);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 26)
+		{
+			std::cout << "输入地图名:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始转换地图文件..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/Map/" + fileName;
+			ImageUtility::convertMapFile(filePath);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 27)
+		{
+			std::cout << "输入文件夹名:";
+			std::string fileName;
+			std::cin >> fileName;
+			std::cout << "开始转换地图文件..." << std::endl;
+			long startTime = timeGetTime();
+			std::string filePath = "../media/" + fileName;
+			ImageUtility::convertAllMapFile(filePath);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		system("pause");

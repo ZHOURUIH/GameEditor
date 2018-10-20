@@ -45,9 +45,12 @@ public:
 	static bool isInvalidImage(const std::string& fileName);
 	static POINT getImagePosition(const std::string& imagePath);
 	static void collectMapTexture(const std::string& fileName);
-	static void groupAtlas(const std::string& filePath);
+	static void groupAtlas(const std::string& filePath, int countInAltas);
 	static void texturePacker(const std::string& texturePath);
 	static void texturePackerAll(const std::string& texturePath);
+	static void convertMapFile(const std::string& fileName);
+	static void convertAllMapFile(const std::string& filePath);
+	static void readAtlasIndexFile(const std::string& fileName, txMap<int, int>& indexMap);
 };
 
 #endif

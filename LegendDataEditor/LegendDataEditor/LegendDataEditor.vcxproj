@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;./SceneMap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -72,7 +72,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;./SceneMap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,6 +89,11 @@
     <ClCompile Include="Memory\txMemoryCheck.cpp" />
     <ClCompile Include="Memory\txMemoryTrace.cpp" />
     <ClCompile Include="Memory\txShareMemoryServer.cpp" />
+    <ClCompile Include="SceneMap\MapHeader.cpp" />
+    <ClCompile Include="SceneMap\MapTile.cpp" />
+    <ClCompile Include="SceneMap\MapTileAdvance.cpp" />
+    <ClCompile Include="SceneMap\SceneMap.cpp" />
+    <ClCompile Include="SceneMap\SceneMapAdvance.cpp" />
     <ClCompile Include="Serialize\txSerializedData.cpp" />
     <ClCompile Include="Serialize\txSerializer.cpp" />
     <ClCompile Include="Sqlite\SQLite.cpp" />
@@ -111,11 +116,8 @@
     <ClCompile Include="Utility\FileUtility.cpp" />
     <ClCompile Include="Utility\HumanImage.cpp" />
     <ClCompile Include="Utility\ImageUtility.cpp" />
-    <ClCompile Include="Utility\MapHeader.cpp" />
-    <ClCompile Include="Utility\MapTile.cpp" />
     <ClCompile Include="Utility\MathUtility.cpp" />
     <ClCompile Include="Utility\MonsterImage.cpp" />
-    <ClCompile Include="Utility\SceneMap.cpp" />
     <ClCompile Include="Utility\StringUtility.cpp" />
     <ClCompile Include="Utility\SystemUtility.cpp" />
     <ClCompile Include="Utility\WeaponImage.cpp" />
@@ -134,6 +136,11 @@
     <ClInclude Include="Memory\txMemoryCheck.h" />
     <ClInclude Include="Memory\txMemoryTrace.h" />
     <ClInclude Include="Memory\txShareMemoryServer.h" />
+    <ClInclude Include="SceneMap\MapHeader.h" />
+    <ClInclude Include="SceneMap\MapTile.h" />
+    <ClInclude Include="SceneMap\MapTileAdvance.h" />
+    <ClInclude Include="SceneMap\SceneMap.h" />
+    <ClInclude Include="SceneMap\SceneMapAdvance.h" />
     <ClInclude Include="Serialize\txSerializedData.h" />
     <ClInclude Include="Serialize\txSerializer.h" />
     <ClInclude Include="Sqlite\SQLite.h" />
@@ -163,12 +170,9 @@
     <ClInclude Include="Utility\HumanAction.h" />
     <ClInclude Include="Utility\HumanImage.h" />
     <ClInclude Include="Utility\ImageUtility.h" />
-    <ClInclude Include="Utility\MapHeader.h" />
-    <ClInclude Include="Utility\MapTile.h" />
     <ClInclude Include="Utility\MathUtility.h" />
     <ClInclude Include="Utility\MonsterAction.h" />
     <ClInclude Include="Utility\MonsterImage.h" />
-    <ClInclude Include="Utility\SceneMap.h" />
     <ClInclude Include="Utility\StringUtility.h" />
     <ClInclude Include="Utility\SystemUtility.h" />
     <ClInclude Include="Utility\Utility.h" />

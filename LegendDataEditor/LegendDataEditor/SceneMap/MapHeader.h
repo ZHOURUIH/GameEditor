@@ -7,6 +7,7 @@ const int TITLE_LENGTH = 17;
 const int UPDATE_TIME_LENGTH = 8;
 const int RESERVED_LENGTH = 23;
 
+class txSerializer;
 class MapHeader
 {
 public:
@@ -21,6 +22,7 @@ public:
 	{
 		return sizeof(mWidth) + sizeof(mHeight) + TITLE_LENGTH + UPDATE_TIME_LENGTH + RESERVED_LENGTH;
 	}
+	void saveHeader(txSerializer* serializer);
 };
 
 #endif

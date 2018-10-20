@@ -40,6 +40,9 @@
     <Filter Include="Sqlite\sqlite3">
       <UniqueIdentifier>{fe2f7597-6e26-4ca4-bbae-b652d73df5a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SceneMap">
+      <UniqueIdentifier>{47a9350b-d916-4ed8-861c-4dafdeda1366}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -138,14 +141,20 @@
     <ClCompile Include="Utility\EffectImage.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\SceneMap.cpp">
-      <Filter>Utility</Filter>
+    <ClCompile Include="SceneMap\MapHeader.cpp">
+      <Filter>SceneMap</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\MapTile.cpp">
-      <Filter>Utility</Filter>
+    <ClCompile Include="SceneMap\MapTile.cpp">
+      <Filter>SceneMap</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\MapHeader.cpp">
-      <Filter>Utility</Filter>
+    <ClCompile Include="SceneMap\SceneMap.cpp">
+      <Filter>SceneMap</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMap\MapTileAdvance.cpp">
+      <Filter>SceneMap</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMap\SceneMapAdvance.cpp">
+      <Filter>SceneMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -299,14 +308,20 @@
     <ClInclude Include="Utility\EffectImage.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\SceneMap.h">
-      <Filter>Utility</Filter>
+    <ClInclude Include="SceneMap\MapHeader.h">
+      <Filter>SceneMap</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\MapTile.h">
-      <Filter>Utility</Filter>
+    <ClInclude Include="SceneMap\MapTile.h">
+      <Filter>SceneMap</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\MapHeader.h">
-      <Filter>Utility</Filter>
+    <ClInclude Include="SceneMap\SceneMap.h">
+      <Filter>SceneMap</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMap\MapTileAdvance.h">
+      <Filter>SceneMap</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMap\SceneMapAdvance.h">
+      <Filter>SceneMap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

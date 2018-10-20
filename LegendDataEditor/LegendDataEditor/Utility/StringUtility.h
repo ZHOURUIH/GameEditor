@@ -13,7 +13,7 @@ public:
 	static void removeLastComma(std::string& stream);
 	static std::string getFolderName(std::string str);
 	static std::string getFileName(std::string str);
-	static std::string getFileNameNoSuffix(std::string str, bool endSuffix = true);
+	static std::string getFileNameNoSuffix(std::string str, bool removePath = true);
 	static std::string getFilePath(std::string dir);
 	static std::string getFileSuffix(const std::string& fileName, bool includeDot = false);
 	// 获得字符串最后不是数字的下标

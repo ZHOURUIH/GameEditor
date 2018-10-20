@@ -141,6 +141,8 @@ if (thread != NULL_THREAD)		\
 #define GET_BYTE(value, pos) (value & (0x000000ff << (8 * pos))) >> (8 * pos)
 #define GET_BIT(value, pos) ((value & (1 << (pos))) >> (pos)) & 1
 #define SET_BIT(value, pos, bit) value = value & ~(1 << (pos)) | (bit & (1 << (pos)))
+#define GET_HIGHEST_BIT(value) GET_BIT(value, sizeof(value) * 8 - 1)
+#define SET_HIGHEST_BIT(value, bit) SET_BIT(value, sizeof(value) * 8 - 1, bit);
 #define _FILE_LINE_ "File : " + std::string(__FILE__) + ", Line : " + LINE_STR(__LINE__)
 #define NEW_PACKET(packet, type) NetServer::createPacket(packet, type);
 

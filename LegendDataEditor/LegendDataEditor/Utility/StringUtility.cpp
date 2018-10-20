@@ -42,24 +42,20 @@ std::string StringUtility::getFileName(std::string str)
 	return str;
 }
 
-std::string StringUtility::getFileNameNoSuffix(std::string str, bool endSuffix)
+std::string StringUtility::getFileNameNoSuffix(std::string str, bool removePath)
 {
 	rightToLeft(str);
+	// 已经移除路径后,从头开始查找后缀名,未移除路径时,从文件名处开始查找后缀名
 	int namePos = str.find_last_of('/');
-	int dotPos = -1;
-	// 从最后一个.到文件名结尾认为是后缀名
-	if (endSuffix)
+	if (removePath)
 	{
-		dotPos = str.find_last_of('.');
+		str = str.substr(namePos + 1, str.length() - namePos - 1);
+		namePos = 0;
 	}
-	// 从第一个.到文件名结尾认为是后缀名
-	else
-	{
-		dotPos = str.find_first_of('.', namePos);
-	}
+	int dotPos = str.find_first_of('.', namePos);
 	if (dotPos != -1)
 	{
-		return str.substr(namePos + 1, dotPos - namePos - 1);
+		return str.substr(0, dotPos);
 	}
 	return str;
 }
