@@ -10,12 +10,27 @@ public class ImagePacker
 	/// <summary>
 	/// 自动构建图集菜单命令
 	/// </summary>
-	[MenuItem("图集/根据txt和png创建NGUI图集")]
-	public static void BuildAtlas()
+	[MenuItem("图集/创建地砖图集")]
+	public static void BuildAtlasTiles()
 	{
 		DateTime time0 = DateTime.Now;
-		SetupNGUIAtlas(CommonDefine.F_TEXTURE_PATH + "GameTexture/MapAtlasTexture/Objects1",
-					   CommonDefine.P_RESOURCE_PATH + CommonDefine.R_ATLAS_PATH + "Map/Objects1");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_PATH,
+					   CommonDefine.P_ATLAS_PATH + "Map");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_PATH + "Tiles",
+					   CommonDefine.P_ATLAS_PATH + "Map/Tiles");
+		UnityUtility.messageBox("创建图集结束! 耗时 : " + (DateTime.Now - time0), false);
+	}
+	[MenuItem("图集/创建地图物体图集")]
+	public static void BuildAtlasObjects()
+	{
+		DateTime time0 = DateTime.Now;
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects1", CommonDefine.P_ATLAS_PATH + "Map/Objects1");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects2", CommonDefine.P_ATLAS_PATH + "Map/Objects2");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects3", CommonDefine.P_ATLAS_PATH + "Map/Objects3");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects4", CommonDefine.P_ATLAS_PATH + "Map/Objects4");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects5", CommonDefine.P_ATLAS_PATH + "Map/Objects5");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects6", CommonDefine.P_ATLAS_PATH + "Map/Objects6");
+		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects7", CommonDefine.P_ATLAS_PATH + "Map/Objects7");
 		UnityUtility.messageBox("创建图集结束! 耗时 : " + (DateTime.Now - time0), false);
 	}
 	/// <summary>
@@ -32,10 +47,14 @@ public class ImagePacker
 			{
 				EditorUtility.DisplayProgressBar("设置NGUI图集", "正在进行" + StringUtility.getFileName(fileList[i]), i / (float)fileList.Count);
 
-				// 创建NGUI的3个图集文件
+				FileUtility.createDir(atlasAssetPath);
 				string atlasName = StringUtility.getFileNameNoSuffix(fileList[i], true);
 				string prefabFile = atlasAssetPath + "/" + atlasName + ".prefab";
 				string matFile = atlasAssetPath + "/" + atlasName + ".mat";
+				string destPNGFile = atlasAssetPath + "/" + atlasName + ".png";
+				string path = CommonDefine.F_ASSETS_PATH.Substring(0, CommonDefine.F_ASSETS_PATH.Length - CommonDefine.ASSETS.Length - 1);
+				// 拷贝png文件
+				FileUtility.copyFile(fileList[i], path + destPNGFile);
 
 				// 加载文件图集文件，如果不存则创建
 				GameObject prefabAsset = AssetDatabase.LoadMainAssetAtPath(prefabFile) as GameObject;
@@ -45,7 +64,12 @@ public class ImagePacker
 					prefabAsset = PrefabUtility.CreatePrefab(prefabFile, temp);
 					GameObject.DestroyImmediate(temp);
 				}
-
+				UIAtlas uiAtlas = prefabAsset.GetComponent<UIAtlas>();
+				if (uiAtlas == null)
+				{
+					uiAtlas = prefabAsset.AddComponent<UIAtlas>();
+				}
+				// 创建材质文件
 				Material matAsset = AssetDatabase.LoadMainAssetAtPath(matFile) as Material;
 				if (matAsset == null)
 				{
@@ -53,16 +77,9 @@ public class ImagePacker
 					AssetDatabase.CreateAsset(matAsset, matFile);
 				}
 
-				UIAtlas uiAtlas = prefabAsset.GetComponent<UIAtlas>();
-				if (uiAtlas == null)
-				{
-					uiAtlas = prefabAsset.AddComponent<UIAtlas>();
-				}
-
 				// 配置图集参数
-				string pngFileName = CommonDefine.P_ASSETS_PATH + fileList[i].Substring(CommonDefine.F_ASSETS_PATH.Length);
-				string dataFile = StringUtility.getFileNameNoSuffix(pngFileName) + ".txt";
-				Texture2D pngAsset = GetAtlasTexture(pngFileName);
+				string dataFile = StringUtility.getFileNameNoSuffix(destPNGFile) + ".txt";
+				Texture2D pngAsset = GetAtlasTexture(destPNGFile);
 				TextAsset dataAsset = AssetDatabase.LoadMainAssetAtPath(dataFile) as TextAsset;
 				matAsset.SetTexture("_MainTex", pngAsset);
 				uiAtlas.spriteMaterial = matAsset;

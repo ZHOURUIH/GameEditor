@@ -12,6 +12,7 @@ public class ScriptEditorSelect : LayoutScript
 	protected txNGUIButton mMonsterSpriteEditor;
 	protected txNGUIButton mHumanSpriteEditor;
 	protected txNGUIButton mSceneEditor;
+	protected txNGUIButton mSceneAdvanceEditor;
 	public ScriptEditorSelect(string name, GameLayout layout)
 		:
 		base(name, layout)
@@ -26,6 +27,7 @@ public class ScriptEditorSelect : LayoutScript
 		newObject(out mMonsterSpriteEditor, "MonsterSpriteEditor");
 		newObject(out mHumanSpriteEditor, "HumanSpriteEditor");
 		newObject(out mSceneEditor, "SceneEditor");
+		newObject(out mSceneAdvanceEditor, "SceneAdvanceEditor");
 	}
 	public override void init()
 	{
@@ -35,6 +37,7 @@ public class ScriptEditorSelect : LayoutScript
 		registeBoxColliderNGUI(mMonsterSpriteEditor, onMonsterSpriteEditorClick);
 		registeBoxColliderNGUI(mHumanSpriteEditor, onHumanSpriteEditorClick);
 		registeBoxColliderNGUI(mSceneEditor, onSceneEditorClick);
+		registeBoxColliderNGUI(mSceneAdvanceEditor, onSceneAdvanceEditorClick);
 	}
 	public override void onReset()
 	{
@@ -87,6 +90,12 @@ public class ScriptEditorSelect : LayoutScript
 	{
 		CommandGameSceneChangeProcedure cmd = newCmd(out cmd);
 		cmd.mProcedure = PROCEDURE_TYPE.PT_START_SCENE_EDITOR;
+		pushCommand(cmd, mGameSceneManager.getCurScene());
+	}
+	protected void onSceneAdvanceEditorClick(GameObject go)
+	{
+		CommandGameSceneChangeProcedure cmd = newCmd(out cmd);
+		cmd.mProcedure = PROCEDURE_TYPE.PT_START_SCENE_ADVANCE_EDITOR;
 		pushCommand(cmd, mGameSceneManager.getCurScene());
 	}
 }

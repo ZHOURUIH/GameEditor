@@ -53,7 +53,7 @@ public class txNGUITexture : txUIObject
 		mTexture.mainTexture = tex;
 		if (useTextureSize && tex != null)
 		{
-			setWindowSize(new Vector2(tex.width, tex.height));
+			setWindowSize(getTextureSize());
 		}
 	}
 	public Texture getTexture()
@@ -113,6 +113,14 @@ public class txNGUITexture : txUIObject
 			return "";
 		}
 		return mTexture.mainTexture.name;
+	}
+	public Vector2 getTextureSize()
+	{
+		if(mTexture.mainTexture == null)
+		{
+			return Vector2.zero;
+		}
+		return new Vector2(mTexture.mainTexture.width, mTexture.mainTexture.height);
 	}
 	public string getMaterialName()
 	{

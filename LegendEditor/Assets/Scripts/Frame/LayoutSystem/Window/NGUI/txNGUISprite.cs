@@ -41,6 +41,15 @@ public class txNGUISprite : txUIObject
 			setWindowSize(new Vector2(spriteData.width, spriteData.height));
 		}
 	}
+	public Vector2 getSpriteSize()
+	{
+		UISpriteData spriteData = mSprite.GetAtlasSprite();
+		if(spriteData != null)
+		{
+			return new Vector2(spriteData.width, spriteData.height);
+		}
+		return Vector2.zero;
+	}
 	public Vector2 getWindowSize()
 	{
 		return new Vector2(mSprite.width, mSprite.height);

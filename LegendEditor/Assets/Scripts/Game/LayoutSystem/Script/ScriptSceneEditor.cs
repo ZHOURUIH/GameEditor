@@ -6,25 +6,31 @@ using UnityEngine;
 
 public class ScriptSceneEditor : LayoutScript
 {
-	txUIObject mEditorRoot;
+	txNGUIPanel mEditorRoot;
 	txNGUIEditbox mSceneNameEdit;
 	txNGUIButton mCreateNewScene;
+	txNGUIText mWidthLabel;
+	txNGUIText mHeightLabel;
 	txUIObject mSceneRoot;
-	txUIObject mBackRoot;
+	txNGUIPanel mBackRoot;
 	txUIObject mMiddleRoot;
-	txUIObject mObjRoot;
+	txNGUIPanel mObjRoot;
+	List<txNGUIPanel> mMidPanelList;
 	List<txNGUITexture> mTiles;
 	public ScriptSceneEditor(string name, GameLayout layout)
 		:
 		base(name, layout)
 	{
 		mTiles = new List<txNGUITexture>();
+		mMidPanelList = new List<txNGUIPanel>();
 	}
 	public override void assignWindow()
 	{
 		newObject(out mEditorRoot, "EditorRoot");
 		newObject(out mSceneNameEdit, mEditorRoot, "SceneNameEdit");
 		newObject(out mCreateNewScene, mEditorRoot, "CreateNewScene");
+		newObject(out mWidthLabel, mEditorRoot, "SceneWidth");
+		newObject(out mHeightLabel, mEditorRoot, "SceneHeight");
 		newObject(out mSceneRoot, "SceneRoot");
 		newObject(out mBackRoot, mSceneRoot, "BackRoot");
 		newObject(out mMiddleRoot, mSceneRoot, "MiddleRoot");
@@ -36,7 +42,8 @@ public class ScriptSceneEditor : LayoutScript
 	}
 	public override void onReset()
 	{
-		;
+		mWidthLabel.setLabel("宽:0");
+		mHeightLabel.setLabel("高:0");
 	}
 	public override void onShow(bool immediately, string param)
 	{
@@ -63,29 +70,36 @@ public class ScriptSceneEditor : LayoutScript
 			// 偶数行偶数列才渲染大地砖
 			if(x % 2 == 0 && y % 2 == 0)
 			{
-				string backTexName = CommonDefine.R_GAME_TEXTURE_PATH + "MapTexture/Tiles/" + tile.mBngImgIdx;
+				string backTexName = CommonDefine.R_GAME_TEXTURE_PATH + "MapTexture/Tiles/" + (tile.mBngImgIdx - 1);
 				Texture backTex = mResourceManager.loadResource<Texture>(backTexName, false);
 				if (backTex != null)
 				{
 					txNGUITexture backTile = createObject<txNGUITexture>(mBackRoot, "back_" + x + "_" + y);
-					backTile.setTexture(backTex);
-					Vector2 textureSize = new Vector2(backTile.getTexture().width, backTile.getTexture().height);
-					backTile.setWindowSize(textureSize);
-					LayoutTools.MOVE_WINDOW(backTile, new Vector3(48 * x + textureSize.x / 2.0f - halfMap.x, 32 * y + textureSize.y / 2.0f - halfMap.y));
+					backTile.setTexture(backTex, true);
+					Vector2 posOffset = backTile.getTextureSize() / 2.0f;
+					posOffset += new Vector2(48 * x - halfMap.x, halfMap.y - 32 * (y + 1));
+					LayoutTools.MOVE_WINDOW(backTile, posOffset);
 					backTile.setDepth(1);
 					mTiles.Add(backTile);
 				}
 			}
 
-			string midTexName = CommonDefine.R_GAME_TEXTURE_PATH + "MapTexture/SmTiles/" + tile.mMidImgIdx;
+			string midTexName = CommonDefine.R_GAME_TEXTURE_PATH + "MapTexture/SmTiles/" + (tile.mMidImgIdx - 1);
 			Texture midTex = mResourceManager.loadResource<Texture>(midTexName, false);
 			if(midTex != null)
 			{
-				txNGUITexture midTile = createObject<txNGUITexture>(mMiddleRoot, "mid_" + x + "_" + y);
-				midTile.setTexture(midTex);
-				Vector2 textureSize = new Vector2(midTile.getTexture().width, midTile.getTexture().height);
-				midTile.setWindowSize(textureSize);
-				LayoutTools.MOVE_WINDOW(midTile, new Vector3(48 * x + textureSize.x / 2.0f - halfMap.x, 32 * y + textureSize.y / 2.0f - halfMap.y));
+				int materialIndex = i / 5000;
+				if (materialIndex >= mMidPanelList.Count)
+				{
+					txNGUIPanel panel = createObject<txNGUIPanel>(mMiddleRoot, "MidPanel" + materialIndex);
+					panel.setDepth(2);
+					mMidPanelList.Add(panel);
+				}
+				txNGUITexture midTile = createObject<txNGUITexture>(mMidPanelList[materialIndex], "mid_" + x + "_" + y);
+				midTile.setTexture(midTex, true);
+				Vector2 posOffset = midTile.getTextureSize() / 2.0f;
+				posOffset += new Vector2(48 * x - halfMap.x, halfMap.y - 32 * y);
+				LayoutTools.MOVE_WINDOW(midTile, posOffset);
 				midTile.setDepth(2);
 				mTiles.Add(midTile);
 			}
@@ -95,11 +109,8 @@ public class ScriptSceneEditor : LayoutScript
 			if (objTex != null)
 			{
 				txNGUITexture objTile = createObject<txNGUITexture>(mObjRoot, "obj_" + x + "_" + y);
-				objTile.setTexture(objTex);
-				Vector2 textureSize = new Vector2(objTile.getTexture().width, objTile.getTexture().height);
-				objTile.setWindowSize(textureSize);
-				Vector2 posOffset = new Vector2();
-				posOffset += new Vector2(textureSize.x / 2.0f, textureSize.y / 2.0f);
+				objTile.setTexture(objTex, true);
+				Vector2 posOffset = objTile.getTextureSize() / 2.0f;
 				posOffset += new Vector2(48 * x - halfMap.x, halfMap.y - 32 * y);
 				LayoutTools.MOVE_WINDOW(objTile, posOffset);
 				objTile.setDepth(3);
@@ -121,5 +132,7 @@ public class ScriptSceneEditor : LayoutScript
 		SceneMap sceneMap = new SceneMap();
 		sceneMap.readFile(mapFileName);
 		createScene(sceneMap);
+		mWidthLabel.setLabel("宽:" + sceneMap.mHeader.mWidth);
+		mHeightLabel.setLabel("高:" + sceneMap.mHeader.mHeight);
 	}
 }

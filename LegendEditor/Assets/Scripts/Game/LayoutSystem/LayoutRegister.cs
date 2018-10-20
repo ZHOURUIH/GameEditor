@@ -9,6 +9,7 @@ public class LayoutRegister : GameBase
 	{
 		//registeLayout<ScriptObjectEditor>(LAYOUT_TYPE.LT_OBJECT_EDITOR, "UIObjectEditor");
 		registeLayout<ScriptSceneEditor>(LAYOUT_TYPE.LT_SCENE_EDITOR, "UISceneEditor");
+		registeLayout<ScriptSceneAdvanceEditor>(LAYOUT_TYPE.LT_SCENE_ADVANCE_EDITOR, "UISceneAdvanceEditor");
 		registeLayout<ScriptEditorSelect>(LAYOUT_TYPE.LT_EDITOR_SELECT, "UIEditorSelect");
 		registeLayout<ScriptEffectTextureEditor>(LAYOUT_TYPE.LT_EFFECT_TEXTURE_EDITOR, "UIEffectTextureEditor");
 		registeLayout<ScriptEffectSpriteEditor>(LAYOUT_TYPE.LT_EFFECT_SPRITE_EDITOR, "UIEffectSpriteEditor");
@@ -28,6 +29,7 @@ public class LayoutRegister : GameBase
 		}
 		//if (assign(ref mScriptObjectEditor, script, created)) return;
 		if (assign(ref mScriptSceneEditor, script, created)) return;
+		if (assign(ref mScriptSceneAdvanceEditor, script, created)) return;
 		if (assign(ref mScriptEditorSelect, script, created)) return;
 		if (assign(ref mScriptEffectTextureEditor, script, created)) return;
 		if (assign(ref mScriptEffectSpriteEditor, script, created)) return;

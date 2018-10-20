@@ -23,6 +23,7 @@ public class GameBase : FrameBase
 	// 以下是用于快速访问的布局脚本
 	//public static ScriptObjectEditor mScriptObjectEditor;
 	public static ScriptSceneEditor mScriptSceneEditor;
+	public static ScriptSceneAdvanceEditor mScriptSceneAdvanceEditor;
 	public static ScriptEditorSelect mScriptEditorSelect;
 	public static ScriptEffectTextureEditor mScriptEffectTextureEditor;
 	public static ScriptEffectSpriteEditor mScriptEffectSpriteEditor;
