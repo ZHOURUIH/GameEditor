@@ -33,6 +33,15 @@ public class ImagePacker
 		SetupNGUIAtlas(CommonDefine.F_TEXTURE_GAME_TEXTURE_PATH + "MapAtlasTexture/Objects7", CommonDefine.P_ATLAS_PATH + "Map/Objects7");
 		UnityUtility.messageBox("创建图集结束! 耗时 : " + (DateTime.Now - time0), false);
 	}
+	// 绝对路径转换为相对于项目的路径
+	static string fullPathToProjectPath(string fullPath)
+	{
+		return CommonDefine.P_ASSETS_PATH + fullPath.Substring(CommonDefine.F_ASSETS_PATH.Length);
+	}
+	static string projectPathToFullPath(string assetPath)
+	{
+		return CommonDefine.F_ASSETS_PATH.Substring(0, CommonDefine.F_ASSETS_PATH.Length - CommonDefine.ASSETS.Length - 1) + assetPath;
+	}
 	/// <summary>
 	/// 配置NGUI图集,srcFullPath是txt和png文件所在目录,绝对路径.atlasAssetPath是图集的目录,以Assets开头的路径
 	/// </summary>
@@ -48,13 +57,13 @@ public class ImagePacker
 				EditorUtility.DisplayProgressBar("设置NGUI图集", "正在进行" + StringUtility.getFileName(fileList[i]), i / (float)fileList.Count);
 
 				FileUtility.createDir(atlasAssetPath);
-				string atlasName = StringUtility.getFileNameNoSuffix(fileList[i], true);
-				string prefabFile = atlasAssetPath + "/" + atlasName + ".prefab";
-				string matFile = atlasAssetPath + "/" + atlasName + ".mat";
-				string destPNGFile = atlasAssetPath + "/" + atlasName + ".png";
-				string path = CommonDefine.F_ASSETS_PATH.Substring(0, CommonDefine.F_ASSETS_PATH.Length - CommonDefine.ASSETS.Length - 1);
+				string assetNameNoSuffix = atlasAssetPath + "/" + StringUtility.getFileNameNoSuffix(fileList[i], true);
+				string prefabFile = assetNameNoSuffix + ".prefab";
+				string matFile = assetNameNoSuffix + ".mat";
+				string destPNGFile = assetNameNoSuffix + ".png";
 				// 拷贝png文件
-				FileUtility.copyFile(fileList[i], path + destPNGFile);
+				FileUtility.copyFile(fileList[i], projectPathToFullPath(destPNGFile));
+				AssetDatabase.Refresh();
 
 				// 加载文件图集文件，如果不存则创建
 				GameObject prefabAsset = AssetDatabase.LoadMainAssetAtPath(prefabFile) as GameObject;
@@ -78,7 +87,8 @@ public class ImagePacker
 				}
 
 				// 配置图集参数
-				string dataFile = StringUtility.getFileNameNoSuffix(destPNGFile) + ".txt";
+				string srcPNGFile = fullPathToProjectPath(fileList[i]);
+				string dataFile = StringUtility.getFileNameNoSuffix(srcPNGFile) + ".txt";
 				Texture2D pngAsset = GetAtlasTexture(destPNGFile);
 				TextAsset dataAsset = AssetDatabase.LoadMainAssetAtPath(dataFile) as TextAsset;
 				matAsset.SetTexture("_MainTex", pngAsset);
