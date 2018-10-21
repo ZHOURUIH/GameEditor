@@ -164,6 +164,10 @@ public class txUIObject : ComponentOwner
 	//-------------------------------------------------------------------------------------------------------------------------------------
 	public void setParent(txUIObject parent)
 	{
+		if(mParent == parent)
+		{
+			return;
+		}
 		mParent = parent;
 		if (parent != null)
 		{
