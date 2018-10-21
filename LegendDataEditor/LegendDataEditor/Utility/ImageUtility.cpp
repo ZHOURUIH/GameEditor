@@ -855,7 +855,7 @@ void ImageUtility::texturePacker(const std::string& texturePath)
 	cmdLine += "--maxrects-heuristics Best ";
 	cmdLine += "--trim-mode None ";
 	cmdLine += "--disable-rotation ";
-	cmdLine += "--size-constraints AnySize ";
+	cmdLine += "--size-constraints POT ";
 	cmdLine += "--max-size 2048 ";
 	cmdLine += "--padding 1 ";
 	cmdLine += texturePath;
