@@ -139,8 +139,8 @@ if (thread != NULL_THREAD)		\
 #define SET_BYTE(value, byte, pos) value = (value & ~(0x000000ff << (8 * pos))) | (byte << (8 * pos))
 // 获得value的指定位置pos的字节的值
 #define GET_BYTE(value, pos) (value & (0x000000ff << (8 * pos))) >> (8 * pos)
-#define GET_BIT(value, pos) ((value & (1 << (pos))) >> (pos)) & 1
-#define SET_BIT(value, pos, bit) value = value & ~(1 << (pos)) | (bit & (1 << (pos)))
+#define GET_BIT(value, pos) (((value & (1 << (pos))) >> (pos)) & 1)
+#define SET_BIT(value, pos, bit) value = value & ~(1 << (pos)) | (bit << (pos))
 #define GET_HIGHEST_BIT(value) GET_BIT(value, sizeof(value) * 8 - 1)
 #define SET_HIGHEST_BIT(value, bit) SET_BIT(value, sizeof(value) * 8 - 1, bit);
 #define _FILE_LINE_ "File : " + std::string(__FILE__) + ", Line : " + LINE_STR(__LINE__)

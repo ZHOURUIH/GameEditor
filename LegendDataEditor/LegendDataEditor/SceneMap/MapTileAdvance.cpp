@@ -57,12 +57,32 @@ void MapTileAdvance::initFromOldTile(MapTile& tile, unsigned char objAtlasIndex,
 
 void MapTileAdvance::saveTile(txSerializer* serializer)
 {
-	serializer->write(mBngImgIdx);
-	serializer->write(mMidImgIdx);
-	serializer->write(mObjImgIdx);
+	short bngImgIdx = mBngImgIdx;
+	if (mHasBng)
+	{
+		SET_HIGHEST_BIT(bngImgIdx, 1);
+	}
+	short midImgIdx = mMidImgIdx;
+	if (mHasMid)
+	{
+		SET_HIGHEST_BIT(midImgIdx, 1);
+	}
+	short objImgIdx = mObjImgIdx;
+	if (mHasObj)
+	{
+		SET_HIGHEST_BIT(objImgIdx, 1);
+	}
+	unsigned char aniFrame = mAniFrame;
+	if (mHasAni)
+	{
+		SET_HIGHEST_BIT(aniFrame, 1);
+	}
+	serializer->write(bngImgIdx);
+	serializer->write(midImgIdx);
+	serializer->write(objImgIdx);
 	serializer->write(mDoorIdx);
 	serializer->write(mDoorOffset);
-	serializer->write(mAniFrame);
+	serializer->write(aniFrame);
 	serializer->write(mAniTick);
 	serializer->write(mObjFileIdx);
 	serializer->write(mObjAtlasIndex);

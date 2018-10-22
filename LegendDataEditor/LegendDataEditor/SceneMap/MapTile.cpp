@@ -26,5 +26,9 @@ void MapTile::parseTile(char* buffer, int bufferSize, int& offset)
 	mDoorOpen = GET_HIGHEST_BIT(mDoorOffset) == 1;
 	mHasDoor = GET_HIGHEST_BIT(mDoorIdx) == 1;
 	mHasAni = GET_HIGHEST_BIT(mAniFrame) == 1;
+	if (mHasAni || mAniFrame > 0)
+	{
+		int a = 0;
+	}
 	SET_HIGHEST_BIT(mAniFrame, 0);
 }
