@@ -31,13 +31,23 @@ public class WindowTexturePool
 	protected List<txNGUITexture> mInusedList;
 	protected List<txNGUITexture> mUnusedList;
 	protected LayoutScript mScript;
+	protected txUIObject mPoolNode;
 	public WindowTexturePool(LayoutScript script)
 	{
 		mScript = script;
 		mInusedList = new List<txNGUITexture>();
 		mUnusedList = new List<txNGUITexture>();
 	}
-	public txNGUITexture createWindow(string name)
+	public void assignWindow()
+	{
+		mPoolNode = mScript.createObject<txUIObject>("WindowTexturePool");
+	}
+	public void destroy()
+	{
+		mScript.destroyObject(mPoolNode, true);
+		mPoolNode = null;
+	}
+	public txNGUITexture createWindow(string name, txUIObject parent)
 	{
 		txNGUITexture window = null;
 		// 从未使用列表中获取
@@ -54,6 +64,8 @@ public class WindowTexturePool
 		// 加入到已使用列表中
 		mInusedList.Add(window);
 		window.setActive(true);
+		window.setName(name);
+		window.setParent(parent);
 		return window;
 	}
 	public void destroyWindow(txNGUITexture window)
@@ -65,6 +77,7 @@ public class WindowTexturePool
 		mUnusedList.Add(window);
 		mInusedList.Remove(window);
 		window.setActive(false);
+		window.setParent(mPoolNode);
 	}
 }
 
@@ -121,6 +134,7 @@ public class ScriptSceneEditor : LayoutScript
 		newObject(out mBackRoot, mSceneRoot, "BackRoot");
 		newObject(out mMiddleRoot, mSceneRoot, "MiddleRoot");
 		newObject(out mObjRoot, mSceneRoot, "ObjRoot");
+		mWindowPool.assignWindow();
 	}
 	public override void init()
 	{
@@ -249,8 +263,7 @@ public class ScriptSceneEditor : LayoutScript
 				{
 					mBackPanelList.Add(panelIndex, createObject<txNGUIPanel>(mBackRoot, "BackPanel" + panelIndex));
 				}
-				tileWindow.mBackTile = mWindowPool.createWindow("back_" + tileSuffix);
-				tileWindow.mBackTile.setParent(mBackPanelList[panelIndex]);
+				tileWindow.mBackTile = mWindowPool.createWindow("back_" + tileSuffix, mBackPanelList[panelIndex]);
 				tileWindow.mBackTile.setTexture(backTex, true);
 				Vector2 posOffset = tileWindow.mBackTile.getTextureSize() / 2.0f;
 				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y - 32);
@@ -265,8 +278,7 @@ public class ScriptSceneEditor : LayoutScript
 			Texture midTex = mResourceManager.loadResource<Texture>(midTexName, false);
 			if (midTex != null)
 			{
-				tileWindow.mMidTile = mWindowPool.createWindow("mid_" + tileSuffix);
-				tileWindow.mMidTile.setParent(mMiddleRoot);
+				tileWindow.mMidTile = mWindowPool.createWindow("mid_" + tileSuffix, mMiddleRoot);
 				tileWindow.mMidTile.setTexture(midTex, true);
 				Vector2 posOffset = tileWindow.mMidTile.getTextureSize() / 2.0f;
 				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
@@ -275,38 +287,62 @@ public class ScriptSceneEditor : LayoutScript
 		}
 		if (tileWindow.mObjectTile == null)
 		{
-			string objTexName = mObjectImagePreString + (tile.mObjFileIdx + 1) + "/" + (tile.mObjImgIdx - 1);
-			Texture objTex = mResourceManager.loadResource<Texture>(objTexName, false);
-			if (objTex != null)
+			// 普通物体
+			if(!tile.mHasAni)
 			{
-				tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix);
-				tileWindow.mObjectTile.setParent(mObjRoot);
-				tileWindow.mObjectTile.setTexture(objTex, true);
-				Vector2 posOffset = tileWindow.mObjectTile.getTextureSize() / 2.0f;
-				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
-				tileWindow.mObjectTile.setLocalPosition(posOffset);
-				tileWindow.mObjectTile.setDepth(3);
+				string objTexName = mObjectImagePreString + (tile.mObjFileIdx + 1) + "/" + (tile.mObjImgIdx - 1);
+				Texture objTex = mResourceManager.loadResource<Texture>(objTexName, false);
+				if (objTex != null)
+				{
+					tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix, mObjRoot);
+					tileWindow.mObjectTile.setTexture(objTex, true);
+					Vector2 posOffset = tileWindow.mObjectTile.getTextureSize() / 2.0f;
+					posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
+					tileWindow.mObjectTile.setLocalPosition(posOffset);
+					tileWindow.mObjectTile.setDepth(3);
+				}
+			}
+			// 带序列帧的物体
+			else
+			{
+				string objTexName = mObjectImagePreString + (tile.mObjFileIdx + 1) + "/" + (tile.mObjImgIdx - 1);
+				Texture objTex = mResourceManager.loadResource<Texture>(objTexName, false);
+				if (objTex != null)
+				{
+					tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix, mObjRoot);
+					tileWindow.mObjectTile.setTexture(objTex, true);
+					tileWindow.mObjectTile.setMaterial("Multiple", false);
+					Vector2 posOffset = new Vector2(0.0f, tileWindow.mObjectTile.getTextureSize().y * 1.5f);
+					posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
+					tileWindow.mObjectTile.setLocalPosition(posOffset);
+					tileWindow.mObjectTile.setDepth(3);
+				}
 			}
 		}
 	}
 	public void clearSceneInfo()
 	{
+		// 销毁所有对象
+		if (mTileArray != null)
+		{
+			int count = mTileArray.Length;
+			for (int i = 0; i < count; ++i)
+			{
+				if (mTileArray[i] != null)
+				{
+					mWindowPool.destroyWindow(mTileArray[i].mBackTile);
+					mWindowPool.destroyWindow(mTileArray[i].mMidTile);
+					mWindowPool.destroyWindow(mTileArray[i].mObjectTile);
+				}
+			}
+		}
+		// 销毁为了分批次而创建的panel
 		foreach (var item in mBackPanelList)
 		{
 			destroyObject(item.Value, true);
 		}
 		mBackPanelList.Clear();
 		mVisibleTiles.Clear();
-		if (mTileArray != null)
-		{
-			int count = mTileArray.Length;
-			for (int i = 0; i < count; ++i)
-			{
-				mWindowPool.destroyWindow(mTileArray[i].mBackTile);
-				mWindowPool.destroyWindow(mTileArray[i].mMidTile);
-				mWindowPool.destroyWindow(mTileArray[i].mObjectTile);
-			}
-		}
 	}
 	protected void onCreateNewSceneClick(GameObject go)
 	{

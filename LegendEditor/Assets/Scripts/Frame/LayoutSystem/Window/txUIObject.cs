@@ -112,6 +112,13 @@ public class txUIObject : ComponentOwner
 			mChildList.Add(child);
 		}
 	}
+	public void removeChild(txUIObject child)
+	{
+		if(mChildList.Contains(child))
+		{
+			mChildList.Remove(child);
+		}
+	}
 	public AudioSource createAudioSource()
 	{
 		mAudioSource = mObject.AddComponent<AudioSource>();
@@ -168,6 +175,12 @@ public class txUIObject : ComponentOwner
 		{
 			return;
 		}
+		// 从原来的父节点上移除
+		if(mParent != null)
+		{
+			mParent.removeChild(this);
+		}
+		// 设置新的父节点
 		mParent = parent;
 		if (parent != null)
 		{
@@ -183,6 +196,14 @@ public class txUIObject : ComponentOwner
 		setName(go.name);
 		mObject = go;
 		mTransform = mObject.transform;
+	}
+	public override void setName(string name)
+	{
+		base.setName(name);
+		if(mObject != null && mObject.name != name)
+		{
+			mObject.name = name;
+		}
 	}
 	public virtual void setDepth(int depth)
 	{

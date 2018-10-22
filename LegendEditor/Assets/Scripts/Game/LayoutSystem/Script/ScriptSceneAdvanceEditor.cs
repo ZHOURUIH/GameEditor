@@ -16,13 +16,23 @@ public class WindowSpritePool
 	protected List<txNGUISprite> mInusedList;
 	protected List<txNGUISprite> mUnusedList;
 	protected LayoutScript mScript;
+	protected txUIObject mPoolNode;
 	public WindowSpritePool(LayoutScript script)
 	{
 		mScript = script;
 		mInusedList = new List<txNGUISprite>();
 		mUnusedList = new List<txNGUISprite>();
 	}
-	public txNGUISprite createWindow(string name)
+	public void assignWindow()
+	{
+		mPoolNode = mScript.createObject<txUIObject>("WindowSpritePool");
+	}
+	public void destroy()
+	{
+		mScript.destroyObject(mPoolNode, true);
+		mPoolNode = null;
+	}
+	public txNGUISprite createWindow(string name, txUIObject parent)
 	{
 		txNGUISprite window = null;
 		// 从未使用列表中获取
@@ -39,6 +49,8 @@ public class WindowSpritePool
 		// 加入到已使用列表中
 		mInusedList.Add(window);
 		window.setActive(true);
+		window.setName(name);
+		window.setParent(parent);
 		return window;
 	}
 	public void destroyWindow(txNGUISprite window)
@@ -50,6 +62,7 @@ public class WindowSpritePool
 		mUnusedList.Add(window);
 		mInusedList.Remove(window);
 		window.setActive(false);
+		window.setParent(mPoolNode);
 	}
 }
 
@@ -133,6 +146,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 		newObject(out mBackRoot, mSceneRoot, "BackRoot");
 		newObject(out mMiddleRoot, mSceneRoot, "MiddleRoot");
 		newObject(out mObjRoot, mSceneRoot, "ObjRoot");
+		mWindowPool.assignWindow();
 	}
 	public override void init()
 	{
@@ -289,8 +303,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 				}
 				// panel中的窗口计数+1
 				mBackPanelList[panelIndex].mObjectCount += 1;
-				tileWindow.mBackTile = mWindowPool.createWindow("back_" + tileSuffix);
-				tileWindow.mBackTile.setParent(mBackPanelList[panelIndex].mPanel);
+				tileWindow.mBackTile = mWindowPool.createWindow("back_" + tileSuffix, mBackPanelList[panelIndex].mPanel);
 				tileWindow.mBackTile.setAtlas(bngAtlas);
 				tileWindow.mBackTile.setSpriteName(bngSpriteName, true);
 				Vector2 posOffset = tileWindow.mBackTile.getSpriteSize() / 2.0f;
@@ -305,8 +318,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 			string midSpriteName = "" + (tile.mMidImgIdx - 1);
 			if (midAtlas.GetSprite(midSpriteName) != null)
 			{
-				tileWindow.mMidTile = mWindowPool.createWindow("mid_" + tileSuffix);
-				tileWindow.mMidTile.setParent(mMiddleRoot);
+				tileWindow.mMidTile = mWindowPool.createWindow("mid_" + tileSuffix, mMiddleRoot);
 				tileWindow.mMidTile.setAtlas(midAtlas);
 				tileWindow.mMidTile.setSpriteName(midSpriteName, true);
 				Vector2 posOffset = tileWindow.mMidTile.getSpriteSize() / 2.0f;
@@ -316,42 +328,64 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 		}
 		if (tileWindow.mObjectTile == null)
 		{
-			// 加载对象图集
-			UIAtlas atlas = getObjTileAtlas(tile);
-			// 创建对象图片窗口
-			string spriteName = "" + (tile.mObjImgIdx - 1);
-			if (atlas != null && atlas.GetSprite(spriteName) != null)
+			if (!tile.mHasAni)
 			{
-				tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix);
-				tileWindow.mObjectTile.setParent(mObjRoot);
-				tileWindow.mObjectTile.setAtlas(atlas);
-				tileWindow.mObjectTile.setSpriteName(spriteName, true);
-				Vector2 posOffset = tileWindow.mObjectTile.getSpriteSize() / 2.0f;
-				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
-				tileWindow.mObjectTile.setLocalPosition(posOffset);
-				tileWindow.mObjectTile.setDepth(3);
+				// 加载对象图集
+				UIAtlas atlas = getObjTileAtlas(tile);
+				// 创建对象图片窗口
+				string spriteName = "" + (tile.mObjImgIdx - 1);
+				if (atlas != null && atlas.GetSprite(spriteName) != null)
+				{
+					tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix, mObjRoot);
+					tileWindow.mObjectTile.setAtlas(atlas);
+					tileWindow.mObjectTile.setSpriteName(spriteName, true);
+					Vector2 posOffset = tileWindow.mObjectTile.getSpriteSize() / 2.0f;
+					posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
+					tileWindow.mObjectTile.setLocalPosition(posOffset);
+					tileWindow.mObjectTile.setDepth(3);
+				}
+			}
+			else
+			{
+				// 加载对象图集
+				UIAtlas atlas = getObjTileAtlas(tile);
+				// 创建对象图片窗口
+				string spriteName = "" + (tile.mObjImgIdx - 1);
+				if (atlas != null && atlas.GetSprite(spriteName) != null)
+				{
+					tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix, mObjRoot);
+					tileWindow.mObjectTile.setAtlas(atlas);
+					tileWindow.mObjectTile.setSpriteName(spriteName, true);
+					Vector2 posOffset = new Vector2(0.0f, tileWindow.mObjectTile.getSpriteSize().y * 1.5f);
+					posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
+					tileWindow.mObjectTile.setLocalPosition(posOffset);
+					tileWindow.mObjectTile.setDepth(3);
+				}
 			}
 		}
 	}
 	public void clearSceneInfo()
 	{
-		foreach(var item in mBackPanelList)
+		if (mTileArray != null)
+		{
+			int count = mTileArray.Length;
+			for (int i = 0; i < count; ++i)
+			{
+				if (mTileArray[i] != null)
+				{
+					mWindowPool.destroyWindow(mTileArray[i].mBackTile);
+					mWindowPool.destroyWindow(mTileArray[i].mMidTile);
+					mWindowPool.destroyWindow(mTileArray[i].mObjectTile);
+				}
+			}
+		}
+		foreach (var item in mBackPanelList)
 		{
 			destroyObject(item.Value.mPanel, true);
 		}
 		mBackPanelList.Clear();
 		mBackAtlasList.Clear();
 		mVisibleTiles.Clear();
-		if(mTileArray != null)
-		{
-			int count = mTileArray.Length;
-			for (int i = 0; i < count; ++i)
-			{
-				mWindowPool.destroyWindow(mTileArray[i].mBackTile);
-				mWindowPool.destroyWindow(mTileArray[i].mMidTile);
-				mWindowPool.destroyWindow(mTileArray[i].mObjectTile);
-			}
-		}
 	}
 	//------------------------------------------------------------------------------------------------------------------------------------
 	protected void onCreateNewSceneClick(GameObject go)
