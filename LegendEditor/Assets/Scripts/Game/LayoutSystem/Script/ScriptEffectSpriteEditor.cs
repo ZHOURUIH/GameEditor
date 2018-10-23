@@ -231,7 +231,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 		}
 		mAtlasIndex = index;
 		mEffectCount.setLabel("图集数量:" + (mAtlasIndex + 1) + "/" + mResourceList.Count);
-		UIAtlas atlas = mResourceManager.loadResource<UIAtlas>(CommonDefine.R_ATLAS_TEXTURE_ANIM_PATH + "Effect/" + mResourceList[mAtlasIndex].mAtlasName, true);
+		UIAtlas atlas = mResourceManager.loadResource<UIAtlas>(CommonDefine.R_ATLAS_TEXTURE_ANIM_PATH + "Effect/Skill/" + mResourceList[mAtlasIndex].mAtlasName, true);
 		mEffectSpriteInstance.setAtlas(atlas);
 		setCurAnim(0);
 	}
