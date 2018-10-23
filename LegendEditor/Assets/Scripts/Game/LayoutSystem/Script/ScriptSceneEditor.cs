@@ -94,7 +94,7 @@ public class ScriptSceneEditor : LayoutScript
 	protected txNGUIText mViewHeightLabel;
 	protected txUIObject mSceneRoot;
 	protected txNGUIPanel mBackRoot;
-	protected txUIObject mMiddleRoot;
+	protected txNGUIPanel mMiddleRoot;
 	protected txNGUIPanel mObjRoot;
 	protected Dictionary<int, txNGUIPanel> mBackPanelList;
 	protected Vector2 mCurViewPos;                      // 使用地图的坐标系,X轴向右,Y轴向下

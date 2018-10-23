@@ -27,7 +27,8 @@ public class SceneMapAdvance : GameBase
 		for(int i = 0; i < tileCount; ++i)
 		{
 			mTileList[i] = new MapTileAdvance(i);
-			mTileList[i].parseTile(fileBuffer, ref offset);
+			// 读文件时只是保存数据,暂时不解析所有地砖
+			mTileList[i].preParseTile(fileBuffer, ref offset);
 		}
 	}
 }

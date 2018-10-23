@@ -30,11 +30,14 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 		base.init(layout, go, parent);
 		mSubPath = mTexture.mSubPath;
 		string textureName = getTextureName();
-		int index = textureName.LastIndexOf('_');
-		if (index >= 0)
+		if(textureName != null && textureName != "")
 		{
-			string textureSetName = textureName.Substring(0, index);
-			setTextureSet(textureSetName);
+			int index = textureName.LastIndexOf('_');
+			if (index >= 0)
+			{
+				string textureSetName = textureName.Substring(0, index);
+				setTextureSet(textureSetName);
+			}
 		}
 		mControl.setPlayEndCallback(onPlayEnd);
 		mControl.setPlayingCallback(onPlaying);

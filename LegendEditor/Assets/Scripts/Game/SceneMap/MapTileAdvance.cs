@@ -7,6 +7,9 @@ using UnityEngine;
 public class MapTileAdvance : GameBase
 {
 	public int mIndex;
+	public byte[] mTileBuffer;
+	public static int mDataLength = sizeof(short) * 3 + sizeof(byte) * 8;
+	public bool mParsed;
 	public short mBngImgIdx;	// 背景图索引
 	public short mMidImgIdx;	// 补充背景图索引
 	public short mObjImgIdx;	// 对象图索引
@@ -29,11 +32,21 @@ public class MapTileAdvance : GameBase
 	public MapTileAdvance(int index)
 	{
 		mIndex = index;
+		mParsed = false;
+		mTileBuffer = new byte[mDataLength];
 	}
-	public void parseTile(byte[] buffer, ref int offset)
+	public void preParseTile(byte[] buffer, ref int offset)
 	{
-		Serializer serializer = new Serializer(buffer);
-		serializer.setIndex(offset);
+		Buffer.BlockCopy(buffer, offset, mTileBuffer, 0, mDataLength);
+		offset += mDataLength;
+	}
+	public void parseTile()
+	{
+		if(mParsed)
+		{
+			return;
+		}
+		Serializer serializer = new Serializer(mTileBuffer);
 		serializer.read(ref mBngImgIdx);
 		serializer.read(ref mMidImgIdx);
 		serializer.read(ref mObjImgIdx);
@@ -45,7 +58,6 @@ public class MapTileAdvance : GameBase
 		serializer.read(ref mObjAtlasIndex);
 		serializer.read(ref mBngAtlasIndex);
 		serializer.read(ref mLight);
-		offset = serializer.getIndex();
 		
 		mHasBng = BinaryUtility.getHightestBit(mBngImgIdx) == 1;
 		BinaryUtility.setHighestBit(ref mBngImgIdx, 0);
@@ -59,5 +71,7 @@ public class MapTileAdvance : GameBase
 		mHasDoor = BinaryUtility.getHightestBit(mDoorIdx) == 1;
 		mHasAni = BinaryUtility.getHightestBit(mAniFrame) == 1;
 		BinaryUtility.setHighestBit(ref mAniFrame, 0);
+		mParsed = true;
+		mTileBuffer = null;
 	}
 }

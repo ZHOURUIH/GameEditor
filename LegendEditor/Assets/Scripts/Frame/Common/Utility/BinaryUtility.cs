@@ -455,16 +455,9 @@ public class BinaryUtility
 		}
 		return data;
 	}
-	public static void memcpy<T>(T[] dest, T[] src, int destOffset, int srcOffset, int count)
+	public static void memcpy(Array dest, Array src, int destOffset, int srcOffset, int count)
 	{
-		for (int i = 0; i < count; ++i)
-		{
-			dest[destOffset + i] = src[srcOffset + i];
-		}
-	}
-	public static void memcpy<T>(T[] dest, T[] src, int destOffset)
-	{
-		memcpy(dest, src, destOffset, 0, src.Length);
+		Buffer.BlockCopy(src, srcOffset, dest, destOffset, count);
 	}
 	public static void memmove<T>(ref T[] data, int dest, int src, int count)
 	{
