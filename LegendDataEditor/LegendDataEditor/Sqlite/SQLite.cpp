@@ -9,6 +9,7 @@
 #include "SQLiteEffect.h"
 #include "SQLiteEffectFrame.h"
 #include "SQLiteDataReader.h"
+#include "SQLiteSceneMap.h"
 
 SQLite::SQLite(const std::string& dbFileName)
 {
@@ -27,6 +28,7 @@ SQLite::SQLite(const std::string& dbFileName)
 	mSQLiteMonsterFrame = new SQLiteMonsterFrame(this);
 	mSQLiteEffect = new SQLiteEffect(this);
 	mSQLiteEffectFrame = new SQLiteEffectFrame(this);
+	mSQLiteSceneMap = new SQLiteSceneMap(this);
 }
 void SQLite::destroy()
 {
@@ -38,6 +40,7 @@ void SQLite::destroy()
 	TRACE_DELETE(mSQLiteMonsterFrame);
 	TRACE_DELETE(mSQLiteEffect);
 	TRACE_DELETE(mSQLiteEffectFrame);
+	TRACE_DELETE(mSQLiteSceneMap);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const std::string& queryString)

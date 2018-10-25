@@ -12,6 +12,7 @@ class SQLiteMonsterFrame;
 class SQLiteEffect;
 class SQLiteEffectFrame;
 class SQLiteDataReader;
+class SQLiteSceneMap;
 class SQLite
 {
 public:
@@ -24,6 +25,7 @@ public:
 	SQLiteMonsterFrame* mSQLiteMonsterFrame;
 	SQLiteEffect* mSQLiteEffect;
 	SQLiteEffectFrame* mSQLiteEffectFrame;
+	SQLiteSceneMap* mSQLiteSceneMap;
 public:
 	SQLite(const std::string& dbFileName);
 	~SQLite() { destroy(); }

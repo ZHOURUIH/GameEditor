@@ -158,6 +158,16 @@ std::string StringUtility::strReplace(const std::string& str, int begin, int end
 	return sub1 + reStr + sub2;
 }
 
+void StringUtility::replaceAll(std::string& str, const char* string_to_replace, const char* new_string)
+{
+	int index = str.find(string_to_replace);
+	while (index != std::string::npos)
+	{
+		str.replace(index, strlen(string_to_replace), new_string);
+		index = str.find(string_to_replace, index + strlen(new_string));
+	}
+}
+
 std::string StringUtility::intToString(int i, int limitLen)
 {
 	char str[256];

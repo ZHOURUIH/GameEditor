@@ -26,6 +26,7 @@ public:
 	static bool stringToBool(const std::string& str) { return str == "True" || str == "true"; }
 	// 将str中的[begin,end)替换为reStr
 	static std::string strReplace(const std::string& str, int begin, int end, const std::string& reStr);
+	static void StringUtility::replaceAll(std::string& str, const char* string_to_replace, const char* new_string);
 	// limitLen是字符串的最小长度,如果整数的位数不足最小长度,则会在前面加0
 	static std::string intToString(int i, int limitLen = 0); 
 	static std::string intArrayToString(const txVector<int>& intArray, int limitLen = 0, const std::string& key = ",");

@@ -1,4 +1,4 @@
-#include "Utility.h"
+ï»¿#include "Utility.h"
 #include "txSerializer.h"
 #include "HumanImage.h"
 #include "WeaponImage.h"
@@ -79,19 +79,19 @@ bool ImageUtility::readWilHeader(const std::string& filePath, WILFileHeader& hea
 
 void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string& wilFileName, const std::string& outputPath)
 {
-	// ´ò¿ªwixÎÄ¼ş
+	// æ‰“å¼€wixæ–‡ä»¶
 	WIXFileImageInfo wixFileHeader;
 	if (!readWixFile(wixFileName, wixFileHeader))
 	{
-		std::cout << "ÕÒ²»µ½wixÎÄ¼ş" << std::endl;
+		std::cout << "æ‰¾ä¸åˆ°wixæ–‡ä»¶" << std::endl;
 		return;
 	}
 
-	// ´ò¿ªwilÎÄ¼ş
+	// æ‰“å¼€wilæ–‡ä»¶
 	WILFileHeader wilHeader;
 	if(!readWilHeader(wilFileName, wilHeader))
 	{
-		std::cout << "ÕÒ²»µ½wilÎÄ¼ş" << std::endl;
+		std::cout << "æ‰¾ä¸åˆ°wilæ–‡ä»¶" << std::endl;
 		return;
 	}
 
@@ -101,7 +101,7 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 	txSerializer serializer(fileBuffer, fileSize);
 	for (int i = 0; i < wixFileHeader.mPositionList.size(); ++i)
 	{
-		// ½«ÏÂ±êÉèÖÃµ½µ±Ç°Í¼Æ¬ÆğÊ¼Î»ÖÃ,²¢ÇÒ¶ÁÈ¡Í¼Æ¬ĞÅÏ¢
+		// å°†ä¸‹æ ‡è®¾ç½®åˆ°å½“å‰å›¾ç‰‡èµ·å§‹ä½ç½®,å¹¶ä¸”è¯»å–å›¾ç‰‡ä¿¡æ¯
 		int startPos = wixFileHeader.mPositionList[i];
 		if (startPos == 0)
 		{
@@ -109,12 +109,12 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 		}
 		serializer.setIndex(startPos);
 		WILFileImageInfo curInfo;
-		// ¿í¸ß,Î»ÖÃÆ«ÒÆ
+		// å®½é«˜,ä½ç½®åç§»
 		serializer.read(curInfo.mWidth);
 		serializer.read(curInfo.mHeight);
 		serializer.read(curInfo.mPosX);
 		serializer.read(curInfo.mPosY);
-		// ¸ù¾İÑÕÉ«Ë÷ÒıÔÚµ÷É«°åÖĞ»ñÈ¡ÑÕÉ«Êı¾İ
+		// æ ¹æ®é¢œè‰²ç´¢å¼•åœ¨è°ƒè‰²æ¿ä¸­è·å–é¢œè‰²æ•°æ®
 		int pixelCount = curInfo.mWidth * curInfo.mHeight;
 		TRACE_NEW_ARRAY(char, pixelCount * 4, curInfo.mColor);
 		for (int j = 0; j < pixelCount; ++j)
@@ -125,15 +125,15 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 				break;
 			}
 			unsigned char pixelIndex = fileBuffer[startPos + ImageHeaderLength + j];
-			// 0À¶,1ÂÌ,2ºì
-			curInfo.mColor[j * 4 + 0] = wilHeader.mColor[pixelIndex][0];// À¶
-			curInfo.mColor[j * 4 + 1] = wilHeader.mColor[pixelIndex][1];// ÂÌ
-			curInfo.mColor[j * 4 + 2] = wilHeader.mColor[pixelIndex][2];// ºì
+			// 0è“,1ç»¿,2çº¢
+			curInfo.mColor[j * 4 + 0] = wilHeader.mColor[pixelIndex][0];// è“
+			curInfo.mColor[j * 4 + 1] = wilHeader.mColor[pixelIndex][1];// ç»¿
+			curInfo.mColor[j * 4 + 2] = wilHeader.mColor[pixelIndex][2];// çº¢
 			curInfo.mColor[j * 4 + 3] = pixelIndex == 0 ? 0 : (char)255;
 		}
 		posList[i].x = curInfo.mPosX;
 		posList[i].y = curInfo.mPosY;
-		// ½«Í¼Æ¬×ª»»Îªpng
+		// å°†å›¾ç‰‡è½¬æ¢ä¸ºpng
 		encodePNG(outputPath + StringUtility::intToString(i) + ".png", curInfo.mColor, curInfo.mWidth, curInfo.mHeight, FIF_PNG);
 		TRACE_DELETE_ARRAY(curInfo.mColor);
 	}
@@ -179,9 +179,9 @@ POINT* ImageUtility::readPositionFile(const std::string& positionFile, int& posC
 
 void ImageUtility::autoGroupHumanImage(const std::string& path)
 {
-	// ÏÈ²ğ·ÖÎ»ÖÃÎÄ¼ş
+	// å…ˆæ‹†åˆ†ä½ç½®æ–‡ä»¶
 	splitPositionFile(path);
-	// °´ÕÕ600¸öÎÄ¼şÒ»×é,·ÅÈëµ¥¶ÀµÄÎÄ¼ş¼ĞÖĞ
+	// æŒ‰ç…§600ä¸ªæ–‡ä»¶ä¸€ç»„,æ”¾å…¥å•ç‹¬çš„æ–‡ä»¶å¤¹ä¸­
 	autoMoveFile(path, HUMAN_GROUP_SIZE);
 
 	txVector<std::string> folderList;
@@ -189,7 +189,7 @@ void ImageUtility::autoGroupHumanImage(const std::string& path)
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
-		// °´ÕÕ¶¯×÷ÖØÃüÃû
+		// æŒ‰ç…§åŠ¨ä½œé‡å‘½å
 		txVector<std::string> fileList;
 		FileUtility::findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
@@ -200,7 +200,7 @@ void ImageUtility::autoGroupHumanImage(const std::string& path)
 			int direction;
 			int frameIndex;
 			bool isValid = getHumanActionInfo(j, actionName, direction, frameIndex);
-			// Èç¹ûÊÇÎŞĞ§Í¼Æ¬ÔòĞèÒªÉ¾³ı
+			// å¦‚æœæ˜¯æ— æ•ˆå›¾ç‰‡åˆ™éœ€è¦åˆ é™¤
 			if (!isValid)
 			{
 				deleteImageWithPosition(fileList[j]);
@@ -214,17 +214,17 @@ void ImageUtility::autoGroupHumanImage(const std::string& path)
 
 void ImageUtility::autoGroupWeaponImage(const std::string& path)
 {
-	// ÏÈ²ğ·ÖÎ»ÖÃÎÄ¼ş
+	// å…ˆæ‹†åˆ†ä½ç½®æ–‡ä»¶
 	splitPositionFile(path);
-	// °´ÕÕ600¸öÎÄ¼şÒ»×é,·ÅÈëµ¥¶ÀµÄÎÄ¼ş¼ĞÖĞ
+	// æŒ‰ç…§600ä¸ªæ–‡ä»¶ä¸€ç»„,æ”¾å…¥å•ç‹¬çš„æ–‡ä»¶å¤¹ä¸­
 	autoMoveFile(path, WEAPON_GROUP_SIZE);
-	// ÒòÎªÎäÆ÷ÎÄ¼şÊÇ½ÇÉ«ÎÄ¼şµÄ2±¶,¿ÉÄÜÊÇ×óÓÒÊÖµÄÇø±ğ,ËùÒÔÔİÊ±Ö»½âÎöÇ°Ò»°ëµÄÎÄ¼ş,ºóÃæµÄÉ¾³ı
+	// å› ä¸ºæ­¦å™¨æ–‡ä»¶æ˜¯è§’è‰²æ–‡ä»¶çš„2å€,å¯èƒ½æ˜¯å·¦å³æ‰‹çš„åŒºåˆ«,æ‰€ä»¥æš‚æ—¶åªè§£æå‰ä¸€åŠçš„æ–‡ä»¶,åé¢çš„åˆ é™¤
 	txVector<std::string> folderList;
 	FileUtility::findFolders(path, folderList);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
-		// °´ÕÕ¶¯×÷ÖØÃüÃû
+		// æŒ‰ç…§åŠ¨ä½œé‡å‘½å
 		txVector<std::string> fileList;
 		FileUtility::findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
@@ -241,7 +241,7 @@ void ImageUtility::autoGroupWeaponImage(const std::string& path)
 				int direction;
 				int frameIndex;
 				bool isValid = getHumanActionInfo(j, actionName, direction, frameIndex);
-				// Èç¹ûÊÇÎŞĞ§Í¼Æ¬ÔòĞèÒªÉ¾³ı
+				// å¦‚æœæ˜¯æ— æ•ˆå›¾ç‰‡åˆ™éœ€è¦åˆ é™¤
 				if (!isValid)
 				{
 					deleteImageWithPosition(fileList[j]);
@@ -256,29 +256,29 @@ void ImageUtility::autoGroupWeaponImage(const std::string& path)
 
 void ImageUtility::autoGroupMonsterImage0(const std::string& path)
 {
-	// ²ğ·ÖÎ»ÖÃÎÄ¼ş
+	// æ‹†åˆ†ä½ç½®æ–‡ä»¶
 	ImageUtility::splitPositionFile(path);
-	// È»ºó°´360¸öÎÄ¼şÒ»×é,ÒÆ¶¯µ½µ¥¶ÀµÄÎÄ¼ş¼Ğ
+	// ç„¶åæŒ‰360ä¸ªæ–‡ä»¶ä¸€ç»„,ç§»åŠ¨åˆ°å•ç‹¬çš„æ–‡ä»¶å¤¹
 	ImageUtility::autoMoveFile(path, MONSTER_GROUP_SIZE);
-	// ¹ÖÎïÍ¼Æ¬²»Ïñ½ÇÉ«ºÍÎäÆ÷Í¼Æ¬ÄÇÑù»áÓĞ¹æÂÉÅÅÁĞ,ËùÒÔÖ»ÄÜÔÚ´óÖÂ·Ö×éºóÊÖ¶¯¶ÔÃ¿¸öÎÄ¼ş¼Ğ½øĞĞ¶¯×÷·Ö×é
+	// æ€ªç‰©å›¾ç‰‡ä¸åƒè§’è‰²å’Œæ­¦å™¨å›¾ç‰‡é‚£æ ·ä¼šæœ‰è§„å¾‹æ’åˆ—,æ‰€ä»¥åªèƒ½åœ¨å¤§è‡´åˆ†ç»„åæ‰‹åŠ¨å¯¹æ¯ä¸ªæ–‡ä»¶å¤¹è¿›è¡ŒåŠ¨ä½œåˆ†ç»„
 }
 
 void ImageUtility::autoGroupMonsterImage1(const std::string& path)
 {
-	// ÊÖ¶¯¶Ô¶¯×÷½øĞĞ·Ö×éºó,¾Í¿ÉÒÔ¶ÔÃ¿×é¶¯×÷ÎÄ¼ş½øĞĞ·½Ïò·Ö×é
-	// ÖØÃüÃûÎÄ¼ş,½«Ã¿¸öÎÄ¼ş¼ĞÖĞµÄÍ¼Æ¬¶¼ÖØÃüÃûÎª¸ÃÎÄ¼ş¼ĞÖĞµÄÎ»ÖÃĞòºÅ
+	// æ‰‹åŠ¨å¯¹åŠ¨ä½œè¿›è¡Œåˆ†ç»„å,å°±å¯ä»¥å¯¹æ¯ç»„åŠ¨ä½œæ–‡ä»¶è¿›è¡Œæ–¹å‘åˆ†ç»„
+	// é‡å‘½åæ–‡ä»¶,å°†æ¯ä¸ªæ–‡ä»¶å¤¹ä¸­çš„å›¾ç‰‡éƒ½é‡å‘½åä¸ºè¯¥æ–‡ä»¶å¤¹ä¸­çš„ä½ç½®åºå·
 	ImageUtility::renameImage(path);
-	// ×Ô¶¯¼ÆËã·½Ïò²¢·Ö×é
+	// è‡ªåŠ¨è®¡ç®—æ–¹å‘å¹¶åˆ†ç»„
 	ImageUtility::renameByDirection(path);
 }
 
 void ImageUtility::autoGroupEffectImage(const std::string& path)
 {
-	// ÏÈ²ğ·ÖÎ»ÖÃÎÄ¼ş
+	// å…ˆæ‹†åˆ†ä½ç½®æ–‡ä»¶
 	splitPositionFile(path);
-	// °´ÕÕ10¸öÎÄ¼şÒ»×é,·ÅÈëµ¥¶ÀµÄÎÄ¼ş¼ĞÖĞ
+	// æŒ‰ç…§10ä¸ªæ–‡ä»¶ä¸€ç»„,æ”¾å…¥å•ç‹¬çš„æ–‡ä»¶å¤¹ä¸­
 	autoMoveFile(path, EFFECT_GROUP_SIZE);
-	// É¾³ıÎŞĞ§Í¼Æ¬
+	// åˆ é™¤æ— æ•ˆå›¾ç‰‡
 	deleteInvalidImage(path);
 }
 
@@ -286,8 +286,8 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 {
 	if (imageType == IT_MONSTER)
 	{
-		// µÚÒ»¼¶ÎÄ¼ş¼ĞÊÇÃ¿¸ö¹ÖÎïµÄ·ÖÀà,Ã¿¸ö¹ÖÎïÎÄ¼ş¼ĞÖĞÓĞ¸Ã¹ÖÎïËùÓĞ¶¯×÷µÄËùÓĞ·½ÏòµÄĞòÁĞÖ¡
-		// ²éÕÒÎÄ¼ş¼ĞÖĞµÄËùÓĞÍ¼Æ¬
+		// ç¬¬ä¸€çº§æ–‡ä»¶å¤¹æ˜¯æ¯ä¸ªæ€ªç‰©çš„åˆ†ç±»,æ¯ä¸ªæ€ªç‰©æ–‡ä»¶å¤¹ä¸­æœ‰è¯¥æ€ªç‰©æ‰€æœ‰åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘çš„åºåˆ—å¸§
+		// æŸ¥æ‰¾æ–‡ä»¶å¤¹ä¸­çš„æ‰€æœ‰å›¾ç‰‡
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
 		int folderCount = folderList.size();
@@ -308,14 +308,14 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
-			// °´ĞòÁĞÖ¡À´·Ö×é,ÕûÀíÊı¾İºóĞ´ÈëÊı¾İ¿â
+			// æŒ‰åºåˆ—å¸§æ¥åˆ†ç»„,æ•´ç†æ•°æ®åå†™å…¥æ•°æ®åº“
 			writeSQLite(imageGroup.mAllAction, sqlite);
 		}
 	}
 	else if (imageType == IT_HUMAN)
 	{
-		// µÚÒ»¼¶ÎÄ¼ş¼ĞÊÇÃ¿¸öÒÂ·şµÄ·ÖÀà,Ã¿¸öÒÂ·şÎÄ¼ş¼ĞÖĞÓĞ¸ÃÒÂ·şËùÓĞ¶¯×÷µÄËùÓĞ·½ÏòµÄĞòÁĞÖ¡
-		// ²éÕÒÎÄ¼ş¼ĞÖĞµÄËùÓĞÍ¼Æ¬
+		// ç¬¬ä¸€çº§æ–‡ä»¶å¤¹æ˜¯æ¯ä¸ªè¡£æœçš„åˆ†ç±»,æ¯ä¸ªè¡£æœæ–‡ä»¶å¤¹ä¸­æœ‰è¯¥è¡£æœæ‰€æœ‰åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘çš„åºåˆ—å¸§
+		// æŸ¥æ‰¾æ–‡ä»¶å¤¹ä¸­çš„æ‰€æœ‰å›¾ç‰‡
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
 		int folderCount = folderList.size();
@@ -336,14 +336,14 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
-			// °´ĞòÁĞÖ¡À´·Ö×é,ÕûÀíÊı¾İºóĞ´ÈëÊı¾İ¿â
+			// æŒ‰åºåˆ—å¸§æ¥åˆ†ç»„,æ•´ç†æ•°æ®åå†™å…¥æ•°æ®åº“
 			writeSQLite(imageGroup.mAllAction, sqlite);
 		}
 	}
 	else if (imageType == IT_WEAPON)
 	{
-		// µÚÒ»¼¶ÎÄ¼ş¼ĞÊÇÃ¿¸öÎäÆ÷µÄ·ÖÀà,Ã¿¸öÎäÆ÷ÎÄ¼ş¼ĞÖĞÓĞ¸ÃÎäÆ÷ËùÓĞ¶¯×÷µÄËùÓĞ·½ÏòµÄĞòÁĞÖ¡
-		// ²éÕÒÎÄ¼ş¼ĞÖĞµÄËùÓĞÍ¼Æ¬
+		// ç¬¬ä¸€çº§æ–‡ä»¶å¤¹æ˜¯æ¯ä¸ªæ­¦å™¨çš„åˆ†ç±»,æ¯ä¸ªæ­¦å™¨æ–‡ä»¶å¤¹ä¸­æœ‰è¯¥æ­¦å™¨æ‰€æœ‰åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘çš„åºåˆ—å¸§
+		// æŸ¥æ‰¾æ–‡ä»¶å¤¹ä¸­çš„æ‰€æœ‰å›¾ç‰‡
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
 		int folderCount = folderList.size();
@@ -364,14 +364,14 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(monsterImage);
 			}
-			// °´ĞòÁĞÖ¡À´·Ö×é,ÕûÀíÊı¾İºóĞ´ÈëÊı¾İ¿â
+			// æŒ‰åºåˆ—å¸§æ¥åˆ†ç»„,æ•´ç†æ•°æ®åå†™å…¥æ•°æ®åº“
 			writeSQLite(imageGroup.mAllAction, sqlite);
 		}
 	}
 	else if (imageType == IT_EFFECT)
 	{
-		// µÚÒ»¼¶ÎÄ¼ş¼ĞÊÇÃ¿¸öÌØĞ§µÄ·ÖÀà,Ã¿¸öÌØĞ§ÎÄ¼ş¼ĞÖĞÓĞ¸ÃÌØĞ§ËùÓĞ·½ÏòµÄĞòÁĞÖ¡,²¿·ÖÌØĞ§Ö»ÓĞ1¸ö·½Ïò
-		// ²éÕÒÎÄ¼ş¼ĞÖĞµÄËùÓĞÍ¼Æ¬
+		// ç¬¬ä¸€çº§æ–‡ä»¶å¤¹æ˜¯æ¯ä¸ªç‰¹æ•ˆçš„åˆ†ç±»,æ¯ä¸ªç‰¹æ•ˆæ–‡ä»¶å¤¹ä¸­æœ‰è¯¥ç‰¹æ•ˆæ‰€æœ‰æ–¹å‘çš„åºåˆ—å¸§,éƒ¨åˆ†ç‰¹æ•ˆåªæœ‰1ä¸ªæ–¹å‘
+		// æŸ¥æ‰¾æ–‡ä»¶å¤¹ä¸­çš„æ‰€æœ‰å›¾ç‰‡
 		txVector<std::string> folderList;
 		FileUtility::findFolders(path, folderList);
 		int folderCount = folderList.size();
@@ -392,7 +392,7 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 				effectImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
 				imageGroup.addImage(effectImage);
 			}
-			// °´ĞòÁĞÖ¡À´·Ö×é,ÕûÀíÊı¾İºóĞ´ÈëÊı¾İ¿â
+			// æŒ‰åºåˆ—å¸§æ¥åˆ†ç»„,æ•´ç†æ•°æ®åå†™å…¥æ•°æ®åº“
 			writeSQLite(imageGroup.mAllEffect, sqlite);
 		}
 	}
@@ -400,13 +400,13 @@ void ImageUtility::saveFrameInfo(const std::string& path, IMAGE_TYPE imageType, 
 
 void ImageUtility::writeSQLite(txMap<std::string, WeaponActionSet>& actionSetList, SQLite* sqlite)
 {
-	// °´ĞòÁĞÖ¡À´·Ö×é,ÕûÀíÊı¾İºóĞ´ÈëÊı¾İ¿â
-	// ±éÀúËùÓĞ¶¯×÷
+	// æŒ‰åºåˆ—å¸§æ¥åˆ†ç»„,æ•´ç†æ•°æ®åå†™å…¥æ•°æ®åº“
+	// éå†æ‰€æœ‰åŠ¨ä½œ
 	auto iter = actionSetList.begin();
 	auto iterEnd = actionSetList.end();
 	for (; iter != iterEnd; ++iter)
 	{
-		// ±éÀú¸Ã¶¯×÷µÄËùÓĞ·½Ïò
+		// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘
 		for (int j = 0; j < DIRECTION_COUNT; ++j)
 		{
 			WeaponActionAnim& actionAnim = iter->second.mDirectionAction[j];
@@ -416,7 +416,7 @@ void ImageUtility::writeSQLite(txMap<std::string, WeaponActionSet>& actionSetLis
 			data.mDirection = j;
 			data.mAction = iter->first;
 			data.mFrameCount = actionAnim.mImageFrame.size();
-			// ±éÀú¸Ã¶¯×÷µÄËùÓĞÖ¡Êı
+			// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰å¸§æ•°
 			for (int kk = 0; kk < data.mFrameCount; ++kk)
 			{
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
@@ -437,7 +437,7 @@ void ImageUtility::writeSQLite(txMap<std::string, HumanActionSet>& actionSetList
 	auto iterEnd = actionSetList.end();
 	for (; iter != iterEnd; ++iter)
 	{
-		// ±éÀú¸Ã¶¯×÷µÄËùÓĞ·½Ïò
+		// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘
 		for (int j = 0; j < DIRECTION_COUNT; ++j)
 		{
 			HumanActionAnim& actionAnim = iter->second.mDirectionAction[j];
@@ -447,7 +447,7 @@ void ImageUtility::writeSQLite(txMap<std::string, HumanActionSet>& actionSetList
 			data.mDirection = j;
 			data.mAction = iter->first;
 			data.mFrameCount = actionAnim.mImageFrame.size();
-			// ±éÀú¸Ã¶¯×÷µÄËùÓĞÖ¡Êı
+			// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰å¸§æ•°
 			for (int kk = 0; kk < data.mFrameCount; ++kk)
 			{
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
@@ -468,7 +468,7 @@ void ImageUtility::writeSQLite(txMap<std::string, MonsterActionSet>& actionSetLi
 	auto iterEnd = actionSetList.end();
 	for (; iter != iterEnd; ++iter)
 	{
-		// ±éÀú¸Ã¶¯×÷µÄËùÓĞ·½Ïò
+		// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘
 		for (int j = 0; j < DIRECTION_COUNT; ++j)
 		{
 			MonsterActionAnim& actionAnim = iter->second.mDirectionAction[j];
@@ -478,7 +478,7 @@ void ImageUtility::writeSQLite(txMap<std::string, MonsterActionSet>& actionSetLi
 			data.mDirection = j;
 			data.mAction = iter->first;
 			data.mFrameCount = actionAnim.mImageFrame.size();
-			// ±éÀú¸Ã¶¯×÷µÄËùÓĞÖ¡Êı
+			// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰å¸§æ•°
 			for (int kk = 0; kk < data.mFrameCount; ++kk)
 			{
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
@@ -499,7 +499,7 @@ void ImageUtility::writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQL
 	auto iterEnd = actionSetList.end();
 	for (; iter != iterEnd; ++iter)
 	{
-		// ±éÀú¸Ã¶¯×÷µÄËùÓĞ·½Ïò
+		// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰æ–¹å‘
 		auto iterDir = iter->second.mDirectionAction.begin();
 		auto iterDirEnd = iter->second.mDirectionAction.end();
 		for(; iterDir != iterDirEnd; ++iterDir)
@@ -511,7 +511,7 @@ void ImageUtility::writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQL
 			data.mDirection = iterDir->first;
 			data.mFrameCount = effectAnim.mImageFrame.size();
 			data.mAction = iter->first;
-			// ±éÀú¸Ã¶¯×÷µÄËùÓĞÖ¡Êı
+			// éå†è¯¥åŠ¨ä½œçš„æ‰€æœ‰å¸§æ•°
 			for (int kk = 0; kk < data.mFrameCount; ++kk)
 			{
 				data.mPosX.push_back(effectAnim.mImageFrame[kk].mPosX);
@@ -528,7 +528,7 @@ void ImageUtility::writeSQLite(txMap<std::string, EffectSet>& actionSetList, SQL
 
 void ImageUtility::renameImage(const std::string& path)
 {
-	// ½«Ä¿Â¼ÖĞµÄÎÄ¼ş°´ÎÄ¼şÃûÅÅĞòºó,ÖØÃüÃûÎª´Ó0¿ªÊ¼µÄÊı×Ö
+	// å°†ç›®å½•ä¸­çš„æ–‡ä»¶æŒ‰æ–‡ä»¶åæ’åºå,é‡å‘½åä¸ºä»0å¼€å§‹çš„æ•°å­—
 	txVector<std::string> folderList;
 	FileUtility::findFolders(path, folderList, true);
 	int folderCount = folderList.size();
@@ -536,7 +536,7 @@ void ImageUtility::renameImage(const std::string& path)
 	{
 		txVector<std::string> fileList;
 		FileUtility::findFiles(folderList[i], fileList, ".png");
-		// ÏÈ¸ù¾İÎÄ¼şÃûÖØĞÂÅÅÁĞ
+		// å…ˆæ ¹æ®æ–‡ä»¶åé‡æ–°æ’åˆ—
 		sortByFileNumber(fileList);
 		int count = fileList.size();
 		for (int j = 0; j < count; ++j)
@@ -550,7 +550,7 @@ void ImageUtility::renameImage(const std::string& path)
 
 void ImageUtility::renameImageToAnim(const std::string& path)
 {
-	// ½«Ä¿Â¼ÖĞµÄÎÄ¼ş°´ÎÄ¼şÃûÅÅĞòºó,ÖØÃüÃûÎªĞòÁĞÖ¡¸ñÊ½µÄÃû×Ö,ÒÔÎÄ¼ş¼ĞÃû¿ªÍ·,ÒÔ´Ó0¿ªÊ¼µÄÊı×Ö½áÎ²
+	// å°†ç›®å½•ä¸­çš„æ–‡ä»¶æŒ‰æ–‡ä»¶åæ’åºå,é‡å‘½åä¸ºåºåˆ—å¸§æ ¼å¼çš„åå­—,ä»¥æ–‡ä»¶å¤¹åå¼€å¤´,ä»¥ä»0å¼€å§‹çš„æ•°å­—ç»“å°¾
 	txVector<std::string> folderList;
 	FileUtility::findFolders(path, folderList, true);
 	int folderCount = folderList.size();
@@ -558,7 +558,7 @@ void ImageUtility::renameImageToAnim(const std::string& path)
 	{
 		txVector<std::string> fileList;
 		FileUtility::findFiles(folderList[i], fileList, ".png");
-		// ÏÈ¸ù¾İÎÄ¼şÃûÖØĞÂÅÅÁĞ
+		// å…ˆæ ¹æ®æ–‡ä»¶åé‡æ–°æ’åˆ—
 		sortByFileNumber(fileList);
 		int count = fileList.size();
 		for (int j = 0; j < count; ++j)
@@ -573,7 +573,7 @@ void ImageUtility::renameImageToAnim(const std::string& path)
 
 void ImageUtility::splitPositionFile(const std::string& path)
 {
-	// ½«position.txtÎÄ¼ş²ğ·ÖÎªµ¥¸öµÄtxtÎÄ¼ş,Ã¿¸ötxtÎÄ¼şÖĞÖ»°üº¬Ò»¸ö×ø±ê
+	// å°†position.txtæ–‡ä»¶æ‹†åˆ†ä¸ºå•ä¸ªçš„txtæ–‡ä»¶,æ¯ä¸ªtxtæ–‡ä»¶ä¸­åªåŒ…å«ä¸€ä¸ªåæ ‡
 	int posCount = 0;
 	POINT* posList = readPositionFile(path + "/position.txt", posCount);
 	for (int i = 0; i < posCount; ++i)
@@ -586,7 +586,7 @@ void ImageUtility::splitPositionFile(const std::string& path)
 
 void ImageUtility::renameByDirection(const std::string& path)
 {
-	// ½«Ä¿Â¼ÖĞµÄËùÓĞÎÄ¼şÏÈ°´ÕÕÎÄ¼şÃûÅÅĞò,È»ºó°´ÕÕË³Ğò·Ö×éÎª8¸ö·½Ïò,ÔÙ¶ÔÃ¿¸ö·½ÏòµÄÎÄ¼şÖØÃüÃû
+	// å°†ç›®å½•ä¸­çš„æ‰€æœ‰æ–‡ä»¶å…ˆæŒ‰ç…§æ–‡ä»¶åæ’åº,ç„¶åæŒ‰ç…§é¡ºåºåˆ†ç»„ä¸º8ä¸ªæ–¹å‘,å†å¯¹æ¯ä¸ªæ–¹å‘çš„æ–‡ä»¶é‡å‘½å
 	txVector<std::string> folderList;
 	FileUtility::findFolders(path, folderList, true);
 	int folderCount = folderList.size();
@@ -601,25 +601,25 @@ void ImageUtility::renameByDirection(const std::string& path)
 		{
 			if (fileCount % DIRECTION_COUNT != 0)
 			{
-				std::cout << "Í¼Æ¬ÊıÁ¿´íÎó,±ØĞëÎª·½ÏòµÄÕûÊı±¶" << std::endl;
+				std::cout << "å›¾ç‰‡æ•°é‡é”™è¯¯,å¿…é¡»ä¸ºæ–¹å‘çš„æ•´æ•°å€" << std::endl;
 				break;
 			}
 			int imageDir = j / actionFrameCount;
 			int index = j % actionFrameCount;
-			// °ÑÎÄ¼şÒÆ¶¯µ½Ò»¸öĞÂ½¨ÎÄ¼ş¼ĞÖĞ
+			// æŠŠæ–‡ä»¶ç§»åŠ¨åˆ°ä¸€ä¸ªæ–°å»ºæ–‡ä»¶å¤¹ä¸­
 			std::string curPath = StringUtility::getFilePath(fileList[j]) + "/";
 			std::string destFolderName = StringUtility::getFolderName(fileList[j]) + "_dir" + StringUtility::intToString(imageDir);
 			std::string destPath = StringUtility::getFilePath(curPath) + "/" + destFolderName + "/";
 			moveImageWithPosition(fileList[j], destPath + destFolderName + "_" + StringUtility::intToString(index) + "." + StringUtility::getFileSuffix(fileList[j]));
 		}
 	}
-	// É¾³ı¿ÕµÄÄ¿Â¼
+	// åˆ é™¤ç©ºçš„ç›®å½•
 	FileUtility::deleteEmptyFolder(path);
 }
 
 void ImageUtility::sortByFileNumber(txVector<std::string>& fileList)
 {
-	// ¸ù¾İÎÄ¼şÃûµÄÊı×Ö½øĞĞÅÅĞò
+	// æ ¹æ®æ–‡ä»¶åçš„æ•°å­—è¿›è¡Œæ’åº
 	txMap<int, std::string> sortedList;
 	int count = fileList.size();
 	for (int i = 0; i < count; ++i)
@@ -666,7 +666,7 @@ bool ImageUtility::getHumanActionInfo(int index, std::string& actionName, int& d
 		index -= HUMAN_ACTION[i].mMaxFrame * DIRECTION_COUNT;
 		++i;
 	}
-	// ÒòÎªÒ»×é¶¯×÷×ÊÔ´°üº¬ÁË8¸ö·½ÏòÉÏµÄËùÓĞ¶¯×÷,ËùÒÔ¿ÉÒÔ¸ù¾İÏÂ±ê¼ÆËã³ö·½ÏòºÍĞòÁĞÖ¡ÏÂ±ê,Ç°ÌáÊÇ±£ÁôÁË¿ÕÍ¼Æ¬×÷ÎªÌî³äÎ»ÖÃ
+	// å› ä¸ºä¸€ç»„åŠ¨ä½œèµ„æºåŒ…å«äº†8ä¸ªæ–¹å‘ä¸Šçš„æ‰€æœ‰åŠ¨ä½œ,æ‰€ä»¥å¯ä»¥æ ¹æ®ä¸‹æ ‡è®¡ç®—å‡ºæ–¹å‘å’Œåºåˆ—å¸§ä¸‹æ ‡,å‰ææ˜¯ä¿ç•™äº†ç©ºå›¾ç‰‡ä½œä¸ºå¡«å……ä½ç½®
 	dir = index / HUMAN_ACTION[i].mMaxFrame;
 	frameIndex = index % HUMAN_ACTION[i].mMaxFrame;
 	actionName = HUMAN_ACTION[i].mName;
@@ -680,7 +680,7 @@ void ImageUtility::moveImageWithPosition(const std::string& fullFileName, const 
 	std::string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
 	std::string destPath = StringUtility::getFilePath(destFullFileName) + "/";
 	moveFileWithMeta(fullFileName, destFullFileName);
-	// Èç¹ûÓĞÍ¬ÃûÎ»ÖÃÎÄ¼ş,Ò²ĞèÒªÒ»ÆğÒÆ¶¯
+	// å¦‚æœæœ‰åŒåä½ç½®æ–‡ä»¶,ä¹Ÿéœ€è¦ä¸€èµ·ç§»åŠ¨
 	std::string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
 	if (FileUtility::isFileExist(positionFileName))
 	{
@@ -696,7 +696,7 @@ void ImageUtility::renameImageWithPosition(const std::string& fullFileName, cons
 	std::string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
 	std::string destPath = StringUtility::getFilePath(destFullFileName) + "/";
 	renameFileWithMeta(fullFileName, destFullFileName);
-	// Èç¹ûÓĞÍ¬ÃûÎ»ÖÃÎÄ¼ş,Ò²ĞèÒªÒ»ÆğÖØÃüÃû
+	// å¦‚æœæœ‰åŒåä½ç½®æ–‡ä»¶,ä¹Ÿéœ€è¦ä¸€èµ·é‡å‘½å
 	std::string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
 	if (FileUtility::isFileExist(positionFileName))
 	{
@@ -710,7 +710,7 @@ void ImageUtility::deleteImageWithPosition(const std::string& fullFileName)
 	std::string sourceFileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
 	std::string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
 	deleteFileWithMeta(fullFileName);
-	// Èç¹ûÓĞÍ¬ÃûÎ»ÖÃÎÄ¼ş,Ò²ĞèÒªÒ»ÆğÉ¾³ı
+	// å¦‚æœæœ‰åŒåä½ç½®æ–‡ä»¶,ä¹Ÿéœ€è¦ä¸€èµ·åˆ é™¤
 	std::string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
 	if (FileUtility::isFileExist(positionFileName))
 	{
@@ -720,7 +720,7 @@ void ImageUtility::deleteImageWithPosition(const std::string& fullFileName)
 
 void ImageUtility::moveFileWithMeta(const std::string& fullFileName, const std::string& destFullFileName)
 {
-	// ÒÆ¶¯ÎÄ¼şºÍÍ¬ÃûmetaÎÄ¼ş
+	// ç§»åŠ¨æ–‡ä»¶å’ŒåŒåmetaæ–‡ä»¶
 	FileUtility::moveFile(fullFileName, destFullFileName);
 	std::string metaFile = fullFileName + ".meta";
 	if (FileUtility::isFileExist(metaFile))
@@ -731,7 +731,7 @@ void ImageUtility::moveFileWithMeta(const std::string& fullFileName, const std::
 
 void ImageUtility::renameFileWithMeta(const std::string& fullFileName, const std::string& destFullFileName)
 {
-	// ÖØÃüÃûÎÄ¼şºÍÍ¬ÃûmetaÎÄ¼ş
+	// é‡å‘½åæ–‡ä»¶å’ŒåŒåmetaæ–‡ä»¶
 	FileUtility::renameFile(fullFileName, destFullFileName);
 	std::string metaFile = fullFileName + ".meta";
 	if (FileUtility::isFileExist(metaFile))
@@ -742,7 +742,7 @@ void ImageUtility::renameFileWithMeta(const std::string& fullFileName, const std
 
 void ImageUtility::deleteFileWithMeta(const std::string& fullFileName)
 {
-	// É¾³ıÎÄ¼şºÍÍ¬ÃûmetaÎÄ¼ş
+	// åˆ é™¤æ–‡ä»¶å’ŒåŒåmetaæ–‡ä»¶
 	FileUtility::deleteFile(fullFileName);
 	std::string metaFile = fullFileName + ".meta";
 	if (FileUtility::isFileExist(metaFile))
@@ -793,7 +793,7 @@ POINT ImageUtility::getImagePosition(const std::string& imageFullPath)
 	}
 	else
 	{
-		std::cout << "Î»ÖÃÎÄ¼şÄÚÈİ´íÎó : " << imageFullPath << std::endl;
+		std::cout << "ä½ç½®æ–‡ä»¶å†…å®¹é”™è¯¯ : " << imageFullPath << std::endl;
 	}
 	return pos;
 }
@@ -834,7 +834,7 @@ void ImageUtility::groupAtlas(const std::string& filePath, int countInAltas)
 		std::string newPath = StringUtility::getFilePath(fileList[i]) + "/" + folderName + "/";
 		FileUtility::moveFile(fileList[i], newPath + curFile + ".png");
 		FileUtility::moveFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
-		// Ã¿Ò»ĞĞĞèÒª¼ÇÂ¼Í¼Æ¬ÔÚÍ¼¼¯ÖĞµÄÎ»ÖÃ
+		// æ¯ä¸€è¡Œéœ€è¦è®°å½•å›¾ç‰‡åœ¨å›¾é›†ä¸­çš„ä½ç½®
 		atlasInfo += StringUtility::getFileName(fileList[i]) + ":" + StringUtility::intToString(atlasIndex) + "\n";
 		serializer.write<unsigned short>(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])));
 		serializer.write<unsigned char>(atlasIndex);
@@ -899,7 +899,7 @@ void ImageUtility::readAtlasIndexFile(const std::string& fileName, txMap<int, in
 		serializer.read(atlasIndex);
 		if (!indexMap.insert(imageIndex, atlasIndex).second)
 		{
-			SystemUtility::print("¶ÁÈ¡Í¼¼¯ÏÂ±êÎÄ¼şÊ§°Ü,ÓĞÖØ¸´µÄÍ¼Æ¬ÎÄ¼ş! image index : " + StringUtility::intToString(imageIndex));
+			SystemUtility::print("è¯»å–å›¾é›†ä¸‹æ ‡æ–‡ä»¶å¤±è´¥,æœ‰é‡å¤çš„å›¾ç‰‡æ–‡ä»¶! image index : " + StringUtility::intToString(imageIndex));
 		}
 	}
 	TRACE_DELETE_ARRAY(fileBuffer);
@@ -910,16 +910,16 @@ void ImageUtility::convertMapFile(const std::string& fileName)
 	std::string fileNoSuffix = StringUtility::getFileNameNoSuffix(fileName, false);
 	SceneMap* map = TRACE_NEW(SceneMap, map);
 	map->readFile(fileNoSuffix + ".map");
-	// ÎïÌåÍ¼¼¯ÏÂ±ê
+	// ç‰©ä½“å›¾é›†ä¸‹æ ‡
 	txMap<int, txMap<int, int>> objAtlasIndexMap;
-	// Ä¿Ç°Ö»ÓĞ7¸ö×ÜµÄÎïÌåÍ¼Æ¬ÎÄ¼ş¼Ğ
+	// ç›®å‰åªæœ‰7ä¸ªæ€»çš„ç‰©ä½“å›¾ç‰‡æ–‡ä»¶å¤¹
 	for (int i = 0; i < 7; ++i)
 	{
 		txMap<int, int> indexMap;
 		readAtlasIndexFile("../media/Objects" + StringUtility::intToString(i + 1) + "/atlas.index", indexMap);
 		objAtlasIndexMap.insert(i + 1, indexMap);
 	}
-	// ´óµØ×©Í¼¼¯ÏÂ±ê
+	// å¤§åœ°ç –å›¾é›†ä¸‹æ ‡
 	txMap<int, int> bngAtlasIndexMap;
 	readAtlasIndexFile("../media/Tiles/atlas.index", bngAtlasIndexMap);
 	SceneMapAdvance* mapAdvance = TRACE_NEW(SceneMapAdvance, mapAdvance);
