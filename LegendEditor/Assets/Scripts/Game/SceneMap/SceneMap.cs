@@ -27,7 +27,7 @@ public class SceneMap : GameBase
 		for(int i = 0; i < tileCount; ++i)
 		{
 			mTileList[i] = new MapTile(i);
-			mTileList[i].parseTile(fileBuffer, ref offset);
+			mTileList[i].preParseTile(fileBuffer, ref offset);
 		}
 	}
 }

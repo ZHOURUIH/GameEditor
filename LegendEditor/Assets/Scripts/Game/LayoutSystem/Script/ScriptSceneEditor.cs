@@ -24,60 +24,11 @@ public class TileTextureWindow
 			mObjectTile.setActive(active);
 		}
 	}
-}
-
-public class WindowTexturePool
-{
-	protected List<txNGUITexture> mInusedList;
-	protected List<txNGUITexture> mUnusedList;
-	protected LayoutScript mScript;
-	protected txUIObject mPoolNode;
-	public WindowTexturePool(LayoutScript script)
+	public void destroy(WindowPool pool)
 	{
-		mScript = script;
-		mInusedList = new List<txNGUITexture>();
-		mUnusedList = new List<txNGUITexture>();
-	}
-	public void assignWindow()
-	{
-		mPoolNode = mScript.createObject<txUIObject>("WindowTexturePool");
-	}
-	public void destroy()
-	{
-		mScript.destroyObject(mPoolNode, true);
-		mPoolNode = null;
-	}
-	public txNGUITexture createWindow(string name, txUIObject parent)
-	{
-		txNGUITexture window = null;
-		// 从未使用列表中获取
-		if (mUnusedList.Count > 0)
-		{
-			window = mUnusedList[mUnusedList.Count - 1];
-			mUnusedList.RemoveAt(mUnusedList.Count - 1);
-		}
-		// 未使用列表中没有就创建新窗口
-		if (window == null)
-		{
-			window = mScript.createObject<txNGUITexture>(name);
-		}
-		// 加入到已使用列表中
-		mInusedList.Add(window);
-		window.setActive(true);
-		window.setName(name);
-		window.setParent(parent);
-		return window;
-	}
-	public void destroyWindow(txNGUITexture window)
-	{
-		if (window == null)
-		{
-			return;
-		}
-		mUnusedList.Add(window);
-		mInusedList.Remove(window);
-		window.setActive(false);
-		window.setParent(mPoolNode);
+		pool.destroyWindow(mBackTile);
+		pool.destroyWindow(mMidTile);
+		pool.destroyWindow(mObjectTile);
 	}
 }
 
@@ -99,7 +50,7 @@ public class ScriptSceneEditor : LayoutScript
 	protected Dictionary<int, txNGUIPanel> mBackPanelList;
 	protected Vector2 mCurViewPos;                      // 使用地图的坐标系,X轴向右,Y轴向下
 	protected SceneMap mSceneMap;
-	protected WindowTexturePool mWindowPool;
+	protected WindowPool mWindowPool;
 	protected TileTextureWindow[] mTileArray;          // 当前场景所有的窗口
 	protected Dictionary<int, MapTile> mVisibleTiles; // 存放当前可见的窗口
 	protected string mBackTilePath;
@@ -113,7 +64,7 @@ public class ScriptSceneEditor : LayoutScript
 		base(name, layout)
 	{
 		mBackPanelList = new Dictionary<int, txNGUIPanel>();
-		mWindowPool = new WindowTexturePool(this);
+		mWindowPool = new WindowPool(this);
 		mVisibleTiles = new Dictionary<int, MapTile>();
 		mBackTilePath = CommonDefine.R_GAME_TEXTURE_PATH + "MapTexture/Tiles/";
 		mMidTilePath = CommonDefine.R_GAME_TEXTURE_PATH + "MapTexture/SmTiles/";
@@ -246,6 +197,11 @@ public class ScriptSceneEditor : LayoutScript
 	}
 	public void createTile(TileTextureWindow tileWindow, MapTile tile)
 	{
+		// 只有真正要使用该地砖时才解析
+		if (!tile.mParsed)
+		{
+			tile.parseTile();
+		}
 		int x = tileIndexToTileX(tile.mIndex);
 		int y = tileIndexToTileY(tile.mIndex);
 		string tileSuffix = x + "_" + y;
@@ -263,12 +219,22 @@ public class ScriptSceneEditor : LayoutScript
 				{
 					mBackPanelList.Add(panelIndex, createObject<txNGUIPanel>(mBackRoot, "BackPanel" + panelIndex));
 				}
-				tileWindow.mBackTile = mWindowPool.createWindow("back_" + tileSuffix, mBackPanelList[panelIndex]);
+				tileWindow.mBackTile = mWindowPool.createWindow<txNGUITexture>("back_" + tileSuffix, mBackPanelList[panelIndex]);
 				tileWindow.mBackTile.setTexture(backTex, true);
+				tileWindow.mBackTile.setMaterial("NGUIDefault", false);
 				Vector2 posOffset = tileWindow.mBackTile.getTextureSize() / 2.0f;
 				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y - 32);
 				tileWindow.mBackTile.setLocalPosition(posOffset);
 				tileWindow.mBackTile.setDepth(1);
+				if (tile.mHasBng)
+				{
+					tileWindow.mBackTile.setColor(new Color(0.5f, 0.0f, 0.0f));
+				}
+				else
+				{
+					tileWindow.mBackTile.setColor(Color.white);
+				}
+				tileWindow.mBackTile.getUITexture().mSubPath = StringUtility.charArrayToHexString(tile.mTileBuffer, tile.mTileBuffer.Length);
 			}
 		}
 		if (tileWindow.mMidTile == null)
@@ -278,11 +244,13 @@ public class ScriptSceneEditor : LayoutScript
 			Texture midTex = mResourceManager.loadResource<Texture>(midTexName, false);
 			if (midTex != null)
 			{
-				tileWindow.mMidTile = mWindowPool.createWindow("mid_" + tileSuffix, mMiddleRoot);
+				tileWindow.mMidTile = mWindowPool.createWindow<txNGUITexture>("mid_" + tileSuffix, mMiddleRoot);
 				tileWindow.mMidTile.setTexture(midTex, true);
+				tileWindow.mMidTile.setMaterial("NGUIDefault", false);
 				Vector2 posOffset = tileWindow.mMidTile.getTextureSize() / 2.0f;
 				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
 				tileWindow.mMidTile.setLocalPosition(posOffset);
+				tileWindow.mMidTile.setColor(Color.white);
 			}
 		}
 		if (tileWindow.mObjectTile == null)
@@ -294,12 +262,22 @@ public class ScriptSceneEditor : LayoutScript
 				Texture objTex = mResourceManager.loadResource<Texture>(objTexName, false);
 				if (objTex != null)
 				{
-					tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix, mObjRoot);
+					tileWindow.mObjectTile = mWindowPool.createWindow<txNGUITexture>("obj_" + tileSuffix, mObjRoot);
 					tileWindow.mObjectTile.setTexture(objTex, true);
+					tileWindow.mObjectTile.setMaterial("NGUIDefault", false);
 					Vector2 posOffset = tileWindow.mObjectTile.getTextureSize() / 2.0f;
 					posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
 					tileWindow.mObjectTile.setLocalPosition(posOffset);
 					tileWindow.mObjectTile.setDepth(3);
+					if (tile.mHasObj)
+					{
+						tileWindow.mObjectTile.setColor(new Color(0.5f, 0.0f, 0.0f));
+					}
+					else
+					{
+						tileWindow.mObjectTile.setColor(Color.white);
+					}
+					tileWindow.mObjectTile.getUITexture().mSubPath = StringUtility.charArrayToHexString(tile.mTileBuffer, tile.mTileBuffer.Length);
 				}
 			}
 			// 带序列帧的物体
@@ -309,7 +287,7 @@ public class ScriptSceneEditor : LayoutScript
 				Texture objTex = mResourceManager.loadResource<Texture>(objTexName, false);
 				if (objTex != null)
 				{
-					tileWindow.mObjectTile = mWindowPool.createWindow("obj_" + tileSuffix, mObjRoot);
+					tileWindow.mObjectTile = mWindowPool.createWindow<txNGUITexture>("obj_" + tileSuffix, mObjRoot);
 					tileWindow.mObjectTile.setTexture(objTex, true);
 					tileWindow.mObjectTile.setMaterial("Multiple", false);
 					Vector2 posOffset = new Vector2(0.0f, tileWindow.mObjectTile.getTextureSize().y * 1.5f);
@@ -330,9 +308,7 @@ public class ScriptSceneEditor : LayoutScript
 			{
 				if (mTileArray[i] != null)
 				{
-					mWindowPool.destroyWindow(mTileArray[i].mBackTile);
-					mWindowPool.destroyWindow(mTileArray[i].mMidTile);
-					mWindowPool.destroyWindow(mTileArray[i].mObjectTile);
+					mTileArray[i].destroy(mWindowPool);
 				}
 			}
 		}

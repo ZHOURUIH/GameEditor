@@ -134,9 +134,16 @@ public class txUIObject : ComponentOwner
 	public txUIObject getParent() { return mParent; }
 	public UI_TYPE getUIType() { return mType; }
 	public Transform getTransform() { return mTransform; }
-	public BoxCollider getBoxCollider() { return mBoxCollider; }
 	public AudioSource getAudioSource() { return mAudioSource; }
 	public bool isActive() { return mObject.activeSelf; }
+	public BoxCollider getBoxCollider(bool addIfNull = false)
+	{
+		if (mBoxCollider == null && addIfNull)
+		{
+			mBoxCollider = mObject.AddComponent<BoxCollider>();
+		}
+		return mBoxCollider;
+	}
 	public Vector3 getRotationEuler()
 	{
 		Vector3 vector3 = mTransform.localEulerAngles;

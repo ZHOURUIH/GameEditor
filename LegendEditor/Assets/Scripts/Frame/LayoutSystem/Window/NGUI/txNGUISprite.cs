@@ -79,4 +79,5 @@ public class txNGUISprite : txUIObject
 	{
 		mSprite.fillAmount = percent;
 	}
+	public UISprite getSprite() { return mSprite; }
 }

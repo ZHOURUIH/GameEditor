@@ -207,6 +207,14 @@ public class txNGUITexture : txUIObject
 		mTexture.depth = depth;
 		base.setDepth(depth);
 	}
+	public void setColor(Color color)
+	{
+		mTexture.color = color;
+	}
+	public UITexture getUITexture()
+	{
+		return mTexture;
+	}
     public string getOriginTextureName() { return mOriginTextureName; }
     public void setOriginTextureName(string textureName) { mOriginTextureName = textureName; }
 	// 自动计算图片的原始名称,也就是不带后缀的名称,后缀默认以_分隔

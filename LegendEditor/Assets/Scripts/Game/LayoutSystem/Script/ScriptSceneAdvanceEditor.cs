@@ -11,13 +11,13 @@ public class PanelInfo
 	public int mObjectCount;
 }
 
-public class WindowSpritePool
+public class WindowPool
 {
 	protected Dictionary<Type, List<txUIObject>> mInusedList;
 	protected Dictionary<Type, List<txUIObject>> mUnusedList;
 	protected LayoutScript mScript;
 	protected txUIObject mPoolNode;
-	public WindowSpritePool(LayoutScript script)
+	public WindowPool(LayoutScript script)
 	{
 		mScript = script;
 		mInusedList = new Dictionary<Type, List<txUIObject>>();
@@ -101,6 +101,13 @@ public class TileWindow
 			mEffect.setActive(active);
 		}
 	}
+	public void destroy(WindowPool pool)
+	{
+		pool.destroyWindow(mBackTile);
+		pool.destroyWindow(mMidTile);
+		pool.destroyWindow(mObjectTile);
+		pool.destroyWindow(mEffect);
+	}
 }
 
 public class ScriptSceneAdvanceEditor : LayoutScript
@@ -122,7 +129,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 	protected Dictionary<int, List<int>> mBackAtlasList;	// 根据图集下标查找有哪些panel包含该图集
 	protected Vector2 mCurViewPos;						// 使用地图的坐标系,X轴向右,Y轴向下
 	protected SceneMapAdvance mSceneMap;
-	protected WindowSpritePool mWindowPool;
+	protected WindowPool mWindowPool;
 	protected TileWindow[] mTileArray;			// 当前场景所有的窗口
 	protected Dictionary<int, MapTileAdvance> mVisibleTiles; // 存放当前可见的窗口
 	protected UIAtlas midAtlas;
@@ -141,7 +148,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 	{
 		mBackPanelList = new Dictionary<int, PanelInfo>();
 		mBackAtlasList = new Dictionary<int, List<int>>();
-		mWindowPool = new WindowSpritePool(this);
+		mWindowPool = new WindowPool(this);
 		mVisibleTiles = new Dictionary<int, MapTileAdvance>();
 		mObjAtlasIndexMap = new Dictionary<int, Dictionary<int, UIAtlas>>();
 		mBngAtlasIndexMap = new Dictionary<int, UIAtlas>();
@@ -335,6 +342,14 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 				posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y - 32);
 				tileWindow.mBackTile.setLocalPosition(posOffset);
 				tileWindow.mBackTile.setDepth(1);
+				if (tile.mHasBng)
+				{
+					tileWindow.mBackTile.getSprite().color = new Color(0.5f, 0.0f, 0.0f);
+				}
+				else
+				{
+					tileWindow.mBackTile.getSprite().color = Color.white;
+				}
 			}
 		}
 		if(tileWindow.mMidTile == null)
@@ -362,12 +377,27 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 				if (atlas != null && atlas.GetSprite(spriteName) != null)
 				{
 					tileWindow.mObjectTile = mWindowPool.createWindow<txNGUISprite>("obj_" + tileSuffix, mObjRoot);
-					tileWindow.mObjectTile.setAtlas(atlas);
-					tileWindow.mObjectTile.setSpriteName(spriteName, true);
-					Vector2 posOffset = tileWindow.mObjectTile.getSpriteSize() / 2.0f;
+					txNGUISprite objTile = tileWindow.mObjectTile;
+					objTile.setAtlas(atlas);
+					objTile.setSpriteName(spriteName, true);
+					Vector2 posOffset = objTile.getSpriteSize() / 2.0f;
 					posOffset += new Vector2(48 * x - mHalfMap.x, mHalfMap.y - 32 * y);
-					tileWindow.mObjectTile.setLocalPosition(posOffset);
-					tileWindow.mObjectTile.setDepth(y);
+					objTile.setLocalPosition(posOffset);
+					objTile.setDepth(y);
+					if(!tile.mCanWalk)
+					{
+						BoxCollider collider = objTile.getBoxCollider(true);
+						collider.size = objTile.getSpriteSize();
+					}
+					objTile.setHandleInput(!tile.mCanWalk);
+					if(tile.mHasObj)
+					{
+						objTile.getSprite().color = new Color(0.5f, 0.0f, 0.0f);
+					}
+					else
+					{
+						objTile.getSprite().color = Color.white;
+					}
 				}
 			}
 		}
@@ -403,10 +433,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 			{
 				if (mTileArray[i] != null)
 				{
-					mWindowPool.destroyWindow(mTileArray[i].mBackTile);
-					mWindowPool.destroyWindow(mTileArray[i].mMidTile);
-					mWindowPool.destroyWindow(mTileArray[i].mObjectTile);
-					mWindowPool.destroyWindow(mTileArray[i].mEffect);
+					mTileArray[i].destroy(mWindowPool);
 				}
 			}
 		}

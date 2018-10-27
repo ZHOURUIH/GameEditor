@@ -72,6 +72,5 @@ public class MapTileAdvance : GameBase
 		mHasAni = BinaryUtility.getHightestBit(mAniFrame) == 1;
 		BinaryUtility.setHighestBit(ref mAniFrame, 0);
 		mParsed = true;
-		mTileBuffer = null;
 	}
 }
