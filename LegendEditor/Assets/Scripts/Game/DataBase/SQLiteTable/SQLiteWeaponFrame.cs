@@ -4,8 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class WeaponFrameData
+public class WeaponFrameData : TableData
 {
+	public static string COL_ID = "WeaponID";
+	public static string COL_LABEL = "Label";
+	public static string COL_DIRECTION = "Direction";
+	public static string COL_ACTION = "Action";
+	public static string COL_FRAME_COUNT = "FrameCount";
+	public static string COL_POSX = "PosX";
+	public static string COL_POSY = "PosY";
 	public int mID;
 	public string mLabel;
 	public int mDirection;
@@ -13,51 +20,54 @@ public class WeaponFrameData
 	public int mFrameCount;
 	public List<int> mPosX;
 	public List<int> mPosY;
+	public override void parse(SqliteDataReader reader)
+	{
+		mID = stringToInt(reader[COL_ID].ToString());
+		mLabel = reader[COL_LABEL].ToString();
+		mDirection = stringToInt(reader[COL_DIRECTION].ToString());
+		mAction = reader[COL_ACTION].ToString();
+		mFrameCount = stringToInt(reader[COL_FRAME_COUNT].ToString());
+		stringToIntArray(reader[COL_POSX].ToString(), ref mPosX);
+		stringToIntArray(reader[COL_POSY].ToString(), ref mPosY);
+	}
 }
 
 public class SQLiteWeaponFrame : SQLiteTable
 {
-	string COL_ID = "WeaponID";
-	string COL_LABEL = "Label";
-	string COL_DIRECTION = "Direction";
-	string COL_ACTION = "Action";
-	string COL_FRAME_COUNT = "FrameCount";
-	string COL_POSX = "PosX";
-	string COL_POSY = "PosY";
 	public SQLiteWeaponFrame()
-		:base("WeaponFrame")
-	{}
+		: base("WeaponFrame")
+	{ }
 	public void query(int id, out List<WeaponFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, "");
+		appendConditionInt(ref condition, WeaponFrameData.COL_ID, id, "");
 		parseReader(doQuery(condition), out dataList);
 	}
 	public void query(int id, int direction, out List<WeaponFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, " and ");
-		appendConditionInt(ref condition, COL_DIRECTION, direction, "");
+		appendConditionInt(ref condition, WeaponFrameData.COL_ID, id, " and ");
+		appendConditionInt(ref condition, WeaponFrameData.COL_DIRECTION, direction, "");
 		parseReader(doQuery(condition), out dataList);
 	}
 	public void query(int id, int direction, string action, out List<WeaponFrameData> dataList)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, " and ");
-		appendConditionInt(ref condition, COL_DIRECTION, direction, " and ");
-		appendConditionString(ref condition, COL_ACTION, action, "");
+		appendConditionInt(ref condition, WeaponFrameData.COL_ID, id, " and ");
+		appendConditionInt(ref condition, WeaponFrameData.COL_DIRECTION, direction, " and ");
+		appendConditionString(ref condition, WeaponFrameData.COL_ACTION, action, "");
 		parseReader(doQuery(condition), out dataList);
 	}
 	public void updateData(WeaponFrameData data)
 	{
 		string updateString = "";
-		appendUpdateInt(ref updateString, COL_FRAME_COUNT, data.mFrameCount);
-		appendUpdateIntArray(ref updateString, COL_POSX, data.mPosX);
-		appendUpdateIntArray(ref updateString, COL_POSY, data.mPosY, true);
+		appendUpdateInt(ref updateString, WeaponFrameData.COL_FRAME_COUNT, data.mFrameCount);
+		appendUpdateIntArray(ref updateString, WeaponFrameData.COL_POSX, data.mPosX);
+		appendUpdateIntArray(ref updateString, WeaponFrameData.COL_POSY, data.mPosY, true);
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, data.mID, " and ");
-		appendConditionInt(ref condition, COL_DIRECTION, data.mDirection, " and ");
-		appendConditionString(ref condition, COL_ACTION, data.mAction, "");
+		appendConditionInt(ref condition, WeaponFrameData.COL_ID, data.mID, " and ");
+		appendConditionInt(ref condition, WeaponFrameData.COL_DIRECTION, data.mDirection, " and ");
+		appendConditionString(ref condition, WeaponFrameData.COL_ACTION, data.mAction, "");
 		doUpdate(updateString, condition);
 	}
 	public void insert(WeaponFrameData data)
@@ -72,22 +82,4 @@ public class SQLiteWeaponFrame : SQLiteTable
 		appendValueIntArray(ref valueString, data.mPosY, true);
 		doInsert(valueString);
 	}
-//-------------------------------------------------------------------------------------------------------------------------------------
-protected void parseReader(SqliteDataReader reader, out List<WeaponFrameData> dataList)
-	{
-		dataList = new List<WeaponFrameData>();
-		while (reader.Read())
-		{
-			WeaponFrameData data = new WeaponFrameData();
-			data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
-			data.mLabel = reader[COL_LABEL].ToString();
-			data.mDirection = StringUtility.stringToInt(reader[COL_DIRECTION].ToString());
-			data.mAction = reader[COL_ACTION].ToString();
-			data.mFrameCount = StringUtility.stringToInt(reader[COL_FRAME_COUNT].ToString());
-			StringUtility.stringToIntArray(reader[COL_POSX].ToString(), ref data.mPosX);
-			StringUtility.stringToIntArray(reader[COL_POSY].ToString(), ref data.mPosY);
-			dataList.Add(data);
-		}
-		reader.Close();
-	}
-};
+}

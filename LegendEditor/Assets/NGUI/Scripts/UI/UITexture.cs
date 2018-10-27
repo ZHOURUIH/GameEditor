@@ -25,7 +25,7 @@ public class UITexture : UIBasicSprite
 
 	[System.NonSerialized] int mPMA = -1;
 
-	public string mSubPath;
+	public string mUserData;
 	/// <summary>
 	/// Texture used by the UITexture. You can set it directly, without the need to specify a material.
 	/// </summary>

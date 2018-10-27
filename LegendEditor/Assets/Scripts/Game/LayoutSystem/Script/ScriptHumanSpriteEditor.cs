@@ -133,7 +133,7 @@ public class ScriptHumanSpriteEditor : LayoutScript
 	public override void onReset()
 	{
 		mHumanSpriteInstance.onReset();
-		LayoutTools.ACTIVE_WINDOW(mPauseOperate, false);
+		LT.ACTIVE_WINDOW(mPauseOperate, false);
 	}
 	public override void onShow(bool immediately, string param)
 	{
@@ -166,7 +166,7 @@ public class ScriptHumanSpriteEditor : LayoutScript
 	}
 	protected void onPlaySpeedChanged()
 	{
-		mHumanSpriteInstance.setPlaySpeed(StringUtility.stringToFloat(mPlaySpeed.getText()));
+		mHumanSpriteInstance.setPlaySpeed(stringToFloat(mPlaySpeed.getText()));
 	}
 	protected void onPlayLoopChanged()
 	{
@@ -304,7 +304,7 @@ public class ScriptHumanSpriteEditor : LayoutScript
 		if(mHumanAnim.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mHumanAnim.getCurFrameIndex() - 1;
-			MathUtility.clampMin(ref curFrame, 0);
+			clampMin(ref curFrame, 0);
 			mHumanAnim.setCurFrameIndex(curFrame);
 			mFrameCount.setLabel("帧数:" + (mHumanAnim.getCurFrameIndex() + 1) + "/" + mHumanAnim.getTextureFrameCount());
 		}
@@ -314,7 +314,7 @@ public class ScriptHumanSpriteEditor : LayoutScript
 		if (mHumanAnim.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mHumanAnim.getCurFrameIndex() + 1;
-			MathUtility.clampMax(ref curFrame, mHumanAnim.getTextureFrameCount() - 1);
+			clampMax(ref curFrame, mHumanAnim.getTextureFrameCount() - 1);
 			mHumanAnim.setCurFrameIndex(curFrame);
 			mFrameCount.setLabel("帧数:" + (mHumanAnim.getCurFrameIndex() + 1) + "/" + mHumanAnim.getTextureFrameCount());
 		}
@@ -329,7 +329,7 @@ public class ScriptHumanSpriteEditor : LayoutScript
 		WeaponAtlas curWeaponAtlas = mWeaponResourceList[mWeaponIndex];
 		HumanAnim curClothAnim = curClothAtlas.mAnimSetList[mDirection][mActionList[mAction]];
 		WeaponAnim curWeaponAnim = curWeaponAtlas.mAnimSetList[mDirection][mActionList[mAction]];
-		float playSpeed = StringUtility.stringToFloat(mPlaySpeed.getText());
+		float playSpeed = stringToFloat(mPlaySpeed.getText());
 		mHumanSpriteInstance.play(curClothAnim.mTextureSet, mPlayLoop.getChecked(), playSpeed);
 		mHumanSpriteInstance.setClothTexturePosList(findClothPosList(curClothAnim));
 		mHumanSpriteInstance.setWeaponTexturePosList(findWeaponPosList(curWeaponAnim));
@@ -398,7 +398,7 @@ public class ScriptHumanSpriteEditor : LayoutScript
 	protected void checkPause()
 	{
 		bool isPause = mHumanAnim.getPlayState() == PLAY_STATE.PS_PAUSE;
-		LayoutTools.ACTIVE_WINDOW(mPauseOperate, isPause);
+		LT.ACTIVE_WINDOW(mPauseOperate, isPause);
 		mFrameCount.setLabel("帧数:" + (mHumanAnim.getCurFrameIndex() + 1) + "/" + mHumanAnim.getTextureFrameCount());
 	}
 }

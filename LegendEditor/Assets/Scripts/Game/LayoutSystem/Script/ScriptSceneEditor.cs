@@ -141,7 +141,7 @@ public class ScriptSceneEditor : LayoutScript
 			if (changed)
 			{
 				refreshMap();
-				LayoutTools.MOVE_WINDOW(mSceneRoot, mSceneRoot.getPosition() + moveDelta);
+				LT.MOVE_WINDOW(mSceneRoot, mSceneRoot.getPosition() + moveDelta);
 			}
 		}
 	}
@@ -149,16 +149,16 @@ public class ScriptSceneEditor : LayoutScript
 	{
 		logInfo("view center : " + mCurViewPos, LOG_LEVEL.LL_FORCE);
 		// 先判断是否有窗口已经从可见变为不可见
-		int viewWidth = StringUtility.stringToInt(mViewWidthEdit.getText());
-		int viewHeight = StringUtility.stringToInt(mViewHeightEdit.getText());
+		int viewWidth = stringToInt(mViewWidthEdit.getText());
+		int viewHeight = stringToInt(mViewHeightEdit.getText());
 		List<int> removedIndex = new List<int>();
 		foreach (var item in mVisibleTiles)
 		{
 			int x = tileIndexToTileX(item.Key);
 			int y = tileIndexToTileY(item.Key);
 			// 判断是否已经超出视野范围
-			if (!MathUtility.isInRange(x, mCurViewPos.x - viewWidth / 2, mCurViewPos.x + viewWidth / 2)
-				|| !MathUtility.isInRange(y, mCurViewPos.y - viewHeight / 2, mCurViewPos.y + viewHeight / 2))
+			if (!isInRange(x, mCurViewPos.x - viewWidth / 2, mCurViewPos.x + viewWidth / 2)
+				|| !isInRange(y, mCurViewPos.y - viewHeight / 2, mCurViewPos.y + viewHeight / 2))
 			{
 				mTileArray[item.Key].setActive(false);
 				removedIndex.Add(item.Key);
@@ -177,10 +177,10 @@ public class ScriptSceneEditor : LayoutScript
 				int curTilePosX = i + (int)mCurViewPos.x - viewWidth / 2;
 				int curTilePosY = j + (int)mCurViewPos.y - viewHeight / 2;
 				int tileIndex = tilePosToTileIndex(curTilePosX, curTilePosY);
-				if (MathUtility.isInRange(curTilePosX, (int)mCurViewPos.x - viewWidth / 2, (int)mCurViewPos.x + viewWidth / 2)
-				&& MathUtility.isInRange(curTilePosY, (int)mCurViewPos.y - viewHeight / 2, (int)mCurViewPos.y + viewHeight / 2)
-				&& MathUtility.isInRange(curTilePosX, 0, mSceneMap.mHeader.mWidth - 1)
-				&& MathUtility.isInRange(curTilePosY, 0, mSceneMap.mHeader.mHeight - 1)
+				if (isInRange(curTilePosX, (int)mCurViewPos.x - viewWidth / 2, (int)mCurViewPos.x + viewWidth / 2)
+				&& isInRange(curTilePosY, (int)mCurViewPos.y - viewHeight / 2, (int)mCurViewPos.y + viewHeight / 2)
+				&& isInRange(curTilePosX, 0, mSceneMap.mHeader.mWidth - 1)
+				&& isInRange(curTilePosY, 0, mSceneMap.mHeader.mHeight - 1)
 				&& !mVisibleTiles.ContainsKey(tileIndex))
 				{
 					// 变为可见的窗口如果不存在,则需要创建
@@ -234,7 +234,7 @@ public class ScriptSceneEditor : LayoutScript
 				{
 					tileWindow.mBackTile.setColor(Color.white);
 				}
-				tileWindow.mBackTile.getUITexture().mSubPath = StringUtility.charArrayToHexString(tile.mTileBuffer, tile.mTileBuffer.Length);
+				tileWindow.mBackTile.getUITexture().mUserData = charArrayToHexString(tile.mTileBuffer, tile.mTileBuffer.Length);
 			}
 		}
 		if (tileWindow.mMidTile == null)
@@ -277,7 +277,7 @@ public class ScriptSceneEditor : LayoutScript
 					{
 						tileWindow.mObjectTile.setColor(Color.white);
 					}
-					tileWindow.mObjectTile.getUITexture().mSubPath = StringUtility.charArrayToHexString(tile.mTileBuffer, tile.mTileBuffer.Length);
+					tileWindow.mObjectTile.getUITexture().mUserData = charArrayToHexString(tile.mTileBuffer, tile.mTileBuffer.Length);
 				}
 			}
 			// 带序列帧的物体

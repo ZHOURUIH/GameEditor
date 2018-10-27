@@ -222,7 +222,7 @@
 //		//	enableHumanID(false);
 //		//	// 读取Magic目录中的所有序列帧,加入到下拉列表中
 //		//	List<string> folderList = new List<string>();
-//		//	FileUtility.findDirectory(CommonDefine.F_TEXTURE_ANIM_PATH + "Magic", ref folderList, false);
+//		//	findDirectory(CommonDefine.F_TEXTURE_ANIM_PATH + "Magic", ref folderList, false);
 //		//	mResourceList.clearAllItem();
 //		//	int folderCount = folderList.Count;
 //		//	for(int i = 0; i < folderCount && i < 100; ++i)
@@ -238,17 +238,17 @@
 //	protected void setID(int id, bool refresh = true)
 //	{
 //		mID = id;
-//		mCurIDEdit.setText(StringUtility.intToString(mID));
+//		mCurIDEdit.setText(intToString(mID));
 //	}
 //	protected void setOccupation(int occupation, bool refresh = true)
 //	{
 //		mOccupation = occupation;
-//		mCurOccupationEdit.setText(StringUtility.intToString(mOccupation));
+//		mCurOccupationEdit.setText(intToString(mOccupation));
 //	}
 //	protected void setDirection(int direction, bool refresh = true)
 //	{
 //		mDirection = direction;
-//		mCurDirectionEdit.setText(StringUtility.intToString(mDirection));
+//		mCurDirectionEdit.setText(intToString(mDirection));
 //	}
 //	protected void setAction(string action, bool refresh = true)
 //	{
@@ -258,12 +258,12 @@
 //	protected void setFrameCount(int frameCount)
 //	{
 //		mFrameCount = frameCount;
-//		mFrameCountLabel.setLabel(StringUtility.intToString(mFrameCount));
+//		mFrameCountLabel.setLabel(intToString(mFrameCount));
 //	}
 //	protected void setHumanID(int humanID)
 //	{
 //		mHumanID = humanID;
-//		mCurHumanIDEdit.setText(StringUtility.intToString(mHumanID));
+//		mCurHumanIDEdit.setText(intToString(mHumanID));
 //	}
 //	protected void disableEditType(EDIT_TYPE type)
 //	{
@@ -300,7 +300,7 @@
 //	protected void onLastID(GameObject obj)
 //	{
 //		int id = --mID;
-//		MathUtility.clampMin(ref id, 1);
+//		clampMin(ref id, 1);
 //		setID(id);
 //	}
 //	protected void onNextID(GameObject obj)
@@ -362,7 +362,7 @@
 //	protected void onLastHumanID(GameObject obj)
 //	{
 //		int humanID = --mHumanID;
-//		MathUtility.clampMin(ref humanID, 1);
+//		clampMin(ref humanID, 1);
 //		setHumanID(humanID);
 //	}
 //	protected void onNextHumanID(GameObject obj)

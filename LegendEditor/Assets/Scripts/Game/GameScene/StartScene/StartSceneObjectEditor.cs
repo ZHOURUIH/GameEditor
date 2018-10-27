@@ -13,7 +13,7 @@ public class StartSceneObjectEditor : SceneProcedure
 	}
 	protected override void onInit(SceneProcedure lastProcedure, string intent)
 	{
-		//LayoutTools.LOAD_NGUI_SHOW(LAYOUT_TYPE.LT_OBJECT_EDITOR, 0);
+		//LT.LOAD_NGUI_SHOW(LAYOUT_TYPE.LT_OBJECT_EDITOR, 0);
 	}
 	protected override void onUpdate(float elapsedTime)
 	{
@@ -21,7 +21,7 @@ public class StartSceneObjectEditor : SceneProcedure
 	}
 	protected override void onExit(SceneProcedure nextProcedure)
 	{
-		//LayoutTools.UNLOAD_LAYOUT(LAYOUT_TYPE.LT_OBJECT_EDITOR);
+		//LT.UNLOAD_LAYOUT(LAYOUT_TYPE.LT_OBJECT_EDITOR);
 	}
 	protected override void onKeyProcess(float elapsedTime)
 	{

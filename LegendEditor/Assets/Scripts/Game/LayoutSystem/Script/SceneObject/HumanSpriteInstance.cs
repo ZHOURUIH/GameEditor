@@ -82,7 +82,7 @@ public class HumanSpriteInstance : GameBase
 		setPlaySpeed(animSpeed);
 		mCloth.addPlayingCallback(onAnimationPlaying);
 		// 当方向大于4时,需要将武器深度设置到角色下面
-		int direction = StringUtility.getLastNumber(animSet);
+		int direction = getLastNumber(animSet);
 		if (direction <= 4 && direction > 0)
 		{
 			mCloth.setDepth(1);
@@ -100,9 +100,9 @@ public class HumanSpriteInstance : GameBase
 		mWeapon.setCurFrameIndex(mCloth.getCurFrameIndex());
 		// 由于原坐标系是以图片左上角为原点,unity是以图片中心为原点,所以需要根据图片大小再做父节点偏移
 		Vector2 clothParentPos = new Vector2(mCloth.getWindowSize().x / 2.0f, -mCloth.getWindowSize().y / 2.0f);
-		LayoutTools.MOVE_WINDOW(mClothParent, clothParentPos);
+		LT.MOVE_WINDOW(mClothParent, clothParentPos);
 		Vector2 weaponParentPos = new Vector2(mWeapon.getWindowSize().x / 2.0f, -mWeapon.getWindowSize().y / 2.0f);
-		LayoutTools.MOVE_WINDOW(mWeaponParent, weaponParentPos);
+		LT.MOVE_WINDOW(mWeaponParent, weaponParentPos);
 	}
 	protected void onAnimationPlayEnd(INGUIAnimation window, bool isBreak)
 	{

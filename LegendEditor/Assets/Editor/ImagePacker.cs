@@ -5,7 +5,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-public class ImagePacker
+public class ImagePacker : GameBase
 {
 	/// <summary>
 	/// 自动构建图集菜单命令
@@ -51,18 +51,18 @@ public class ImagePacker
 		{
 			AssetDatabase.Refresh();
 			List<string> fileList = new List<string>();
-			FileUtility.findFiles(srcFullPath, ref fileList, ".png", false);
+			findFiles(srcFullPath, ref fileList, ".png", false);
 			for (int i = 0; i < fileList.Count; ++i)
 			{
-				EditorUtility.DisplayProgressBar("设置NGUI图集", "正在进行" + StringUtility.getFileName(fileList[i]), i / (float)fileList.Count);
+				EditorUtility.DisplayProgressBar("设置NGUI图集", "正在进行" + getFileName(fileList[i]), i / (float)fileList.Count);
 
-				FileUtility.createDir(atlasAssetPath);
-				string assetNameNoSuffix = atlasAssetPath + "/" + StringUtility.getFileNameNoSuffix(fileList[i], true);
+				createDir(atlasAssetPath);
+				string assetNameNoSuffix = atlasAssetPath + "/" + getFileNameNoSuffix(fileList[i], true);
 				string prefabFile = assetNameNoSuffix + ".prefab";
 				string matFile = assetNameNoSuffix + ".mat";
 				string destPNGFile = assetNameNoSuffix + ".png";
 				// 拷贝png文件
-				FileUtility.copyFile(fileList[i], projectPathToFullPath(destPNGFile));
+				copyFile(fileList[i], projectPathToFullPath(destPNGFile));
 				AssetDatabase.Refresh();
 
 				// 加载文件图集文件，如果不存则创建
@@ -88,7 +88,7 @@ public class ImagePacker
 
 				// 配置图集参数
 				string srcPNGFile = fullPathToProjectPath(fileList[i]);
-				string dataFile = StringUtility.getFileNameNoSuffix(srcPNGFile) + ".txt";
+				string dataFile = getFileNameNoSuffix(srcPNGFile) + ".txt";
 				Texture2D pngAsset = GetAtlasTexture(destPNGFile);
 				TextAsset dataAsset = AssetDatabase.LoadMainAssetAtPath(dataFile) as TextAsset;
 				matAsset.SetTexture("_MainTex", pngAsset);

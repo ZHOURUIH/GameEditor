@@ -67,14 +67,14 @@ public class EffectTextureInstance : GameBase
 	}
 	public void move(Vector3 dest)
 	{
-		LayoutTools.MOVE_WINDOW(mEffectRoot, dest);
+		LT.MOVE_WINDOW(mEffectRoot, dest);
 	}
 	//-------------------------------------------------------------------------------------------------------
 	protected void onAnimationPlaying(INGUIAnimation window, bool isBreak)
 	{
 		// 由于原坐标系是以图片左上角为原点,unity是以图片中心为原点,所以需要根据图片大小再做父节点偏移
 		Vector2 parentPos = new Vector2(mEffectNode.getWindowSize().x / 2.0f, -mEffectNode.getWindowSize().y / 2.0f);
-		LayoutTools.MOVE_WINDOW(mParentNode, parentPos);
+		LT.MOVE_WINDOW(mParentNode, parentPos);
 	}
 	protected void onAnimationPlayEnd(INGUIAnimation window, bool isBreak)
 	{

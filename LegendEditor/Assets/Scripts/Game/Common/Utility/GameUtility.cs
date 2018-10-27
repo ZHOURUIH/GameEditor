@@ -12,10 +12,10 @@ public class GameUtility : GameBase
 	protected static int mIDMaker;
 	public static float calcuteConfigExpression(GAME_DEFINE_STRING CommonDefine, float variableValue)
 	{
-		string variableStr = "(" + StringUtility.floatToString(variableValue, 2) + ")";
+		string variableStr = "(" + floatToString(variableValue, 2) + ")";
 		string expression = mGameConfig.getStringParam(CommonDefine);
 		expression = expression.Replace("i", variableStr);
-		float expressionValue = MathUtility.calculateFloat(expression);
+		float expressionValue = calculateFloat(expression);
 		return expressionValue;
 	}
 	public static int makeID() { return ++mIDMaker; }
@@ -55,12 +55,12 @@ public class GameUtility : GameBase
 		for (int i = 0; i < count; ++i)
 		{
 			string curStr = fileList[i];
-			string preStr = StringUtility.getNotNumberSubString(curStr);
+			string preStr = getNotNumberSubString(curStr);
 			if (!sortedList.ContainsKey(preStr))
 			{
 				sortedList.Add(preStr, new SortedDictionary<int, string>());
 			}
-			int number = StringUtility.getLastNumber(curStr);
+			int number = getLastNumber(curStr);
 			if (!sortedList[preStr].ContainsKey(number))
 			{
 				sortedList[preStr].Add(number, curStr);
@@ -82,7 +82,7 @@ public class GameUtility : GameBase
 	}
 	public static Vector2 getPositionByFile(string fileNameNoSuffix)
 	{
-		string str = FileUtility.openTxtFile(fileNameNoSuffix + ".txt");
-		return StringUtility.stringToVector2(str);
+		string str = openTxtFile(fileNameNoSuffix + ".txt");
+		return stringToVector2(str);
 	}
 }

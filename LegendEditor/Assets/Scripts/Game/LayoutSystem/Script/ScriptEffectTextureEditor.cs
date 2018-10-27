@@ -75,8 +75,8 @@ public class ScriptEffectTextureEditor : LayoutScript
 	public override void onReset()
 	{
 		mEffectTextureInstance.onReset();
-		LayoutTools.ACTIVE_WINDOW(mLastFrame, false);
-		LayoutTools.ACTIVE_WINDOW(mNextFrame, false);
+		LT.ACTIVE_WINDOW(mLastFrame, false);
+		LT.ACTIVE_WINDOW(mNextFrame, false);
 	}
 	public override void onShow(bool immediately, string param)
 	{
@@ -93,8 +93,8 @@ public class ScriptEffectTextureEditor : LayoutScript
 	protected void checkPause()
 	{
 		bool isPause = mCurEffectNode.getPlayState() == PLAY_STATE.PS_PAUSE;
-		LayoutTools.ACTIVE_WINDOW(mLastFrame, isPause);
-		LayoutTools.ACTIVE_WINDOW(mNextFrame, isPause);
+		LT.ACTIVE_WINDOW(mLastFrame, isPause);
+		LT.ACTIVE_WINDOW(mNextFrame, isPause);
 	}
 	// 回调
 	//---------------------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 	}
 	protected void onPlaySpeedChanged()
 	{
-		mEffectTextureInstance.setPlaySpeed(StringUtility.stringToFloat(mPlaySpeed.getText()));
+		mEffectTextureInstance.setPlaySpeed(stringToFloat(mPlaySpeed.getText()));
 	}
 	protected void onPlayLoopChanged()
 	{
@@ -154,7 +154,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 	protected void onLastFolderClick(GameObject obj)
 	{
 		int curIndex = mEffectIndex;
-		string curFolder = StringUtility.getFilePath(mResourceList[mEffectIndex]);
+		string curFolder = getFilePath(mResourceList[mEffectIndex]);
 		while (true)
 		{
 			curIndex = (curIndex - 1 + mResourceList.Count) % mResourceList.Count;
@@ -164,7 +164,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 				break;
 			}
 			// 查找下一个资源的目录,如果目录不同,则退出循环
-			string folder = StringUtility.getFilePath(mResourceList[curIndex]);
+			string folder = getFilePath(mResourceList[curIndex]);
 			if(folder != curFolder)
 			{
 				break;
@@ -175,7 +175,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 	protected void onNextFolderClick(GameObject obj)
 	{
 		int curIndex = mEffectIndex;
-		string curFolder = StringUtility.getFilePath(mResourceList[mEffectIndex]);
+		string curFolder = getFilePath(mResourceList[mEffectIndex]);
 		while (true)
 		{
 			curIndex = (curIndex + 1) % mResourceList.Count;
@@ -185,7 +185,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 				break;
 			}
 			// 查找下一个资源的目录,如果目录不同,则退出循环
-			string folder = StringUtility.getFilePath(mResourceList[curIndex]);
+			string folder = getFilePath(mResourceList[curIndex]);
 			if (folder != curFolder)
 			{
 				break;
@@ -196,7 +196,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 	protected void onRefreshResourceClick(GameObject obj)
 	{
 		mResourceList.Clear();
-		FileUtility.findDirectory(CommonDefine.F_TEXTURE_ANIM_PATH + "Effect", ref mResourceList);
+		findDirectory(CommonDefine.F_TEXTURE_ANIM_PATH + "Effect", ref mResourceList);
 		// 去除路径前缀
 		int count = mResourceList.Count;
 		for(int i = 0; i < count; ++i)
@@ -209,7 +209,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 		for (int i = 0; i < count; ++i)
 		{
 			List<string> temp = new List<string>();
-			FileUtility.findFiles(CommonDefine.F_TEXTURE_ANIM_PATH + mResourceList[i], ref temp, ".png", false);
+			findFiles(CommonDefine.F_TEXTURE_ANIM_PATH + mResourceList[i], ref temp, ".png", false);
 			if(temp.Count == 0)
 			{
 				removeItem.Add(i);
@@ -231,7 +231,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 		if(mCurEffectNode.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mCurEffectNode.getCurFrameIndex() - 1;
-			MathUtility.clampMin(ref curFrame, 0);
+			clampMin(ref curFrame, 0);
 			mCurEffectNode.setCurFrameIndex(curFrame);
 		}
 	}
@@ -240,7 +240,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 		if (mCurEffectNode.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mCurEffectNode.getCurFrameIndex() + 1;
-			MathUtility.clampMax(ref curFrame, mCurEffectNode.getTextureFrameCount() - 1);
+			clampMax(ref curFrame, mCurEffectNode.getTextureFrameCount() - 1);
 			mCurEffectNode.setCurFrameIndex(curFrame);
 		}
 	}
@@ -252,9 +252,9 @@ public class ScriptEffectTextureEditor : LayoutScript
 		}
 		mEffectIndex = index;
 		mEffectCount.setLabel("数量:" + (mEffectIndex + 1) + "/" + mResourceList.Count);
-		string textureSetName = StringUtility.getFileName(mResourceList[mEffectIndex]);
+		string textureSetName = getFileName(mResourceList[mEffectIndex]);
 		string subPath = mResourceList[mEffectIndex].Substring(0, mResourceList[mEffectIndex].Length - textureSetName.Length);
-		float playSpeed = StringUtility.stringToFloat(mPlaySpeed.getText());
+		float playSpeed = stringToFloat(mPlaySpeed.getText());
 		mEffectTextureInstance.play(textureSetName, subPath, findPosList(mResourceList[mEffectIndex]), mPlayLoop.getChecked(), playSpeed);
 		if (mEffectName.getText() != mResourceList[mEffectIndex])
 		{
@@ -273,7 +273,7 @@ public class ScriptEffectTextureEditor : LayoutScript
 		{
 			path = CommonDefine.F_TEXTURE_ANIM_PATH + path;
 			List<string> fileList = new List<string>();
-			FileUtility.findFiles(path, ref fileList, ".txt", false);
+			findFiles(path, ref fileList, ".txt", false);
 			int count = fileList.Count;
 			if (count == 0)
 			{
@@ -282,9 +282,9 @@ public class ScriptEffectTextureEditor : LayoutScript
 			List<Vector2> posList = new List<Vector2>();
 			for(int i = 0; i < count; ++i)
 			{
-				string posStr = FileUtility.openTxtFile(fileList[i]);
+				string posStr = openTxtFile(fileList[i]);
 				// 由于坐标系不一致,所以需要将Y方向偏移取反
-				Vector2 pos = StringUtility.stringToVector2(posStr);
+				Vector2 pos = stringToVector2(posStr);
 				pos.y = -pos.y;
 				posList.Add(pos);
 			}

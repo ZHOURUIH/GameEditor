@@ -4,29 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class WeaponData
+public class WeaponData : TableData
 {
+	public static string COL_LABEL = "WeaponLabel";
+	public static string COL_ID = "WeaponID";
+	public static string COL_DESC = "Desc";
+	public static string COL_OCCUPATION = "Occupation";
+	public static string COL_RESOURCE = "Resource";
 	public string mLabel;
 	public int mID;
 	public string mDesc;
 	public string mOccupation;
 	public string mResource;
+	public override void parse(SqliteDataReader reader)
+	{
+		mLabel = reader[COL_LABEL].ToString();
+		mID = stringToInt(reader[COL_ID].ToString());
+		mDesc = reader[COL_DESC].ToString();
+		mOccupation = reader[COL_OCCUPATION].ToString();
+		mResource = reader[COL_RESOURCE].ToString();
+	}
 }
 
 public class SQLiteWeapon : SQLiteTable
 {
-	string COL_LABEL = "WeaponLabel";
-	string COL_ID = "WeaponID";
-	string COL_DESC = "Desc";
-	string COL_OCCUPATION = "Occupation";
-	string COL_RESOURCE = "Resource";
 	public SQLiteWeapon()
 		:base("Weapon")
 	{}
 	public void query(int id, out WeaponData data)
 	{
 		string condition = "";
-		appendConditionInt(ref condition, COL_ID, id, "");
+		appendConditionInt(ref condition, WeaponData.COL_ID, id, "");
 		parseReader(doQuery(condition), out data);
 	}
 	public void queryAll(out List<WeaponData> dataList)
@@ -42,31 +50,5 @@ public class SQLiteWeapon : SQLiteTable
 		appendValueString(ref valueString, data.mOccupation);
 		appendValueString(ref valueString, data.mResource, true);
 		doInsert(valueString);
-	}
-	//--------------------------------------------------------------------------------------------------------------------------
-	protected void parseReader(SqliteDataReader reader, out WeaponData data)
-	{
-		parseReaderOne(reader, out data);
-		reader.Close();
-	}
-	protected void parseReader(SqliteDataReader reader, out List<WeaponData> dataList)
-	{
-		dataList = new List<WeaponData>();
-		while (reader.Read())
-		{
-			WeaponData data;
-			parseReaderOne(reader, out data);
-			dataList.Add(data);
-		}
-		reader.Close();
-	}
-	protected void parseReaderOne(SqliteDataReader reader, out WeaponData data)
-	{
-		data = new WeaponData();
-		data.mLabel = reader[COL_LABEL].ToString();
-		data.mID = StringUtility.stringToInt(reader[COL_ID].ToString());
-		data.mDesc = reader[COL_DESC].ToString();
-		data.mOccupation = reader[COL_OCCUPATION].ToString();
-		data.mResource = reader[COL_RESOURCE].ToString();
 	}
 };

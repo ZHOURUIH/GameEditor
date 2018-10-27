@@ -73,7 +73,7 @@ public class MonsterSpriteInstance : GameBase
 	{
 		// 由于原坐标系是以图片左上角为原点,unity是以图片中心为原点,所以需要根据图片大小再做父节点偏移
 		Vector2 parentPos = new Vector2(mFrame.getWindowSize().x / 2.0f, -mFrame.getWindowSize().y / 2.0f);
-		LayoutTools.MOVE_WINDOW(mFrameParent, parentPos);
+		LT.MOVE_WINDOW(mFrameParent, parentPos);
 	}
 	protected void onAnimationPlayEnd(INGUIAnimation window, bool isBreak)
 	{

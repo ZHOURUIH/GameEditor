@@ -109,7 +109,7 @@ public class ScriptMonsterSpriteEditor : LayoutScript
 	public override void onReset()
 	{
 		mMonsterSpriteInstance.onReset();
-		LayoutTools.ACTIVE_WINDOW(mPauseOperate, false);
+		LT.ACTIVE_WINDOW(mPauseOperate, false);
 	}
 	public override void onShow(bool immediately, string param)
 	{
@@ -142,7 +142,7 @@ public class ScriptMonsterSpriteEditor : LayoutScript
 	}
 	protected void onPlaySpeedChanged()
 	{
-		mMonsterSpriteInstance.setPlaySpeed(StringUtility.stringToFloat(mPlaySpeed.getText()));
+		mMonsterSpriteInstance.setPlaySpeed(stringToFloat(mPlaySpeed.getText()));
 	}
 	protected void onPlayLoopChanged()
 	{
@@ -230,7 +230,7 @@ public class ScriptMonsterSpriteEditor : LayoutScript
 		if(mMonsterAnim.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mMonsterAnim.getCurFrameIndex() - 1;
-			MathUtility.clampMin(ref curFrame, 0);
+			clampMin(ref curFrame, 0);
 			mMonsterAnim.setCurFrameIndex(curFrame);
 			mFrameCount.setLabel("帧数:" + (mMonsterAnim.getCurFrameIndex() + 1) + "/" + mMonsterAnim.getTextureFrameCount());
 		}
@@ -240,7 +240,7 @@ public class ScriptMonsterSpriteEditor : LayoutScript
 		if (mMonsterAnim.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mMonsterAnim.getCurFrameIndex() + 1;
-			MathUtility.clampMax(ref curFrame, mMonsterAnim.getTextureFrameCount() - 1);
+			clampMax(ref curFrame, mMonsterAnim.getTextureFrameCount() - 1);
 			mMonsterAnim.setCurFrameIndex(curFrame);
 			mFrameCount.setLabel("帧数:" + (mMonsterAnim.getCurFrameIndex() + 1) + "/" + mMonsterAnim.getTextureFrameCount());
 		}
@@ -253,7 +253,7 @@ public class ScriptMonsterSpriteEditor : LayoutScript
 		mCurActionEdit.setText(mActionList[mAction]);
 		MonsterAtlas curAtlas = mResourceList[mMonsterIndex];
 		MonsterAnim curAnim = curAtlas.mAnimSetList[mDirection][mActionList[mAction]];
-		float playSpeed = StringUtility.stringToFloat(mPlaySpeed.getText());
+		float playSpeed = stringToFloat(mPlaySpeed.getText());
 		mMonsterSpriteInstance.play(curAnim.mTextureSet, findPosList(curAnim), mPlayLoop.getChecked(), playSpeed);
 		mMonsterName.setText(curAtlas.mAtlasName + "/" + curAnim.mTextureSet);
 		checkPause();
@@ -291,7 +291,7 @@ public class ScriptMonsterSpriteEditor : LayoutScript
 	protected void checkPause()
 	{
 		bool isPause = mMonsterAnim.getPlayState() == PLAY_STATE.PS_PAUSE;
-		LayoutTools.ACTIVE_WINDOW(mPauseOperate, isPause);
+		LT.ACTIVE_WINDOW(mPauseOperate, isPause);
 		mFrameCount.setLabel("帧数:" + (mMonsterAnim.getCurFrameIndex() + 1) + "/" + mMonsterAnim.getTextureFrameCount());
 	}
 }

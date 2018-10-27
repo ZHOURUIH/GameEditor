@@ -15,7 +15,7 @@ public class SceneMap : GameBase
 	public void readFile(string fileName)
 	{
 		byte[] fileBuffer = null;
-		FileUtility.openFile(fileName, ref fileBuffer);
+		openFile(fileName, ref fileBuffer);
 		if(fileBuffer == null)
 		{
 			return;

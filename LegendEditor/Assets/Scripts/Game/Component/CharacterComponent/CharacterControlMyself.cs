@@ -199,16 +199,16 @@
 //		{
 //			moveDir += Vector2.right;
 //		}
-//		mRunning = !MathUtility.isVectorZero(moveDir);
+//		mRunning = !isVectorZero(moveDir);
 //		if (mRunning)
 //		{
-//			moveDir = MathUtility.normalize(moveDir);
-//			float angle = MathUtility.getAngleFromVectorToVector(moveDir, Vector2.up);
+//			moveDir = normalize(moveDir);
+//			float angle = getAngleFromVectorToVector(moveDir, Vector2.up);
 //			float angleBetweenDirection = 2 * Mathf.PI / GameDefine.DIRECTION_COUNT;
 //			direction = (int)((angle + angleBetweenDirection) / angleBetweenDirection + 0.5f);
 //			setDirection(direction);
 //			// 通过整数的方向,重新计算方向向量,避免当输入方式修改为移动轴时会出现的错误
-//			moveDir = MathUtility.getVectorFromAngle(angleBetweenDirection * direction);
+//			moveDir = getVectorFromAngle(angleBetweenDirection * direction);
 //			run(moveDir, elapsedTime);
 //		}
 //	}

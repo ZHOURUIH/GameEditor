@@ -91,8 +91,8 @@ public class ScriptEffectSpriteEditor : LayoutScript
 	public override void onReset()
 	{
 		mEffectSpriteInstance.onReset();
-		LayoutTools.ACTIVE_WINDOW(mLastFrame, false);
-		LayoutTools.ACTIVE_WINDOW(mNextFrame, false);
+		LT.ACTIVE_WINDOW(mLastFrame, false);
+		LT.ACTIVE_WINDOW(mNextFrame, false);
 	}
 	public override void onShow(bool immediately, string param)
 	{
@@ -125,7 +125,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 	}
 	protected void onPlaySpeedChanged()
 	{
-		mEffectSpriteInstance.setPlaySpeed(StringUtility.stringToFloat(mPlaySpeed.getText()));
+		mEffectSpriteInstance.setPlaySpeed(stringToFloat(mPlaySpeed.getText()));
 	}
 	protected void onPlayLoopChanged()
 	{
@@ -195,7 +195,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 		if(mCurEffectNode.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mCurEffectNode.getCurFrameIndex() - 1;
-			MathUtility.clampMin(ref curFrame, 0);
+			clampMin(ref curFrame, 0);
 			mCurEffectNode.setCurFrameIndex(curFrame);
 		}
 	}
@@ -204,7 +204,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 		if (mCurEffectNode.getPlayState() == PLAY_STATE.PS_PAUSE)
 		{
 			int curFrame = mCurEffectNode.getCurFrameIndex() + 1;
-			MathUtility.clampMax(ref curFrame, mCurEffectNode.getTextureFrameCount() - 1);
+			clampMax(ref curFrame, mCurEffectNode.getTextureFrameCount() - 1);
 			mCurEffectNode.setCurFrameIndex(curFrame);
 		}
 	}
@@ -217,7 +217,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 		mAnimIndex = index;
 		EffectAtlas curAtlas = mResourceList[mAtlasIndex];
 		EffectAnim curAnim = curAtlas.mAnimSetList[mAnimIndex];
-		float playSpeed = StringUtility.stringToFloat(mPlaySpeed.getText());
+		float playSpeed = stringToFloat(mPlaySpeed.getText());
 		mEffectSpriteInstance.play(curAnim.mTextureSet, findPosList(curAnim), mPlayLoop.getChecked(), playSpeed);
 		mEffectName.setText(curAtlas.mAtlasName + "/" + curAnim.mTextureSet);
 		checkPause();
@@ -255,7 +255,7 @@ public class ScriptEffectSpriteEditor : LayoutScript
 	protected void checkPause()
 	{
 		bool isPause = mCurEffectNode.getPlayState() == PLAY_STATE.PS_PAUSE;
-		LayoutTools.ACTIVE_WINDOW(mLastFrame, isPause);
-		LayoutTools.ACTIVE_WINDOW(mNextFrame, isPause);
+		LT.ACTIVE_WINDOW(mLastFrame, isPause);
+		LT.ACTIVE_WINDOW(mNextFrame, isPause);
 	}
 }

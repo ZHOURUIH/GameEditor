@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class ReloadTexture
+public class ReloadTexture : GameBase
 {
 	[MenuItem("Reload/Texture")]
 	static public void reloadDitherTexture()
@@ -21,7 +21,7 @@ public class ReloadTexture
 	static protected void reloadPath(string path)
 	{
 		List<string> files = new List<string>();
-		FileUtility.findFiles(path, ref files, ".png");
+		findFiles(path, ref files, ".png");
 		foreach(var item in files)
 		{
 			string curPath = CommonDefine.ASSETS + "/" + item.Substring(CommonDefine.F_ASSETS_PATH.Length);

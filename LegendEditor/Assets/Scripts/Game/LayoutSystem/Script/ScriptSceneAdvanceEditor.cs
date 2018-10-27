@@ -232,22 +232,22 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 	{
 		tileViewPos.x -= mSceneMap.mHeader.mWidth / 2.0f;
 		tileViewPos.y -= mSceneMap.mHeader.mHeight / 2.0f;
-		LayoutTools.MOVE_WINDOW(mSceneRoot, new Vector3(-tileViewPos.x * 48, tileViewPos.y * 32));
+		LT.MOVE_WINDOW(mSceneRoot, new Vector3(-tileViewPos.x * 48, tileViewPos.y * 32));
 	}
 	public void refreshMap()
 	{
 		logInfo("view center : " + mCurViewPos, LOG_LEVEL.LL_FORCE);
 		// 先判断是否有窗口已经从可见变为不可见
-		int viewWidth = StringUtility.stringToInt(mViewWidthEdit.getText());
-		int viewHeight = StringUtility.stringToInt(mViewHeightEdit.getText());
+		int viewWidth = stringToInt(mViewWidthEdit.getText());
+		int viewHeight = stringToInt(mViewHeightEdit.getText());
 		List<int> removedIndex = new List<int>();
 		foreach(var item in mVisibleTiles)
 		{
 			int x = tileIndexToTileX(item.Key);
 			int y = tileIndexToTileY(item.Key);
 			// 判断是否已经超出视野范围
-			if (!MathUtility.isInRange(x, mCurViewPos.x - viewWidth / 2, mCurViewPos.x + viewWidth /2)
-				|| !MathUtility.isInRange(y, mCurViewPos.y - viewHeight / 2, mCurViewPos.y + viewHeight / 2))
+			if (!isInRange(x, mCurViewPos.x - viewWidth / 2, mCurViewPos.x + viewWidth /2)
+				|| !isInRange(y, mCurViewPos.y - viewHeight / 2, mCurViewPos.y + viewHeight / 2))
 			{
 				mTileArray[item.Key].setActive(false);
 				removedIndex.Add(item.Key);
@@ -266,10 +266,10 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 				int curTilePosX = i + (int)mCurViewPos.x - viewWidth / 2;
 				int curTilePosY = j + (int)mCurViewPos.y - viewHeight / 2;
 				int tileIndex = tilePosToTileIndex(curTilePosX, curTilePosY);
-				if (MathUtility.isInRange(curTilePosX, (int)mCurViewPos.x - viewWidth / 2, (int)mCurViewPos.x + viewWidth / 2)
-				&& MathUtility.isInRange(curTilePosY, (int)mCurViewPos.y - viewHeight / 2, (int)mCurViewPos.y + viewHeight / 2)
-				&& MathUtility.isInRange(curTilePosX, 0, mSceneMap.mHeader.mWidth - 1)
-				&& MathUtility.isInRange(curTilePosY, 0, mSceneMap.mHeader.mHeight - 1)
+				if (isInRange(curTilePosX, (int)mCurViewPos.x - viewWidth / 2, (int)mCurViewPos.x + viewWidth / 2)
+				&& isInRange(curTilePosY, (int)mCurViewPos.y - viewHeight / 2, (int)mCurViewPos.y + viewHeight / 2)
+				&& isInRange(curTilePosX, 0, mSceneMap.mHeader.mWidth - 1)
+				&& isInRange(curTilePosY, 0, mSceneMap.mHeader.mHeight - 1)
 				&& !mVisibleTiles.ContainsKey(tileIndex))
 				{
 					// 变为可见的窗口如果不存在,则需要创建
@@ -412,7 +412,7 @@ public class ScriptSceneAdvanceEditor : LayoutScript
 				{
 					tileWindow.mEffect = mWindowPool.createWindow<txNGUISpriteAnim>("effect_" + tileSuffix, mObjRoot);
 					tileWindow.mEffect.setAtlas(atlas);
-					tileWindow.mEffect.setTextureSet(StringUtility.intToString(tile.mObjImgIdx - 1));
+					tileWindow.mEffect.setTextureSet(intToString(tile.mObjImgIdx - 1));
 					tileWindow.mEffect.play();
 					tileWindow.mEffect.setLoop(LOOP_MODE.LM_LOOP);
 					tileWindow.mEffect.setSpeed(0.5f);

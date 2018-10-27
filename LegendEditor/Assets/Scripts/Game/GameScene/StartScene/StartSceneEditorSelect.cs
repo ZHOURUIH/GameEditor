@@ -16,7 +16,7 @@ public class StartSceneEditorSelect : SceneProcedure
 		QualitySettings.vSyncCount = 0;
 		Application.targetFrameRate = 30;
 		mLayoutSubPrefabManager.loadAll(false);
-		LayoutTools.LOAD_NGUI_SHOW(LAYOUT_TYPE.LT_EDITOR_SELECT, 0);
+		LT.LOAD_NGUI_SHOW(LAYOUT_TYPE.LT_EDITOR_SELECT, 0);
 	}
 	protected override void onUpdate(float elapsedTime)
 	{
@@ -24,7 +24,7 @@ public class StartSceneEditorSelect : SceneProcedure
 	}
 	protected override void onExit(SceneProcedure nextProcedure)
 	{
-		LayoutTools.UNLOAD_LAYOUT(LAYOUT_TYPE.LT_EDITOR_SELECT);
+		LT.UNLOAD_LAYOUT(LAYOUT_TYPE.LT_EDITOR_SELECT);
 	}
 	protected override void onKeyProcess(float elapsedTime)
 	{
