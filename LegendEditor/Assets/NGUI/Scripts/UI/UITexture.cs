@@ -1,7 +1,7 @@
-//----------------------------------------------
+//-------------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2016 Tasharen Entertainment
-//----------------------------------------------
+// Copyright © 2011-2018 Tasharen Entertainment Inc
+//-------------------------------------------------
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -18,7 +18,6 @@ public class UITexture : UIBasicSprite
 {
 	[HideInInspector][SerializeField] Rect mRect = new Rect(0f, 0f, 1f, 1f);
 	[HideInInspector][SerializeField] Texture mTexture;
-	[HideInInspector][SerializeField] Material mMat;
 	[HideInInspector][SerializeField] Shader mShader;
 	[HideInInspector][SerializeField] Vector4 mBorder = Vector4.zero;
 	[HideInInspector][SerializeField] bool mFixedAspect = false;
@@ -29,6 +28,7 @@ public class UITexture : UIBasicSprite
 	/// <summary>
 	/// Texture used by the UITexture. You can set it directly, without the need to specify a material.
 	/// </summary>
+
 	public override Texture mainTexture
 	{
 		get
@@ -334,7 +334,7 @@ public class UITexture : UIBasicSprite
 	/// Virtual function called by the UIPanel that fills the buffers.
 	/// </summary>
 
-	public override void OnFill (BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color> cols)
+	public override void OnFill (List<Vector3> verts, List<Vector2> uvs, List<Color> cols)
 	{
 		Texture tex = mainTexture;
 		if (tex == null) return;
@@ -360,7 +360,7 @@ public class UITexture : UIBasicSprite
 		inner.yMin *= h;
 		inner.yMax *= h;
 
-		int offset = verts.size;
+		int offset = verts.Count;
 		Fill(verts, uvs, cols, outer, inner);
 
 		if (onPostFill != null)
