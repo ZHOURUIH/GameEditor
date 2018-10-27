@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,13 +25,9 @@ public class LocalLog
 		mLogBufferList[mWriteIndex] = new List<string>();
 		mLogListLock = new ThreadLock();
 		mWriteLogThread = new CustomThread("WriteLocalLog");
-#if UNITY_EDITOR
-		mLogFilePath = CommonDefine.F_ASSETS_PATH + "../log.txt";
-#else
 		mLogFilePath = CommonDefine.F_ASSETS_PATH + "log.txt";
-#endif
 		// 清空已经存在的日志文件
-		FileUtility.writeTxtFile(mLogFilePath, "");
+		writeTxtFile(mLogFilePath, "");
 	}
 	public void init()
 	{
@@ -50,17 +47,16 @@ public class LocalLog
 		mLogListLock.unlock();
 	}
 	//-----------------------------------------------------------------------------------------------------------
-	protected bool writeLocalLog()
+	protected void writeLocalLog(ref bool run)
 	{
 		// 将当前写入缓冲区中的内容写入文件
 		writeLogToFile();
-		return true;
 	}
 	protected void writeLogToFile()
 	{
 		// 切换缓冲区
 		mLogListLock.waitForUnlock();
-		MathUtility.swap(ref mLogIndex, ref mWriteIndex);
+		swap(ref mLogIndex, ref mWriteIndex);
 		mLogListLock.unlock();
 		string totalString = "";
 		int count = mLogBufferList[mWriteIndex].Count;
@@ -70,8 +66,9 @@ public class LocalLog
 			{
 				totalString += mLogBufferList[mWriteIndex][i] + "\r\n";
 			}
-			FileUtility.writeTxtFile(mLogFilePath, totalString, true);
+			writeTxtFile(mLogFilePath, totalString, true);
 			mLogBufferList[mWriteIndex].Clear();
 		}
 	}
 }
+#endif

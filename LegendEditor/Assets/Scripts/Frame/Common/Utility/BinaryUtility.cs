@@ -44,7 +44,7 @@ public class BinaryUtility
 	};
 	public static Encoding getGB2312()
 	{
-		if(ENCODING_GB2312 == null)
+		if (ENCODING_GB2312 == null)
 		{
 			ENCODING_GB2312 = Encoding.GetEncoding("gb2312");
 		}
@@ -66,7 +66,7 @@ public class BinaryUtility
 	}
 	public static ushort crc16(ushort crc, byte[] buffer, int len, int bufferOffset = 0)
 	{
-		for(int i = 0; i < len; ++i)
+		for (int i = 0; i < len; ++i)
 		{
 			crc = crc16_byte(crc, buffer[bufferOffset + i]);
 		}
@@ -102,7 +102,7 @@ public class BinaryUtility
 		}
 		int byte0 = (int)(0xff & buffer[index++]);
 		int byte1 = (int)(0xff & buffer[index++]);
-		if(inverse)
+		if (inverse)
 		{
 			short finalValue = (short)((byte1 << (8 * 0)) | (byte0 << (8 * 1)));
 			return finalValue;
@@ -160,7 +160,7 @@ public class BinaryUtility
 			return 0.0f;
 		}
 		byte[] floatBuffer = new byte[4];
-		if(inverse)
+		if (inverse)
 		{
 			floatBuffer[3] = buffer[curIndex++];
 			floatBuffer[2] = buffer[curIndex++];
@@ -210,7 +210,7 @@ public class BinaryUtility
 	public static void readShorts(byte[] buffer, ref int index, short[] destBuffer)
 	{
 		int shortCount = destBuffer.Length;
-		for(int i = 0; i < shortCount; ++i)
+		for (int i = 0; i < shortCount; ++i)
 		{
 			destBuffer[i] = readShort(buffer, ref index);
 		}
@@ -255,10 +255,10 @@ public class BinaryUtility
 		{
 			return false;
 		}
-		if(inverse)
+		if (inverse)
 		{
 			buffer[index++] = (byte)((0xff00 & value) >> 8);
-			buffer[index++] = (byte)((0x00ff & value) >> 0);	
+			buffer[index++] = (byte)((0x00ff & value) >> 0);
 		}
 		else
 		{
@@ -273,7 +273,7 @@ public class BinaryUtility
 		{
 			return false;
 		}
-		if(inverse)
+		if (inverse)
 		{
 			buffer[index++] = (byte)((0xff000000 & value) >> 24);
 			buffer[index++] = (byte)((0x00ff0000 & value) >> 16);
@@ -287,7 +287,7 @@ public class BinaryUtility
 			buffer[index++] = (byte)((0x00ff0000 & value) >> 16);
 			buffer[index++] = (byte)((0xff000000 & value) >> 24);
 		}
-		
+
 		return true;
 	}
 
@@ -360,7 +360,7 @@ public class BinaryUtility
 	{
 		bool ret = true;
 		int floatCount = sourceBuffer.Length;
-		for(int i = 0; i < floatCount; ++i)
+		for (int i = 0; i < floatCount; ++i)
 		{
 			ret = writeFloat(buffer, ref index, sourceBuffer[i]) && ret;
 		}
@@ -461,7 +461,7 @@ public class BinaryUtility
 	}
 	public static void memmove<T>(ref T[] data, int dest, int src, int count)
 	{
-		if(count <= 0)
+		if (count <= 0)
 		{
 			return;
 		}
@@ -483,7 +483,7 @@ public class BinaryUtility
 	}
 	public static void memset<T>(T[] p, T value, int length = -1)
 	{
-		if(length == -1)
+		if (length == -1)
 		{
 			length = p.Length;
 		}
@@ -573,9 +573,9 @@ public class BinaryUtility
 	{
 		int strLen = str.Length;
 		int newLen = strLen;
-		for(int i = 0; i < strLen; ++i)
+		for (int i = 0; i < strLen; ++i)
 		{
-			if(str[i] == 0)
+			if (str[i] == 0)
 			{
 				newLen = i;
 				break;
@@ -587,7 +587,7 @@ public class BinaryUtility
 	public static bool isMemoryEqual(byte[] buffer0, byte[] buffer1, int length, int offset0 = 0, int offset1 = 0)
 	{
 		// 如果长度不足,则返回失败
-		if(offset0 + length > buffer0.Length || offset1 + length > buffer1.Length)
+		if (offset0 + length > buffer0.Length || offset1 + length > buffer1.Length)
 		{
 			return false;
 		}
@@ -614,7 +614,7 @@ public class BinaryUtility
 	}
 	public static void setHighestBit(ref byte value, int bit)
 	{
-		if(bit == 0)
+		if (bit == 0)
 		{
 			value = (byte)(value & 0x7F);
 		}

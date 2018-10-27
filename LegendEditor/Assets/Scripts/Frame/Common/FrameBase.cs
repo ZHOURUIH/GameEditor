@@ -3,7 +3,8 @@ using System.Collections;
 
 // 管理类初始化完成调用
 // 这个父类的添加是方便代码的书写
-public class FrameBase
+// 继承StringUtility是为了在调用工具函数时方便,把四个完全独立的工具函数类串起来继承,所有继承自FrameBase的类都可以直接访问四大工具类中的函数
+public class FrameBase : FileUtility
 {
 	// FrameComponent
 	public static GameFramework				mGameFramework			= null;
@@ -16,6 +17,7 @@ public class FrameBase
 	public static GlobalTouchSystem			mGlobalTouchSystem		= null;
 	public static ShaderManager				mShaderManager			= null;
 	public static SQLite					mSQLite					= null;
+	public static DataBase					mDataBase				= null;
 	public static CameraManager				mCameraManager			= null;
 	public static ResourceManager			mResourceManager		= null;
 	public static LayoutSubPrefabManager	mLayoutSubPrefabManager	= null;
@@ -26,7 +28,9 @@ public class FrameBase
 	public static SceneSystem				mSceneSystem			= null;
 	public static IFrameLogSystem			mFrameLogSystem			= null;
 	public static ClassObjectPool			mClassObjectPool		= null;
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
 	public static LocalLog					mLocalLog				= null;
+#endif
 	// SQLiteTable
 	public static SQLiteSound				mSQLiteSound			= null;
 	public virtual void notifyConstructDone()
@@ -43,6 +47,7 @@ public class FrameBase
 			mGlobalTouchSystem = mGameFramework.getSystem<GlobalTouchSystem>();
 			mShaderManager = mGameFramework.getSystem<ShaderManager>();
 			mSQLite = mGameFramework.getSystem<SQLite>();
+			mDataBase = mGameFramework.getSystem<DataBase>();
 			mCameraManager = mGameFramework.getSystem<CameraManager>();
 			mResourceManager = mGameFramework.getSystem<ResourceManager>();
 			mLayoutSubPrefabManager = mGameFramework.getSystem<LayoutSubPrefabManager>();

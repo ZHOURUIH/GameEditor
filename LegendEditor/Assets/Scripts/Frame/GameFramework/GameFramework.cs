@@ -22,11 +22,14 @@ public class GameFramework : MonoBehaviour
 	protected int					mFPS;
 	protected DateTime				mCurTime;
 	protected int					mCurFrameCount;
+	protected ThreadTimeLock		mTimeLock;
 	public void Start()
 	{
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
 		// 由于本地日志系统的特殊性,必须在最开始就初始化
 		FrameBase.mLocalLog = new LocalLog();
 		FrameBase.mLocalLog.init();
+#endif
 		if (instance != null)
 		{
 			UnityUtility.logError("game framework can not start again!");
@@ -37,6 +40,7 @@ public class GameFramework : MonoBehaviour
 		UnityUtility.logInfo("start game!", LOG_LEVEL.LL_FORCE);
 		mFrameComponentMap = new Dictionary<string, FrameComponent>();
 		mFrameComponentList = new List<FrameComponent>();
+		mTimeLock = new ThreadTimeLock(15);
 		try
 		{
 			start();
@@ -61,6 +65,7 @@ public class GameFramework : MonoBehaviour
 		try
 		{
 			++mCurFrameCount;
+			mTimeLock.update();
 			DateTime now = DateTime.Now;
 			if ((now - mCurTime).TotalMilliseconds >= 1000.0f)
 			{
@@ -115,11 +120,13 @@ public class GameFramework : MonoBehaviour
 	{
 		destroy();
 		UnityUtility.logInfo("程序退出完毕!", LOG_LEVEL.LL_FORCE);
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
 		if (FrameBase.mLocalLog != null)
 		{
 			FrameBase.mLocalLog.destroy();
 			FrameBase.mLocalLog = null;
 		}
+#endif
 	}
 	public virtual void destroy()
 	{
@@ -131,6 +138,8 @@ public class GameFramework : MonoBehaviour
 		}
 		mFrameComponentList.Clear();
 		mFrameComponentMap.Clear();
+		// 所有系统组件都销毁完毕后,刷新GameBase和FrameBase中记录的变量
+		notifyBase();
 	}
 	public void stop()
 	{
@@ -248,6 +257,7 @@ public class GameFramework : MonoBehaviour
 		registeComponent<UnityUtility>();
 		registeComponent<HttpUtility>();
 		registeComponent<SQLite>();
+		registeComponent<DataBase>();
 		registeComponent<CommandSystem>();
 		registeComponent<CharacterManager>();
 		registeComponent<GameLayoutManager>();
@@ -274,6 +284,10 @@ public class GameFramework : MonoBehaviour
 	protected void setCameraTargetTexture(GameObject parent, string cameraName, UITexture renderTexture)
 	{
 		GameObject cameraObject = UnityUtility.getGameObject(parent, cameraName);
+		if(cameraObject == null)
+		{
+			return;
+		}
 		Camera camera = cameraObject.GetComponent<Camera>();
 		if (renderTexture != null)
 		{
@@ -332,10 +346,11 @@ public class GameFramework : MonoBehaviour
 		{
 			rootMultiScreen.SetActive(false);
 		}
-		if (rootMultiScreen != null)
+		if (rootStretch != null)
 		{
 			rootStretch.SetActive(false);
 		}
+		// 简单拉伸自适应分辨率,将所有画面都渲染到NGUIRootStretch中的UICameraTexture上,然后拉伸显示UICameraTexture
 		if (adaptScreen == ADAPT_SCREEN.AS_SIMPLE_STRETCH)
 		{
 			rootStretch.SetActive(true);
@@ -353,15 +368,14 @@ public class GameFramework : MonoBehaviour
 			UITexture uiTexture = cameraTexture.GetComponent<UITexture>();
 			setCameraTargetTexture(null, "MainCamera", uiTexture);
 			setCameraTargetTexture(uiRootObj, "UICamera", uiTexture);
+			setCameraTargetTexture(uiRootObj, "UIBackEffectCamera", uiTexture);
+			setCameraTargetTexture(uiRootObj, "UIForeEffectCamera", uiTexture);
+			setCameraTargetTexture(uiRootObj, "UIBlurCamera", uiTexture);
 		}
 		else
 		{
-			if (adaptScreen == ADAPT_SCREEN.AS_BASE_ON_ANCHOR)
-			{
-				setCameraTargetTexture(null, "MainCamera", null);
-				setCameraTargetTexture(uiRootObj, "UICamera", null);
-			}
-			else if(adaptScreen == ADAPT_SCREEN.AS_MULTI_SCREEN && screenCount > 1)
+			// 多屏横向组合为高分辨率屏幕
+			if(adaptScreen == ADAPT_SCREEN.AS_MULTI_SCREEN && screenCount > 1)
 			{
 				// 激活渲染目标
 				rootMultiScreen.SetActive(true);
@@ -383,6 +397,9 @@ public class GameFramework : MonoBehaviour
 				UITexture uiTexture = cameraTexture0.GetComponent<UITexture>();
 				setCameraTargetTexture(null, "MainCamera", uiTexture);
 				setCameraTargetTexture(uiRootObj, "UICamera", uiTexture);
+				setCameraTargetTexture(uiRootObj, "UIBackEffectCamera", uiTexture);
+				setCameraTargetTexture(uiRootObj, "UIForeEffectCamera", uiTexture);
+				setCameraTargetTexture(uiRootObj, "UIBlurCamera", uiTexture);
 			}
 		}
 	}

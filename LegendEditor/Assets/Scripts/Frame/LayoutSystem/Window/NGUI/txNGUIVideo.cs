@@ -88,23 +88,34 @@ public class txNGUIVideo : txNGUITexture
 			mAutoShowOrHide = autoShowOrHide;
 		}
 	}
-	public bool setFileName(string file)
+	public bool setFileName(string file, string pathUnderStreamingAssets = CommonDefine.SA_VIDEO_PATH)
 	{
 		setVideoEndCallback(null);
-		if (!file.StartsWith(CommonDefine.SA_VIDEO_PATH))
+		if (!file.StartsWith(pathUnderStreamingAssets))
 		{
-			file = CommonDefine.SA_VIDEO_PATH + file;
+			file = pathUnderStreamingAssets + file;
 		}
-		if(!FileUtility.isFileExist(CommonDefine.F_STREAMING_ASSETS_PATH + file))
+		if(!isFileExist(CommonDefine.F_STREAMING_ASSETS_PATH + file))
 		{
 			logError("找不到视频文件 : " + file);
 			return false;
 		}
 		notifyVideoReady(false);
-		mFileName = StringUtility.getFileName(file);
+		mFileName = getFileName(file);
 		mMediaPlayer.Events.RemoveAllListeners();
 		mTexture.mainTexture = null;
 		mMediaPlayer.OpenVideoFromFile(MediaPlayer.FileLocation.RelativeToStreamingAssetsFolder, file, false);
+		mMediaPlayer.Events.AddListener(onVideoEvent);
+		return true;
+	}
+	public bool setFileURL(string url)
+	{
+		setVideoEndCallback(null);
+		notifyVideoReady(false);
+		mFileName = getFileName(url);
+		mMediaPlayer.Events.RemoveAllListeners();
+		mTexture.mainTexture = null;
+		mMediaPlayer.OpenVideoFromFile(MediaPlayer.FileLocation.AbsolutePathOrURL, url, false);
 		mMediaPlayer.Events.AddListener(onVideoEvent);
 		return true;
 	}
@@ -131,8 +142,8 @@ public class txNGUIVideo : txNGUITexture
 	{
 		if (mReady)
 		{
-			MathUtility.clamp(ref rate, 0.0f, 4.0f);
-			if (!MathUtility.isFloatEqual(rate, getRate()))
+			clamp(ref rate, 0.0f, 4.0f);
+			if (!isFloatEqual(rate, getRate()))
 			{
 				mMediaPlayer.Control.SetPlaybackRate(rate);
 			}

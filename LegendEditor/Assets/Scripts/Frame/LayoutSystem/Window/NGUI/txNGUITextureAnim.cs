@@ -28,16 +28,13 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 	public override void init(GameLayout layout, GameObject go, txUIObject parent)
 	{
 		base.init(layout, go, parent);
-		mSubPath = mTexture.mSubPath;
+		mSubPath = mTexture.mUserData;
 		string textureName = getTextureName();
-		if(textureName != null && textureName != "")
+		int index = textureName.LastIndexOf('_');
+		if (index >= 0)
 		{
-			int index = textureName.LastIndexOf('_');
-			if (index >= 0)
-			{
-				string textureSetName = textureName.Substring(0, index);
-				setTextureSet(textureSetName);
-			}
+			string textureSetName = textureName.Substring(0, index);
+			setTextureSet(textureSetName);
 		}
 		mControl.setPlayEndCallback(onPlayEnd);
 		mControl.setPlayingCallback(onPlaying);
@@ -78,7 +75,7 @@ public class txNGUITextureAnim : txNGUITexture, INGUIAnimation
 		string preName = path + "/" + mTextureSetName + "_";
 		for (int i = 0; ; ++i)
 		{
-			string name = preName + StringUtility.intToString(i);
+			string name = preName + intToString(i);
 			Texture tex = mResourceManager.loadResource<Texture>(name, false);
 			if (tex == null)
 			{

@@ -6,7 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using UnityEngine;
 
-public class FileUtility : GameBase
+public class FileUtility : MathUtility
 {
 	public static void validPath(ref string path)
 	{
@@ -33,14 +33,14 @@ public class FileUtility : GameBase
 			fs.Dispose();
 #else
 			// 安卓平台如果要读取StreamingAssets下的文件,只能使用AssetManager
-			if(StringUtility.startWith(fileName, CommonDefine.F_STREAMING_ASSETS_PATH))
+			if(startWith(fileName, CommonDefine.F_STREAMING_ASSETS_PATH))
 			{
 				// 改为相对路径
 				fileName = fileName.Substring(CommonDefine.F_STREAMING_ASSETS_PATH.Length, fileName.Length - CommonDefine.F_STREAMING_ASSETS_PATH.Length);
 				fileBuffer = AndroidAssetLoader.loadAsset(fileName);
 			}
 			// 安卓平台如果要读取persistentDataPath的文件,则可以使用File
-			else if (StringUtility.startWith(fileName, CommonDefine.F_PERSISTENT_DATA_PATH))
+			else if (startWith(fileName, CommonDefine.F_PERSISTENT_DATA_PATH))
 			{
 				fileBuffer = AndroidAssetLoader.loadFile(fileName);
 			}
@@ -52,7 +52,7 @@ public class FileUtility : GameBase
 		}
 		catch (Exception)
 		{
-			logInfo("open file failed! filename : " + fileName);
+			UnityUtility.logInfo("open file failed! filename : " + fileName);
 		}
 	}
 	// 打开一个文本文件,fileName为绝对路径
@@ -64,7 +64,7 @@ public class FileUtility : GameBase
 			StreamReader streamReader = File.OpenText(fileName);
 			if (streamReader == null)
 			{
-				logInfo("open file failed! filename : " + fileName);
+				UnityUtility.logInfo("open file failed! filename : " + fileName);
 				return "";
 			}
 			string fileBuffer = streamReader.ReadToEnd();
@@ -73,14 +73,14 @@ public class FileUtility : GameBase
 			return fileBuffer;
 #else
 			// 安卓平台如果要读取StreamingAssets下的文件,只能使用AssetManager
-			if(StringUtility.startWith(fileName, CommonDefine.F_STREAMING_ASSETS_PATH))
+			if(startWith(fileName, CommonDefine.F_STREAMING_ASSETS_PATH))
 			{
 				// 改为相对路径
 				fileName = fileName.Substring(CommonDefine.F_STREAMING_ASSETS_PATH.Length, fileName.Length - CommonDefine.F_STREAMING_ASSETS_PATH.Length);
 				return AndroidAssetLoader.loadTxtAsset(fileName);
 			}
 			// 安卓平台如果要读取persistentDataPath的文件,则可以使用File
-			else if (StringUtility.startWith(fileName, CommonDefine.F_PERSISTENT_DATA_PATH))
+			else if (startWith(fileName, CommonDefine.F_PERSISTENT_DATA_PATH))
 			{
 				return AndroidAssetLoader.loadTxtFile(fileName);
 			}
@@ -93,7 +93,7 @@ public class FileUtility : GameBase
 		}
 		catch(Exception)
 		{
-			logInfo("open file failed! filename : " + fileName);
+			UnityUtility.logInfo("open file failed! filename : " + fileName);
 			return "";
 		}
 	}
@@ -101,7 +101,7 @@ public class FileUtility : GameBase
 	public static void writeFile(string fileName, byte[] buffer, int size, bool appendData = false)
 	{
 		// 检测路径是否存在,如果不存在就创建一个
-		createDir(StringUtility.getFilePath(fileName));
+		createDir(getFilePath(fileName));
 #if !UNITY_ANDROID || UNITY_EDITOR
 		FileStream file = null;
 		if(appendData)
@@ -123,11 +123,11 @@ public class FileUtility : GameBase
 	public static void writeTxtFile(string fileName, string content, bool appendData = false)
 	{
 #if !UNITY_ANDROID || UNITY_EDITOR
-		byte[] bytes = BinaryUtility.stringToBytes(content, Encoding.UTF8);
+		byte[] bytes = stringToBytes(content, Encoding.UTF8);
 		writeFile(fileName, bytes, bytes.Length, appendData);
 #else
 		// 检测路径是否存在,如果不存在就创建一个
-		createDir(StringUtility.getFilePath(fileName));
+		createDir(getFilePath(fileName));
 		AndroidAssetLoader.writeTxtFile(fileName, content, appendData);
 #endif
 	}
@@ -166,7 +166,7 @@ public class FileUtility : GameBase
 		// 再删除文件夹自身
 		Directory.Delete(path);
 	}
-	public static bool deleteEmptyFolder(string path)
+	public static bool deleteEmptyFolder(string path, bool deleteSelfIfEmpty = true)
 	{
 #if UNITY_ANDROID && !UNITY_EDITOR
 		logError("can not delete empty dir on android!");
@@ -178,14 +178,40 @@ public class FileUtility : GameBase
 		bool isEmpty = true;
 		foreach (var item in dirList)
 		{
-			isEmpty = deleteEmptyFolder(item) && isEmpty;
+			isEmpty = deleteEmptyFolder(item, true) && isEmpty;
 		}
 		isEmpty = isEmpty && Directory.GetFiles(path).Length == 0;
-		if (isEmpty)
+		if (isEmpty && deleteSelfIfEmpty)
 		{
 			Directory.Delete(path);
 		}
 		return isEmpty;
+	}
+	public static void moveFile(string source, string dest, bool overwrite = true)
+	{
+#if UNITY_ANDROID && !UNITY_EDITOR
+		logError("can not copy file on android!");
+		return;
+#endif
+		if (isFileExist(dest))
+		{
+			// 先删除目标文件,因为File.Move不支持覆盖文件,目标文件存在时,File.Move会失败
+			if (overwrite)
+			{
+				deleteFile(dest);
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			// 如果目标文件所在的目录不存在,则先创建目录
+			string parentDir = getFilePath(dest);
+			createDir(parentDir);
+		}
+		File.Move(source, dest);
 	}
 	public static void copyFile(string source, string dest, bool overwrite = true)
 	{
@@ -194,7 +220,7 @@ public class FileUtility : GameBase
 		return;
 #endif
 		// 如果目标文件所在的目录不存在,则先创建目录
-		string parentDir = StringUtility.getFilePath(dest);
+		string parentDir = getFilePath(dest);
 		createDir(parentDir);
 		File.Copy(source, dest, overwrite);
 	}
@@ -220,14 +246,14 @@ public class FileUtility : GameBase
 		return Directory.Exists(dir);
 #else
 		// 安卓平台如果要读取StreamingAssets下的文件,只能使用AssetManager
-		if(StringUtility.startWith(dir, CommonDefine.F_STREAMING_ASSETS_PATH))
+		if(startWith(dir + "/", CommonDefine.F_STREAMING_ASSETS_PATH))
 		{
 			// 改为相对路径
 			dir = dir.Substring(CommonDefine.F_STREAMING_ASSETS_PATH.Length, dir.Length - CommonDefine.F_STREAMING_ASSETS_PATH.Length);
 			return AndroidAssetLoader.isAssetExist(dir);
 		}
 		// 安卓平台如果要读取persistentDataPath的文件,则可以使用File
-		else if (StringUtility.startWith(dir, CommonDefine.F_PERSISTENT_DATA_PATH))
+		else if (startWith(dir + "/", CommonDefine.F_PERSISTENT_DATA_PATH))
 		{
 			return AndroidAssetLoader.isDirExist(dir);
 		}
@@ -244,14 +270,14 @@ public class FileUtility : GameBase
 		return File.Exists(fileName);
 #else
 		// 安卓平台如果要读取StreamingAssets下的文件,只能使用AssetManager
-		if(StringUtility.startWith(fileName, CommonDefine.F_STREAMING_ASSETS_PATH))
+		if(startWith(fileName, CommonDefine.F_STREAMING_ASSETS_PATH))
 		{
 			// 改为相对路径
 			fileName = fileName.Substring(CommonDefine.F_STREAMING_ASSETS_PATH.Length, fileName.Length - CommonDefine.F_STREAMING_ASSETS_PATH.Length);
 			return AndroidAssetLoader.isAssetExist(fileName);
 		}
 		// 安卓平台如果要读取persistentDataPath的文件,则可以使用File
-		else if (StringUtility.startWith(fileName, CommonDefine.F_PERSISTENT_DATA_PATH))
+		else if (startWith(fileName, CommonDefine.F_PERSISTENT_DATA_PATH))
 		{
 			return AndroidAssetLoader.isFileExist(fileName);
 		}
@@ -269,7 +295,7 @@ public class FileUtility : GameBase
 			return;
 		}
 		// 如果有上一级目录,并且上一级目录不存在,则先创建上一级目录
-		string parentDir = StringUtility.getFilePath(dir);
+		string parentDir = getFilePath(dir);
 		if (parentDir != dir)
 		{
 			createDir(parentDir);
@@ -300,7 +326,7 @@ public class FileUtility : GameBase
 		return;
 #endif
 		validPath(ref path);
-		if (!StringUtility.startWith(path, CommonDefine.F_STREAMING_ASSETS_PATH))
+		if (!startWith(path, CommonDefine.F_STREAMING_ASSETS_PATH))
 		{
 			path = CommonDefine.F_RESOURCES_PATH + path;
 		}
@@ -319,7 +345,7 @@ public class FileUtility : GameBase
 #if UNITY_ANDROID && !UNITY_EDITOR
 		AndroidAssetLoader.findAssets(path, ref fileList, patterns, recursive);
 #else
-		if (!StringUtility.startWith(path, CommonDefine.F_STREAMING_ASSETS_PATH))
+		if (!startWith(path, CommonDefine.F_STREAMING_ASSETS_PATH))
 		{
 			path = CommonDefine.F_STREAMING_ASSETS_PATH + path;
 		}
@@ -330,7 +356,10 @@ public class FileUtility : GameBase
 	public static void findFiles(string path, ref List<string> fileList, string pattern, bool recursive = true)
 	{
 		List<string> patternList = new List<string>();
-		patternList.Add(pattern);
+		if(pattern != "")
+		{
+			patternList.Add(pattern);
+		}
 		findFiles(path, ref fileList, patternList, recursive);
 	}
 	// path为绝对路径
@@ -343,7 +372,6 @@ public class FileUtility : GameBase
 		validPath(ref path);
 		if(!isDirExist(path))
 		{
-			logError("path is invalid! path : " + path);
 			return;
 		}
 		DirectoryInfo folder = new DirectoryInfo(path);
@@ -358,7 +386,7 @@ public class FileUtility : GameBase
 			{
 				for (int j = 0; j < patternCount; ++j)
 				{
-					if (StringUtility.endWith(fileName, patterns[j], false))
+					if (endWith(fileName, patterns[j], false))
 					{
 						fileList.Add(path + fileName);
 					}
@@ -417,6 +445,6 @@ public class FileUtility : GameBase
 		FileStream file = new FileStream(fileName, FileMode.Open);
 		HashAlgorithm algorithm = MD5.Create();
 		byte[] md5Bytes = algorithm.ComputeHash(file);
-		return BinaryUtility.bytesToHEXString(md5Bytes, false, upperOrLower);
+		return bytesToHEXString(md5Bytes, false, upperOrLower);
 	}
 }

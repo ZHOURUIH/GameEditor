@@ -66,11 +66,13 @@ public class UnityUtility : FrameComponent
 			mShowMessageBox = false;
 		}
 		string trackStr = new StackTrace().ToString();
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+		// windows平台打包后使用LocalLog打印日志
 		if (mLocalLog != null)
 		{
 			mLocalLog.log("error : " + info + ", stack : " + trackStr);
 		}
-#if UNITY_EDITOR
+#else
 		UnityEngine.Debug.LogError("error : " + info + ", stack : " + trackStr);
 #endif
 		// 游戏中的错误日志
@@ -83,13 +85,15 @@ public class UnityUtility : FrameComponent
 	{
 		if ((int)level <= (int)mLogLevel)
 		{
-#if UNITY_EDITOR
-			UnityEngine.Debug.Log(getTime() + " : " + info);
-#endif
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+			// windows平台打包后使用LocalLog打印日志
 			if(mLocalLog != null)
 			{
 				mLocalLog.log(getTime() + " : " + info);
 			}
+#else
+			UnityEngine.Debug.Log(getTime() + " : " + info);
+#endif
 		}
 	}
 	public static string getTime()
@@ -234,13 +238,13 @@ public class UnityUtility : FrameComponent
 	// prefabName为Resource下的相对路径
 	public static GameObject instantiatePrefab(GameObject parent, string prefabName)
 	{
-		string name = StringUtility.getFileName(prefabName);
+		string name = getFileName(prefabName);
 		return instantiatePrefab(parent, prefabName, name, Vector3.one, Vector3.zero, Vector3.zero);
 	}
 	// 根据预设对象实例化
 	public static GameObject instantiatePrefab(GameObject parent, GameObject prefab)
 	{
-		string name = StringUtility.getFileName(prefab.name);
+		string name = getFileName(prefab.name);
 		return instantiatePrefab(parent, prefab, name, Vector3.one, Vector3.zero, Vector3.zero);
 	}
 	public static GameObject instantiatePrefab(GameObject parent, GameObject prefab, string name)

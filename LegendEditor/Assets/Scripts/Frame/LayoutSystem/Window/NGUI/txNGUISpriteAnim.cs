@@ -78,7 +78,7 @@ public class txNGUISpriteAnim : txNGUISprite, INGUIAnimation
 			int index = 0;
 			while(true)
 			{
-				string name = mTextureSetName + "_" + StringUtility.intToString(index++);
+				string name = mTextureSetName + "_" + intToString(index++);
 				if(nameList.ContainsKey(name))
 				{
 					mTextureNameList.Add(name);

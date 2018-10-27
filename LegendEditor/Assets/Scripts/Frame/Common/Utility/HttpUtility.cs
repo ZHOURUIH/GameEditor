@@ -23,13 +23,16 @@ public class RequestThreadParam
 public class HttpUtility : FrameComponent
 {
 	protected static List<Thread> mHttpThreadList;
+	protected static ThreadLock ThreadListLock;
 	public HttpUtility(string name)
 		:base(name)
 	{
 		mHttpThreadList = new List<Thread>();
+		ThreadListLock = new ThreadLock();
 	}
 	public override void destroy()
 	{
+		ThreadListLock.waitForUnlock();
 		int count = mHttpThreadList.Count;
 		for(int i = 0; i < count; ++i)
 		{
@@ -37,12 +40,14 @@ public class HttpUtility : FrameComponent
 			mHttpThreadList[i] = null;
 		}
 		mHttpThreadList.Clear();
+		mHttpThreadList = null;
+		ThreadListLock.unlock();
 		base.destroy();
 	}
 	public static JsonData httpWebRequestPost(string url, string param, OnHttpWebRequestCallback callback = null, object callbakcUserData = null, bool logError = true)
 	{
 		// 转换输入参数的编码类型，获取byte[]数组 
-		byte[] byteArray = BinaryUtility.stringToBytes(param, Encoding.UTF8);
+		byte[] byteArray = stringToBytes(param, Encoding.UTF8);
 		// 初始化新的webRequst
 		// 1． 创建httpWebRequest对象
 		HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(new Uri(url));
@@ -66,7 +71,9 @@ public class HttpUtility : FrameComponent
 			threadParam.mThread = httpThread;
 			httpThread.Start(threadParam);
 			httpThread.IsBackground = true;
+			ThreadListLock.waitForUnlock();
 			mHttpThreadList.Add(httpThread);
+			ThreadListLock.unlock();
 			return null;
 		}
 		// 同步
@@ -103,7 +110,7 @@ public class HttpUtility : FrameComponent
 			{
 				Parameters += post_arg.Key + "=" + post_arg.Value + "&";
 			}
-			StringUtility.removeLast(ref Parameters, '&');
+			removeLast(ref Parameters, '&');
 		}
 		return url + Parameters;
 	}
@@ -130,7 +137,9 @@ public class HttpUtility : FrameComponent
 			threadParam.mThread = httpThread;
 			httpThread.Start(threadParam);
 			httpThread.IsBackground = true;
+			ThreadListLock.waitForUnlock();
 			mHttpThreadList.Add(httpThread);
+			ThreadListLock.unlock();
 			return null;
 		}
 		// 同步
@@ -186,7 +195,9 @@ public class HttpUtility : FrameComponent
 		}
 		finally
 		{
+			ThreadListLock.waitForUnlock();
 			mHttpThreadList.Remove(threadParam.mThread);
+			ThreadListLock.unlock();
 		}
 	}
 	static protected void waitGetHttpWebRequest(object param)
@@ -218,7 +229,9 @@ public class HttpUtility : FrameComponent
 		}
 		finally
 		{
+			ThreadListLock.waitForUnlock();
 			mHttpThreadList.Remove(threadParam.mThread);
+			ThreadListLock.unlock();
 		}
 	}
 	//public static int OpenUSBDevice(ushort VID, ushort PID)

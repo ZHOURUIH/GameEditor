@@ -78,6 +78,13 @@ public enum ADAPT_SCREEN
 	AS_MULTI_SCREEN,    // 多屏拼接后复制显示
 }
 
+public enum LOAD_STATE
+{
+	LS_UNLOAD,
+	LS_LOADING,
+	LS_LOADED,
+}
+
 // 游戏委托定义-------------------------------------------------------------------------------------------------------------
 public delegate void TextureAnimCallBack(INGUIAnimation window, bool isBreak);
 public delegate void KeyFrameCallback(ComponentKeyFrameBase component, object userdata, bool breakTremling, bool done);
@@ -85,7 +92,7 @@ public delegate void CommandCallback(object user_data, Command cmd);
 public delegate void BoxColliderClickCallback(txUIObject obj);
 public delegate void BoxColliderHoverCallback(txUIObject obj, bool hover);
 public delegate void BoxColliderPressCallback(txUIObject obj, bool press);
-public delegate void AssetLoadDoneCallback(UnityEngine.Object res, object userData);
+public delegate void AssetLoadDoneCallback(UnityEngine.Object res, byte[] bytes, object userData);
 public delegate void SceneLoadCallback(float progress, bool done, object userData);
 public delegate void SceneActiveCallback(object userData);
 public delegate void AssetBundleLoadDoneCallback(List<UnityEngine.Object> resList);
@@ -139,7 +146,6 @@ public class CommonDefine
 	// 相对路径,相对于项目,以P_开头,表示Project
 	public const string P_ASSETS_PATH = ASSETS + "/";
 	public const string P_RESOURCE_PATH = P_ASSETS_PATH + RESOURCES + "/";
-	public const string P_ATLAS_PATH = P_RESOURCE_PATH + ATLAS + "/";
 	// 相对路径,相对于StreamingAssets,以SA_开头,表示StreamingAssets
 	// 由于Android下的StreamingAssets路径不完全以Assets路径开头,与其他平台不一致,所以不定义相对于Asstes的路径
 	public const string SA_CONFIG_PATH = CONFIG + "/";
@@ -188,7 +194,6 @@ public class CommonDefine
 	public static string F_GAME_ATLAS_PATH = F_ATLAS_PATH + GAME_ATLAS + "/";
 	public static string F_ATLAS_TEXTURE_ANIM_PATH = F_ATLAS_PATH + TEXTURE_ANIM + "/";
 	public static string F_TEXTURE_PATH = F_RESOURCES_PATH + TEXTURE + "/";
-	public static string F_TEXTURE_GAME_TEXTURE_PATH = F_TEXTURE_PATH + GAME_TEXTURE + "/";
 	public static string F_TEXTURE_ANIM_PATH = F_TEXTURE_PATH + TEXTURE_ANIM + "/";
 	//-----------------------------------------------------------------------------------------------------------------
 	// 常量定义
@@ -221,6 +226,7 @@ public class CommonDefine
 	public const int INVALID_ID = ~0;
 	//-----------------------------------------------------------------------------------------------------------------
 	// 后缀名
+	public const string DATA_SUFFIX = ".bytes";
 	public const string ASSET_BUNDLE_SUFFIX = ".unity3d";
 	// dll插件的后缀名
 	public const string DLL_PLUGIN_SUFFIX = ".bytes";
@@ -238,5 +244,5 @@ public class CommonDefine
 	public const string NGUI_DEFAULT_MATERIAL = "NGUIDefault";
 	public const string UGUI_DEFAULT_MATERIAL = "UGUIDefault";
 	// 数据库文件名
-	public const string DATA_BASE_FILE_NAME = "MicroLegend.db";
+	public const string DATA_BASE_FILE_NAME = "DataBase.db";
 }

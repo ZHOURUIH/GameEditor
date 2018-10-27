@@ -5,9 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public class StringUtility : GameBase
+public class StringUtility : BinaryUtility
 {
-	public void init() { }
 	public static bool startWith(string oriString, string pattern, bool sensitive = true)
 	{
 		if (oriString.Length < pattern.Length)
@@ -216,6 +215,17 @@ public class StringUtility : GameBase
 		}
 		return str;
 	}
+	public static string getFirstFolderName(string str)
+	{
+		rightToLeft(ref str);
+		string ret = "";
+		int firstPos = str.IndexOf('/');
+		if(firstPos != -1)
+		{
+			ret = str.Substring(0, firstPos);
+		}
+		return ret;
+	}
 	// 从文件路径中得到最后一级的文件夹名
 	public static string getFolderName(string str)
 	{
@@ -321,7 +331,7 @@ public class StringUtility : GameBase
 		int len = rangeList.Length;
 		if (values != null && len != values.Length)
 		{
-			logError("count is not equal " + str.Length);
+			UnityUtility.logError("count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -340,7 +350,7 @@ public class StringUtility : GameBase
 		int len = rangeList.Length;
 		if (values != null && len != values.Count)
 		{
-			logError("count is not equal " + str.Length);
+			UnityUtility.logError("count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -387,7 +397,7 @@ public class StringUtility : GameBase
 		int len = rangeList.Length;
 		if (values != null && len != values.Count)
 		{
-			logError("count is not equal " + str.Length);
+			UnityUtility.logError("count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -406,7 +416,7 @@ public class StringUtility : GameBase
 		int len = rangeList.Length;
 		if (values != null && len != values.Length)
 		{
-			logError("count is not equal " + str.Length);
+			UnityUtility.logError("count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -530,7 +540,7 @@ public class StringUtility : GameBase
 	}
 	public static int getStringLength(string str)
 	{
-		byte[] bytes = BinaryUtility.stringToBytes(str);
+		byte[] bytes = stringToBytes(str);
 		for (int i = 0; i < bytes.Length; ++i)
 		{
 			if (bytes[i] == 0)

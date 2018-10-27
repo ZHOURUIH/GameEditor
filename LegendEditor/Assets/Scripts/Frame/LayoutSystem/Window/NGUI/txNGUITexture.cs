@@ -53,7 +53,7 @@ public class txNGUITexture : txUIObject
 		mTexture.mainTexture = tex;
 		if (useTextureSize && tex != null)
 		{
-			setWindowSize(getTextureSize());
+			setWindowSize(new Vector2(tex.width, tex.height));
 		}
 	}
 	public Texture getTexture()
@@ -113,14 +113,6 @@ public class txNGUITexture : txUIObject
 			return "";
 		}
 		return mTexture.mainTexture.name;
-	}
-	public Vector2 getTextureSize()
-	{
-		if(mTexture.mainTexture == null)
-		{
-			return Vector2.zero;
-		}
-		return new Vector2(mTexture.mainTexture.width, mTexture.mainTexture.height);
 	}
 	public string getMaterialName()
 	{
@@ -206,14 +198,6 @@ public class txNGUITexture : txUIObject
 		}
 		mTexture.depth = depth;
 		base.setDepth(depth);
-	}
-	public void setColor(Color color)
-	{
-		mTexture.color = color;
-	}
-	public UITexture getUITexture()
-	{
-		return mTexture;
 	}
     public string getOriginTextureName() { return mOriginTextureName; }
     public void setOriginTextureName(string textureName) { mOriginTextureName = textureName; }
