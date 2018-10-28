@@ -187,7 +187,7 @@ void main()
 	for (int i = 0; i < fileCount; ++i)
 	{
 		std::string fileDir = getParentDir(fileList[i]);
-		std::string newName = preName + intToString(i + 1) + getFileSuffix(fileList[i]);
+		std::string newName = preName + intToString(i) + getFileSuffix(fileList[i]);
 		rename(fileList[i].c_str(), (fileDir + "/" + newName).c_str());
 	}
 }
