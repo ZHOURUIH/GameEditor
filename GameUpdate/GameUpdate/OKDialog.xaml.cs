@@ -23,18 +23,24 @@ namespace GameUpdate
 		{
 			InitializeComponent();
 		}
-
 		private void mOKButton_Click(object sender, RoutedEventArgs e)
 		{
 			Hide();
 		}
 		public void setInfo(string info)
 		{
-			mInfoBlock.Text = info;
+			mInfo.Content = info;
 		}
 		public void setTitle(string title)
 		{
 			Title = title;
+		}
+		private void windowMove_Click(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				this.DragMove();
+			}
 		}
 	}
 }

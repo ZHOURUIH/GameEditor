@@ -52,7 +52,7 @@ namespace GameUpdate
 			string gymID = SystemUtility.getRegistryValue("Software\\北京踏行天际科技发展有限公司\\电能动力4.0", "REGISTE_CODE");
 			if (gymID == "")
 			{
-				mOKDialog.mInfo.Content = "找不到设备的注册信息!";
+				mOKDialog.setInfo("找不到设备的注册信息!");
 				mOKDialog.ShowDialog();
 				exit();
 				return;
@@ -60,7 +60,7 @@ namespace GameUpdate
 			// 如果游戏已经运行则直接退出
 			if (SystemUtility.isProgressRunning(CommonDefine.GAME_NAME))
 			{
-				mOKDialog.mInfo.Content = "游戏已经运行!";
+				mOKDialog.setInfo("游戏已经运行!");
 				mOKDialog.ShowDialog();
 				exit();
 				return;
@@ -211,19 +211,22 @@ namespace GameUpdate
 				{
 					mBusyInfo.Hide();
 					Show();
-					mYesNoDialog.setInfo("发现有新版本,是否要更新?(更新会将所有配置文件恢复默认值)");
+					mYesNoDialog.setInfo("发现有新版本,是否要更新?");
+					mYesNoDialog.setDownLoadInfo(param[1]);
 					bool? ret = mYesNoDialog.ShowDialog();
 					EditorBase.mDownloadManager.startUpdateGame(ret == true);
 					if (ret != true)
 					{
-						downloadDone(true);
+						downloadDone(false);
 					}
 				}
 				else
 				{
 					finishDownload();
 					mBusyInfo.Hide();
-					downloadDone(true);
+					mOKDialog.setInfo("未发现新版本!");
+					mOKDialog.ShowDialog();
+					downloadDone(false);
 				}
 			}
 			// 版本文件和列表文件检查完毕,开始下载资源
@@ -245,8 +248,11 @@ namespace GameUpdate
 			// 更新完成,所有资源与服务器上同步完成
 			else if (type == CORE_EVENT_TYPE.CET_UPDATE_DONE)
 			{
+				mBusyInfo.Hide();
 				finishDownload();
-				downloadDone(true);
+				mOKDialog.setInfo("更新完毕!");
+				mOKDialog.ShowDialog();
+				downloadDone(false);
 			}
 			// 列表文件下载完毕,开始对比本地文件
 			else if (type == CORE_EVENT_TYPE.CET_START_GENERATE_LOCAL_FILE)
@@ -275,7 +281,9 @@ namespace GameUpdate
 			else if (type == CORE_EVENT_TYPE.CET_NOTHING_UPDATE)
 			{
 				notifyNothingUpdate();
-				downloadDone(true);
+				mOKDialog.setInfo("没有需要更新的文件!");
+				mOKDialog.ShowDialog();
+				downloadDone(false);
 			}
 			// 有文件上传完毕
 			else if (type == CORE_EVENT_TYPE.CET_FINISH_UPLOAD)
@@ -383,10 +391,24 @@ namespace GameUpdate
 				mTotalTimeLabel.Content = timeString;
 			}
 		}
-
-		private void mCancelButton_Click(object sender, RoutedEventArgs e)
+		private void cancelButton_Click(object sender, RoutedEventArgs e)
 		{
 			mEditorCore.getSystem<DownloadManager>().setCancel(true);
+		}
+		private void minButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.WindowState = WindowState.Minimized; 
+		}
+		private void closeButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
+		private void windowMove_Click(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				this.DragMove();
+			}
 		}
 	}
 }

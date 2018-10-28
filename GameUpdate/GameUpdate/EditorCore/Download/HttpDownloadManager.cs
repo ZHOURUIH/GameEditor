@@ -117,56 +117,64 @@ public class HttpDownloadManager : FrameComponent
 		mDownloadList.RemoveAt(0);
 		mDownloadListLock.unlock();
 		Stream responseStream = startDownload(info.mURL, info.mStartCallback, info.mFileName, info.mDownloadOffset);
-		bool download = true;
-		while (download)
+		if(responseStream != null)
 		{
-			try
+			bool download = true;
+			while (download)
 			{
-				int size = 0;
-				do
+				try
 				{
-					//创建本地文件写入流
-					size = responseStream.Read(mDownloadBytes, 0, mDownloadBytes.Length);
-					if (size == 0)
+					int size = 0;
+					do
 					{
-						break;
-					}
-					else if (info.mDownloadingCallback != null)
-					{
-						info.mDownloadingCallback(mDownloadBytes, size);
-					}
-				} while (true);
-				responseStream.Close();
-			}
-			catch (Exception ex)
-			{
-				// 下载超时,如果设置了超时函数,则继续下载
-				if (ex.Message == "操作已超时。" && info.mTimeoutCallback != null)
-				{
+						//创建本地文件写入流
+						size = responseStream.Read(mDownloadBytes, 0, mDownloadBytes.Length);
+						if (size == 0)
+						{
+							break;
+						}
+						else if (info.mDownloadingCallback != null)
+						{
+							info.mDownloadingCallback(mDownloadBytes, size);
+						}
+					} while (true);
 					responseStream.Close();
-					// 从上次下载的点重新开始下载
-					long lastPos = info.mTimeoutCallback();
-					// 此处不能再调用开始下载的回调
-					responseStream = startDownload(info.mURL, null, info.mFileName, lastPos);
-					continue;
 				}
-				else
+				catch (Exception ex)
 				{
-					download = false;
-					if (info.mFinishCallback != null)
+					// 下载超时,如果设置了超时函数,则继续下载
+					if (ex.Message == "操作已超时。" && info.mTimeoutCallback != null)
 					{
-						info.mFinishCallback(info.mFileName, false);
+						responseStream.Close();
+						// 从上次下载的点重新开始下载
+						long lastPos = info.mTimeoutCallback();
+						// 此处不能再调用开始下载的回调
+						responseStream = startDownload(info.mURL, null, info.mFileName, lastPos);
+						continue;
 					}
-					logError(info.mFileName + "下载失败 : " + ex.Message, true);
-					pushDelayCommand<CommandDownloadManagerCancel>(mDownloadManager);
-					return false;
+					else
+					{
+						download = false;
+						if (info.mFinishCallback != null)
+						{
+							info.mFinishCallback(info.mFileName, false);
+						}
+						logError(info.mFileName + "下载失败 : " + ex.Message, true);
+						pushDelayCommand<CommandDownloadManagerCancel>(mDownloadManager);
+						return false;
+					}
 				}
+				if (info.mFinishCallback != null)
+				{
+					info.mFinishCallback(info.mFileName, true);
+				}
+				download = false;
 			}
-			if (info.mFinishCallback != null)
-			{
-				info.mFinishCallback(info.mFileName, true);
-			}
-			download = false;
+		}
+		else
+		{
+			logError(info.mFileName + "下载失败 : 网络异常!", true);
+			pushDelayCommand<CommandDownloadManagerCancel>(mDownloadManager);
 		}
 		return true;
 	}

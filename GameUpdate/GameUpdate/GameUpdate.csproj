@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GameUpdate</RootNamespace>
     <AssemblyName>GameUpdate</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -79,6 +80,11 @@
     <Compile Include="EditorCore\CommandSystem\CommandReceiver.cs" />
     <Compile Include="EditorCore\CommandSystem\CommandSystem.cs" />
     <Compile Include="EditorCore\Common\CommonDefine.cs" />
+    <Compile Include="EditorCore\Common\Config\ApplicationConfig.cs" />
+    <Compile Include="EditorCore\Common\Config\ConfigBase.cs" />
+    <Compile Include="EditorCore\Common\Config\FrameConfig.cs" />
+    <Compile Include="EditorCore\Common\Config\GameFloatConfig.cs" />
+    <Compile Include="EditorCore\Common\Config\GameStringConfig.cs" />
     <Compile Include="EditorCore\Common\CustomThread.cs" />
     <Compile Include="EditorCore\Common\EditorBase.cs" />
     <Compile Include="EditorCore\Common\FrameComponent.cs" />
@@ -157,6 +163,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BottomMap.png" />
+    <Resource Include="Images\ButtonBackground.png" />
+    <Resource Include="Images\logo.png" />
+    <Resource Include="Images\PopupBottomMap.png" />
+    <Resource Include="Images\ProgressBar.png" />
+    <Resource Include="Images\ProgressBarBackground.png" />
+    <Resource Include="Images\TopMap.png" />
+    <Resource Include="Images\UpdataBackground.png" />
+    <Resource Include="Images\UpdataLine.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
