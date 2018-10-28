@@ -3,10 +3,15 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
+std::string EffectData::COL_LABLE = "Label";
+std::string EffectData::COL_ID = "ID";
+std::string EffectData::COL_DESC = "Desc";
+std::string EffectData::COL_RESOURCE = "Resource";
+
 void SQLiteEffect::query(int weaponID, EffectData& data)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, weaponID, "");
+	appendConditionInt(conditionString, EffectData::COL_ID, weaponID, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
@@ -19,17 +24,4 @@ bool SQLiteEffect::insert(const EffectData& data)
 	appendValueString(valueString, data.mDesc);
 	appendValueString(valueString, data.mResource, true);
 	return doInsert(valueString);
-}
-
-void SQLiteEffect::parseReader(SQLiteDataReader* reader, EffectData& data)
-{
-	while (reader->read())
-	{
-		data.mLabel = reader->getString(getCol(COL_LABLE));
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mDesc = reader->getString(getCol(COL_DESC));
-		data.mResource = reader->getString(getCol(COL_RESOURCE));
-		break;
-	}
-	mSQLite->releaseReader(reader);
 }

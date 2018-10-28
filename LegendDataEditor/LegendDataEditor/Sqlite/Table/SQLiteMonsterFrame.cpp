@@ -3,40 +3,48 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
+std::string MonsterFrameData::COL_ID = "MonsterID";
+std::string MonsterFrameData::COL_LABEL = "Label";
+std::string MonsterFrameData::COL_DIRECTION = "Direction";
+std::string MonsterFrameData::COL_ACTION = "Action";
+std::string MonsterFrameData::COL_FRAME_COUNT = "FrameCount";
+std::string MonsterFrameData::COL_POSX = "PosX";
+std::string MonsterFrameData::COL_POSY = "PosY";
+
 void SQLiteMonsterFrame::query(int monsterID, txVector<MonsterFrameData>& dataList)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, monsterID, "");
+	appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteMonsterFrame::query(int monsterID, int direction, txVector<MonsterFrameData>& dataList)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, monsterID, " and ");
-	appendConditionInt(conditionString, COL_DIRECTION, direction, "");
+	appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, " and ");
+	appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, direction, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteMonsterFrame::query(int monsterID, int direction, const std::string& action, txVector<MonsterFrameData>& dataList)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, monsterID, " and ");
-	appendConditionInt(conditionString, COL_DIRECTION, direction, " and ");
-	appendConditionString(conditionString, COL_ACTION, action, "");
+	appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, " and ");
+	appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, direction, " and ");
+	appendConditionString(conditionString, MonsterFrameData::COL_ACTION, action, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 bool SQLiteMonsterFrame::updateData(const MonsterFrameData& data)
 {
 	std::string updateString;
-	appendUpdateInt(updateString, COL_FRAME_COUNT, data.mFrameCount);
-	appendUpdateIntArray(updateString, COL_FRAME_COUNT, data.mPosX);
-	appendUpdateIntArray(updateString, COL_FRAME_COUNT, data.mPosY, true);
+	appendUpdateInt(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mFrameCount);
+	appendUpdateIntArray(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mPosX);
+	appendUpdateIntArray(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mPosY, true);
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, data.mID, " and ");
-	appendConditionInt(conditionString, COL_DIRECTION, data.mDirection, " and ");
-	appendConditionString(conditionString, COL_ACTION, data.mAction, "");
+	appendConditionInt(conditionString, MonsterFrameData::COL_ID, data.mID, " and ");
+	appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, data.mDirection, " and ");
+	appendConditionString(conditionString, MonsterFrameData::COL_ACTION, data.mAction, "");
 	return doUpdate(updateString, conditionString);
 }
 
@@ -51,37 +59,4 @@ bool SQLiteMonsterFrame::insert(const MonsterFrameData& data)
 	appendValueIntArray(valueString, data.mPosX);
 	appendValueIntArray(valueString, data.mPosY, true);
 	return doInsert(valueString);
-}
-
-bool SQLiteMonsterFrame::insertOrUpdate(const MonsterFrameData& data)
-{
-	bool ret = false;
-	txVector<MonsterFrameData> tempList;
-	query(data.mID, data.mDirection, data.mAction, tempList);
-	if (tempList.size() == 0)
-	{
-		ret = insert(data);
-	}
-	else
-	{
-		ret = updateData(data);
-	}
-	return ret;
-}
-
-void SQLiteMonsterFrame::parseReader(SQLiteDataReader* reader, txVector<MonsterFrameData>& dataList)
-{
-	while (reader->read())
-	{
-		MonsterFrameData data;
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mLabel = reader->getString(getCol(COL_LABEL));
-		data.mDirection = reader->getInt(getCol(COL_DIRECTION));
-		data.mAction = reader->getString(getCol(COL_ACTION));
-		data.mFrameCount = reader->getInt(getCol(COL_FRAME_COUNT));
-		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSX)), data.mPosX);
-		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSY)), data.mPosY);
-		dataList.push_back(data);
-	}
-	mSQLite->releaseReader(reader);
 }

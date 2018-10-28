@@ -4,37 +4,48 @@
 #include "ServerDefine.h"
 #include "SQLiteTable.h"
 
-class WeaponData
+class WeaponData : public SQLiteTableData
 {
 public:
+	static std::string COL_LABLE;
+	static std::string COL_ID;
+	static std::string COL_DESC;
+	static std::string COL_OCCUPATION;
+	static std::string COL_RESOURCE;
 	std::string mLabel;
 	int mID;
 	std::string mDesc;
 	std::string mOccupation;
 	std::string mResource;
+public:
+	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	{
+		mLabel = reader->getString(table->getCol(COL_LABLE));
+		mID = reader->getInt(table->getCol(COL_ID));
+		mDesc = reader->getString(table->getCol(COL_DESC));
+		mOccupation = reader->getString(table->getCol(COL_OCCUPATION));
+		mResource = reader->getString(table->getCol(COL_RESOURCE));
+	}
+	static void registeColumn(SQLiteTable* table)
+	{
+		table->registeColumn(COL_LABLE);
+		table->registeColumn(COL_ID);
+		table->registeColumn(COL_DESC);
+		table->registeColumn(COL_OCCUPATION);
+		table->registeColumn(COL_RESOURCE);
+	}
 };
 
 class SQLiteWeapon : public SQLiteTable
 {
-	std::string COL_LABLE = "WeaponLabel";
-	std::string COL_ID = "WeaponID";
-	std::string COL_DESC = "Desc";
-	std::string COL_OCCUPATION = "Occupation";
-	std::string COL_RESOURCE = "Resource";
 public:
 	SQLiteWeapon(SQLite* sqlite)
 		:SQLiteTable("Weapon", sqlite)
 	{
-		registeColumn(COL_LABLE);
-		registeColumn(COL_ID);
-		registeColumn(COL_DESC);
-		registeColumn(COL_OCCUPATION);
-		registeColumn(COL_RESOURCE);
+		WeaponData::registeColumn(this);
 	}
 	void query(int weaponID, WeaponData& data);
 	bool insert(const WeaponData& data);
-protected:
-	void parseReader(SQLiteDataReader* reader, WeaponData& data);
 };
 
 #endif

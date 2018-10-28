@@ -7,22 +7,7 @@ SQLiteTable::SQLiteTable(const std::string& name, SQLite* sqlite)
 	mTableName = name;
 	mSQLite = sqlite;
 }
-int SQLiteTable::getCol(const std::string& colName)
-{
-	int count = COL_NAME.size();
-	for (int i = 0; i < count; ++i)
-	{
-		if (COL_NAME[i] == colName)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-void SQLiteTable::registeColumn(const std::string& colName)
-{
-	COL_NAME.push_back(colName);
-}
+
 bool SQLiteTable::doUpdate(const std::string& updateString, const std::string& conditionString)
 {
 	std::string queryStr = "UPDATE " + mTableName + " SET " + updateString + " WHERE " + conditionString;

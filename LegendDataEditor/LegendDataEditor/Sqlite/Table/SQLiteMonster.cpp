@@ -3,10 +3,16 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
+std::string MonsterData::COL_LABLE = "MonsterLabel";
+std::string MonsterData::COL_ID = "MonsterID";
+std::string MonsterData::COL_DESC = "Desc";
+std::string MonsterData::COL_PREFAB = "Prefab";
+std::string MonsterData::COL_RESOURCE = "Resource";
+
 void SQLiteMonster::query(int monsterID, MonsterData& data)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, monsterID, "");
+	appendConditionInt(conditionString, MonsterData::COL_ID, monsterID, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
@@ -20,18 +26,4 @@ bool SQLiteMonster::insert(const MonsterData& data)
 	appendValueString(valueString, data.mPrefab);
 	appendValueString(valueString, data.mResource, true);
 	return doInsert(valueString);
-}
-
-void SQLiteMonster::parseReader(SQLiteDataReader* reader, MonsterData& data)
-{
-	while (reader->read())
-	{
-		data.mLabel = reader->getString(getCol(COL_LABLE));
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mDesc = reader->getString(getCol(COL_DESC));
-		data.mPrefab = reader->getString(getCol(COL_PREFAB));
-		data.mResource = reader->getString(getCol(COL_RESOURCE));
-		break;
-	}
-	mSQLite->releaseReader(reader);
 }

@@ -3,9 +3,16 @@
 
 #include "SQLiteTable.h"
 
-class ClothFrameData
+class ClothFrameData : public SQLiteTableData
 {
 public:
+	static std::string COL_ID;
+	static std::string COL_LABEL;
+	static std::string COL_DIRECTION;
+	static std::string COL_ACTION;
+	static std::string COL_FRAME_COUNT;
+	static std::string COL_POSX;
+	static std::string COL_POSY;
 	std::string mLabel;
 	int mID;
 	int mDirection;
@@ -13,38 +20,42 @@ public:
 	int mFrameCount;
 	txVector<int> mPosX;
 	txVector<int> mPosY;
+public:
+	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	{
+		mID = reader->getInt(table->getCol(COL_ID));
+		mLabel = reader->getInt(table->getCol(COL_LABEL));
+		mDirection = reader->getInt(table->getCol(COL_DIRECTION));
+		mAction = reader->getString(table->getCol(COL_ACTION));
+		mFrameCount = reader->getInt(table->getCol(COL_FRAME_COUNT));
+		StringUtility::stringToIntArray(reader->getString(table->getCol(COL_POSX)), mPosX);
+		StringUtility::stringToIntArray(reader->getString(table->getCol(COL_POSY)), mPosY);
+	}
+	static void registeColumn(SQLiteTable* table)
+	{
+		table->registeColumn(COL_ID);
+		table->registeColumn(COL_LABEL);
+		table->registeColumn(COL_DIRECTION);
+		table->registeColumn(COL_ACTION);
+		table->registeColumn(COL_FRAME_COUNT);
+		table->registeColumn(COL_POSX);
+		table->registeColumn(COL_POSY);
+	}
 };
 
 class SQLiteClothFrame : public SQLiteTable
 {
-	std::string COL_ID = "ClothID";
-	std::string COL_LABEL = "Label";
-	std::string COL_DIRECTION = "Direction";
-	std::string COL_ACTION = "Action";
-	std::string COL_FRAME_COUNT = "FrameCount";
-	std::string COL_POSX = "PosX";
-	std::string COL_POSY = "PosY";
 public:
 	SQLiteClothFrame(SQLite* sqlite)
 		:SQLiteTable("ClothFrame", sqlite)
 	{
-		registeColumn(COL_ID);
-		registeColumn(COL_LABEL);
-		registeColumn(COL_DIRECTION);
-		registeColumn(COL_ACTION);
-		registeColumn(COL_FRAME_COUNT);
-		registeColumn(COL_POSX);
-		registeColumn(COL_POSY);
+		ClothFrameData::registeColumn(this);
 	}
 	void query(int clothID, txVector<ClothFrameData>& dataList);
 	void query(int clothID, int direction, txVector<ClothFrameData>& dataList);
 	void query(int clothID, int direction, const std::string& action, txVector<ClothFrameData>& dataList);
 	bool updateData(const ClothFrameData& data);
 	bool insert(const ClothFrameData& data);
-	bool insertOrUpdate(const ClothFrameData& data);
-	//------------------------------------------------------------------------------------------------------------------------
-protected:
-	void parseReader(SQLiteDataReader* reader, txVector<ClothFrameData>& dataList);
 };
 
 #endif

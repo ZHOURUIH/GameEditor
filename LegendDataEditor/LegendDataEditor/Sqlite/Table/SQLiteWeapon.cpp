@@ -3,10 +3,16 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
+std::string WeaponData::COL_LABLE = "WeaponLabel";
+std::string WeaponData::COL_ID = "WeaponID";
+std::string WeaponData::COL_DESC = "Desc";
+std::string WeaponData::COL_OCCUPATION = "Occupation";
+std::string WeaponData::COL_RESOURCE = "Resource";
+
 void SQLiteWeapon::query(int weaponID, WeaponData& data)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, weaponID, "");
+	appendConditionInt(conditionString, WeaponData::COL_ID, weaponID, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
@@ -20,18 +26,4 @@ bool SQLiteWeapon::insert(const WeaponData& data)
 	appendValueString(valueString, data.mOccupation);
 	appendValueString(valueString, data.mResource, true);
 	return doInsert(valueString);
-}
-
-void SQLiteWeapon::parseReader(SQLiteDataReader* reader, WeaponData& data)
-{
-	while (reader->read())
-	{
-		data.mLabel = reader->getString(getCol(COL_LABLE));
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mDesc = reader->getString(getCol(COL_DESC));
-		data.mOccupation = reader->getString(getCol(COL_OCCUPATION));
-		data.mResource = reader->getString(getCol(COL_RESOURCE));
-		break;
-	}
-	mSQLite->releaseReader(reader);
 }

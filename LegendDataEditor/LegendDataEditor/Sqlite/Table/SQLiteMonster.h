@@ -3,37 +3,48 @@
 
 #include "SQLiteTable.h"
 
-class MonsterData
+class MonsterData : public SQLiteTableData
 {
 public:
+	static std::string COL_LABLE;
+	static std::string COL_ID;
+	static std::string COL_DESC;
+	static std::string COL_PREFAB;
+	static std::string COL_RESOURCE;
 	std::string mLabel;
 	int mID;
 	std::string mDesc;
 	std::string mPrefab;
 	std::string mResource;
+public:
+	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	{
+		mLabel = reader->getString(table->getCol(COL_LABLE));
+		mID = reader->getInt(table->getCol(COL_ID));
+		mDesc = reader->getString(table->getCol(COL_DESC));
+		mPrefab = reader->getString(table->getCol(COL_PREFAB));
+		mResource = reader->getString(table->getCol(COL_RESOURCE));
+	}
+	static void registeColumn(SQLiteTable* table)
+	{
+		table->registeColumn(COL_LABLE);
+		table->registeColumn(COL_ID);
+		table->registeColumn(COL_DESC);
+		table->registeColumn(COL_PREFAB);
+		table->registeColumn(COL_RESOURCE);
+	}
 };
 
 class SQLiteMonster : public SQLiteTable
 {
-	std::string COL_LABLE = "MonsterLabel";
-	std::string COL_ID = "MonsterID";
-	std::string COL_DESC = "Desc";
-	std::string COL_PREFAB = "Prefab";
-	std::string COL_RESOURCE = "Resource";
 public:
 	SQLiteMonster(SQLite* sqlite)
 		:SQLiteTable("Monster", sqlite)
 	{
-		registeColumn(COL_LABLE);
-		registeColumn(COL_ID);
-		registeColumn(COL_DESC);
-		registeColumn(COL_PREFAB);
-		registeColumn(COL_RESOURCE);
+		MonsterData::registeColumn(this);
 	}
 	void query(int monsterID, MonsterData& data);
 	bool insert(const MonsterData& data);
-protected:
-	void parseReader(SQLiteDataReader* reader, MonsterData& data);
 };
 
 #endif

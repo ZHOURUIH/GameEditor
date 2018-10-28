@@ -4,34 +4,44 @@
 #include "ServerDefine.h"
 #include "SQLiteTable.h"
 
-class EffectData
+class EffectData : public SQLiteTableData
 {
 public:
+	static std::string COL_LABLE;
+	static std::string COL_ID;
+	static std::string COL_DESC;
+	static std::string COL_RESOURCE;
 	std::string mLabel;
 	int mID;
 	std::string mDesc;
 	std::string mResource;
+public:
+	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	{
+		mLabel = reader->getString(table->getCol(COL_LABLE));
+		mID = reader->getInt(table->getCol(COL_ID));
+		mDesc = reader->getString(table->getCol(COL_DESC));
+		mResource = reader->getString(table->getCol(COL_RESOURCE));
+	}
+	static void registeColumn(SQLiteTable* table)
+	{
+		table->registeColumn(COL_LABLE);
+		table->registeColumn(COL_ID);
+		table->registeColumn(COL_DESC);
+		table->registeColumn(COL_RESOURCE);
+	}
 };
 
 class SQLiteEffect : public SQLiteTable
 {
-	std::string COL_LABLE = "Label";
-	std::string COL_ID = "ID";
-	std::string COL_DESC = "Desc";
-	std::string COL_RESOURCE = "Resource";
 public:
 	SQLiteEffect(SQLite* sqlite)
 		:SQLiteTable("Effect", sqlite)
 	{
-		registeColumn(COL_LABLE);
-		registeColumn(COL_ID);
-		registeColumn(COL_DESC);
-		registeColumn(COL_RESOURCE);
+		EffectData::registeColumn(this);
 	}
 	void query(int weaponID, EffectData& data);
 	bool insert(const EffectData& data);
-protected:
-	void parseReader(SQLiteDataReader* reader, EffectData& data);
 };
 
 #endif

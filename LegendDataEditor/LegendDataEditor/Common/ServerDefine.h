@@ -68,6 +68,7 @@
 #include "ServerCallback.h"
 #include "sqlite3.h"
 
+using namespace std;
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // 宏定义
 #if RUN_PLATFORM == PLATFORM_WINDOWS

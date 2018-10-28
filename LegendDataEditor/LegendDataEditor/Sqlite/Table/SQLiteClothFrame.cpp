@@ -3,40 +3,48 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
+std::string ClothFrameData::COL_ID = "ClothID";
+std::string ClothFrameData::COL_LABEL = "Label";
+std::string ClothFrameData::COL_DIRECTION = "Direction";
+std::string ClothFrameData::COL_ACTION = "Action";
+std::string ClothFrameData::COL_FRAME_COUNT = "FrameCount";
+std::string ClothFrameData::COL_POSX = "PosX";
+std::string ClothFrameData::COL_POSY = "PosY";
+
 void SQLiteClothFrame::query(int clothID, txVector<ClothFrameData>& dataList)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, clothID, "");
+	appendConditionInt(conditionString, ClothFrameData::COL_ID, clothID, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteClothFrame::query(int clothID, int direction, txVector<ClothFrameData>& dataList)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, clothID, " and ");
-	appendConditionInt(conditionString, COL_DIRECTION, direction, "");
+	appendConditionInt(conditionString, ClothFrameData::COL_ID, clothID, " and ");
+	appendConditionInt(conditionString, ClothFrameData::COL_DIRECTION, direction, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteClothFrame::query(int clothID, int direction, const std::string& action, txVector<ClothFrameData>& dataList)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, clothID, " and ");
-	appendConditionInt(conditionString, COL_DIRECTION, direction, " and ");
-	appendConditionString(conditionString, COL_ACTION, action, "");
+	appendConditionInt(conditionString, ClothFrameData::COL_ID, clothID, " and ");
+	appendConditionInt(conditionString, ClothFrameData::COL_DIRECTION, direction, " and ");
+	appendConditionString(conditionString, ClothFrameData::COL_ACTION, action, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 bool SQLiteClothFrame::updateData(const ClothFrameData& data)
 {
 	std::string updateString;
-	appendUpdateInt(updateString, COL_FRAME_COUNT, data.mFrameCount);
-	appendUpdateIntArray(updateString, COL_POSX, data.mPosX);
-	appendUpdateIntArray(updateString, COL_POSY, data.mPosY, true);
+	appendUpdateInt(updateString, ClothFrameData::COL_FRAME_COUNT, data.mFrameCount);
+	appendUpdateIntArray(updateString, ClothFrameData::COL_POSX, data.mPosX);
+	appendUpdateIntArray(updateString, ClothFrameData::COL_POSY, data.mPosY, true);
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, data.mID, " and ");
-	appendConditionInt(conditionString, COL_DIRECTION, data.mDirection, " and ");
-	appendConditionString(conditionString, COL_ACTION, data.mAction, "");
+	appendConditionInt(conditionString, ClothFrameData::COL_ID, data.mID, " and ");
+	appendConditionInt(conditionString, ClothFrameData::COL_DIRECTION, data.mDirection, " and ");
+	appendConditionString(conditionString, ClothFrameData::COL_ACTION, data.mAction, "");
 	return doUpdate(updateString, conditionString);
 }
 bool SQLiteClothFrame::insert(const ClothFrameData& data)
@@ -50,37 +58,4 @@ bool SQLiteClothFrame::insert(const ClothFrameData& data)
 	appendValueIntArray(valueString, data.mPosX);
 	appendValueIntArray(valueString, data.mPosY, true);
 	return doInsert(valueString);
-}
-
-bool SQLiteClothFrame::insertOrUpdate(const ClothFrameData& data)
-{
-	bool ret = false;
-	txVector<ClothFrameData> tempList;
-	query(data.mID, data.mDirection, data.mAction, tempList);
-	if (tempList.size() == 0)
-	{
-		ret = insert(data);
-	}
-	else
-	{
-		ret = updateData(data);
-	}
-	return ret;
-}
-
-void SQLiteClothFrame::parseReader(SQLiteDataReader* reader, txVector<ClothFrameData>& dataList)
-{
-	while (reader->read())
-	{
-		ClothFrameData data;
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mLabel = reader->getInt(getCol(COL_LABEL));
-		data.mDirection = reader->getInt(getCol(COL_DIRECTION));
-		data.mAction = reader->getString(getCol(COL_ACTION));
-		data.mFrameCount = reader->getInt(getCol(COL_FRAME_COUNT));
-		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSX)), data.mPosX);
-		StringUtility::stringToIntArray(reader->getString(getCol(COL_POSY)), data.mPosY);
-		dataList.push_back(data);
-	}
-	mSQLite->releaseReader(reader);
 }

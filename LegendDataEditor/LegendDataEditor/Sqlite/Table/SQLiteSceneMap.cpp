@@ -3,10 +3,15 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
+std::string SceneMapData::COL_ID = "ID";
+std::string SceneMapData::COL_LABEL = "Label";
+std::string SceneMapData::COL_RESOURCE = "Resource";
+std::string SceneMapData::COL_MINI_MAP = "MiniMap";
+
 void SQLiteSceneMap::query(int id, SceneMapData& data)
 {
 	std::string conditionString;
-	appendConditionInt(conditionString, COL_ID, id, "");
+	appendConditionInt(conditionString, SceneMapData::COL_ID, id, "");
 	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
@@ -29,35 +34,11 @@ bool SQLiteSceneMap::insert(const SceneMapData& data)
 bool SQLiteSceneMap::update(const SceneMapData& data)
 {
 	std::string updateStr;
-	appendUpdateInt(updateStr, COL_ID, data.mID);
-	appendUpdateString(updateStr, COL_LABEL, data.mLabel);
-	appendUpdateString(updateStr, COL_RESOURCE, data.mResource, true);
+	appendUpdateInt(updateStr, SceneMapData::COL_ID, data.mID);
+	appendUpdateString(updateStr, SceneMapData::COL_LABEL, data.mLabel);
+	appendUpdateString(updateStr, SceneMapData::COL_RESOURCE, data.mResource);
+	appendUpdateInt(updateStr, SceneMapData::COL_MINI_MAP, data.mMiniMap, true);
 	std::string conditionStr;
-	appendConditionInt(conditionStr, COL_ID, data.mID, "");
+	appendConditionInt(conditionStr, SceneMapData::COL_ID, data.mID, "");
 	return doUpdate(updateStr, conditionStr);
-}
-
-void SQLiteSceneMap::parseReader(SQLiteDataReader* reader, SceneMapData& data)
-{
-	while (reader->read())
-	{
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mLabel = reader->getString(getCol(COL_LABEL));
-		data.mResource = reader->getString(getCol(COL_RESOURCE));
-		break;
-	}
-	mSQLite->releaseReader(reader);
-}
-
-void SQLiteSceneMap::parseReader(SQLiteDataReader* reader, txVector<SceneMapData>& dataList)
-{
-	while (reader->read())
-	{
-		SceneMapData data;
-		data.mID = reader->getInt(getCol(COL_ID));
-		data.mLabel = reader->getString(getCol(COL_LABEL));
-		data.mResource = reader->getString(getCol(COL_RESOURCE));
-		dataList.push_back(data);
-	}
-	mSQLite->releaseReader(reader);
 }
