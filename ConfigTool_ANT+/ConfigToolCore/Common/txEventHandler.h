@@ -1,13 +1,12 @@
 #ifndef _TX_EVENT_HANDLER_H_
 #define _TX_EVENT_HANDLER_H_
 
-#include <string>
-#include <vector>
+#include "CommonDefine.h"
 
 class txEventHandlerBase
 {
 public:
-	virtual void notifyEvent(const int& event, std::vector<std::string>& paramList) = 0;
+	virtual void notifyEvent(const int& event, txVector<std::string>& paramList) = 0;
 };
 
 #endif

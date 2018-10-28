@@ -25,13 +25,43 @@
     <Filter Include="Memory">
       <UniqueIdentifier>{6e8c49aa-f47b-4b9f-9701-188d906f039f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataBase">
+      <UniqueIdentifier>{b102b645-e099-47a5-9a0d-fe59bf8a4353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket\SocketPacket">
+      <UniqueIdentifier>{f09618c4-dd23-4826-99e8-fff16d5bd7f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence">
+      <UniqueIdentifier>{d87c2bb8-ab13-4613-a477-dbbd27e4073d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence\md5">
+      <UniqueIdentifier>{736827dd-0df1-4289-a3f3-9652200f3269}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence\curl_windows">
+      <UniqueIdentifier>{7b7093c7-53bd-40f2-9a29-89333b0cb640}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependence\json">
+      <UniqueIdentifier>{57908a9b-a4e1-41df-aac1-e808afabe09b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libcurl">
+      <UniqueIdentifier>{e70f1673-dd3e-4969-a838-6901c093d98b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libcurl\Packet">
+      <UniqueIdentifier>{e9455067-4ad0-4ac0-bcd1-ee0dfdd82983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{b9a34a6c-7761-477f-8f9e-1514e7c896fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket\ANTPlusPacket">
+      <UniqueIdentifier>{f15a4542-9f71-4ad5-a1bc-0cc82d230728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Socket\ANTPlusPacket\ANTPlusData">
+      <UniqueIdentifier>{83266ef9-095f-4e8b-88fe-6a96f5d10054}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\txSerializedData.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Socket\SocketNetManager.cpp">
-      <Filter>Socket</Filter>
     </ClCompile>
     <ClCompile Include="EventSystem\CTEventSystem.cpp">
       <Filter>EventSystem</Filter>
@@ -47,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="Common\txSerializer.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfigToolCore\DataManager.cpp">
-      <Filter>ConfigToolCore</Filter>
     </ClCompile>
     <ClCompile Include="CommandSystem\txCommand.cpp">
       <Filter>CommandSystem</Filter>
@@ -75,9 +102,6 @@
     <ClCompile Include="Common\Utility\txUtility.cpp">
       <Filter>Common\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Common\txThreadLock.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="Memory\txMemoryCheck.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
@@ -87,10 +111,121 @@
     <ClCompile Include="Memory\txShareMemoryServer.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigToolCore\ANTPlusData.cpp">
+    <ClCompile Include="DataBase\Data.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="DataBase\DataBase.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigToolCore\DeviceRegisteManager.cpp">
       <Filter>ConfigToolCore</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigToolCore\ANTPlusPacket.cpp">
+    <ClCompile Include="Socket\SocketWireless.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\StreamBuffer.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigToolCore\SpeedDataManager.cpp">
+      <Filter>ConfigToolCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketNetManager.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacketFactoryManager.cpp">
+      <Filter>Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketColour.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFriction.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFrictionRet.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketHeartRate.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\SocketPacket\SocketPacketSpeed.cpp">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\md5\md5.cpp">
+      <Filter>dependence\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\json\json_reader.cpp">
+      <Filter>dependence\json</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\json\json_value.cpp">
+      <Filter>dependence\json</Filter>
+    </ClCompile>
+    <ClCompile Include="dependence\json\json_writer.cpp">
+      <Filter>dependence\json</Filter>
+    </ClCompile>
+    <ClCompile Include="Libcurl\LibcurlNetManager.cpp">
+      <Filter>Libcurl</Filter>
+    </ClCompile>
+    <ClCompile Include="Libcurl\Packet\SetupDevice.cpp">
+      <Filter>Libcurl\Packet</Filter>
+    </ClCompile>
+	<ClCompile Include="ToolRegister.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\LogSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\CustomThread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\ThreadLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\TimeLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\GameConfig.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacket.cpp">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketHeartBeat.cpp">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadence.cpp">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadenceSpeed.cpp">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingHeartRate.cpp">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingSpeed.cpp">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusData.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataHeartBeat.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRiding.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadence.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadenceSpeed.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingHeartRate.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingSpeed.cpp">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigToolCore\WirelessDataManager.cpp">
       <Filter>ConfigToolCore</Filter>
     </ClCompile>
   </ItemGroup>
@@ -103,9 +238,6 @@
     </ClInclude>
     <ClInclude Include="Common\txSerializedData.h">
       <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Socket\SocketNetManager.h">
-      <Filter>Socket</Filter>
     </ClInclude>
     <ClInclude Include="EventSystem\CTEventHandler.h">
       <Filter>EventSystem</Filter>
@@ -146,15 +278,6 @@
     <ClInclude Include="Common\txSerializer.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="ConfigToolCore\ANTPlusPacket.h">
-      <Filter>ConfigToolCore</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigToolCore\ANTPlusData.h">
-      <Filter>ConfigToolCore</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigToolCore\DataManager.h">
-      <Filter>ConfigToolCore</Filter>
-    </ClInclude>
     <ClInclude Include="CommandSystem\txCommand.h">
       <Filter>CommandSystem</Filter>
     </ClInclude>
@@ -185,9 +308,6 @@
     <ClInclude Include="Common\EngineDefine.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\txThreadLock.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="STL\txMap.h">
       <Filter>STL</Filter>
     </ClInclude>
@@ -209,5 +329,223 @@
     <ClInclude Include="Memory\txShareMemoryServer.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="DataBase\Data.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\DataBase.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\DataDefine.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\DataFactory.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\DataRegisteDevice.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\DeviceRegisteManager.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketWireless.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\StreamBuffer.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\SpeedData.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\SpeedDataManager.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\HeartRateData.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketNetManager.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacketFactory.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacketFactoryManager.h">
+      <Filter>Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacket.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketColour.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFriction.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFrictionRet.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketHeartRate.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\SocketPacket\SocketPacketSpeed.h">
+      <Filter>Socket\SocketPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\md5\md5.h">
+      <Filter>dependence\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\curl.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\curlbuild.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\curlrules.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\curlver.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\easy.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\mprintf.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\multi.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\stdcheaders.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\typecheck-gcc.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\curl_windows\types.h">
+      <Filter>dependence\curl_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\assertions.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\autolink.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\config.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\features.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\forwards.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json_batchallocator.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json_tool.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\json-forwards.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\reader.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\value.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\version.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="dependence\json\writer.h">
+      <Filter>dependence\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Libcurl\Packet\LibcurlPacket.h">
+      <Filter>Libcurl\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Libcurl\Packet\LibcurlPacketHeader.h">
+      <Filter>Libcurl\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Libcurl\LibcurlNetManager.h">
+      <Filter>Libcurl</Filter>
+    </ClInclude>
+    <ClInclude Include="Libcurl\LibcurlPacketFactory.h">
+      <Filter>Libcurl</Filter>
+    </ClInclude>
+    <ClInclude Include="Libcurl\Packet\SetupDevice.h">
+      <Filter>Libcurl\Packet</Filter>
+    </ClInclude>
+	<ClInclude Include="ToolRegister.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\LogSystem.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\CustomThread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\ThreadLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\TimeLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\GameConfig.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacket.h">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketHeartBeat.h">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadence.h">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadenceSpeed.h">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingHeartRate.h">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingSpeed.h">
+      <Filter>Socket\ANTPlusPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusData.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataHeartBeat.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRiding.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadence.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadenceSpeed.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingHeartRate.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingSpeed.h">
+      <Filter>Socket\ANTPlusPacket\ANTPlusData</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigToolCore\WirelessDataManager.h">
+      <Filter>ConfigToolCore</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependence\json\json_internalarray.inl">
+      <Filter>dependence\json</Filter>
+    </None>
+    <None Include="dependence\json\json_internalmap.inl">
+      <Filter>dependence\json</Filter>
+    </None>
+    <None Include="dependence\json\json_valueiterator.inl">
+      <Filter>dependence\json</Filter>
+    </None>
   </ItemGroup>
 </Project>

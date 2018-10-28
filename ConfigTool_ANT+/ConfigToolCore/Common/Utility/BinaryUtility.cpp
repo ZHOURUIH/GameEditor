@@ -146,6 +146,18 @@ void BinaryUtility::YUV420PToRGB32(unsigned char* yuv420[3], unsigned char* rgb3
 	}
 }
 
+bool BinaryUtility::isMemoryEqual(char* buffer0, char* buffer1, int length)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		if (buffer0[i] != buffer1[i])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 int BinaryUtility::crc_check(char c)
 {
 	int count = 0;

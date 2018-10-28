@@ -47,6 +47,15 @@ public:
 	{
 		return mVector.end();
 	}
+	void merge(txVector<T>& otherList)
+	{
+		int otherCount = otherList.size();
+		FOR_STL(otherList, int i = 0; i < otherCount; ++i)
+		{
+			push_back(otherList[i]);
+		}
+		END_FOR_STL(otherList);
+	}
 	const T& operator[](const int& i) const
 	{
 		if (i < 0 || i >= size())

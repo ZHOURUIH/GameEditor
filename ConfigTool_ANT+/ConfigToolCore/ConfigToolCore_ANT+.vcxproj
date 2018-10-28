@@ -14,25 +14,59 @@
     <ClCompile Include="CommandSystem\txCommand.cpp" />
     <ClCompile Include="CommandSystem\txCommandReceiver.cpp" />
     <ClCompile Include="CommandSystem\txCommandSystem.cpp" />
+    <ClCompile Include="Common\GameConfig.cpp" />
+    <ClCompile Include="Common\LogSystem.cpp" />
     <ClCompile Include="Common\ToolCoreBase.cpp" />
     <ClCompile Include="Common\ToolCoreUtility.cpp" />
     <ClCompile Include="Common\txSerializedData.cpp" />
     <ClCompile Include="Common\txSerializer.cpp" />
-    <ClCompile Include="Common\txThreadLock.cpp" />
     <ClCompile Include="Common\Utility\BinaryUtility.cpp" />
     <ClCompile Include="Common\Utility\FileUtility.cpp" />
     <ClCompile Include="Common\Utility\MathUtility.cpp" />
     <ClCompile Include="Common\Utility\StringUtility.cpp" />
     <ClCompile Include="Common\Utility\txUtility.cpp" />
-    <ClCompile Include="ConfigToolCore\ANTPlusData.cpp" />
-    <ClCompile Include="ConfigToolCore\ANTPlusPacket.cpp" />
     <ClCompile Include="ConfigToolCore\ConfigToolCore.cpp" />
-    <ClCompile Include="ConfigToolCore\DataManager.cpp" />
+    <ClCompile Include="ConfigToolCore\WirelessDataManager.cpp" />
+    <ClCompile Include="ConfigToolCore\DeviceRegisteManager.cpp" />
+    <ClCompile Include="ConfigToolCore\SpeedDataManager.cpp" />
+    <ClCompile Include="DataBase\Data.cpp" />
+    <ClCompile Include="DataBase\DataBase.cpp" />
+    <ClCompile Include="dependence\json\json_reader.cpp" />
+    <ClCompile Include="dependence\json\json_value.cpp" />
+    <ClCompile Include="dependence\json\json_writer.cpp" />
+    <ClCompile Include="dependence\md5\md5.cpp" />
     <ClCompile Include="EventSystem\CTEventSystem.cpp" />
+    <ClCompile Include="Libcurl\LibcurlNetManager.cpp" />
+    <ClCompile Include="Libcurl\Packet\SetupDevice.cpp" />
     <ClCompile Include="Memory\txMemoryCheck.cpp" />
     <ClCompile Include="Memory\txMemoryTrace.cpp" />
     <ClCompile Include="Memory\txShareMemoryServer.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusData.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataHeartBeat.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRiding.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadence.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadenceSpeed.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingHeartRate.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingSpeed.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacket.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketHeartBeat.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadence.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadenceSpeed.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingHeartRate.cpp" />
+    <ClCompile Include="Socket\ANTPlusPacket\ANTPlusPacketRidingSpeed.cpp" />
     <ClCompile Include="Socket\SocketNetManager.cpp" />
+    <ClCompile Include="Socket\SocketPacketFactoryManager.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketColour.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFriction.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketFrictionRet.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketHeartRate.cpp" />
+    <ClCompile Include="Socket\SocketPacket\SocketPacketSpeed.cpp" />
+    <ClCompile Include="Socket\SocketWireless.cpp" />
+    <ClCompile Include="Socket\StreamBuffer.cpp" />
+	<ClCompile Include="ToolRegister.cpp" />
+    <ClCompile Include="Thread\CustomThread.cpp" />
+    <ClCompile Include="Thread\ThreadLock.cpp" />
+    <ClCompile Include="Thread\TimeLock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandSystem\CommandHeader.h" />
@@ -42,6 +76,8 @@
     <ClInclude Include="CommandSystem\txCommandSystem.h" />
     <ClInclude Include="Common\CommonDefine.h" />
     <ClInclude Include="Common\EngineDefine.h" />
+    <ClInclude Include="Common\GameConfig.h" />
+    <ClInclude Include="Common\LogSystem.h" />
     <ClInclude Include="Common\ToolCoreBase.h" />
     <ClInclude Include="Common\ToolCoreLog.h" />
     <ClInclude Include="Common\ToolCoreUtility.h" />
@@ -52,27 +88,94 @@
     <ClInclude Include="Common\txSerializedData.h" />
     <ClInclude Include="Common\txSerializer.h" />
     <ClInclude Include="Common\txSingleton.h" />
-    <ClInclude Include="Common\txThreadLock.h" />
     <ClInclude Include="Common\Utility\BinaryUtility.h" />
     <ClInclude Include="Common\Utility\FileUtility.h" />
     <ClInclude Include="Common\Utility\MathUtility.h" />
     <ClInclude Include="Common\Utility\StringUtility.h" />
     <ClInclude Include="Common\Utility\txUtility.h" />
     <ClInclude Include="Common\Utility\Utility.h" />
-    <ClInclude Include="ConfigToolCore\ANTPlusData.h" />
-    <ClInclude Include="ConfigToolCore\ANTPlusPacket.h" />
     <ClInclude Include="ConfigToolCore\ConfigToolCore.h" />
-    <ClInclude Include="ConfigToolCore\DataManager.h" />
+    <ClInclude Include="ConfigToolCore\WirelessDataManager.h" />
+    <ClInclude Include="ConfigToolCore\DeviceRegisteManager.h" />
+    <ClInclude Include="ConfigToolCore\HeartRateData.h" />
+    <ClInclude Include="ConfigToolCore\SpeedData.h" />
+    <ClInclude Include="ConfigToolCore\SpeedDataManager.h" />
+    <ClInclude Include="DataBase\Data.h" />
+    <ClInclude Include="DataBase\DataBase.h" />
+    <ClInclude Include="DataBase\DataDefine.h" />
+    <ClInclude Include="DataBase\DataFactory.h" />
+    <ClInclude Include="DataBase\DataRegisteDevice.h" />
+    <ClInclude Include="dependence\curl_windows\curl.h" />
+    <ClInclude Include="dependence\curl_windows\curlbuild.h" />
+    <ClInclude Include="dependence\curl_windows\curlrules.h" />
+    <ClInclude Include="dependence\curl_windows\curlver.h" />
+    <ClInclude Include="dependence\curl_windows\easy.h" />
+    <ClInclude Include="dependence\curl_windows\mprintf.h" />
+    <ClInclude Include="dependence\curl_windows\multi.h" />
+    <ClInclude Include="dependence\curl_windows\stdcheaders.h" />
+    <ClInclude Include="dependence\curl_windows\typecheck-gcc.h" />
+    <ClInclude Include="dependence\curl_windows\types.h" />
+    <ClInclude Include="dependence\json\assertions.h" />
+    <ClInclude Include="dependence\json\autolink.h" />
+    <ClInclude Include="dependence\json\config.h" />
+    <ClInclude Include="dependence\json\features.h" />
+    <ClInclude Include="dependence\json\forwards.h" />
+    <ClInclude Include="dependence\json\json-forwards.h" />
+    <ClInclude Include="dependence\json\json.h" />
+    <ClInclude Include="dependence\json\json_batchallocator.h" />
+    <ClInclude Include="dependence\json\json_tool.h" />
+    <ClInclude Include="dependence\json\reader.h" />
+    <ClInclude Include="dependence\json\value.h" />
+    <ClInclude Include="dependence\json\version.h" />
+    <ClInclude Include="dependence\json\writer.h" />
+    <ClInclude Include="dependence\md5\md5.h" />
     <ClInclude Include="EventSystem\CTEventHandler.h" />
     <ClInclude Include="EventSystem\CTEventSystem.h" />
+    <ClInclude Include="Libcurl\LibcurlNetManager.h" />
+    <ClInclude Include="Libcurl\LibcurlPacketFactory.h" />
+    <ClInclude Include="Libcurl\Packet\LibcurlPacket.h" />
+    <ClInclude Include="Libcurl\Packet\LibcurlPacketHeader.h" />
+    <ClInclude Include="Libcurl\Packet\SetupDevice.h" />
     <ClInclude Include="Memory\txMemoryCheck.h" />
     <ClInclude Include="Memory\txMemoryTrace.h" />
     <ClInclude Include="Memory\txShareMemoryServer.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusData.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataHeartBeat.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRiding.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadence.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingCadenceSpeed.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingHeartRate.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusData\ANTPlusDataRidingSpeed.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacket.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketHeartBeat.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadence.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingCadenceSpeed.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingHeartRate.h" />
+    <ClInclude Include="Socket\ANTPlusPacket\ANTPlusPacketRidingSpeed.h" />
     <ClInclude Include="Socket\SocketNetManager.h" />
+    <ClInclude Include="Socket\SocketPacketFactory.h" />
+    <ClInclude Include="Socket\SocketPacketFactoryManager.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacket.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketColour.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFriction.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketFrictionRet.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketHeartRate.h" />
+    <ClInclude Include="Socket\SocketPacket\SocketPacketSpeed.h" />
+    <ClInclude Include="Socket\SocketWireless.h" />
+    <ClInclude Include="Socket\StreamBuffer.h" />
     <ClInclude Include="STL\txMap.h" />
     <ClInclude Include="STL\txSet.h" />
     <ClInclude Include="STL\txSTLBase.h" />
     <ClInclude Include="STL\txVector.h" />
+	<ClInclude Include="ToolRegister.h" />
+    <ClInclude Include="Thread\CustomThread.h" />
+    <ClInclude Include="Thread\ThreadLock.h" />
+    <ClInclude Include="Thread\TimeLock.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependence\json\json_internalarray.inl" />
+    <None Include="dependence\json\json_internalmap.inl" />
+    <None Include="dependence\json\json_valueiterator.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F024FEE7-0F53-435C-B61C-4BA34EBA7D9C}</ProjectGuid>
@@ -111,9 +214,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_USE_SOCKET_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BUILDING_LIBCURL;HTTP_ONLY;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./ConfigToolCore;./Common;./Common/Utility;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./STL;./Memory;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./ConfigToolCore;./Common;./Common/Utility;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./STL;./Memory;./DataBase;./Libcurl;./Libcurl/Packet;./dependence;./Thread;./Socket/ANTPlusPacket;./Socket/ANTPlusPacket/ANTPlusData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -123,6 +226,12 @@
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>libcurl_d.lib;ws2_32.lib;winmm.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -131,9 +240,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_USE_SOCKET_UDP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_WINDOWS;_CRT_SECURE_NO_WARNINGS;BUILDING_LIBCURL;HTTP_ONLY;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;./ConfigToolCore;./Common;./Common/Utility;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./STL;./Memory;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;./ConfigToolCore;./Common;./Common/Utility;./EventSystem;./Socket;./Socket/SocketPacket;./CommandSystem;./CommandSystem/CommandSpeedDataManager;./STL;./Memory;./DataBase;./Libcurl;./Libcurl/Packet;./dependence;./Thread;./Socket/ANTPlusPacket;./Socket/ANTPlusPacket/ANTPlusData;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -145,6 +254,12 @@
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "../../EngineLib/"</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>libcurl.lib;ws2_32.lib;winmm.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

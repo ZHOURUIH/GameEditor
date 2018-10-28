@@ -2,44 +2,66 @@
 #define _SOCKET_NET_MANAGER_H_
 
 #include "CommonDefine.h"
-#include "txThreadLock.h"
-#include "ToolCoreBase.h"
+#include "SocketPacketFactory.h"
+#include "ThreadLock.h"
 
-class WriteData
+struct OUTPUT_STREAM
 {
-public:
+	OUTPUT_STREAM(char* data, int dataSize)
+	:
+	mData(data),
+	mDataSize(dataSize)
+	{}
 	char* mData;
-	int mDataCount;
+	int mDataSize;
 };
 
-class SocketNetManager : public ToolCoreBase
+struct INPUT_ELEMENT
+{
+	INPUT_ELEMENT(SOCKET_PACKET type, char* data, int dataSize)
+	:
+	mType(type),
+	mData(data),
+	mDataSize(dataSize)
+	{}
+	SOCKET_PACKET mType;
+	char* mData;
+	int mDataSize;
+};
+
+class SocketPacketFactoryManager;
+class StreamBuffer;
+// 使用socket时是作为服务器的
+class SocketNetManager
 {
 public:
 	SocketNetManager();
-	~SocketNetManager();
-	void init(int port);
-	void update(float elapsedTime){}
+	~SocketNetManager(){ destroy(); }
+	void init(const int& port, const int& broadcastPort);
+	void update(float elapsedTime);
 	void destroy();
+	void processInput();
+	SocketPacket* createPacket(const SOCKET_PACKET& type);
+	void destroyPacket(SocketPacket* packet);
+	void sendMessage(SocketPacket* packet, const bool& destroyPacketEndSend = true);
 protected:
 	static DWORD WINAPI updateUdpServer(LPVOID lpParameter);
 	static DWORD WINAPI updateOutput(LPVOID lpParameter);
-	static DWORD WINAPI praseDataThread(LPVOID lpParameter);
-	void resizeBuffer(const int& size);
-	void addDataToBuffer(unsigned char* data, const int& dataCount);
-	void removeDataFromBuffer(const int& start, const int& count);
-	void clearBuffer();
+	void receivePacket(const SOCKET_PACKET& type, char* data, const int& dataSize);
 protected:
-	float					mCurElapsedTime;		// 当前计时 
-	int						mPort;                  // 端口号
-	SOCKET					mServer;				// 用于接收消息的套接字
-	HANDLE					mUDPThread;				// 套接字线程句柄
-	HANDLE					mParseDataThread;		// 解析数据的线程
-	txThreadLock			mReadBufferLock;
-	unsigned char*			mReadBuffer;			// 接收到的数据的缓冲区
-	std::atomic<int>		mDataLength;			// 缓冲区中剩余接收到的数据长度
-	std::atomic<int>		mBufferSize;			// 缓冲区总大小
-	std::vector<WriteData*>	mWriteDataBuffer;		// 写入数据的缓冲列表,用于添加数据
-	std::vector<WriteData*>	mWriteDataList;			// 需要写入的数据列表,用于写入数据
+	SocketPacketFactoryManager*		mSocketPacketFactoryManager;
+	std::vector<OUTPUT_STREAM>		mOutputStreamList;		// 输出流
+	int								mPort;                  // 端口号
+	int								mBroadcastPort;			// 广播的端口号
+	SOCKET							mServer;				// 用于接收消息的套接字
+	SOCKET							mBroadcastSocket;		// 用于广播的套接字
+	SOCKADDR_IN						mBroadcastAddr;			// 广播地址
+	std::vector<INPUT_ELEMENT>		mInputStreamList;		// 输入流
+	ThreadLock						mInputMutex;			// 锁定读写输入流,锁定后不能读写输入流
+	HANDLE							mSocketThread;			// 套接字线程句柄
+	ThreadLock						mOutputMutex;			// 输出流互斥锁
+	HANDLE							mOutputThread;			// 输出流发送线程
+	std::vector<INPUT_ELEMENT>		mReceiverStream;		// 接收的流
 };
 
 #endif

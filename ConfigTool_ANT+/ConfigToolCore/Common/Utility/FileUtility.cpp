@@ -3,41 +3,43 @@
 #include "ToolCoreLog.h"
 #include "ToolCoreUtility.h"
 
-std::string FileUtility::validPath(const std::string& path)
+void FileUtility::findFiles(const std::string& pathName, txVector<std::string>& files, const std::string& patterns, const bool& recursive)
 {
-	std::string newPath = path;
-	if (newPath.length() > 0)
-	{
-		// 不以/结尾,则加上/
-		if (newPath[newPath.length() - 1] != '/')
-		{
-			newPath += "/";
-		}
-	}	
-	return newPath;
+	txVector<std::string> patternList;
+	patternList.push_back(patterns);
+	findFiles(pathName, files, patternList, recursive);
 }
 
-void FileUtility::findFiles(std::string path, txVector<std::string>& files, const txVector<std::string>& patterns, const bool& recursive)
+void FileUtility::findFiles(std::string path, txVector<std::string>& files, txVector<std::string>& patterns, const bool& recursive)
 {
-	path = validPath(path);
-	WIN32_FIND_DATAA findFileData;
-	HANDLE hFind = FindFirstFileA((path + "*").c_str(), &findFileData);
+	if (path.length() == 0)
+	{
+		return;
+	}
+	// 不以/结尾,则加上/
+	if (path[path.length() - 1] != '/')
+	{
+		path += "/";
+	}
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA((path + "*").c_str(), &FindFileData);
 	// 如果找不到文件夹就直接返回
 	if (INVALID_HANDLE_VALUE == hFind)
 	{
 		return;
 	}
-	bool hasFile = false;
-	while (::FindNextFileA(hFind, &findFileData))
+	do
 	{
 		// 过滤.和..
-		if (strcmp(findFileData.cFileName, ".") == 0 || strcmp(findFileData.cFileName, "..") == 0)
+		if (strcmp(FindFileData.cFileName, ".") == 0
+			|| strcmp(FindFileData.cFileName, "..") == 0)
 		{
 			continue;
 		}
+
 		// 构造完整路径
-		std::string fullname = path + std::string(findFileData.cFileName);
-		if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		std::string fullname = path + std::string(FindFileData.cFileName);
+		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			if (recursive)
 			{
@@ -51,7 +53,7 @@ void FileUtility::findFiles(std::string path, txVector<std::string>& files, cons
 			{
 				for (int i = 0; i < patternCount; ++i)
 				{
-					if (fullname.length() >= patterns[i].length() && fullname.substr(fullname.length() - patterns[i].length(), patterns[i].length()) == patterns[i])
+					if (StringUtility::endWith(fullname, patterns[i]))
 					{
 						files.push_back(fullname);
 					}
@@ -62,31 +64,41 @@ void FileUtility::findFiles(std::string path, txVector<std::string>& files, cons
 				files.push_back(fullname);
 			}
 		}
-	}
+	} while (::FindNextFileA(hFind, &FindFileData));
 	::FindClose(hFind);
 }
 
 void FileUtility::findFolders(std::string path, txVector<std::string>& folders, const bool& recursive)
 {
-	path = validPath(path);
-	WIN32_FIND_DATAA findFileData;
-	HANDLE hFind = FindFirstFileA((path + "*").c_str(), &findFileData);
+	if (path.length() == 0)
+	{
+		return;
+	}
+	// 不以/结尾,则加上/
+	if (path[path.length() - 1] != '/')
+	{
+		path += "/";
+	}
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA((path + "*").c_str(), &FindFileData);
 	// 如果找不到文件夹就直接返回
 	if (INVALID_HANDLE_VALUE == hFind)
 	{
 		return;
 	}
-	bool hasFile = false;
-	while (::FindNextFileA(hFind, &findFileData))
+	do
 	{
 		// 过滤.和..
-		if (strcmp(findFileData.cFileName, ".") == 0 || strcmp(findFileData.cFileName, "..") == 0)
+		if (strcmp(FindFileData.cFileName, ".") == 0
+			|| strcmp(FindFileData.cFileName, "..") == 0)
 		{
 			continue;
 		}
+
 		// 构造完整路径
-		std::string fullname = path + std::string(findFileData.cFileName);
-		if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		std::string fullname = path + std::string(FindFileData.cFileName);
+		// 是文件夹则先放入列表,然后判断是否递归查找
+		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			folders.push_back(fullname);
 			if (recursive)
@@ -94,120 +106,66 @@ void FileUtility::findFolders(std::string path, txVector<std::string>& folders, 
 				findFolders(fullname.c_str(), folders, recursive);
 			}
 		}
-	}
+	} while (::FindNextFileA(hFind, &FindFileData));
 	::FindClose(hFind);
 }
 
-void FileUtility::deleteFolder(std::string path)
+void FileUtility::deleteFolder(const std::string& path)
 {
-	path = validPath(path);
-	WIN32_FIND_DATAA findFileData;
-	HANDLE hFind = FindFirstFileA((path + "*").c_str(), &findFileData);
-	// 如果找不到文件夹就直接返回
-	if (INVALID_HANDLE_VALUE == hFind)
+	WIN32_FIND_DATAA FindData;
+	// 构造路径
+	std::string pathName = path + "/*.*";
+	HANDLE hFind = FindFirstFileA(pathName.c_str(), &FindData);
+	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		return;
 	}
-	bool hasFile = false;
-	while (::FindNextFileA(hFind, &findFileData))
+	while (::FindNextFileA(hFind, &FindData))
 	{
-		// 过滤.和..
-		if (strcmp(findFileData.cFileName, ".") == 0 || strcmp(findFileData.cFileName, "..") == 0)
+		// 过虑.和..
+		if (strcmp(FindData.cFileName, ".") == 0
+			|| strcmp(FindData.cFileName, "..") == 0)
 		{
 			continue;
 		}
+
 		// 构造完整路径
-		std::string fullname = path + std::string(findFileData.cFileName);
+		std::string fullname = path + "/" + std::string(FindData.cFileName);
 		// 如果是文件夹,则递归删除文件夹
-		if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		if (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			deleteFolder(fullname);
-			// 然后删除文件夹
-			RemoveDirectoryA(fullname.c_str());
 		}
 		// 如果是文件,则直接删除文件
 		else
 		{
-			deleteFile(fullname);
+			DeleteFileA(fullname.c_str());
 		}
 	}
 	::FindClose(hFind);
 	// 删除文件夹自身
-	BOOL ret = RemoveDirectoryA(path.c_str());
+	RemoveDirectoryA(path.c_str());
 }
 
-bool FileUtility::deleteFile(const std::string& fileName)
+bool FileUtility::isFileExist(const std::string& fullPath)
 {
-	return ::DeleteFileA(fileName.c_str()) == TRUE;
-}
-
-bool FileUtility::deleteEmptyFolder(std::string path)
-{
-	path = validPath(path);
-	WIN32_FIND_DATAA findFileData;
-	HANDLE hFind = FindFirstFileA((path + "*").c_str(), &findFileData);
-	// 如果找不到文件夹就直接返回
-	if (INVALID_HANDLE_VALUE == hFind)
+	if (fullPath == "." || fullPath == "..")
 	{
 		return true;
 	}
-	bool isEmpty = true;
-	while (::FindNextFileA(hFind, &findFileData))
-	{
-		// 过滤.和..
-		if (strcmp(findFileData.cFileName, ".") == 0 || strcmp(findFileData.cFileName, "..") == 0)
-		{
-			continue;
-		}
-		// 构造完整路径
-		std::string fullname = path + std::string(findFileData.cFileName);
-		// 如果是文件夹,则递归删除空文件夹
-		if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			// 如果文件夹未删除成功,则表示不是空文件夹
-			if (!deleteEmptyFolder(fullname))
-			{
-				isEmpty = false;
-			}
-		}
-		// 是文件,则标记为有文件,然后退出循环
-		else
-		{
-			isEmpty = false;
-		}
-	}
-	::FindClose(hFind);
-	if (isEmpty)
-	{
-		RemoveDirectoryA(path.c_str());
-	}
-	return isEmpty;
-}
-
-bool FileUtility::isFileExist(std::string fullPath)
-{
 	int ret = _access(fullPath.c_str(), 0);
 	return ret == 0;
 }
 
-bool FileUtility::renameFile(const std::string& fileName, const std::string& newName)
-{
-	return rename(fileName.c_str(), newName.c_str()) == 0;
-}
-
-bool FileUtility::copyFile(std::string sourceFile, std::string destFile, bool overWrite)
+bool FileUtility::copyFile(const std::string& sourceFile, const std::string& destFile, bool overWrite)
 {
 	// 如果目标文件所在的目录不存在,则先创建目录
 	std::string parentDir = StringUtility::getParentDir(destFile);
 	createFolder(parentDir);
-#if RUN_PLATFORM == PLATFORM_WINDOWS
 	return CopyFileA(sourceFile.c_str(), destFile.c_str(), !overWrite) == TRUE;
-#elif RUN_PLATFORM == PLATFORM_ANDROID
-	return false;
-#endif
 }
 
-bool FileUtility::createFolder(std::string path)
+bool FileUtility::createFolder(const std::string& path)
 {
 	// 如果有上一级目录,并且上一级目录不存在,则先创建上一级目录
 	std::string parentDir = StringUtility::getParentDir(path);
@@ -226,70 +184,84 @@ bool FileUtility::createFolder(std::string path)
 	return true;
 }
 
-bool FileUtility::openFile(std::string filePath, int& length, char*& buffer, const bool& addZero)
+bool FileUtility::writeFile(std::string filePath, int length, const char* buffer, bool append)
+{
+	StringUtility::rightToLeft(filePath);
+	std::string tempPath = filePath;
+	int pos = filePath.find_last_of('/');
+	if (pos != -1)
+	{
+		tempPath = filePath.substr(0, pos);
+	}
+	if (!createFolder(tempPath))
+	{
+		TOOL_CORE_ERROR("error : can not create folder, name : %s", filePath.c_str());
+		return false;
+	}
+	char* openMode = "";
+	if (append)
+	{
+		// 不清空文件,并将文件指示器移到文件末尾
+		openMode = "ab+";
+	}
+	else
+	{
+		// 清空文件,并将文件指示器移到文件开头
+		openMode = "wb";
+	}
+	FILE* pFile = NULL;
+	fopen_s(&pFile, filePath.c_str(), openMode);
+	if (pFile == NULL)
+	{
+		TOOL_CORE_ERROR("error : can not write file, name : %s", filePath.c_str());
+		return false;
+	}
+	if (buffer != NULL && length > 0)
+	{
+		fwrite(buffer, sizeof(char), length, pFile);
+	}
+	fclose(pFile);
+	return true;
+}
+
+char* FileUtility::openFile(const std::string& filePath, int* bufferSize, bool addZero)
 {
 	FILE* pFile = NULL;
 	fopen_s(&pFile, filePath.c_str(), "rb");
 	if (pFile == NULL)
 	{
-		return false;
+		return NULL;
 	}
 	fseek(pFile, 0, SEEK_END);
-	length = ftell(pFile);
+	int fileSize = ftell(pFile);
 	rewind(pFile);
-	int bufferSize = length;
-	if (addZero)
+	int bufferLen = addZero ? fileSize + 1 : fileSize;
+	if (bufferSize != NULL)
 	{
-		bufferSize += 1;
+		*bufferSize = bufferLen;
 	}
-	buffer = TRACE_NEW_ARRAY(char, bufferSize, buffer);
-	memset(buffer, 0, bufferSize);
-	fread(buffer, sizeof(char), length, pFile);
+	char* buffer = TRACE_NEW_ARRAY(char, bufferLen, buffer);
+	if (buffer != NULL)
+	{
+		fread(buffer, sizeof(char), fileSize, pFile);
+	}
 	fclose(pFile);
-	return true;
+	return buffer;
 }
 
-bool FileUtility::writeFile(std::string filePath, int length, char* buffer, const bool& appendData)
+std::string FileUtility::openTxtFile(const std::string& filePath)
 {
-	if (length <= 0 || NULL == buffer)
+	char* buffer = openFile(filePath, NULL, true);
+	if (buffer == NULL)
 	{
-		return false;
+		return EMPTY_STRING;
 	}
-
-	// 创建路径
-	StringUtility::rightToLeft(filePath);
-	int pos = filePath.find_last_of('/');
-	if (-1 != pos)
-	{
-		std::string dirPath = filePath.substr(0, pos);
-		if (!createFolder(dirPath))
-		{
-			return false;
-		}
-	}
-	// 写入文件
-	FILE* pFile = NULL;
-	if (appendData)
-	{
-		fopen_s(&pFile, filePath.c_str(), "ab+");
-	}
-	else
-	{
-		fopen_s(&pFile, filePath.c_str(), "wb");
-	}
-	if (pFile == NULL)
-	{
-		return false;
-	}
-	fwrite(buffer, sizeof(char), length, pFile);
-	fclose(pFile);
-	return true;
+	std::string str(buffer);
+	TRACE_DELETE_ARRAY(buffer);
+	return str;
 }
 
-int FileUtility::getFileSize(const std::string& filePath)
+char* FileUtility::openBinaryFile(const std::string& filePath, int* bufferSize)
 {
-	struct _stat info;
-	_stat(filePath.c_str(), &info);
-	long size = info.st_size;
-	return size;
+	return openFile(filePath, bufferSize, false);
 }

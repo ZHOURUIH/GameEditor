@@ -12,10 +12,10 @@ public:
 	virtual ~CTEventHandler(){}
 	virtual void registerEditorCoreEventHandler() = 0;
 	virtual void unregisterEditorCoreEventHandler() = 0;
-	virtual void onEditorCoreEvent(const CORE_EVENT_TYPE& type, std::vector<std::string>& params) = 0;
-	virtual void notifyEvent(const int& event, std::vector<std::string>& paramList)
+	virtual void onEditorCoreEvent(const CORE_EVENT& type, txVector<std::string>& params) = 0;
+	virtual void notifyEvent(const int& event, txVector<std::string>& paramList)
 	{
-		onEditorCoreEvent((CORE_EVENT_TYPE)event, paramList);
+		onEditorCoreEvent((CORE_EVENT)event, paramList);
 	}
 protected:
 };

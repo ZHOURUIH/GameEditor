@@ -7,29 +7,36 @@
 
 class ConfigToolCore;
 class SpeedDataPanel;
+class WirelessDevicePanel;
+class SetupDevicePanel;
+class SpeedDataPanel;
 class HeartRatePanel;
 class txCommandSystem;
+class EditorPanel;
 class EditorFrame : public wxFrame, public CTEventHandler, public txCommandReceiver
 {
 public:
-	EditorFrame(wxString title, wxSize size);
+	EditorFrame(const wxString& title, const wxSize& size);
 	void init();
 	void destroy();
 	void setup();
 	virtual ~EditorFrame();
-	// 刷新全部的可选中菜单和可选中工具按钮的选中状态
-	void RefreshAllMenuToolCheckState();
 	void Update(float elapsedTime);
 	void Render();
 	void KeyProcess();
 	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	virtual void registerEditorCoreEventHandler();
 	virtual void unregisterEditorCoreEventHandler();
-	virtual void onEditorCoreEvent(const CORE_EVENT_TYPE& type, std::vector<std::string>& params);
-	void showPanel(wxWindow* panel, bool show);
-	txMap<wxWindow*, int>& getWindowIDList() { return mWindowIDList; }
+	virtual void onEditorCoreEvent(const CORE_EVENT& type, txVector<std::string>& params);
+	
+	//get
+	//-------------------------------------------------------------------------------------------------------------------------
+	txMap<EditorPanel*, int>& getWindowIDList() { return mWindowIDList; }
 	wxAuiManager& getAuiManager() { return mAuiManager; }
-	wxWindow* getWindow(std::string name);
+	EditorPanel* getPanel(const std::string& name);
+	int getPanelID(const std::string& name);
+	WirelessDevicePanel* getWirelessDevicePanel() { return mWirelessDevicePanel; }
+	SetupDevicePanel* getSetupDevicePanel() { return mSetupDevicePanel; }
 	HeartRatePanel* getHeartRatePanel() { return mHeartRatePanel; }
 	ConfigToolCore* getConfigTool() { return mConfigToolCore; }
 	wxAuiToolBar* getWindowToolBar() { return mWindowToolBar; }
@@ -38,6 +45,9 @@ public:
 	void OnTimer(wxTimerEvent& event);
 	void OnExit(wxCommandEvent& event);			// 响应菜单的退出事件
 	void OnCloseWindow(wxCloseEvent& event);	// 响应程序发出的关闭事件
+	void OnWirelessDevicePanel(wxCommandEvent& event);
+	void OnSetupDevicePanel(wxCommandEvent& event);
+	void OnSpeedDataPanel(wxCommandEvent& event);
 	void OnHeartRatePanel(wxCommandEvent& event);
 protected:
 	void CreateMenu();
@@ -47,16 +57,22 @@ protected:
 	void UpdateStatus();
 	void CreateEditorCore();
 	void RefreshAllResource();
+	void hideAllPanel();
+	void showPanel(wxWindow* panel, bool show, bool update = true);
+	// 刷新全部的可选中菜单和可选中工具按钮的选中状态
+	void RefreshAllMenuToolCheckState();
 protected:
 	wxTimer* mTimer;
 	wxMenu* mFileMenu;
 	wxAuiToolBar* mWindowToolBar;
 	wxAuiManager mAuiManager;
-	HeartRatePanel* mHeartRatePanel;
+	WirelessDevicePanel* mWirelessDevicePanel;
+	SetupDevicePanel* mSetupDevicePanel;
 	ConfigToolCore* mConfigToolCore;
-	txCommandSystem* mCommandSystem;
-	txMap<wxWindow*, int> mWindowIDList;
-	txMap<std::string, wxWindow*> mWindowList;
+	SpeedDataPanel* mSpeedDataPanel;
+	HeartRatePanel* mHeartRatePanel;
+	txMap<EditorPanel*, int> mWindowIDList;
+	txMap<std::string, EditorPanel*> mWindowList;
 };
 
 #endif

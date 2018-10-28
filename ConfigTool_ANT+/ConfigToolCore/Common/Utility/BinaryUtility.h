@@ -16,6 +16,8 @@ public:
 	static void RGBAToYUV(char* RGBAData, int width, int height, char* YUVData);
 	// YUV420P转换为RGB24
 	static void YUV420PToRGB32(unsigned char* yuv420[3], unsigned char* rgb32, int width, int height);
+	// 判断两段内存的数据是否相同,length为需要判断的长度
+	static bool isMemoryEqual(char* buffer0, char* buffer1, int length);
 	// 计算 16进制的c中1的个数
 	static int crc_check(char c);
 	static unsigned short crc16(unsigned short crc, unsigned char* buffer, unsigned short len);
@@ -24,7 +26,7 @@ public:
 		return (crc >> 8) ^ crc16_table[(crc ^ data) & 0xff];
 	}
 	template<typename T>
-	static T read(T& value, unsigned char* buffer, int& offset, const bool& inverse = false)
+	static T read(T& value, unsigned char* buffer, int& offset, bool inverse = false)
 	{
 		if (inverse)
 		{
@@ -41,7 +43,7 @@ public:
 		offset += sizeof(value);
 		return value;
 	}
-	static void readBuffer(unsigned char* dest, unsigned char* buffer, const int& count, int& offset)
+	static void readBuffer(unsigned char* dest, unsigned char* buffer, int count, int& offset)
 	{
 		memcpy(dest, buffer + offset, count);
 		offset += count;
@@ -64,7 +66,7 @@ public:
 		}
 		offset += sizeof(value);
 	}
-	static void writeBuffer(unsigned char* source, unsigned char* buffer, const int& count, int& offset)
+	static void writeBuffer(unsigned char* source, unsigned char* buffer, int count, int& offset)
 	{
 		memcpy(buffer + offset, source, count);
 		offset += count;

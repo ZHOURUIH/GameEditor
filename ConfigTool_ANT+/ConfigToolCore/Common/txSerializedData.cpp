@@ -1,5 +1,4 @@
-#include "txUtility.h"
-#include "StringUtility.h"
+#include "Utility.h"
 #include "txSerializedData.h"
 
 bool txSerializedData::read(char* pBuffer, int bufferSize)
@@ -49,7 +48,7 @@ bool txSerializedData::writeData(std::string dataString, int paramIndex)
 	else if (paramType == typeid(char*).name())
 	{
 		memset(dataParam.mDataPtr, 0, dataParam.mDataSize);
-		int copySize = TX_MIN((int)dataString.length(), dataParam.mDataSize - 1);
+		int copySize = MathUtility::getMin((int)dataString.length(), dataParam.mDataSize - 1);
 		memcpy(dataParam.mDataPtr, dataString.c_str(), copySize);
 	}
 	else if (paramType == typeid(int*).name())
@@ -57,7 +56,7 @@ bool txSerializedData::writeData(std::string dataString, int paramIndex)
 		txVector<std::string> valueList;
 		StringUtility::split(dataString, ";", valueList);
 		int valueCount = valueList.size();
-		valueCount = TX_MIN(valueCount, 2);
+		valueCount = MathUtility::getMin(valueCount, 2);
 		for (int i = 0; i < valueCount; ++i)
 		{
 			((int*)(dataParam.mDataPtr))[i] = StringUtility::stringToInt(valueList[i]);
@@ -161,7 +160,7 @@ bool txSerializedData::readStringList(std::vector<std::string>& dataList)
 		else if (paramter.mDataType == typeid(char*).name())
 		{
 			memset(mDataParameterList[i].mDataPtr, 0, mDataParameterList[i].mDataSize);
-			int copySize = TX_MIN((int)dataList[curIndex].length(), mDataParameterList[i].mDataSize - 1);
+			int copySize = MathUtility::getMin((int)dataList[curIndex].length(), mDataParameterList[i].mDataSize - 1);
 			memcpy(mDataParameterList[i].mDataPtr, dataList[curIndex].c_str(), copySize);
 		}
 		else if (paramter.mDataType == typeid(int*).name())
@@ -169,7 +168,7 @@ bool txSerializedData::readStringList(std::vector<std::string>& dataList)
 			txVector<std::string> breakVec;
 			StringUtility::split(dataList[curIndex], ";", breakVec);
 			int size = breakVec.size();
-			size = TX_MIN(size, 2);
+			size = MathUtility::getMin(size, 2);
 
 			for (int j = 0; j < size; ++j)
 			{

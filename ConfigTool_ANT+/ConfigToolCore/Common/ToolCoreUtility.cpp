@@ -64,3 +64,31 @@ float ToolCoreUtility::HWSToMS(float hwsSpeed, float speedRatio)
 {
 	return stepFrequencyToMS(HWSToStepFrequency(hwsSpeed, speedRatio));
 }
+
+int ToolCoreUtility::toDeviceID(char* idBytes)
+{
+	int id = 0;
+	memcpy(&id, idBytes, sizeof(id));
+	return id;
+}
+
+std::string ToolCoreUtility::deviceTypeToName(char deviceType)
+{
+	if (deviceType == RD_HEART_RATE)
+	{
+		return "心率";
+	}
+	else if (deviceType == RD_CADENCE_SPEED)
+	{
+		return "踏频速度";
+	}
+	else if (deviceType == RD_CADENCE)
+	{
+		return "踏频";
+	}
+	else if (deviceType == RD_SPEED)
+	{
+		return "速度";
+	}
+	return "";
+}

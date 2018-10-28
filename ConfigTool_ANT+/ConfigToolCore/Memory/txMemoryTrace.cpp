@@ -23,7 +23,7 @@ MemoryType txMemoryTrace::mMemoryList[MAX_COUNT];
 int txMemoryTrace::mMemoryCount = 0;
 #endif
 txShareMemoryServer* txMemoryTrace::mShareMemoryServer = NULL;
-txThreadLock txMemoryTrace::mInfoLock;
+ThreadLock txMemoryTrace::mInfoLock;
 
 txMemoryTrace::txMemoryTrace()
 {

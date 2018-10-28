@@ -2,6 +2,7 @@
 #define _TX_COMMAND_SYSTEM_H_
 
 #include "CommonDefine.h"
+#include "ThreadLock.h"
 
 class txCommand;
 class txCommandReceiver;
@@ -10,7 +11,6 @@ class txCommandSystem
 public:
 	txCommandSystem()
 		:
-		mLockBuffer(false),
 		mShowDebugInfo(true)
 	{}
 	virtual ~txCommandSystem(){ destroy(); }
@@ -27,14 +27,11 @@ public:
 	virtual void notifyReceiverDestroied(txCommandReceiver* receiver);
 protected:
 	void destroy();
-	void waitUnlockBuffer();
-	void lockBuffer() { mLockBuffer = true; }
-	void unlockBuffer() { mLockBuffer = false; }
 protected:
-	std::vector<DelayCommand> mCommandBufferProcess;	// 用于处理的命令列表
-	std::vector<DelayCommand> mCommandBufferInput;		// 用于放入命令的命令列表
-	bool mLockBuffer;
+	txVector<DelayCommand> mCommandBufferProcess;	// 用于处理的命令列表
+	txVector<DelayCommand> mCommandBufferInput;		// 用于放入命令的命令列表
 	bool mShowDebugInfo;
+	ThreadLock mBufferLock;
 };
 
 #endif

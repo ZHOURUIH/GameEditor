@@ -2,20 +2,32 @@
 #define _TOOL_CORE_BASE_H_
 
 class ConfigToolCore;
-class SocketNetManager;
+class SocketWireless;
 class CTEventSystem;
 class txCommandSystem;
-class DataManager;
+class WirelessDataManager;
+class DataBase;
+class DeviceRegisteManager;
+class SpeedDataManager;
+class SocketNetManager;
+class LibcurlNetManager;
+class LogSystem;
 class ToolCoreBase
 {
 public:
 	static void notifyConstructDone();
 public:
 	static ConfigToolCore* mConfigToolCore;
-	static SocketNetManager* mSocketNetManager;
+	static SocketWireless* mSocketWireless;
 	static CTEventSystem* mEventSystem;
 	static txCommandSystem* mCommandSystem;
-	static DataManager* mDataManager;
+	static WirelessDataManager* mWirelessDataManager;
+	static DataBase* mDataBase;
+	static DeviceRegisteManager* mDeviceRegisteManager;
+	static SpeedDataManager* mSpeedDataManager;
+	static SocketNetManager* mSocketNetManager;
+	static LibcurlNetManager* mLibcurlNetManager;
+	static LogSystem* mLogSystem;
 };
 
 #endif

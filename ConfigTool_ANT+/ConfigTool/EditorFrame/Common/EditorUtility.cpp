@@ -1,93 +1,90 @@
 #include "EditorUtility.h"
 
-float EditorUtility::pow_f(float f, int p)
+bool EditorUtility::isIgnoreClass(txSet<std::string>& keywordList, const std::string& name)
 {
-	float ret = 1.0f;
-	while (p)
+	auto iter = keywordList.begin();
+	auto iterEnd = keywordList.end();
+	for (; iter != iterEnd; ++iter)
 	{
-		ret *= f;
-		--p;
+		if (strstr(name.c_str(), iter->c_str()) != NULL)
+		{
+			return true;
+		}
 	}
-	return ret;
+	return false;
 }
 
-std::string EditorUtility::floatToString(float f, int precision)
+bool EditorUtility::isIgnoreClass(txVector<std::string>& keywordList, const std::string& name)
 {
-	f = f * pow_f(10.0f, precision) + 0.5f;
-	int MAX_INT = 0x7FFFFFFF;
-	if (f > (float)MAX_INT)
+	auto iter = keywordList.begin();
+	auto iterEnd = keywordList.end();
+	for (; iter != iterEnd; ++iter)
 	{
-		char str[256];
-		sprintf_s(str, 256, "%f", f);
-		return std::string(str);
+		if (strstr(name.c_str(), iter->c_str()) != NULL)
+		{
+			return true;
+		}
 	}
-	
-	int intValue = (int)f;
+	return false;
+}
 
-	char str[256];
-	sprintf_s(str, 256, "%d", intValue);
-	if (precision == 0)
+void EditorUtility::clearUpList(wxListCtrl* list, const int& shownCount)
+{
+	int itemCount = list->GetItemCount();
+	if (itemCount < shownCount)
 	{
-		return std::string(str);
+		resetListItemCount(list, shownCount);
+	}
+	clearEmptyRow(list, shownCount);
+}
+
+void EditorUtility::resetListItemCount(wxListCtrl* listCtrl, const int& count)
+{
+	int curItemCount = listCtrl->GetItemCount();
+	int deltaCount = curItemCount - count;
+	// 行数多了,则删除多余的
+	if (deltaCount > 0)
+	{
+		for (int i = 0; i < deltaCount; ++i)
+		{
+			listCtrl->DeleteItem(curItemCount - i - 1);
+		}
+	}
+	// 行数少了,则添加
+	else if (deltaCount < 0)
+	{
+		deltaCount = -deltaCount;
+		for (int i = 0; i < deltaCount; ++i)
+		{
+			listCtrl->InsertItem(curItemCount + i, wxT(""), -1);
+		}
 	}
 	else
 	{
-		int length = strlen(str);
-		if (length <= precision)
+		return;
+	}
+}
+
+void EditorUtility::clearEmptyRow(wxListCtrl* listCtrl, const int& shownCount)
+{
+	int itemCount = listCtrl->GetItemCount();
+	for (int i = shownCount; i < itemCount; ++i)
+	{
+		if (listCtrl->GetItemText(i, 0) != "")
 		{
-			char newStr[256];
-			memset(newStr, 0, 256 * sizeof(char));
-			for (int i = 0; i < precision - length + 1; ++i)
+			int columnCount = listCtrl->GetColumnCount();
+			for (int j = 0; j < columnCount; ++j)
 			{
-				newStr[i] = '0';
+				listCtrl->SetItem(i, j, wxT(""));
 			}
-			memcpy(newStr + precision - length + 1, str, length);
-
-			char intStr[256];
-			memset(intStr, 0, 256 * sizeof(char));
-			char decimalStr[256];
-			memset(decimalStr, 0, 256 * sizeof(char));
-			memcpy(intStr, newStr, strlen(newStr) - precision);
-			memcpy(decimalStr, newStr + strlen(newStr) - precision, precision);
-			return std::string(intStr) + "." + std::string(decimalStr);
-		}
-		else
-		{
-			char intStr[256];
-			memset(intStr, 0, 256 * sizeof(char));
-			char decimalStr[256];
-			memset(decimalStr, 0, 256 * sizeof(char));
-			memcpy(intStr, str, strlen(str) - precision);
-			memcpy(decimalStr, str + strlen(str) - precision, precision);
-			return std::string(intStr) + "." + std::string(decimalStr);
 		}
 	}
 }
 
-bool EditorUtility::isIgnoreClass(std::set<std::string>& keywordList, std::string name)
+void EditorUtility::updateItem(wxListCtrl* listCtrl, const int& item, const int& column, const std::string& text)
 {
-	std::set<std::string>::iterator iter = keywordList.begin();
-	std::set<std::string>::iterator iterEnd = keywordList.end();
-	for (; iter != iterEnd; ++iter)
+	if (listCtrl->GetItemText(item, column) != text)
 	{
-		if (strstr(name.c_str(), iter->c_str()) != NULL)
-		{
-			return true;
-		}
+		listCtrl->SetItem(item, column, text);
 	}
-	return false;
-}
-
-bool EditorUtility::isIgnoreClass(std::vector<std::string>& keywordList, std::string name)
-{
-	std::vector<std::string>::iterator iter = keywordList.begin();
-	std::vector<std::string>::iterator iterEnd = keywordList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		if (strstr(name.c_str(), iter->c_str()) != NULL)
-		{
-			return true;
-		}
-	}
-	return false;
 }
