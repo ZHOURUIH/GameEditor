@@ -22,7 +22,17 @@ public:
 		clamp(value, 0, 255);
 	}
 	template<typename T>
-	static void clamp(T& value, const T& min, const T& max)
+	static T getMin(T value0, T value1)
+	{
+		return value0 < value1 ? value0 : value1;
+	}
+	template<typename T>
+	static T getMax(T value0, T value1)
+	{
+		return value0 > value1 ? value0 : value1;
+	}
+	template<typename T>
+	static void clamp(T& value, T min, T max)
 	{
 		if (value < min)
 		{

@@ -6,7 +6,7 @@
 #include "CTEventHandler.h"
 
 class CTEventHandler;
-class CTEventSystem : public txEventSystemBase<CORE_EVENT_TYPE, CTEventHandler>
+class CTEventSystem : public txEventSystemBase<CORE_EVENT, CTEventHandler>
 {
 public:
 	CTEventSystem();

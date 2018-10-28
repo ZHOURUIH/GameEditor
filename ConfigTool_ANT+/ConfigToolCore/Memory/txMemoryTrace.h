@@ -5,7 +5,7 @@
 //#define WRITE_FILE
 //#define CHECK_MEMORY
 #include "EngineDefine.h"
-#include "txThreadLock.h"
+#include "ThreadLock.h"
 #include "txMemoryCheck.h"
 
 // 无论什么平台都需要定义以下正常的内存申请宏
@@ -172,7 +172,7 @@ protected:
 	static bool mShowTotalCount;
 	static int mInstanceCount;
 	static bool mShowAll;
-	static txThreadLock mInfoLock;
+	static ThreadLock mInfoLock;
 	HANDLE mThread;
 	static txShareMemoryServer* mShareMemoryServer;
 #ifdef WRITE_FILE

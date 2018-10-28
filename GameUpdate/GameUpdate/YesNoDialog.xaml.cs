@@ -27,18 +27,28 @@ namespace GameUpdate
 		{
 			DialogResult = true;
 		}
-
 		private void mButtonNo_Click(object sender, RoutedEventArgs e)
 		{
 			DialogResult = false;
 		}
+		private void windowMove_Click(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				this.DragMove();
+			}
+		}
+		private void closeButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
 		public void setInfo(string info)
 		{
-			mInfoBlock.Text = info;
+			mInfo.Content = info;
 		}
-		public void setTitle(string title)
+		public void setDownLoadInfo(string info)
 		{
-			Title = title;
+			mDownLoadInfo.Content = info;
 		}
 	}
 }

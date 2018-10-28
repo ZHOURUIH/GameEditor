@@ -50,7 +50,7 @@ public class DownloadManager : FrameComponent
 	protected UPGRADE_STATE mState;
 	protected bool mCancel;
 	public DownloadManager(string name)
-		:base(name)
+		: base(name)
 	{
 		mDownloadingFileList = new Dictionary<string, FileWrap>();
 		mDownloadedList = new Dictionary<string, FileWrap>();
@@ -131,7 +131,7 @@ public class DownloadManager : FrameComponent
 	public bool getDownloading() { return mState == UPGRADE_STATE.US_DOWNLOADING_REMOTE_FILE; }
 	public void setCancel(bool cancel, bool delay = true)
 	{
-		if(mCancel == cancel)
+		if (mCancel == cancel)
 		{
 			return;
 		}
@@ -288,17 +288,11 @@ public class DownloadManager : FrameComponent
 	protected void notifyVersionDownloaded(FileWrap versionFile)
 	{
 		// 版本文件下载完毕后,提示是否有新版本可以更新
-		string versionString = FileUtility.openTxtFile(CommonDefine.VERSION);
-		bool hasNewVersion = false;
-		if (versionString == "")
-		{
-			hasNewVersion = true;
-		}
-		else
-		{
-			string remoteVersion = BinaryUtility.bytesToString(versionFile.getFileData());
-			hasNewVersion = remoteVersion != versionString;
-		}
+		string localUpdateInfo = "";
+		string localVersion = getVersionFromFile(FileUtility.openTxtFile(CommonDefine.VERSION), ref localUpdateInfo);
+		string remoteUpdateInfo = "";
+		string remoteVersion = getVersionFromFile(BinaryUtility.bytesToString(versionFile.getFileData()), ref remoteUpdateInfo);
+		bool hasNewVersion = remoteVersion != localVersion;
 		if (hasNewVersion)
 		{
 			setState(UPGRADE_STATE.US_WAIT_FOR_UPGRADE);
@@ -307,7 +301,10 @@ public class DownloadManager : FrameComponent
 		{
 			done();
 		}
-		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.CET_NEW_VERSION, StringUtility.boolToString(hasNewVersion));
+		List<string> paramList = new List<string>();
+		paramList.Add(StringUtility.boolToString(hasNewVersion));
+		paramList.Add(remoteUpdateInfo);
+		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.CET_NEW_VERSION, paramList);
 	}
 	protected void notifyFileListDownloaded(FileWrap listFile)
 	{
@@ -361,7 +358,7 @@ public class DownloadManager : FrameComponent
 		}
 	}
 	// 所有文件都已经下载完毕,更新所有文件
-	protected void notifyAllDownloaded() 
+	protected void notifyAllDownloaded()
 	{
 		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.CET_UPDATING_FILE);
 		setState(UPGRADE_STATE.US_UPDATE_LOCAL_FILE);
@@ -378,7 +375,6 @@ public class DownloadManager : FrameComponent
 		}
 		// 清除空文件夹
 		FileUtility.deleteEmptyFolder("./");
-
 		List<string> temporaryFileList = new List<string>();
 		FileUtility.findFiles(CommonDefine.TEMP_PATH, ref temporaryFileList);
 		// 将临时目录中的文件替换掉本地文件
@@ -387,12 +383,39 @@ public class DownloadManager : FrameComponent
 		{
 			string sourceFile = temporaryFileList[j];
 			string destFile = sourceFile.Substring(CommonDefine.TEMP_PATH.Length, sourceFile.Length - CommonDefine.TEMP_PATH.Length);
+			// 检查是否有配置文件需要保存
+			afterFileDownloaded(destFile);
 			FileUtility.copyFile(sourceFile, destFile);
 			// 替换文件占总进度的90%
 			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.CET_UPDATING_PROGRESS, StringUtility.floatToString(j / (float)temporaryFilecount * 0.9f + 0.1f));
 		}
 		// 删除下载临时目录
 		FileUtility.deleteFolder(CommonDefine.TEMP_PATH);
+	}
+	protected void afterFileDownloaded(string fileName)
+	{
+		ConfigBase config = null;
+		if (fileName == CommonDefine.FILE_PATH + "ApplicationSetting.txt")
+		{
+			config = new ApplicationConfig(fileName);
+		}
+		else if (fileName == CommonDefine.FILE_PATH + "FrameFloatConfig.txt")
+		{
+			config = new FrameConfig(fileName);
+		}
+		else if (fileName == CommonDefine.FILE_PATH + "GameFloatConfig.txt")
+		{
+			config = new GameFloatConfig(fileName);
+		}
+		else if (fileName == CommonDefine.FILE_PATH + "GameStringConfig.txt")
+		{
+			config = new GameStringConfig(fileName);
+		}
+		if(config != null)
+		{
+			config.init();
+			config.mergeConfig(fileName, CommonDefine.TEMP_PATH + fileName);
+		}
 	}
 	protected void done()
 	{
@@ -425,7 +448,7 @@ public class DownloadManager : FrameComponent
 			int fileCount = fileList.Count();
 			if (fileCount - 1 != readFileCount)
 			{
-				logError("文件数量不匹配, 文件头记录数量 : " + readFileCount + ", 实际数量 : " + fileCount, true);
+				logError("文件数量不匹配, 文件头记录数量 : " + readFileCount + ", 实际数量 : " + (fileCount - 1), true);
 				return;
 			}
 			// 生成远端文件列表
@@ -466,19 +489,19 @@ public class DownloadManager : FrameComponent
 		for (int i = 0; i < fileCount; ++i)
 		{
 			// 排除临时文件夹
-			if(!StringUtility.startWith(fileList[i], startPath + CommonDefine.TEMP_PATH))
+			if (!StringUtility.startWith(fileList[i], startPath + CommonDefine.TEMP_PATH))
 			{
 				DownloadFileInfo info = new DownloadFileInfo();
 				string newPath = fileList[i].Substring(startPath.Length, fileList[i].Length - startPath.Length);
 				mLocalFileList.Add(newPath, info);
-			}	
+			}
 		}
 		// 查找临时目录
 		string tempPath = CommonDefine.TEMP_PATH;
 		List<string> tempFile = new List<string>();
 		FileUtility.findFiles(tempPath, ref tempFile);
 		int tempCount = tempFile.Count();
-		for(int i = 0; i < tempCount; ++i)
+		for (int i = 0; i < tempCount; ++i)
 		{
 			tempFile[i] = tempFile[i].Substring(tempPath.Length, tempFile[i].Length - tempPath.Length);
 		}
@@ -488,9 +511,9 @@ public class DownloadManager : FrameComponent
 		strThisFile = strThisFile.Substring(0, strThisFile.IndexOf("."));
 		// 移除所有以程序名开头的文件
 		List<string> keyList = new List<string>(mLocalFileList.Keys);
-		foreach(var item in keyList)
+		foreach (var item in keyList)
 		{
-			if(StringUtility.startWith(item, strThisFile + "."))
+			if (StringUtility.startWith(item, strThisFile + "."))
 			{
 				mLocalFileList.Remove(item);
 			}
@@ -502,9 +525,9 @@ public class DownloadManager : FrameComponent
 
 		// 计算文件信息
 		int index = 0;
-		foreach(var item in mLocalFileList)
+		foreach (var item in mLocalFileList)
 		{
-			if(mCancel)
+			if (mCancel)
 			{
 				break;
 			}
@@ -523,7 +546,7 @@ public class DownloadManager : FrameComponent
 			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.CET_GENERATING_LOCAL_FILE, param);
 			++index;
 		}
-		foreach(var item in tempFile)
+		foreach (var item in tempFile)
 		{
 			if (mCancel)
 			{
@@ -531,7 +554,7 @@ public class DownloadManager : FrameComponent
 			}
 			string fileName = item;
 			DownloadFileInfo info = null;
-			if(mLocalFileList.ContainsKey(fileName))
+			if (mLocalFileList.ContainsKey(fileName))
 			{
 				info = mLocalFileList[fileName];
 			}
@@ -561,12 +584,12 @@ public class DownloadManager : FrameComponent
 		mDownloadingFileList.Add(fileName, new FileWrap());
 		mHttpDownloadManager.download(CommonDefine.REMOTE_URL + fileName, fileName, offset, downloading, onTimeout, onStart, onFinish);
 	}
-	protected static Dictionary<string, DownloadFileInfo>  generateUselessFile(Dictionary<string, DownloadFileInfo> remoteList, 
+	protected static Dictionary<string, DownloadFileInfo> generateUselessFile(Dictionary<string, DownloadFileInfo> remoteList,
 	Dictionary<string, DownloadFileInfo> localList, List<string> ignorePathList)
 	{
 		Dictionary<string, DownloadFileInfo> uselessList = new Dictionary<string, DownloadFileInfo>();
 		// 本地有但是远端没有的文件
-		foreach(var local in localList)
+		foreach (var local in localList)
 		{
 			if (isIgnoreFile(local.Key, ignorePathList))
 			{
@@ -583,7 +606,7 @@ public class DownloadManager : FrameComponent
 													Dictionary<string, DownloadFileInfo> localList, List<string> ignorePathList)
 	{
 		Dictionary<string, DownloadFileInfo> modifiedList = new Dictionary<string, DownloadFileInfo>();
-		foreach(var itemRemote in remoteList)
+		foreach (var itemRemote in remoteList)
 		{
 			if (isIgnoreFile(itemRemote.Key, ignorePathList))
 			{
@@ -614,7 +637,7 @@ public class DownloadManager : FrameComponent
 	}
 	protected static bool isIgnoreFile(string file, List<string> ignorePathList)
 	{
-		foreach(var item in ignorePathList)
+		foreach (var item in ignorePathList)
 		{
 			if (StringUtility.findSubstr(file, item, false))
 			{
@@ -622,5 +645,21 @@ public class DownloadManager : FrameComponent
 			}
 		}
 		return false;
+	}
+	protected string getVersionFromFile(string fileString, ref string updateInfo)
+	{
+		string version = "";
+		string nextLineString = "\r\n\r\n"; // 两个回车换行分隔版本号和版本内容
+		int nextLinePos = fileString.IndexOf(nextLineString);
+		if (nextLinePos != -1)
+		{
+			version = fileString.Substring(0, nextLinePos);
+			updateInfo = fileString.Substring(nextLinePos + nextLineString.Length, fileString.Length - nextLinePos - nextLineString.Length);
+		}
+		else
+		{
+			version = fileString;
+		}
+		return version;
 	}
 }

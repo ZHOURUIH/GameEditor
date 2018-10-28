@@ -2,10 +2,15 @@
 #define _TX_UTILITY_H_
 
 #include "CommonDefine.h"
+#include "ThreadLock.h"
 
 class txUtility
 {
+	static ThreadLock mTimeLock;
 public:
+	static void sleep(const unsigned long& timeMS);
+	static long getTimeMS();
+	static const char* getTime();
 	// 返回media的路径,不带/
 	static std::string getMediaPath()
 	{

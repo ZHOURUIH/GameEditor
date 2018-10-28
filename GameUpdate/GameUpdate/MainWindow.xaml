@@ -1,30 +1,46 @@
 ﻿<Window x:Class="GameUpdate.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameUpdate"
         mc:Ignorable="d"
-        Title="版本更新" Height="439" Width="747">
-	<Grid Margin="0,0,2,0">
+		Height="500" Width="747" AllowsTransparency="True" WindowStyle="None" Background="#00FDFAFA">
+	<Grid Margin="0,16,0,0">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="410*"/>
-			<ColumnDefinition Width="107*"/>
+			<ColumnDefinition Width="61*"/>
+			<ColumnDefinition Width="6*"/>
 		</Grid.ColumnDefinitions>
-		<Label x:Name="label" Content="当前正在下载:" HorizontalAlignment="Left" Margin="56,47,0,0" VerticalAlignment="Top" Height="25" Width="85"/>
-		<Label x:Name="label_Copy" Content="当前文件大小:" HorizontalAlignment="Left" Margin="56,85,0,0" VerticalAlignment="Top" Height="25" Width="85"/>
-		<Label x:Name="mCurDownloadingLabel" Content="" HorizontalAlignment="Left" Margin="140,47,0,0" VerticalAlignment="Top" Height="25" Width="535" Grid.ColumnSpan="2"/>
-		<Label x:Name="mCurSizeLabel" Content="0KB" HorizontalAlignment="Left" Margin="140,85,0,0" VerticalAlignment="Top" Height="25" Width="255"/>
-		<Label x:Name="label_Copy3" Content="下载速度:" HorizontalAlignment="Left" Margin="56,122,0,0" VerticalAlignment="Top" Height="25" Width="61"/>
-		<Label x:Name="mCurSpeedLabel" Content="0KB/S" HorizontalAlignment="Left" Margin="120,122,0,0" VerticalAlignment="Top" Height="25" Width="220"/>
-		<Label x:Name="label_Copy5" Content="当前进度:" HorizontalAlignment="Left" Margin="56,159,0,0" VerticalAlignment="Top" Height="25" Width="61"/>
-		<ProgressBar x:Name="mCurFileProgress" HorizontalAlignment="Left" Height="15" Margin="131,164,0,0" VerticalAlignment="Top" Width="529" Grid.ColumnSpan="2"/>
-		<Label x:Name="labelFileCount" Content="文件数量:" HorizontalAlignment="Left" Margin="56,225,0,0" VerticalAlignment="Top" Height="25" Width="61"/>
-		<Label x:Name="mTotalFileCountText" Content="0" HorizontalAlignment="Left" Margin="115,225,0,0" VerticalAlignment="Top" Height="25" Width="150"/>
-		<Label x:Name="label_Copy8" Content="预计剩余时间:" HorizontalAlignment="Left" Margin="56,255,0,0" VerticalAlignment="Top" Height="25" Width="85"/>
-		<Label x:Name="mTotalTimeLabel" Content="00小时00分00秒" HorizontalAlignment="Left" Margin="140,255,0,0" VerticalAlignment="Top" Height="25" Width="190"/>
-		<Label x:Name="label_Copy10" Content="文件总大小:" HorizontalAlignment="Left" Margin="56,285,0,0" VerticalAlignment="Top" Height="25" Width="73"/>
-		<Label x:Name="mTotalSizeLabel" Content="0MB" HorizontalAlignment="Left" Margin="130,285,0,0" VerticalAlignment="Top" Height="25" Width="155" RenderTransformOrigin="0.5,0.5">
+
+		<Image x:Name="mBackground" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top" Height="441" Width="747" Source="Images/BottomMap.png" StretchDirection="UpOnly" Grid.ColumnSpan="2" OpacityMask="Black"/>
+		<Image x:Name="mTopMap" HorizontalAlignment="Left" Margin="-1,20,0,0" VerticalAlignment="Top" Height="73" Width="748" Source="Images/TopMap.png" StretchDirection="UpOnly" Grid.ColumnSpan="2" OpacityMask="Black"/>
+		<Image x:Name="mLogo" HorizontalAlignment="Left" Margin="246,-20,0,0" VerticalAlignment="Top" Height="114" Width="271" Source="Images/logo.png" StretchDirection="UpOnly" OpacityMask="Black"/>
+		<WrapPanel x:Name="mWindowMove" MouseMove="windowMove_Click" Background="#010576FB" DockPanel.Dock="Top" Grid.ColumnSpan="2" Margin="0,20,0,391"/>
+		<Button x:Name="mMinButton" Click="minButton_Click" Content="-"  BorderBrush="#00707070" FontSize="24" Background="#00000000" Foreground="White" Margin="650,54,5,405" RenderTransformOrigin="-0.333,0.633" Width="25" Height="25"/>
+		<Button x:Name="mCloseButton" Click="closeButton_Click" Content="X" BorderBrush="#00707070" Foreground="White" Background="#00000000" Margin="10,56,32,403" RenderTransformOrigin="12.033,3.2" Grid.Column="1" Width="25" Height="25"/>
+		<TextBlock x:Name="mText" Foreground="White" Text="版本更新" RenderTransformOrigin="2.08,0.5" Margin="41,62,589,408" Background="#00000000"/>
+		<Image x:Name="mIcon" HorizontalAlignment="Left" Margin="21,61,644,408" VerticalAlignment="Top" Height="16" Width="15" Source="Icon.ico" OpacityMask="Black"/>
+		<Label x:Name="label" Content="当前正在下载:" HorizontalAlignment="Left" Margin="56,120,0,0" VerticalAlignment="Top" Height="25" Width="85" Foreground="#FFFDFAFA"/>
+		<Label x:Name="label_Copy" Content="当前文件大小:" HorizontalAlignment="Left" Margin="56,158,0,0" VerticalAlignment="Top" Height="25" Width="85" Foreground="#FFFFFCFC"/>
+		<Label x:Name="mCurDownloadingLabel" Content="" HorizontalAlignment="Left" Margin="140,120,0,0" VerticalAlignment="Top" Height="25" Width="535" Foreground="#FFFDF9F9"/>
+		<Label x:Name="mCurSizeLabel" Content="0KB" HorizontalAlignment="Left" Margin="140,158,0,0" VerticalAlignment="Top" Height="25" Width="255" Foreground="#FFF9F8F8"/>
+		<Label x:Name="label_Copy3" Content="下载速度:" HorizontalAlignment="Left" Margin="56,195,0,0" VerticalAlignment="Top" Height="25" Width="61" Foreground="#FFFBF8F8"/>
+		<Label x:Name="mCurSpeedLabel" Content="0KB/S" HorizontalAlignment="Left" Margin="120,195,0,0" VerticalAlignment="Top" Height="25" Width="220" Foreground="#FFF7F6F6"/>
+		<Label x:Name="label_Copy5" Content="当前进度:" HorizontalAlignment="Left" Margin="56,232,0,0" VerticalAlignment="Top" Height="25" Width="61" Foreground="#FFFFFCFC"/>
+		<ProgressBar x:Name="mCurFileProgress" HorizontalAlignment="Left" Height="15" Margin="131,237,0,0" VerticalAlignment="Top" Width="529" BorderBrush="#00BCBCBC">
+			<ProgressBar.Background>
+				<ImageBrush ImageSource="Images/ProgressBarBackground.png" Stretch="Fill" TileMode="None" />
+			</ProgressBar.Background>
+			<ProgressBar.Foreground>
+				<ImageBrush ImageSource="Images/ProgressBar.png" Stretch="Fill" TileMode="None" />
+			</ProgressBar.Foreground>
+		</ProgressBar>
+		<Label x:Name="labelFileCount" Content="文件数量:" HorizontalAlignment="Left" Margin="56,298,0,0" VerticalAlignment="Top" Height="25" Width="61" Foreground="#FFFBFAFA"/>
+		<Label x:Name="mTotalFileCountText" Content="0" HorizontalAlignment="Left" Margin="115,298,0,0" VerticalAlignment="Top" Height="25" Width="150" Foreground="#FFFDFCFC"/>
+		<Label x:Name="label_Copy8" Content="预计剩余时间:" HorizontalAlignment="Left" Margin="56,328,0,0" VerticalAlignment="Top" Height="25" Width="85" Foreground="#FFFDF9F9"/>
+		<Label x:Name="mTotalTimeLabel" Content="00小时00分00秒" HorizontalAlignment="Left" Margin="140,328,0,0" VerticalAlignment="Top" Height="25" Width="190" Foreground="#FFFBFBFB"/>
+		<Label x:Name="label_Copy10" Content="文件总大小:" HorizontalAlignment="Left" Margin="56,358,0,0" VerticalAlignment="Top" Height="25" Width="73" Foreground="#FFFBF7F7"/>
+		<Label x:Name="mTotalSizeLabel" Content="0MB" HorizontalAlignment="Left" Margin="130,358,0,0" VerticalAlignment="Top" Height="25" Width="155" RenderTransformOrigin="0.5,0.5" Foreground="#FFFBFAFA">
 			<Label.RenderTransform>
 				<TransformGroup>
 					<ScaleTransform/>
@@ -34,10 +50,21 @@
 				</TransformGroup>
 			</Label.RenderTransform>
 		</Label>
-		<Label x:Name="label_Copy12" Content="总进度:" HorizontalAlignment="Left" Margin="56,315,0,0" VerticalAlignment="Top" Height="25" Width="49"/>
-		<ProgressBar x:Name="mTotalProgress" HorizontalAlignment="Left" Height="15" Margin="131,319,0,0" VerticalAlignment="Top" Width="529" Grid.ColumnSpan="2"/>
-		<Button x:Name="mCancelButton" Content="取消" HorizontalAlignment="Left" Margin="340,360,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.027,0.684" Height="33" Click="mCancelButton_Click"/>
-		<Label x:Name="mCurFilePercent" Content="0.0%" HorizontalAlignment="Left" Margin="84,159,0,0" VerticalAlignment="Top" Height="25" Width="52" RenderTransformOrigin="0.5,0.5" Grid.Column="1">
+		<Label x:Name="label_Copy12" Content="总进度:" HorizontalAlignment="Left" Margin="56,388,0,0" VerticalAlignment="Top" Height="25" Width="49" Foreground="#FFFDFDFD"/>
+		<ProgressBar x:Name="mTotalProgress" HorizontalAlignment="Left" Height="15" Margin="131,392,0,0" VerticalAlignment="Top" Width="529" BorderBrush="#00BCBCBC">
+			<ProgressBar.Background>
+				<ImageBrush ImageSource="Images/ProgressBarBackground.png" Stretch="Fill" TileMode="None" />
+			</ProgressBar.Background>
+			<ProgressBar.Foreground>
+				<ImageBrush ImageSource="Images/ProgressBar.png" Stretch="Fill" TileMode="None" />
+			</ProgressBar.Foreground>
+		</ProgressBar>
+		<Button x:Name="mCancelButton" HorizontalAlignment="Left" Margin="340,433,0,0" VerticalAlignment="Top" Width="87" RenderTransformOrigin="0.027,0.684" Height="33" Click="cancelButton_Click" Content="取消" BorderBrush="#00707070" Foreground="#FFFBF9F9">
+			<Button.Background>
+				<ImageBrush ImageSource="Images/ButtonBackground.png" Stretch="Fill" TileMode="None" />
+			</Button.Background>
+		</Button>
+		<Label x:Name="mCurFilePercent" Content="0.0%" HorizontalAlignment="Left" Margin="5,231,0,0" VerticalAlignment="Top" Height="25" Width="54" RenderTransformOrigin="0.5,0.5" Foreground="#FFFFFEFE" Grid.Column="1">
 			<Label.RenderTransform>
 				<TransformGroup>
 					<ScaleTransform/>
@@ -47,7 +74,7 @@
 				</TransformGroup>
 			</Label.RenderTransform>
 		</Label>
-		<Label x:Name="mTotalPercent" Content="0.0%" HorizontalAlignment="Left" Margin="84,314,0,0" VerticalAlignment="Top" Height="25" Width="54" RenderTransformOrigin="0.5,0.5" Grid.Column="1">
+		<Label x:Name="mTotalPercent" Content="0.0%" HorizontalAlignment="Left" Margin="2,386,0,0" VerticalAlignment="Top" Height="25" Width="54" RenderTransformOrigin="0.5,0.5" Foreground="#FFFFFBFB" Grid.Column="1">
 			<Label.RenderTransform>
 				<TransformGroup>
 					<ScaleTransform/>

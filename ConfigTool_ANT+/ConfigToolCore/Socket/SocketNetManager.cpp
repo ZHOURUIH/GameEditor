@@ -1,31 +1,24 @@
 ﻿#include "SocketNetManager.h"
+#include "SocketPacketSpeed.h"
+#include "SocketPacketFriction.h"
 #include "ToolCoreLog.h"
-#include "ToolCoreUtility.h"
-#include "DataManager.h"
+#include "SocketPacketFactory.h"
+#include "SocketPacketFactoryManager.h"
 #include "txMemoryTrace.h"
-
-#define CLOSE_THREAD(thread)	\
-if (thread != NULL)				\
-{								\
-	TerminateThread(thread, 0);	\
-	thread = NULL;				\
-}
+#include "ToolCoreUtility.h"
 
 SocketNetManager::SocketNetManager()
-:
-mCurElapsedTime(0.0f)
 {
-	resizeBuffer(2048);
+	mSocketPacketFactoryManager = TRACE_NEW(SocketPacketFactoryManager, mSocketPacketFactoryManager);
 }
 
-SocketNetManager::~SocketNetManager()
-{
-	destroy();
-}
-
-void SocketNetManager::init(int port)
+void SocketNetManager::init(const int& port, const int& broadcastPort)
 {
 	mPort = port;
+	mBroadcastPort = broadcastPort;
+
+	// 初始化工厂
+	mSocketPacketFactoryManager->init();
 
 	BYTE minorVer = 2;
 	BYTE majorVer = 2;
@@ -54,6 +47,21 @@ void SocketNetManager::init(int port)
 		return;
 	}
 
+	mBroadcastSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (mBroadcastSocket == INVALID_SOCKET)
+	{
+		TOOL_CORE_ERROR("create broadcast socket err : %d" + WSAGetLastError());
+		return;
+	}
+
+	mBroadcastAddr.sin_family = AF_INET;
+	mBroadcastAddr.sin_port = htons(mBroadcastPort);
+	mBroadcastAddr.sin_addr.s_addr = INADDR_BROADCAST;
+
+	bool bOpt = true;
+	// 设置该套接字为广播类型
+	setsockopt(mBroadcastSocket, SOL_SOCKET, SO_BROADCAST, (char*)&bOpt, sizeof(bOpt));
+
 	SOCKADDR_IN addrSrv;
 	addrSrv.sin_family = AF_INET;
 	addrSrv.sin_port = htons(mPort);
@@ -65,48 +73,90 @@ void SocketNetManager::init(int port)
 		return;
 	}
 
-	mUDPThread = CreateThread(NULL, 0, updateUdpServer, this, 0, NULL);
-	mParseDataThread = CreateThread(NULL, 0, praseDataThread, this, 0, NULL);
+	mSocketThread = CreateThread(NULL, 0, SocketNetManager::updateUdpServer, this, 0, NULL);
+	mOutputThread = CreateThread(NULL, 0, SocketNetManager::updateOutput, this, 0, NULL);
+}
+
+void SocketNetManager::update(float elapsedTime)
+{
+	processInput();
 }
 
 void SocketNetManager::destroy()
 {
-	CLOSE_THREAD(mUDPThread);
-	CLOSE_THREAD(mParseDataThread);
+	TerminateThread(mSocketThread, 0);
+	TerminateThread(mOutputThread, 0);
 	WSACleanup();
 	closesocket(mServer);
+	closesocket(mBroadcastSocket);
+	UNLOCK(mInputMutex);
+	UNLOCK(mOutputMutex);
+	TRACE_DELETE(mSocketPacketFactoryManager);
 }
 
-DWORD SocketNetManager::praseDataThread(LPVOID lpParameter)
+void SocketNetManager::processInput()
 {
-	SocketNetManager* netManager = static_cast<SocketNetManager*>(lpParameter);
-	while (true)
+	// 等待解锁接收流的读写,并锁定接收流
+	LOCK(mInputMutex);
+	int receiveCount = mReceiverStream.size();
+	for (int i = 0; i < receiveCount; ++i)
 	{
-		Sleep(30);
-		if (netManager->mDataLength > 0)
-		{
-			LOCK(netManager->mReadBufferLock);
-			int parsedCount = 0;
-			PARSE_RESULT ret = mDataManager->setData(netManager->mReadBuffer, netManager->mDataLength, parsedCount);
-			// 解析成功,则将已解析的数据移除
-			if (ret == PR_SUCCESS)
-			{
-				netManager->removeDataFromBuffer(0, parsedCount);
-			}
-			// 解析失败,则将缓冲区清空
-			else if (ret == PR_ERROR)
-			{
-				netManager->clearBuffer();
-			}
-			// 数据不足,继续等待接收数据
-			else if (ret == PR_NOT_ENOUGH)
-			{
-				;
-			}
-			UNLOCK(netManager->mReadBufferLock);
-		}
+		mInputStreamList.push_back(mReceiverStream[i]);
 	}
-	return 0;
+	mReceiverStream.clear();
+	// 锁定接收流的读写
+	UNLOCK(mInputMutex);
+
+	int streamCount = mInputStreamList.size();
+	for (int i = 0; i < streamCount; ++i)
+	{
+		INPUT_ELEMENT element = mInputStreamList[i];
+		SocketPacket* packetReply = createPacket(element.mType);
+		if (packetReply != NULL)
+		{
+			packetReply->read(element.mData, element.mDataSize);
+			packetReply->execute();
+			destroyPacket(packetReply);
+		}
+		TRACE_DELETE_ARRAY(element.mData);
+	}
+	mInputStreamList.clear();
+}
+
+SocketPacket* SocketNetManager::createPacket(const SOCKET_PACKET& type)
+{
+	if (type == SP_MAX)
+	{
+		return NULL;
+	}
+	return mSocketPacketFactoryManager->getFactory(type)->createPacket();
+}
+
+void SocketNetManager::destroyPacket(SocketPacket* packet)
+{
+	if (packet == NULL)
+	{
+		return;
+	}
+	mSocketPacketFactoryManager->getFactory(packet->getPacketType())->destroyPacket(packet);
+}
+
+void SocketNetManager::sendMessage(SocketPacket* packet, const bool& destroyPacketEndSend)
+{
+	// 将包的数据存入列表
+	int packetSize = packet->getSize();
+	char* packetData = TRACE_NEW_ARRAY(char, packetSize, packetData);
+	packet->write(packetData, packetSize);
+
+	// 保存发送数据
+	LOCK(mOutputMutex);
+	mOutputStreamList.push_back(OUTPUT_STREAM(packetData, packetSize));
+	UNLOCK(mOutputMutex);
+
+	if (destroyPacketEndSend)
+	{
+		destroyPacket(packet);
+	}
 }
 
 DWORD WINAPI SocketNetManager::updateUdpServer(LPVOID lpParameter)
@@ -128,64 +178,51 @@ DWORD WINAPI SocketNetManager::updateUdpServer(LPVOID lpParameter)
 			TOOL_CORE_ERROR("网络连接中断! nRecv : %d, error code : %d", nRecv, WSAGetLastError());
 			return 0;
 		}
-		LOCK(netManager->mReadBufferLock);
-		netManager->addDataToBuffer((unsigned char*)buff, nRecv);
-		std::string str = StringUtility::charArrayToHexString((unsigned char*)buff, nRecv) + "\n";
-		OutputDebugStringA(str.c_str());
-		UNLOCK(netManager->mReadBufferLock);
+		// 判断消息包类型
+		SOCKET_PACKET type = SocketPacketFactoryManager::checkPacketType(buff, nRecv);
+		netManager->receivePacket(type, buff, nRecv);
 	}
 	return 0;
 }
 
-void SocketNetManager::resizeBuffer(const int& size)
+DWORD WINAPI SocketNetManager::updateOutput(LPVOID lpParameter)
 {
-	if (mBufferSize >= size)
+	SocketNetManager* netManager = (SocketNetManager*)(lpParameter);
+	SOCKADDR* broadcastAddr = (SOCKADDR*)&netManager->mBroadcastAddr;
+	int broadcastAddrLen = sizeof(netManager->mBroadcastAddr);
+	while (true)
 	{
-		return;
-	}
-	LOCK(mReadBufferLock);
-	if (mReadBuffer != NULL)
-	{
-		// 创建新的缓冲区,将原来的数据拷贝到新缓冲区中,销毁原缓冲区,指向新缓冲区
-		unsigned char* newBuffer = TRACE_NEW_ARRAY(unsigned char, size, newBuffer);
-		if (mDataLength > 0)
+		// 如果有需要发送的数据,则先发送数据
+		LOCK(netManager->mOutputMutex);
+		int outputCount = netManager->mOutputStreamList.size();
+		if (outputCount > 0)
 		{
-			memcpy(newBuffer, mReadBuffer, mDataLength);
+			for (int i = 0; i < outputCount; ++i)
+			{
+				OUTPUT_STREAM outStream = netManager->mOutputStreamList[i];
+				int nSendSize = sendto(netManager->mBroadcastSocket, outStream.mData, outStream.mDataSize, 0, broadcastAddr, broadcastAddrLen);
+				TRACE_DELETE_ARRAY(outStream.mData);
+				if (SOCKET_ERROR == nSendSize)
+				{
+					TOOL_CORE_ERROR("广播错误， error code : %d", WSAGetLastError());
+					UNLOCK(netManager->mOutputMutex);
+					return 0;
+				}
+			}
+			netManager->mOutputStreamList.clear();
 		}
-		TRACE_DELETE_ARRAY(mReadBuffer);
-		mReadBuffer = newBuffer;
-		mBufferSize = size;
+		UNLOCK(netManager->mOutputMutex);
 	}
-	else
-	{
-		mReadBuffer = TRACE_NEW_ARRAY(unsigned char, size, mReadBuffer);
-		mBufferSize = size;
-	}
-	UNLOCK(mReadBufferLock);
 }
 
-void SocketNetManager::addDataToBuffer(unsigned char* data, const int& dataCount)
+void SocketNetManager::receivePacket(const SOCKET_PACKET& type, char* data, const int& dataSize)
 {
-	// 如果当前已经存放不下新的数据了,不再处理新数据
-	if (mBufferSize - mDataLength < dataCount)
-	{
-		return;
-	}
-	memcpy(mReadBuffer + mDataLength, data, dataCount);
-	mDataLength += dataCount;
-}
-
-void SocketNetManager::removeDataFromBuffer(const int& start, const int& count)
-{
-	if (mDataLength < start + count)
-	{
-		return;
-	}
-	memmove(mReadBuffer + start, mReadBuffer + start + count, mDataLength - start - count);
-	mDataLength -= count;
-}
-
-void SocketNetManager::clearBuffer()
-{
-	mDataLength = 0;
+	char* p = TRACE_NEW_ARRAY(char, dataSize, p);
+	memcpy(p, data, dataSize);
+	INPUT_ELEMENT element(type, p, dataSize);
+	// 等待解锁接收流的读写,并锁定接收流
+	LOCK(mInputMutex);
+	mReceiverStream.push_back(element);
+	// 锁定接收流的读写
+	UNLOCK(mInputMutex);
 }

@@ -474,10 +474,10 @@ void StringUtility::strToUpper(std::string& str)
 	}
 }
 
-std::string StringUtility::charToHex(unsigned char byte)
+std::string StringUtility::charToHex(unsigned char byte, const bool& upper)
 {
 	char byteHex[3] = { 0 };
-	char charPool[] = { 'A', 'B', 'C', 'D', 'E', 'F' };
+	char cA = upper ? 'A' : 'a';
 	unsigned char highBit = byte >> 4;
 	// 高字节的十六进制
 	if (highBit < (unsigned char)10)
@@ -486,7 +486,7 @@ std::string StringUtility::charToHex(unsigned char byte)
 	}
 	else
 	{
-		byteHex[0] = charPool[highBit - 10];
+		byteHex[0] = cA + highBit - 10;
 	}
 	// 低字节的十六进制
 	unsigned char lowBit = byte & 0x0F;
@@ -496,25 +496,65 @@ std::string StringUtility::charToHex(unsigned char byte)
 	}
 	else
 	{
-		byteHex[1] = charPool[lowBit - 10];
+		byteHex[1] = cA + lowBit - 10;
 	}
 	return byteHex;
 }
 
-std::string StringUtility::charArrayToHexString(unsigned char* data, const int& dataCount)
+unsigned char StringUtility::hexStringToChar(const std::string& str)
 {
-	int showCount = dataCount * 3 + 1;
+	unsigned char highBit = 0;
+	unsigned char lowBit = 0;
+	char highBitChar = str[0];
+	char lowBitChar = str[1];
+	if (highBitChar >= 'A' && highBitChar <= 'F')
+	{
+		highBit = 10 + highBitChar - 'A';
+	}
+	else
+	{
+		highBit = highBitChar - '0';
+	}
+	if (lowBitChar >= 'A' && lowBitChar <= 'F')
+	{
+		lowBit = 10 + lowBitChar - 'A';
+	}
+	else
+	{
+		lowBit = lowBitChar - '0';
+	}
+	return highBit << 4 | lowBit;
+}
+
+std::string StringUtility::charArrayToHexString(unsigned char* data, const int& dataCount, const bool& addSpace, const bool& upper)
+{
+	int oneLength = addSpace ? 3 : 2;
+	int showCount = dataCount * oneLength + 1;
 	char* byteData = TRACE_NEW_ARRAY(char, showCount, byteData);
 	memset(byteData, 0, showCount);
 	for (int j = 0; j < dataCount; ++j)
 	{
 		unsigned char curByte = data[j];
-		std::string byteStr = charToHex(curByte);
-		byteData[j * 3 + 0] = byteStr[0];
-		byteData[j * 3 + 1] = byteStr[1];
-		byteData[j * 3 + 2] = ' ';
+		std::string byteStr = charToHex(curByte, upper);
+		byteData[j * oneLength + 0] = byteStr[0];
+		byteData[j * oneLength + 1] = byteStr[1];
+		if (oneLength >= 3)
+		{
+			byteData[j * oneLength + 2] = ' ';
+		}
 	}
 	std::string str(byteData);
 	TRACE_DELETE_ARRAY(byteData);
 	return str;
+}
+
+void StringUtility::hexStringToCharArray(const std::string& str, unsigned char*& data, int& dataCount)
+{
+	std::string newStr = StringUtility::strReplaceAll(str, " ", "");
+	dataCount = newStr.length() / 2;
+	data = TRACE_NEW_ARRAY(unsigned char, dataCount, data);
+	for (int i = 0; i < dataCount; ++i)
+	{
+		data[i] = hexStringToChar(newStr.substr(i * 2, 2));
+	}
 }

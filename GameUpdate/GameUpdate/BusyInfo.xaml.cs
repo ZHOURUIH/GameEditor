@@ -25,7 +25,18 @@ namespace GameUpdate
 		}
 		public void setInfo(string info)
 		{
-			mInfoBlock.Text = info;
+			mInfo.Content = info;
+		}
+		private void closeButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
+		private void windowMove_Click(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				this.DragMove();
+			}
 		}
 	}
 }

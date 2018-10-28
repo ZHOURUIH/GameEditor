@@ -40,8 +40,10 @@ public:
 	static txVector<std::string> findSubstr(txVector<std::string>& res, std::string dst, bool sensitive);
 	static void strToLower(std::string& str);
 	static void strToUpper(std::string& str);
-	static std::string charToHex(unsigned char byte);
-	static std::string charArrayToHexString(unsigned char* data, const int& dataCount);
+	static std::string charToHex(unsigned char byte, const bool& upper = true);
+	static unsigned char hexStringToChar(const std::string& str);
+	static std::string charArrayToHexString(unsigned char* data, const int& dataCount, const bool& addSpace = true, const bool& upper = true);
+	static void hexStringToCharArray(const std::string& str, unsigned char*& data, int& dataCount);
 	static void jsonStartArray(std::string& str){ str += "["; }
 	static void jsonEndArray(std::string& str)
 	{
@@ -62,6 +64,14 @@ public:
 		str += "\"";
 		str += value;
 		str += "\",";
+	}
+	// ²»´ø¶ººÅ
+	static void jsonAddObject(std::string& str, std::string name, std::string value)
+	{
+		str += "\"";
+		str += name;
+		str += "\":";
+		str += value;
 	}
 };
 

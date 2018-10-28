@@ -1,7 +1,7 @@
 #include "txMemoryCheck.h"
 
 txSet<void*> txMemoryCheck::mUsedPtrs;
-txThreadLock txMemoryCheck::mLock;
+ThreadLock txMemoryCheck::mLock;
 
 void txMemoryCheck::usePtr(void* ptr)
 {

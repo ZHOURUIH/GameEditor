@@ -9,18 +9,14 @@
 void txCommandSystem::update(float elapsedTime)
 {
 	// 同步命令输入列表到命令处理列表中
-	// 等待解锁缓冲区
-	waitUnlockBuffer();
-	// 锁定缓冲区
-	lockBuffer();
+	LOCK(mBufferLock);
 	int inputCount = mCommandBufferInput.size();
 	for (int i = 0; i < inputCount; ++i)
 	{
 		mCommandBufferProcess.push_back(mCommandBufferInput[i]);
 	}
 	mCommandBufferInput.clear();
-	// 解锁缓冲区
-	unlockBuffer();
+	UNLOCK(mBufferLock);
 
 	// 如果一帧时间大于1秒,则认为是无效更新
 	if (elapsedTime >= 1.0f)
@@ -28,7 +24,7 @@ void txCommandSystem::update(float elapsedTime)
 		return;
 	}
 	// 开始处理命令处理列表
-	std::vector<DelayCommand>::iterator iter = mCommandBufferProcess.begin();
+	auto iter = mCommandBufferProcess.begin();
 	for (; iter != mCommandBufferProcess.end();)
 	{
 		iter->mDelayTime -= elapsedTime;
@@ -52,8 +48,8 @@ bool txCommandSystem::interruptCommand(txCommand* cmd)
 	{
 		return false;
 	}
-	std::vector<DelayCommand>::iterator iter = mCommandBufferProcess.begin();
-	std::vector<DelayCommand>::iterator iterEnd = mCommandBufferProcess.end();
+	auto iter = mCommandBufferProcess.begin();
+	auto iterEnd = mCommandBufferProcess.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		// 找到该命令,然后销毁该命令,从列表中移除
@@ -102,14 +98,9 @@ void txCommandSystem::pushDelayCommand(txCommand* cmd, txCommandReceiver* cmdRec
 	if (cmd->isDelayCommand())
 	{
 		DelayCommand delayCommand(delayExecute, cmd, cmdReceiver);
-
-		// 等待解锁缓冲区
-		waitUnlockBuffer();
-		// 锁定缓冲区
-		lockBuffer();
+		LOCK(mBufferLock);
 		mCommandBufferInput.push_back(delayCommand);
-		// 解锁缓冲区
-		unlockBuffer();
+		UNLOCK(mBufferLock);
 	}
 	else
 	{
@@ -135,19 +126,10 @@ void txCommandSystem::destroy()
 	mCommandBufferProcess.clear();
 }
 
-void txCommandSystem::waitUnlockBuffer()
-{
-	while (mLockBuffer)
-	{}
-}
-
 void txCommandSystem::notifyReceiverDestroied(txCommandReceiver* receiver)
 {
-	// 等待解锁缓冲区
-	waitUnlockBuffer();
-	// 锁定缓冲区
-	lockBuffer();
-	std::vector<DelayCommand>::iterator iterCommandInput = mCommandBufferInput.begin();
+	LOCK(mBufferLock);
+	auto iterCommandInput = mCommandBufferInput.begin();
 	for (; iterCommandInput != mCommandBufferInput.end();)
 	{
 		if (iterCommandInput->mReceiver == receiver)
@@ -160,10 +142,9 @@ void txCommandSystem::notifyReceiverDestroied(txCommandReceiver* receiver)
 			++iterCommandInput;
 		}
 	}
-	// 解锁缓冲区
-	unlockBuffer();
+	UNLOCK(mBufferLock);
 
-	std::vector<DelayCommand>::iterator iterCommand = mCommandBufferProcess.begin();
+	auto iterCommand = mCommandBufferProcess.begin();
 	for (; iterCommand != mCommandBufferProcess.end();)
 	{
 		if (iterCommand->mReceiver == receiver)

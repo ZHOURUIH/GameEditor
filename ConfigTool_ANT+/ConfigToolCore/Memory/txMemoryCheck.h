@@ -1,7 +1,7 @@
 #ifndef _TX_MEMORY_CHECK_H_
 #define _TX_MEMORY_CHECK_H_
 
-#include "txThreadLock.h"
+#include "ThreadLock.h"
 #include "txVector.h"
 #include "txMap.h"
 #include "txSet.h"
@@ -14,7 +14,7 @@ public:
 	static bool canAccess(void* ptr);
 protected:
 	static txSet<void*> mUsedPtrs;
-	static txThreadLock mLock;
+	static ThreadLock mLock;
 };
 
 #endif

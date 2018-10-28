@@ -4,11 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameUpdate"
-        mc:Ignorable="d" Height="197" Width="398.794" WindowStyle="None">
-    <Grid>
-        <Label x:Name="mInfo" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="375" Height="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-            <TextBlock x:Name="mInfoBlock" TextWrapping="Wrap" Width="365" TextAlignment="Center"/>
-        </Label>
-
+        mc:Ignorable="d" Height="174" Width="376" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" Background="#00FDFAFA">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="177*"/>
+			<ColumnDefinition Width="199*"/>
+		</Grid.ColumnDefinitions>
+		<Image x:Name="mBackground" HorizontalAlignment="Left" VerticalAlignment="Top" Height="174" Width="376" Source="Images/PopupBottomMap.png" StretchDirection="UpOnly" Grid.ColumnSpan="2"/>
+		<WrapPanel x:Name="mWindowMove" MouseMove="windowMove_Click" Background="#000576FB" DockPanel.Dock="Top" Margin="0,0,0,144" Grid.ColumnSpan="2"/>
+		<Button x:Name="mCloseButton" Click="closeButton_Click" Content="X" BorderBrush="#00707070" Foreground="White" Background="#00000000" Margin="168,0,8,144" RenderTransformOrigin="0,0" Grid.Column="1"/>
+        <Label x:Name="mInfo" Content="123" HorizontalAlignment="Left" Margin="25,47,0,0" VerticalAlignment="Top" Width="327" Height="105" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="2" Foreground="#FFFDFAFA"/>
     </Grid>
 </Window>

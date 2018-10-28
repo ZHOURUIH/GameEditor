@@ -2,19 +2,31 @@
 #include "ConfigToolCore.h"
 
 ConfigToolCore* ToolCoreBase::mConfigToolCore = NULL;
-SocketNetManager* ToolCoreBase::mSocketNetManager = NULL;
+SocketWireless* ToolCoreBase::mSocketWireless = NULL;
 CTEventSystem* ToolCoreBase::mEventSystem = NULL;
 txCommandSystem* ToolCoreBase::mCommandSystem = NULL;
-DataManager* ToolCoreBase::mDataManager = NULL;
+WirelessDataManager* ToolCoreBase::mWirelessDataManager = NULL;
+DataBase* ToolCoreBase::mDataBase = NULL;
+DeviceRegisteManager* ToolCoreBase::mDeviceRegisteManager = NULL;
+SpeedDataManager* ToolCoreBase::mSpeedDataManager = NULL;
+SocketNetManager* ToolCoreBase::mSocketNetManager = NULL;
+LibcurlNetManager* ToolCoreBase::mLibcurlNetManager = NULL;
+LogSystem* ToolCoreBase::mLogSystem = NULL;
 
 void ToolCoreBase::notifyConstructDone()
 {
 	if (mConfigToolCore == NULL)
 	{
 		mConfigToolCore = ConfigToolCore::getSingletonPtr();
-		mSocketNetManager = mConfigToolCore->getSocketNetManager();
+		mSocketWireless = mConfigToolCore->getSocketWireless();
 		mEventSystem = mConfigToolCore->getEventSystem();
 		mCommandSystem = mConfigToolCore->getCommandSystem();
-		mDataManager = mConfigToolCore->getDataManager();
+		mWirelessDataManager = mConfigToolCore->getWirelessDataManager();
+		mDataBase = mConfigToolCore->getDataBase();
+		mDeviceRegisteManager = mConfigToolCore->getDeviceRegisteManager();
+		mSpeedDataManager = mConfigToolCore->getSpeedDataManager();
+		mSocketNetManager = mConfigToolCore->getSocketNetManager();
+		mLibcurlNetManager = mConfigToolCore->getLibcurlNetManager();
+		mLogSystem = mConfigToolCore->getLogSystem();
 	}
 }

@@ -4,18 +4,12 @@
 void CommandEditorFrameNotifyPanelShow::execute()
 {
 	EditorFrame* editorFrame = static_cast<EditorFrame*>(mReceiver);
-	wxWindow* window = editorFrame->getWindow(mPanelName);
-	if (window == NULL)
+	int windowID = editorFrame->getPanelID(mPanelName);
+	if (windowID < 0)
 	{
 		return;
 	}
-	txMap<wxWindow*, int>& windowIDList = editorFrame->getWindowIDList();
-	txMap<wxWindow*, int>::iterator iterWindow = windowIDList.find(window);
-	if (iterWindow == windowIDList.end())
-	{
-		return;
-	}
-	editorFrame->getWindowToolBar()->ToggleTool(iterWindow->second, mShow);
+	editorFrame->getWindowToolBar()->ToggleTool(windowID, mShow);
 }
 
 std::string CommandEditorFrameNotifyPanelShow::showDebugInfo()

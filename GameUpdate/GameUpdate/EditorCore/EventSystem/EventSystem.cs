@@ -130,7 +130,7 @@ public class EventSystem : FrameComponent
 		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_DOWNLOAD_VERSION, 0);
 		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_DOWNLOAD_LIST_FILE, 0);
 		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_DOWNLOADING_LIST_FILE, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_NEW_VERSION, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_NEW_VERSION, 2);
 		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_DOWNLOAD, 1);
 		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_FINISH_DOWNLOAD, 1);
 		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_GENERATE_LOCAL_FILE, 1);
