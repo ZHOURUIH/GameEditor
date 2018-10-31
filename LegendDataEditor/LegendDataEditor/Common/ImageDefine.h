@@ -2,6 +2,7 @@
 #define _IMAGE_DEFINE_H_
 
 #include "ServerDefine.h"
+#include "txMemoryTrace.h"
 
 // WIX 文件头格式 
 struct WIXFileImageInfo
@@ -14,8 +15,14 @@ struct WIXFileImageInfo
 struct WILFileHeader
 {
 	char mInfo[44];
-	char mPlayInfo[12];
-	unsigned char mColor[256][4];
+	int mImageCount;
+	int mColorCount;
+	int mColorPadSize;
+	unsigned char* mColor;
+	~WILFileHeader()
+	{
+		TRACE_DELETE_ARRAY(mColor);
+	}
 };
 const int ColorPadIndex = 44 + 12;
 
@@ -25,7 +32,7 @@ struct WILFileImageInfo
 	short mHeight;		// 图片高
 	short mPosX;		// 图片像素偏移X
 	short mPosY;		// 图片像素偏移Y
-	char* mColor;		// 长度为mWidth * mHeight * 4
+	unsigned char* mColor;		// 长度为mWidth * mHeight * 4
 };
 const int ImageHeaderLength = 8;
 

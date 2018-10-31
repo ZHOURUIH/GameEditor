@@ -19,7 +19,7 @@
 #include "SceneMapAdvance.h"
 #include "MapTileAdvance.h"
 
-void ImageUtility::encodePNG(const std::string& path, char* color, int width, int height, FREE_IMAGE_FORMAT format)
+void ImageUtility::encodePNG(const std::string& path, unsigned char* color, int width, int height, FREE_IMAGE_FORMAT format)
 {
 	std::string dir = StringUtility::getFilePath(path);
 	FileUtility::createFolder(dir);
@@ -65,14 +65,11 @@ bool ImageUtility::readWilHeader(const std::string& filePath, WILFileHeader& hea
 	}
 	txSerializer serializer(fileBuffer, fileSize);
 	serializer.readBuffer(header.mInfo, 44);
-	serializer.readBuffer(header.mPlayInfo, 12);
-	for (int i = 0; i < 256; ++i)
-	{
-		for (int j = 0; j < 4; ++j)
-		{
-			serializer.read(header.mColor[i][j]);
-		}
-	}
+	serializer.read(header.mImageCount);
+	serializer.read(header.mColorCount);
+	serializer.read(header.mColorPadSize);
+	TRACE_NEW_ARRAY(unsigned char, header.mColorPadSize, header.mColor);
+	memcpy(header.mColor, serializer.getBuffer() + serializer.getIndex(), header.mColorPadSize);
 	TRACE_DELETE_ARRAY(fileBuffer);
 	return true;
 }
@@ -94,7 +91,18 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 		std::cout << "找不到wil文件" << std::endl;
 		return;
 	}
-
+	// 位图的位数,8位图或者16位图,8位图使用调色板,16位图使用16位表示颜色
+	int bpp = 0;
+	if (wilHeader.mColorCount == 0xFF + 1)
+	{
+		bpp = 8;
+	}
+	else if (wilHeader.mColorCount == 0xFFFF + 1)
+	{
+		bpp = 16;
+	}
+	std::string fileNameNoSuffix = StringUtility::getFileNameNoSuffix(wilFileName);
+	std::cout << "正在解析" << fileNameNoSuffix << ", 图片数量 : " << wilHeader.mImageCount << ", 颜色位数 : " << bpp << std::endl;
 	POINT* posList = TRACE_NEW_ARRAY(POINT, wixFileHeader.mPositionList.size(), posList);
 	int fileSize = 0;
 	char* fileBuffer = FileUtility::openBinaryFile(wilFileName, &fileSize);
@@ -107,7 +115,12 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 		{
 			continue;
 		}
+		if (i == 12000)
+		{
+			int a = 0;
+		}
 		serializer.setIndex(startPos);
+		const char* chrBuf = serializer.getBuffer() + serializer.getIndex();
 		WILFileImageInfo curInfo;
 		// 宽高,位置偏移
 		serializer.read(curInfo.mWidth);
@@ -116,20 +129,53 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 		serializer.read(curInfo.mPosY);
 		// 根据颜色索引在调色板中获取颜色数据
 		int pixelCount = curInfo.mWidth * curInfo.mHeight;
-		TRACE_NEW_ARRAY(char, pixelCount * 4, curInfo.mColor);
-		for (int j = 0; j < pixelCount; ++j)
+		int lineLength = curInfo.mWidth;
+		// 位图要按4字节对齐,每行的字节数必须为4的倍数,不够的需要补齐
+		// 8位图,则需要按4个字节对齐
+		if (bpp == 8)
 		{
-			if (startPos + ImageHeaderLength + j >= fileSize)
+			if (curInfo.mWidth % 4 != 0)
 			{
-				std::cout << "error" <<std::endl;
-				break;
+				lineLength += 4 - curInfo.mWidth % 4;
 			}
-			unsigned char pixelIndex = fileBuffer[startPos + ImageHeaderLength + j];
-			// 0蓝,1绿,2红
-			curInfo.mColor[j * 4 + 0] = wilHeader.mColor[pixelIndex][0];// 蓝
-			curInfo.mColor[j * 4 + 1] = wilHeader.mColor[pixelIndex][1];// 绿
-			curInfo.mColor[j * 4 + 2] = wilHeader.mColor[pixelIndex][2];// 红
-			curInfo.mColor[j * 4 + 3] = pixelIndex == 0 ? 0 : (char)255;
+		}
+		// 16位图图片宽度必须为2的倍数,不够则需要按2的倍数来读取,否则像素会错位
+		else  if (bpp == 16)
+		{
+			if (curInfo.mWidth % (bpp / 8) != 0)
+			{
+				lineLength += (bpp / 8) - curInfo.mWidth % (bpp / 8);
+			}
+		}
+		// 固定转换为32位png图片
+		TRACE_NEW_ARRAY(unsigned char, pixelCount * 4, curInfo.mColor);
+		for (int y = 0; y < curInfo.mHeight; ++y)
+		{
+			for (int x = 0; x < curInfo.mWidth; ++x)
+			{
+				int pos = y * lineLength + x;
+				int pngPos = y * curInfo.mWidth + x;
+				// 8bit
+				if (wilHeader.mColorCount == 0xFF + 1)
+				{
+					unsigned char pixelIndex = fileBuffer[startPos + ImageHeaderLength + pos];
+					// 0蓝,1绿,2红
+					curInfo.mColor[pngPos * 4 + 0] = wilHeader.mColor[pixelIndex * 4 + 0];
+					curInfo.mColor[pngPos * 4 + 1] = wilHeader.mColor[pixelIndex * 4 + 1];
+					curInfo.mColor[pngPos * 4 + 2] = wilHeader.mColor[pixelIndex * 4 + 2];
+					curInfo.mColor[pngPos * 4 + 3] = pixelIndex == 0 ? 0 : (char)255;
+				}
+				// 16bit
+				else if (wilHeader.mColorCount == 0xFFFF + 1)
+				{
+					unsigned short pixel = *(unsigned short*)(fileBuffer + startPos + ImageHeaderLength + pos * 2);
+					// 将16位转为24位,蓝绿红的顺序
+					curInfo.mColor[pngPos * 4 + 0] = (pixel & 0x1F) << 3;
+					curInfo.mColor[pngPos * 4 + 1] = pixel >> 3;
+					curInfo.mColor[pngPos * 4 + 2] = pixel >> 8;
+					curInfo.mColor[pngPos * 4 + 3] = pixel == 0 ? 0 : (char)255;
+				}
+			}
 		}
 		posList[i].x = curInfo.mPosX;
 		posList[i].y = curInfo.mPosY;
@@ -141,6 +187,22 @@ void ImageUtility::wixWilToPNG(const std::string& wixFileName, const std::string
 
 	writePositionFile(outputPath + "position.txt", posList, wixFileHeader.mPositionList.size());
 	TRACE_DELETE_ARRAY(posList);
+}
+
+void ImageUtility::allWixWilToPNG(const std::string& sourcePath)
+{
+	txVector<std::string> fileList;
+	txVector<std::string> patterns;
+	patterns.push_back(".wil");
+	FileUtility::findFiles(sourcePath, fileList, patterns);
+	int fileCount = fileList.size();
+	for (int i = 0; i < fileCount; ++i)
+	{
+		std::string wixFile = StringUtility::getFileNameNoSuffix(fileList[i], false) + ".wix";
+		std::string filePath = StringUtility::getFilePath(fileList[i]);
+		std::string folderName = StringUtility::getFileNameNoSuffix(fileList[i]);
+		wixWilToPNG(wixFile, fileList[i], filePath + "/" + folderName + "/");
+	}
 }
 
 void ImageUtility::writePositionFile(const std::string& positionFile, POINT* posList, int posCount)

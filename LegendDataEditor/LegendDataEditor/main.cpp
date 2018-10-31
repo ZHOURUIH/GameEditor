@@ -28,6 +28,7 @@ void main()
 25:打包全部图集\n\
 26:转换地图文件\n\
 27:转换全部地图文件\n\
+28:解析所有wix和wil文件\n\
 0:退出" << std::endl;
 		int input;
 		std::cin >> input;
@@ -117,7 +118,7 @@ void main()
 			std::cout << "开始将角色文件帧数据写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
 			ImageUtility::saveFrameInfo(filePath, IT_HUMAN, mSQLite);
 			TRACE_DELETE(mSQLite);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
@@ -130,7 +131,7 @@ void main()
 			std::cout << "开始将武器文件帧数据写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
 			ImageUtility::saveFrameInfo(filePath, IT_WEAPON, mSQLite);
 			TRACE_DELETE(mSQLite);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
@@ -143,7 +144,7 @@ void main()
 			std::cout << "开始将怪物文件帧数据写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
 			ImageUtility::saveFrameInfo(filePath, IT_MONSTER, mSQLite);
 			TRACE_DELETE(mSQLite);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
@@ -156,7 +157,7 @@ void main()
 			std::cout << "开始将特效文件帧数据写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
 			std::string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/MicroLegend.db");
+			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
 			ImageUtility::saveFrameInfo(filePath, IT_EFFECT, mSQLite);
 			TRACE_DELETE(mSQLite);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
@@ -281,6 +282,11 @@ void main()
 			std::string filePath = "../media/" + fileName;
 			ImageUtility::convertAllMapFile(filePath);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 28)
+		{
+			std::cout << "开始解析所有wil..." << std::endl;
+			ImageUtility::allWixWilToPNG("../media");
 		}
 		system("pause");
 		std::cout << std::endl;
