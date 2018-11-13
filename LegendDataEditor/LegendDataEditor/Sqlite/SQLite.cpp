@@ -1,9 +1,7 @@
 ﻿#include "SQLite.h"
 #include "Utility.h"
-#include "SQLiteCloth.h"
-#include "SQLiteClothFrame.h"
-#include "SQLiteWeapon.h"
-#include "SQLiteWeaponFrame.h"
+#include "SQLiteEquip.h"
+#include "SQLiteEquipFrame.h"
 #include "SQLiteMonster.h"
 #include "SQLiteMonsterFrame.h"
 #include "SQLiteEffect.h"
@@ -20,10 +18,8 @@ SQLite::SQLite(const std::string& dbFileName)
 		std::string errorInfo = sqlite3_errmsg(mSQlite3);
 		return;
 	}
-	mSQLiteCloth = new SQLiteCloth(this);
-	mSQLiteClothFrame = new SQLiteClothFrame(this);
-	mSQLiteWeapon = new SQLiteWeapon(this);
-	mSQLiteWeaponFrame = new SQLiteWeaponFrame(this);
+	mSQLiteEquip = new SQLiteEquip(this);
+	mSQLiteEquipFrame = new SQLiteEquipFrame(this);
 	mSQLiteMonster = new SQLiteMonster(this);
 	mSQLiteMonsterFrame = new SQLiteMonsterFrame(this);
 	mSQLiteEffect = new SQLiteEffect(this);
@@ -32,10 +28,8 @@ SQLite::SQLite(const std::string& dbFileName)
 }
 void SQLite::destroy()
 {
-	TRACE_DELETE(mSQLiteCloth);
-	TRACE_DELETE(mSQLiteClothFrame);
-	TRACE_DELETE(mSQLiteWeapon);
-	TRACE_DELETE(mSQLiteWeaponFrame);
+	TRACE_DELETE(mSQLiteEquip);
+	TRACE_DELETE(mSQLiteEquipFrame);
 	TRACE_DELETE(mSQLiteMonster);
 	TRACE_DELETE(mSQLiteMonsterFrame);
 	TRACE_DELETE(mSQLiteEffect);

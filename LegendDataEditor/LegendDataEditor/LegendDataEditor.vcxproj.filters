@@ -102,22 +102,10 @@
     <ClCompile Include="Sqlite\SQLiteDataReader.cpp">
       <Filter>Sqlite</Filter>
     </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteCloth.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteClothFrame.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteMonster.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteMonsterFrame.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteWeapon.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteWeaponFrame.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\sqlite3\sqlite3.c">
@@ -157,6 +145,12 @@
       <Filter>SceneMap</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteSceneMap.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteEquip.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteEquipFrame.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
   </ItemGroup>
@@ -260,22 +254,10 @@
     <ClInclude Include="Sqlite\SQLiteDataReader.h">
       <Filter>Sqlite</Filter>
     </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteCloth.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteClothFrame.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteMonster.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteMonsterFrame.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteWeapon.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteWeaponFrame.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\sqlite3\sqlite3.h">
@@ -327,6 +309,12 @@
       <Filter>SceneMap</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteSceneMap.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteEquip.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteEquipFrame.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
   </ItemGroup>

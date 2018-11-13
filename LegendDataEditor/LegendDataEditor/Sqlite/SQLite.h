@@ -3,10 +3,8 @@
 
 #include "ServerDefine.h"
 
-class SQLiteCloth;
-class SQLiteClothFrame;
-class SQLiteWeapon;
-class SQLiteWeaponFrame;
+class SQLiteEquip;
+class SQLiteEquipFrame;
 class SQLiteMonster;
 class SQLiteMonsterFrame;
 class SQLiteEffect;
@@ -17,10 +15,8 @@ class SQLite
 {
 public:
 	sqlite3* mSQlite3;
-	SQLiteCloth* mSQLiteCloth;
-	SQLiteClothFrame* mSQLiteClothFrame;
-	SQLiteWeapon* mSQLiteWeapon;
-	SQLiteWeaponFrame* mSQLiteWeaponFrame;
+	SQLiteEquip* mSQLiteEquip;
+	SQLiteEquipFrame* mSQLiteEquipFrame;
 	SQLiteMonster* mSQLiteMonster;
 	SQLiteMonsterFrame* mSQLiteMonsterFrame;
 	SQLiteEffect* mSQLiteEffect;

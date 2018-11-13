@@ -286,7 +286,9 @@ void main()
 		else if (input == 28)
 		{
 			std::cout << "开始解析所有wil..." << std::endl;
+			long startTime = timeGetTime();
 			ImageUtility::allWixWilToPNG("../media");
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		system("pause");
 		std::cout << std::endl;
