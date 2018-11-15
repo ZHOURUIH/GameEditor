@@ -149,41 +149,41 @@ static void reorderList(std::vector<std::string>& fileList)
 
 void main()
 {
-	std::cout << "是否再次重命名?(y/n)";
-	char re = 'n';
-	std::cin >> re;
 	std::vector<std::string> fileList;
 	std::vector<std::string> patterns;
 	patterns.push_back(".png");
 	findFiles("./", fileList, patterns);
-
-	char autoRename = 'n';
-	std::string preName;
-	if (re == 'y')
+	if (fileList.size() == 0)
 	{
-		std::cout << "是否自动重命名?(y/n)";
-		std::cin >> autoRename;
+		return;
 	}
-	if (re != 'y' || autoRename != 'y')
+	std::cout << "1.根据文件夹名自动重命名" << std::endl;
+	std::cout << "2.根据文件名数字后缀排序命名" << std::endl;
+	std::cout << "3.手动输入前缀重命名" << std::endl;
+	std::cout << "请选择:";
+	int input = 0;
+	std::cin >> input;
+	std::string preName;
+	if (input == 1)
+	{
+		char moduleFileName[MAX_PATH];
+		GetModuleFileNameA(0, moduleFileName, MAX_PATH);
+		std::string curFolder = getFileName(getParentDir(moduleFileName));
+		preName = curFolder + "_";
+	}
+	else if (input == 2)
+	{
+		std::string fileName = getFileName(fileList[0]);
+		preName = fileName.substr(0, fileName.find_last_of('_') + 1);
+		reorderList(fileList);
+	}
+	else if (input == 3)
 	{
 		std::cout << "文件前缀:";
 		std::cin >> preName;
 	}
-	int fileCount = fileList.size();
-	if (fileCount > 0 && autoRename == 'y')
-	{
-		std::string fileName = getFileName(fileList[0]);
-		preName = fileName.substr(0, fileName.find_last_of('_') + 1);
-	}
-
-	// 根据后缀数字重新排列文件
-	if (re == 'y')
-	{
-		reorderList(fileList);
-	}
-
 	// 重命名文件
-	fileCount = fileList.size();
+	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
 		std::string fileDir = getParentDir(fileList[i]);
