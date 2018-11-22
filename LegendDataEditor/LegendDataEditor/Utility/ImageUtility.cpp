@@ -3,12 +3,10 @@
 #include "HumanImage.h"
 #include "WeaponImage.h"
 #include "SQLite.h"
-#include "SQLiteCloth.h"
-#include "SQLiteClothFrame.h"
+#include "SQLiteEquip.h"
+#include "SQLiteEquipFrame.h"
 #include "SQLiteMonster.h"
 #include "SQLiteMonsterFrame.h"
-#include "SQLiteWeapon.h"
-#include "SQLiteWeaponFrame.h"
 #include "SQLiteEffect.h"
 #include "SQLiteEffectFrame.h"
 #include "HumanAction.h"
@@ -472,7 +470,7 @@ void ImageUtility::writeSQLite(txMap<std::string, WeaponActionSet>& actionSetLis
 		for (int j = 0; j < DIRECTION_COUNT; ++j)
 		{
 			WeaponActionAnim& actionAnim = iter->second.mDirectionAction[j];
-			WeaponFrameData data;
+			EquipFrameData data;
 			data.mID = actionAnim.mImageFrame[0].mWeaponID;
 			data.mLabel = StringUtility::ANSIToUTF8(actionAnim.mImageFrame[0].mLabel);
 			data.mDirection = j;
@@ -484,7 +482,7 @@ void ImageUtility::writeSQLite(txMap<std::string, WeaponActionSet>& actionSetLis
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
 				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
 			}
-			bool ret = sqlite->mSQLiteWeaponFrame->insert(data);
+			bool ret = sqlite->mSQLiteEquipFrame->insert(data);
 			if (!ret)
 			{
 				break;
@@ -503,7 +501,7 @@ void ImageUtility::writeSQLite(txMap<std::string, HumanActionSet>& actionSetList
 		for (int j = 0; j < DIRECTION_COUNT; ++j)
 		{
 			HumanActionAnim& actionAnim = iter->second.mDirectionAction[j];
-			ClothFrameData data;
+			EquipFrameData data;
 			data.mID = actionAnim.mImageFrame[0].mClothID;
 			data.mLabel = StringUtility::ANSIToUTF8(actionAnim.mImageFrame[0].mLabel);
 			data.mDirection = j;
@@ -515,7 +513,7 @@ void ImageUtility::writeSQLite(txMap<std::string, HumanActionSet>& actionSetList
 				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
 				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
 			}
-			bool ret = sqlite->mSQLiteClothFrame->insert(data);
+			bool ret = sqlite->mSQLiteEquipFrame->insert(data);
 			if (!ret)
 			{
 				break;

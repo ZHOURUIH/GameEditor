@@ -1,22 +1,22 @@
-﻿#ifndef _SQLITE_CLOTH_FRAME_H_
-#define _SQLITE_CLOTH_FRAME_H_
+﻿#ifndef _SQLITE_EQUIP_FRAME_H_
+#define _SQLITE_EQUIP_FRAME_H_
 
 #include "SQLiteTable.h"
 
-class ClothFrameData : public SQLiteTableData
+class EquipFrameData : public SQLiteTableData
 {
 public:
-	static std::string COL_ID;
-	static std::string COL_LABEL;
-	static std::string COL_DIRECTION;
-	static std::string COL_ACTION;
-	static std::string COL_FRAME_COUNT;
-	static std::string COL_POSX;
-	static std::string COL_POSY;
-	std::string mLabel;
+	static string COL_ID;
+	static string COL_LABEL;
+	static string COL_DIRECTION;
+	static string COL_ACTION;
+	static string COL_FRAME_COUNT;
+	static string COL_POSX;
+	static string COL_POSY;
+	string mLabel;
 	int mID;
 	int mDirection;
-	std::string mAction;
+	string mAction;
 	int mFrameCount;
 	txVector<int> mPosX;
 	txVector<int> mPosY;
@@ -43,19 +43,19 @@ public:
 	}
 };
 
-class SQLiteClothFrame : public SQLiteTable
+class SQLiteEquipFrame : public SQLiteTable
 {
 public:
-	SQLiteClothFrame(SQLite* sqlite)
-		:SQLiteTable("ClothFrame", sqlite)
+	SQLiteEquipFrame(SQLite* sqlite)
+		:SQLiteTable("EquipFrame", sqlite)
 	{
-		ClothFrameData::registeColumn(this);
+		EquipFrameData::registeColumn(this);
 	}
-	void query(int clothID, txVector<ClothFrameData>& dataList);
-	void query(int clothID, int direction, txVector<ClothFrameData>& dataList);
-	void query(int clothID, int direction, const std::string& action, txVector<ClothFrameData>& dataList);
-	bool updateData(const ClothFrameData& data);
-	bool insert(const ClothFrameData& data);
+	void query(int id, txVector<EquipFrameData>& dataList);
+	void query(int id, int direction, txVector<EquipFrameData>& dataList);
+	void query(int id, int direction, const std::string& action, txVector<EquipFrameData>& dataList);
+	bool updateData(const EquipFrameData& data);
+	bool insert(const EquipFrameData& data);
 };
 
 #endif
