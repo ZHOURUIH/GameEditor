@@ -80,7 +80,10 @@ void MakeListPanel::OnGenerate(wxCommandEvent& event)
 
 	std::string fileListString;
 	txVector<std::string> fileList;
-	FileUtility::findFiles(path, fileList, ".cpp");
+	txVector<std::string> patterns;
+	patterns.push_back(".cpp");
+	patterns.push_back(".c");
+	FileUtility::findFiles(path, fileList, patterns);
 	removeIgnorePath(fileList, exceptList);
 	int count = fileList.size();
 	FOR_STL(fileList, int i = 0; i < count; ++i)
