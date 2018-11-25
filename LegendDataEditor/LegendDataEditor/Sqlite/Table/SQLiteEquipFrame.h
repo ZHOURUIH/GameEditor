@@ -53,7 +53,7 @@ public:
 	}
 	void query(int id, txVector<EquipFrameData>& dataList);
 	void query(int id, int direction, txVector<EquipFrameData>& dataList);
-	void query(int id, int direction, const std::string& action, txVector<EquipFrameData>& dataList);
+	void query(int id, int direction, const string& action, txVector<EquipFrameData>& dataList);
 	bool updateData(const EquipFrameData& data);
 	bool insert(const EquipFrameData& data);
 };

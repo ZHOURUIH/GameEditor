@@ -15,15 +15,15 @@ string EquipData::COL_CHAR_PANEL_RESOURCE_OFFSET = "CharPanelResourceOffset";
 
 void SQLiteEquip::query(int id, EquipData& data)
 {
-	std::string conditionString;
+	string conditionString;
 	appendConditionInt(conditionString, EquipData::COL_ID, id, "");
-	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
+	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
 
 bool SQLiteEquip::insert(const EquipData& data)
 {
-	std::string valueString;
+	string valueString;
 	appendValueInt(valueString, data.mID);
 	appendValueString(valueString, data.mLabel);
 	appendValueInt(valueString, data.mEquipType);
@@ -32,6 +32,7 @@ bool SQLiteEquip::insert(const EquipData& data)
 	appendValueString(valueString, data.mResource);
 	appendValueString(valueString, data.mCharPanelResourceAtlas);
 	appendValueString(valueString, data.mCharPanelResourceName);
-	appendValueString(valueString, data.mCharPanelResourceOffset, true);
+	appendValueString(valueString, data.mCharPanelResourceOffset);
+	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }

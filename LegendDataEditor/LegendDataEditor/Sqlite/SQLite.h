@@ -11,6 +11,8 @@ class SQLiteEffect;
 class SQLiteEffectFrame;
 class SQLiteDataReader;
 class SQLiteSceneMap;
+class SQLiteNPC;
+class SQLiteNPCFrame;
 class SQLite
 {
 public:
@@ -22,12 +24,14 @@ public:
 	SQLiteEffect* mSQLiteEffect;
 	SQLiteEffectFrame* mSQLiteEffectFrame;
 	SQLiteSceneMap* mSQLiteSceneMap;
+	SQLiteNPC* mSQLiteNPC;
+	SQLiteNPCFrame* mSQLiteNPCFrame;
 public:
-	SQLite(const std::string& dbFileName);
+	SQLite(const string& dbFileName);
 	~SQLite() { destroy(); }
 	void destroy();
-	bool executeNonQuery(const std::string& queryString);
-	SQLiteDataReader* executeQuery(const std::string& queryString);
+	bool executeNonQuery(const string& queryString);
+	SQLiteDataReader* executeQuery(const string& queryString);
 	void releaseReader(SQLiteDataReader* reader);
 };
 

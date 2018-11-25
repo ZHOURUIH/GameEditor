@@ -35,9 +35,9 @@ int SQLiteDataReader::getColumnCount()
 	return sqlite3_column_count(m_pStmt);
 }
 
-std::string SQLiteDataReader::getColumnName(int col)
+string SQLiteDataReader::getColumnName(int col)
 {
-	return std::string(sqlite3_column_name(m_pStmt, col));
+	return string(sqlite3_column_name(m_pStmt, col));
 }
 
 SQLITE_DATATYPE SQLiteDataReader::getDataType(int col)
@@ -45,9 +45,9 @@ SQLITE_DATATYPE SQLiteDataReader::getDataType(int col)
 	return (SQLITE_DATATYPE)sqlite3_column_type(m_pStmt, col);
 }
 
-std::string SQLiteDataReader::getString(int col)
+string SQLiteDataReader::getString(int col)
 {
-	return std::string((char*)sqlite3_column_text(m_pStmt, col));
+	return string((char*)sqlite3_column_text(m_pStmt, col));
 }
 
 int SQLiteDataReader::getInt(int col)

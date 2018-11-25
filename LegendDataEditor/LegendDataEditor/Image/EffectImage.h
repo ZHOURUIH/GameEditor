@@ -8,15 +8,15 @@
 class EffectImage
 {
 public:
-	std::string mLabel;
+	string mLabel;
 	int mPosX;
 	int mPosY;
 	int mDirection;
-	std::string mActionName;
+	string mActionName;
 	int mFrameIndex;		// 在当前序列帧中的下标
 	int mID;
 public:
-	void setFileName(const std::string& fileName);
+	void setFileName(const string& fileName);
 };
 
 #endif

@@ -5,16 +5,16 @@
 #include "CustomThread.h"
 
 txMap<void*, MemoryInfo> txMemoryTrace::mMemoryInfo;
-txMap<std::string, MemoryType> txMemoryTrace::mMemoryType;
-txSet<std::string> txMemoryTrace::mIgnoreClass;
-txSet<std::string> txMemoryTrace::mIgnoreClassKeyword;
-txSet<std::string> txMemoryTrace::mShowOnlyDetailClass;
-txSet<std::string> txMemoryTrace::mShowOnlyStatisticsClass;
+txMap<string, MemoryType> txMemoryTrace::mMemoryType;
+txSet<string> txMemoryTrace::mIgnoreClass;
+txSet<string> txMemoryTrace::mIgnoreClassKeyword;
+txSet<string> txMemoryTrace::mShowOnlyDetailClass;
+txSet<string> txMemoryTrace::mShowOnlyStatisticsClass;
 bool txMemoryTrace::mShowDetail = true;
 bool txMemoryTrace::mShowStatistics = true;
 bool txMemoryTrace::mShowTotalCount = true;
 bool txMemoryTrace::mShowAll = true;
-txMap<std::string, int> txMemoryTrace::mMemoryTypeIndex;
+txMap<string, int> txMemoryTrace::mMemoryTypeIndex;
 MemoryType txMemoryTrace::mMemoryList[MAX_COUNT];
 int txMemoryTrace::mMemoryCount = 0;
 txShareMemoryServer* txMemoryTrace::mShareMemoryServer = NULL;
@@ -22,7 +22,7 @@ ThreadLock txMemoryTrace::mInfoLock;
 bool txMemoryTrace::mWriteOrDebug = false;
 CustomThread* txMemoryTrace::mThread = NULL;
 
-txMemoryTrace::txMemoryTrace(const std::string& name)
+txMemoryTrace::txMemoryTrace(const string& name)
 {
 	mShowDetail = true;
 	mShowStatistics = true;
@@ -248,7 +248,7 @@ void txMemoryTrace::erasePtr(void* ptr)
 		{
 			break;
 		}
-		std::string type = iterTrace->second.type;
+		string type = iterTrace->second.type;
 		int size = iterTrace->second.size;
 		mMemoryInfo.erase(iterTrace);
 		// 从内存类型列表中移除

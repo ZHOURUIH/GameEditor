@@ -14,7 +14,7 @@ public:
 	SceneMap();
 	~SceneMap() { destroy(); }
 	void destroy();
-	void readFile(const std::string& fileName);
+	void readFile(const string& fileName);
 };
 
 #endif

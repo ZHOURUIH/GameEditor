@@ -37,7 +37,7 @@ public:
 class MonsterImageGroup
 {
 public:
-	txMap<std::string, MonsterActionSet> mAllAction;
+	txMap<string, MonsterActionSet> mAllAction;
 public:
 	void addImage(const MonsterImage& image)
 	{

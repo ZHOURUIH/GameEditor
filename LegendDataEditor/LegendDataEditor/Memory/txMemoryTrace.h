@@ -19,7 +19,7 @@ const int MEMORY_TRACE_CMD = 1;
 class txMemoryTrace
 {
 public:
-	txMemoryTrace(const std::string& name);
+	txMemoryTrace(const string& name);
 	virtual ~txMemoryTrace();
 	// writeOrDebug为真则表示将信息写入共享内存,然后使用MemoryViewer查看,为假时表示在控制台显示内存信息
 	virtual void init();
@@ -27,10 +27,10 @@ public:
 	static bool writeMemoryTrace(void* args);
 	static void insertPtr(void* ptr, MemoryInfo& info);
 	static void erasePtr(void* ptr);
-	static void setIgnoreClass(txSet<std::string>& classList){mIgnoreClass = classList;}
-	static void setIgnoreClassKeyword(txSet<std::string>& classList){mIgnoreClassKeyword = classList;}
-	static void setShowOnlyDetailClass(txSet<std::string>& classList){mShowOnlyDetailClass = classList;}
-	static void setShowOnlyStatisticsClass(txSet<std::string>& classList){mShowOnlyStatisticsClass = classList;}
+	static void setIgnoreClass(txSet<string>& classList){mIgnoreClass = classList;}
+	static void setIgnoreClassKeyword(txSet<string>& classList){mIgnoreClassKeyword = classList;}
+	static void setShowOnlyDetailClass(txSet<string>& classList){mShowOnlyDetailClass = classList;}
+	static void setShowOnlyStatisticsClass(txSet<string>& classList){mShowOnlyStatisticsClass = classList;}
 	static void setShowDetail(bool show){ mShowDetail = show; }
 	static void setShowStatistics(bool show){ mShowStatistics = show; }
 	static void setShowAll(bool show){ mShowAll = show; }
@@ -38,15 +38,15 @@ protected:
 	// 内存申请总信息表
 	static txMap<void*, MemoryInfo> mMemoryInfo;
 	// 内存统计信息表, first是类型名,second的first是该类型名的内存个数,second是该类型占得总内存大小,单位是字节
-	static txMap<std::string, MemoryType> mMemoryType;
+	static txMap<string, MemoryType> mMemoryType;
 	// 不显示该列表中类型的内存详细信息以及统计信息
-	static txSet<std::string> mIgnoreClass;
+	static txSet<string> mIgnoreClass;
 	// 如果详细信息以及统计信息中的类型包含该列表中的关键字,则不显示
-	static txSet<std::string> mIgnoreClassKeyword;
+	static txSet<string> mIgnoreClassKeyword;
 	// 只显示该列表中类型的内存详细信息,如果该列表为空,则全部显示
-	static txSet<std::string> mShowOnlyDetailClass;
+	static txSet<string> mShowOnlyDetailClass;
 	// 只显示该列表中类型的内存统计信息,如果该列表为空,则全部显示
-	static txSet<std::string> mShowOnlyStatisticsClass;
+	static txSet<string> mShowOnlyStatisticsClass;
 	// 是否显示总信息表的详细内容
 	static bool mShowDetail;
 	// 是否显示内存统计信息
@@ -58,7 +58,7 @@ protected:
 	static ThreadLock mInfoLock;
 	static CustomThread* mThread;
 	static txShareMemoryServer* mShareMemoryServer;
-	static txMap<std::string, int> mMemoryTypeIndex;
+	static txMap<string, int> mMemoryTypeIndex;
 	static MemoryType mMemoryList[MAX_COUNT];
 	static int mMemoryCount;
 };

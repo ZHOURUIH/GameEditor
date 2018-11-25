@@ -3,7 +3,7 @@
 #include "txMemoryTrace.h"
 #include "TimeLock.h"
 
-CustomThread::CustomThread(const std::string& name)
+CustomThread::CustomThread(const string& name)
 {
 	mName = name;
 	mFinish = true;

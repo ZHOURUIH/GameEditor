@@ -7,14 +7,14 @@
 class EffectData : public SQLiteTableData
 {
 public:
-	static std::string COL_LABLE;
-	static std::string COL_ID;
-	static std::string COL_DESC;
-	static std::string COL_RESOURCE;
-	std::string mLabel;
+	static string COL_LABLE;
+	static string COL_ID;
+	static string COL_DESC;
+	static string COL_RESOURCE;
+	string mLabel;
 	int mID;
-	std::string mDesc;
-	std::string mResource;
+	string mDesc;
+	string mResource;
 public:
 	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
 	{

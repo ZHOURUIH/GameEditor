@@ -9,19 +9,19 @@ class SQLiteTable;
 class SQLiteTableData
 {
 public:
-	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table) {}
+	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table) = 0;
 };
 
 class SQLite;
 class SQLiteTable
 {
 protected:
-	std::string mTableName;
+	string mTableName;
 	SQLite* mSQLite;
-	txVector<std::string> COL_NAME;
+	txVector<string> COL_NAME;
 public:
-	SQLiteTable(const std::string& name, SQLite* sqlite);
-	int getCol(const std::string& colName)
+	SQLiteTable(const string& name, SQLite* sqlite);
+	int getCol(const string& colName)
 	{
 		int count = COL_NAME.size();
 		for (int i = 0; i < count; ++i)
@@ -33,21 +33,21 @@ public:
 		}
 		return -1;
 	}
-	void registeColumn(const std::string& colName)
+	void registeColumn(const string& colName)
 	{
 		COL_NAME.push_back(colName);
 	}
 protected:
-	bool doUpdate(const std::string& updateString, const std::string& conditionString);
-	bool doInsert(const std::string& valueString);
-	void appendValueString(std::string& queryStr, const std::string& str, bool isEnd = false);
-	void appendValueInt(std::string& queryStr, int value, bool isEnd = false);
-	void appendValueIntArray(std::string& queryStr, const txVector<int>& intArray, bool isEnd = false);
-	void appendConditionString(std::string& condition, const std::string& col, const std::string& str, const std::string& operate);
-	void appendConditionInt(std::string& condition, const std::string& col, int value, const std::string& operate);
-	void appendUpdateString(std::string& updateInfo, const std::string& col, const std::string& str, bool isEnd = false);
-	void appendUpdateInt(std::string& updateInfo, const std::string& col, int value, bool isEnd = false);
-	void appendUpdateIntArray(std::string& updateInfo, const std::string& col, const txVector<int>& intArray, bool isEnd = false);
+	bool doUpdate(const string& updateString, const string& conditionString);
+	bool doInsert(const string& valueString);
+	void appendValueString(string& queryStr, const string& str, bool isEnd = false);
+	void appendValueInt(string& queryStr, int value, bool isEnd = false);
+	void appendValueIntArray(string& queryStr, const txVector<int>& intArray, bool isEnd = false);
+	void appendConditionString(string& condition, const string& col, const string& str, const string& operate);
+	void appendConditionInt(string& condition, const string& col, int value, const string& operate);
+	void appendUpdateString(string& updateInfo, const string& col, const string& str, bool isEnd = false);
+	void appendUpdateInt(string& updateInfo, const string& col, int value, bool isEnd = false);
+	void appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray, bool isEnd = false);
 	template<typename T>
 	void parseReader(SQLiteDataReader* reader, T& data)
 	{

@@ -37,7 +37,7 @@ public:
 class WeaponImageGroup
 {
 public:
-	txMap<std::string, WeaponActionSet> mAllAction;
+	txMap<string, WeaponActionSet> mAllAction;
 public:
 	void addImage(const WeaponImage& image)
 	{

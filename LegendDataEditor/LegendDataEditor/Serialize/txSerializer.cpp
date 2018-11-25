@@ -89,7 +89,7 @@ void txSerializer::readString(char* str)
 	str[readLen] = 0;
 }
 
-void txSerializer::writeToFile(const std::string& fullName)
+void txSerializer::writeToFile(const string& fullName)
 {
 	// 确保是只写的,并且数据不为空
 	if (!mWriteFlag || mBuffer == NULL || mIndex <= 0)

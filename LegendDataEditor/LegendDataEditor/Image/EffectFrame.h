@@ -37,7 +37,7 @@ public:
 class EffectImageGroup
 {
 public:
-	txMap<std::string, EffectSet> mAllEffect;
+	txMap<string, EffectSet> mAllEffect;
 public:
 	void addImage(const EffectImage& image)
 	{

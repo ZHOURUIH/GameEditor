@@ -1,11 +1,11 @@
 ﻿#include "txSerializedData.h"
 #include "Utility.h"
 
-std::string txSerializedData::mIntType = typeid(int).name();
-std::string txSerializedData::mShortType = typeid(short).name();
-std::string txSerializedData::mFloatType = typeid(float).name();
-std::string txSerializedData::mCharArrayType = typeid(char*).name();
-std::string txSerializedData::mIntArrayType = typeid(int*).name();
+string txSerializedData::mIntType = typeid(int).name();
+string txSerializedData::mShortType = typeid(short).name();
+string txSerializedData::mFloatType = typeid(float).name();
+string txSerializedData::mCharArrayType = typeid(char*).name();
+string txSerializedData::mIntArrayType = typeid(int*).name();
 
 bool txSerializedData::read(char* pBuffer, int bufferSize)
 {
@@ -31,14 +31,14 @@ bool txSerializedData::write(char* pBuffer, int bufferSize)
 	return ret;
 }
 
-bool txSerializedData::writeData(const std::string& dataString, int paramIndex)
+bool txSerializedData::writeData(const string& dataString, int paramIndex)
 {
 	if (paramIndex < 0 || paramIndex >= (int)mDataParameterList.size())
 	{
 		return false;
 	}
 	const DataParameter& dataParam = mDataParameterList[paramIndex];
-	const std::string& paramType = dataParam.mDataType;
+	const string& paramType = dataParam.mDataType;
 	if (paramType == mIntType)
 	{
 		*(int*)(dataParam.mDataPtr) = StringUtility::stringToInt(dataString);
@@ -59,7 +59,7 @@ bool txSerializedData::writeData(const std::string& dataString, int paramIndex)
 	}
 	else if (paramType == mIntArrayType)
 	{
-		txVector<std::string> valueList;
+		txVector<string> valueList;
 		StringUtility::split(dataString, ";", valueList);
 		int valueCount = valueList.size();
 		for (int i = 0; i < valueCount; ++i)
@@ -84,10 +84,10 @@ bool txSerializedData::writeData(char* buffer, int bufferSize, int paramIndex)
 	return true;
 }
 
-std::string txSerializedData::getValueString(int paramIndex)
+string txSerializedData::getValueString(int paramIndex)
 {
 	const DataParameter& dataParam = mDataParameterList[paramIndex];
-	std::string dataString;
+	string dataString;
 	if (dataParam.mDataType == mIntType)
 	{
 		dataString = StringUtility::intToString(*((int*)dataParam.mDataPtr));
@@ -131,7 +131,7 @@ void txSerializedData::zeroParams()
 	}
 }
 
-bool txSerializedData::readStringList(const std::vector<std::string>& dataList)
+bool txSerializedData::readStringList(const std::vector<string>& dataList)
 {
 	int curIndex = 0;
 	int parameterCount = mDataParameterList.size();
@@ -162,7 +162,7 @@ bool txSerializedData::readStringList(const std::vector<std::string>& dataList)
 		}
 		else if (paramter.mDataType == mIntArrayType)
 		{
-			txVector<std::string> breakVec;
+			txVector<string> breakVec;
 			StringUtility::split(dataList[curIndex], ";", breakVec);
 			int size = breakVec.size();
 			for (int j = 0; j < size; ++j)

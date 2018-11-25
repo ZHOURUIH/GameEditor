@@ -37,7 +37,7 @@ public:
 class HumanImageGroup
 {
 public:
-	txMap<std::string, HumanActionSet> mAllAction;
+	txMap<string, HumanActionSet> mAllAction;
 public:
 	void addImage(const HumanImage& image)
 	{

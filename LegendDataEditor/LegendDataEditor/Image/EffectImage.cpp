@@ -1,9 +1,9 @@
 ﻿#include "EffectImage.h"
 #include "Utility.h"
 
-void EffectImage::setFileName(const std::string& fileName)
+void EffectImage::setFileName(const string& fileName)
 {
-	txVector<std::string> elemList;
+	txVector<string> elemList;
 	StringUtility::split(fileName, "_", elemList);
 	if (elemList.size() == 3)
 	{

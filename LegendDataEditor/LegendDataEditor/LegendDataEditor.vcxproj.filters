@@ -43,6 +43,9 @@
     <Filter Include="SceneMap">
       <UniqueIdentifier>{47a9350b-d916-4ed8-861c-4dafdeda1366}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{85cefcf8-04e5-4ebd-88b5-4b0084f49303}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -93,9 +96,6 @@
     <ClCompile Include="Utility\ImageUtility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\HumanImage.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\SQLite.cpp">
       <Filter>Sqlite</Filter>
     </ClCompile>
@@ -114,20 +114,11 @@
     <ClCompile Include="Sqlite\SQLiteTable.cpp">
       <Filter>Sqlite</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\WeaponImage.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility\MonsterImage.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteEffect.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteEffectFrame.cpp">
       <Filter>Sqlite\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility\EffectImage.cpp">
-      <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="SceneMap\MapHeader.cpp">
       <Filter>SceneMap</Filter>
@@ -151,6 +142,27 @@
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteEquipFrame.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteNPC.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\EffectImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\HumanImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\MonsterImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\NPCImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\WeaponImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteNPCFrame.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,9 +254,6 @@
     <ClInclude Include="Utility\ImageUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\HumanImage.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Sqlite\SQLite.h">
       <Filter>Sqlite</Filter>
     </ClInclude>
@@ -266,32 +275,11 @@
     <ClInclude Include="Sqlite\sqlite3\sqlite3ext.h">
       <Filter>Sqlite\sqlite3</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\HumanAction.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\WeaponImage.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\WeaponAction.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\MonsterImage.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\MonsterAction.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteEffect.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteEffectFrame.h">
       <Filter>Sqlite\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\EffectFrame.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\EffectImage.h">
-      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="SceneMap\MapHeader.h">
       <Filter>SceneMap</Filter>
@@ -315,6 +303,42 @@
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteEquipFrame.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteNPC.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\EffectFrame.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\EffectImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\HumanAction.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\HumanImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\MonsterAction.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\MonsterImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\NPCAction.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\NPCImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\WeaponAction.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\WeaponImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteNPCFrame.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
   </ItemGroup>

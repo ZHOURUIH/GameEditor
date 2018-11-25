@@ -88,7 +88,7 @@ int MathUtility::getForwardInt(float value)
 	}
 }
 
-bool MathUtility::replaceKeywordAndCalculate(std::string& str, const std::string& keyword, int replaceValue, bool floatOrInt)
+bool MathUtility::replaceKeywordAndCalculate(string& str, const string& keyword, int replaceValue, bool floatOrInt)
 {
 	// 如果最后的表达式中存在i,则需要把i替换为i具体的值,然后计算出最后的表达式的值
 	bool replaced = false;
@@ -109,19 +109,19 @@ bool MathUtility::replaceKeywordAndCalculate(std::string& str, const std::string
 	return replaced;
 }
 
-bool MathUtility::replaceStringKeyword(std::string& str, const std::string& keyword, int keyValue, bool floatOrInt)
+bool MathUtility::replaceStringKeyword(string& str, const string& keyword, int keyValue, bool floatOrInt)
 {
 	bool replaced = false;
 	int expressionBegin = -1;
 	int expressionEnd = -1;
 	// 倒序寻找
-	while (StringUtility::findSubstr(str, std::string("\\("), true, &expressionBegin, 0, false))
+	while (StringUtility::findSubstr(str, string("\\("), true, &expressionBegin, 0, false))
 	{
 		replaced = true;
 		// 找到匹配的)
-		StringUtility::findSubstr(str, std::string(")"), true, &expressionEnd, 0, false);
+		StringUtility::findSubstr(str, string(")"), true, &expressionEnd, 0, false);
 		// expressionBegin + 1 去掉 /
-		std::string calculateValue = str.substr(expressionBegin + 1, expressionEnd - expressionBegin + 1);
+		string calculateValue = str.substr(expressionBegin + 1, expressionEnd - expressionBegin + 1);
 		replaceKeywordAndCalculate(calculateValue, keyword, keyValue, floatOrInt);
 		// 替换掉最后一个\\()之间的内容
 		str = StringUtility::strReplace(str, expressionBegin, expressionEnd + 1, calculateValue);
@@ -140,7 +140,7 @@ float MathUtility::powerFloat(float f, int p)
 	return ret;
 }
 
-float MathUtility::calculateFloat(std::string str)
+float MathUtility::calculateFloat(string str)
 {
 	// 判断字符串是否含有非法字符,也就是除数字,小数点,运算符以外的字符
 	StringUtility::checkString(str, "0123456789.+-*/()");
@@ -154,10 +154,10 @@ float MathUtility::calculateFloat(std::string str)
 	while (true)
 	{
 		// 先判断有没有括号，如果有括号就先算括号里的,如果没有就退出while循环
-		if (str.find_first_of("(") != std::string::npos || str.find_first_of(")") != std::string::npos)
+		if (str.find_first_of("(") != string::npos || str.find_first_of(")") != string::npos)
 		{
 			int curpos = str.find_last_of("(");
-			std::string strInBracket = str.substr(curpos + 1, str.length() - curpos - 1);
+			string strInBracket = str.substr(curpos + 1, str.length() - curpos - 1);
 			strInBracket = strInBracket.substr(0, strInBracket.find_first_of(")"));
 			float ret = calculateFloat(strInBracket);
 			// 如果括号中的计算结果是负数,则标记为负数
@@ -168,7 +168,7 @@ float MathUtility::calculateFloat(std::string str)
 				isMinus = true;
 			}
 			// 将括号中的计算结果替换原来的表达式,包括括号也一起替换
-			std::string floatStr = StringUtility::floatToString(ret, 4);
+			string floatStr = StringUtility::floatToString(ret, 4);
 			str = StringUtility::strReplace(str, curpos, curpos + strInBracket.length() + 2, floatStr);
 			if (isMinus)
 			{
@@ -222,7 +222,7 @@ float MathUtility::calculateFloat(std::string str)
 		// 遍历到了最后一个字符,则直接把最后一个数字放入列表,然后退出循环
 		if (i == strLen - 1)
 		{
-			std::string num = str.substr(beginpos, strLen - beginpos);
+			string num = str.substr(beginpos, strLen - beginpos);
 			numbers.push_back(StringUtility::stringToFloat(num));
 			break;
 		}
@@ -231,7 +231,7 @@ float MathUtility::calculateFloat(std::string str)
 		{
 			if (i != 0)
 			{
-				std::string num = str.substr(beginpos, i - beginpos);
+				string num = str.substr(beginpos, i - beginpos);
 				numbers.push_back(StringUtility::stringToFloat(num));
 			}
 			// 如果在表达式的开始就发现了运算符,则表示第一个数是负数,那就处理为0减去这个数的绝对值
@@ -333,7 +333,7 @@ float MathUtility::calculateFloat(std::string str)
 	}
 }
 
-int MathUtility::calculateInt(std::string str)
+int MathUtility::calculateInt(string str)
 {
 	// 判断字符串是否含有非法字符,也就是除数字,小数点,运算符以外的字符
 	StringUtility::checkString(str, "0123456789+-*/%()");
@@ -347,10 +347,10 @@ int MathUtility::calculateInt(std::string str)
 	while (true)
 	{
 		// 先判断有没有括号，如果有括号就先算括号里的,如果没有就退出while循环
-		if (str.find_first_of("(") != std::string::npos || str.find_first_of(")") != std::string::npos)
+		if (str.find_first_of("(") != string::npos || str.find_first_of(")") != string::npos)
 		{
 			int curpos = str.find_last_of("(");
-			std::string strInBracket = str.substr(curpos + 1, str.length() - curpos - 1);
+			string strInBracket = str.substr(curpos + 1, str.length() - curpos - 1);
 			strInBracket = strInBracket.substr(0, strInBracket.find_first_of(")"));
 			int ret = calculateInt(strInBracket);
 			// 如果括号中的计算结果是负数,则标记为负数
@@ -361,7 +361,7 @@ int MathUtility::calculateInt(std::string str)
 				isMinus = true;
 			}
 			// 将括号中的计算结果替换原来的表达式,包括括号也一起替换
-			std::string intStr = StringUtility::intToString(ret, 4);
+			string intStr = StringUtility::intToString(ret, 4);
 			str = StringUtility::strReplace(str, curpos, curpos + strInBracket.length() + 2, intStr);
 			if (isMinus)
 			{
@@ -415,7 +415,7 @@ int MathUtility::calculateInt(std::string str)
 		// 遍历到了最后一个字符,则直接把最后一个数字放入列表,然后退出循环
 		if (i == strLen - 1)
 		{
-			std::string num = str.substr(beginpos, strLen - beginpos);
+			string num = str.substr(beginpos, strLen - beginpos);
 			numbers.push_back(StringUtility::stringToInt(num));
 			break;
 		}
@@ -424,7 +424,7 @@ int MathUtility::calculateInt(std::string str)
 		{
 			if (i != 0)
 			{
-				std::string num = str.substr(beginpos, i - beginpos);
+				string num = str.substr(beginpos, i - beginpos);
 				numbers.push_back(StringUtility::stringToInt(num));
 			}
 			// 如果在表达式的开始就发现了运算符,则表示第一个数是负数,那就处理为0减去这个数的绝对值

@@ -8,23 +8,27 @@
 #include "SQLiteEffectFrame.h"
 #include "SQLiteDataReader.h"
 #include "SQLiteSceneMap.h"
+#include "SQLiteNPC.h"
+#include "SQLiteNPCFrame.h"
 
-SQLite::SQLite(const std::string& dbFileName)
+SQLite::SQLite(const string& dbFileName)
 {
 	// 打开数据库链接
 	int ret = sqlite3_open(dbFileName.c_str(), &mSQlite3);
 	if (ret != SQLITE_OK)
 	{
-		std::string errorInfo = sqlite3_errmsg(mSQlite3);
+		string errorInfo = sqlite3_errmsg(mSQlite3);
 		return;
 	}
-	mSQLiteEquip = new SQLiteEquip(this);
-	mSQLiteEquipFrame = new SQLiteEquipFrame(this);
-	mSQLiteMonster = new SQLiteMonster(this);
-	mSQLiteMonsterFrame = new SQLiteMonsterFrame(this);
-	mSQLiteEffect = new SQLiteEffect(this);
-	mSQLiteEffectFrame = new SQLiteEffectFrame(this);
-	mSQLiteSceneMap = new SQLiteSceneMap(this);
+	mSQLiteEquip = TRACE_NEW(SQLiteEquip, mSQLiteEquip, this);
+	mSQLiteEquipFrame = TRACE_NEW(SQLiteEquipFrame, mSQLiteEquipFrame, this);
+	mSQLiteMonster = TRACE_NEW(SQLiteMonster, mSQLiteMonster, this);
+	mSQLiteMonsterFrame = TRACE_NEW(SQLiteMonsterFrame, mSQLiteMonsterFrame, this);
+	mSQLiteEffect = TRACE_NEW(SQLiteEffect, mSQLiteEffect, this);
+	mSQLiteEffectFrame = TRACE_NEW(SQLiteEffectFrame, mSQLiteEffectFrame, this);
+	mSQLiteSceneMap = TRACE_NEW(SQLiteSceneMap, mSQLiteSceneMap, this);
+	mSQLiteNPC = TRACE_NEW(SQLiteNPC, mSQLiteNPC, this);
+	mSQLiteNPCFrame = TRACE_NEW(SQLiteNPCFrame, mSQLiteNPCFrame, this);
 }
 void SQLite::destroy()
 {
@@ -35,9 +39,10 @@ void SQLite::destroy()
 	TRACE_DELETE(mSQLiteEffect);
 	TRACE_DELETE(mSQLiteEffectFrame);
 	TRACE_DELETE(mSQLiteSceneMap);
+	TRACE_DELETE(mSQLiteNPC);
 	sqlite3_close(mSQlite3);
 }
-bool SQLite::executeNonQuery(const std::string& queryString)
+bool SQLite::executeNonQuery(const string& queryString)
 {
 	sqlite3_stmt* stmt = NULL;
 	if (sqlite3_prepare_v2(mSQlite3, queryString.c_str(), -1, &stmt, NULL) != SQLITE_OK)
@@ -48,7 +53,7 @@ bool SQLite::executeNonQuery(const std::string& queryString)
 	return (sqlite3_finalize(stmt) == SQLITE_OK) ? true : false;
 }
 
-SQLiteDataReader* SQLite::executeQuery(const std::string& queryString)
+SQLiteDataReader* SQLite::executeQuery(const string& queryString)
 {
 	sqlite3_stmt* stmt = NULL;
 	if (sqlite3_prepare_v2(mSQlite3, queryString.c_str(), -1, &stmt, NULL) != SQLITE_OK)

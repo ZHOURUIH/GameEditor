@@ -21,9 +21,9 @@ public:
 	bool read();// 读取一行数据,需要循环调用来读取多行数据
 	void close();
 	int getColumnCount();
-	std::string getColumnName(int col);
+	string getColumnName(int col);
 	SQLITE_DATATYPE getDataType(int col);
-	std::string getString(int col);
+	string getString(int col);
 	int getInt(int col);
 	float getFloat(int col);
 	const char* getBlob(int col, int& length);

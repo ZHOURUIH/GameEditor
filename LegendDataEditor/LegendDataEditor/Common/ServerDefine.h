@@ -144,7 +144,7 @@ if (thread != NULL_THREAD)		\
 #define SET_BIT(value, pos, bit) value = value & ~(1 << (pos)) | (bit << (pos))
 #define GET_HIGHEST_BIT(value) GET_BIT(value, sizeof(value) * 8 - 1)
 #define SET_HIGHEST_BIT(value, bit) SET_BIT(value, sizeof(value) * 8 - 1, bit);
-#define _FILE_LINE_ "File : " + std::string(__FILE__) + ", Line : " + LINE_STR(__LINE__)
+#define _FILE_LINE_ "File : " + string(__FILE__) + ", Line : " + LINE_STR(__LINE__)
 #define NEW_PACKET(packet, type) NetServer::createPacket(packet, type);
 
 // 角色唯一ID
@@ -182,10 +182,10 @@ const int HEADER_SIZE = sizeof(short) + sizeof(short);
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 // 常量字符串定义
-const std::string MEDIA_PATH = "../media";
-const std::string GAME_DATA_PATH = "GameDataFile/";
-const std::string CONFIG_PATH = "Config/";
-const std::string LOG_PATH = "Log/";
-const std::string EMPTY_STRING = "";
+const string MEDIA_PATH = "../media";
+const string GAME_DATA_PATH = "GameDataFile/";
+const string CONFIG_PATH = "Config/";
+const string LOG_PATH = "Log/";
+const string EMPTY_STRING = "";
 
 #endif

@@ -19,7 +19,7 @@ public:
 	}
 	virtual ~txSTLBase(){}
 	// 循环遍历列表之前必须锁定
-	virtual void lock(STL_LOCK lockType, const std::string& file, int line)
+	virtual void lock(STL_LOCK lockType, const string& file, int line)
 	{
 		// 当前为锁定写入,则不允许再加任何锁,或者当前为读锁定,则不能添加写锁定
 		if (mLock == SL_WRITE || mLock == SL_READ && lockType != SL_READ || lockType == SL_NONE)
@@ -69,14 +69,14 @@ protected:
 			directError("error : stl is locked! can not modify stl!");
 		}
 	}
-	void directError(const std::string& info)
+	void directError(const string& info)
 	{
 		//LOG_ERROR("%s", info.c_str());
 	}
 protected:
 	STL_LOCK mLock;
 	int mReadLockCount;		// 读锁定的次数,读锁定可以叠加,计算读锁定的次数,当读锁定次数为0时,取消锁定
-	std::string mFile;
+	string mFile;
 	int mLine;
 };
 

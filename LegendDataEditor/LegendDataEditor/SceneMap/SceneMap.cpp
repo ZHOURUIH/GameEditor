@@ -15,7 +15,7 @@ void SceneMap::destroy()
 	TRACE_DELETE(mHeader);
 }
 
-void SceneMap::readFile(const std::string& fileName)
+void SceneMap::readFile(const string& fileName)
 {
 	int fileSize = 0;
 	char* fileBuffer = FileUtility::openBinaryFile(fileName, &fileSize);

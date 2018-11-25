@@ -3,42 +3,48 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
-std::string SceneMapData::COL_ID = "ID";
-std::string SceneMapData::COL_LABEL = "Label";
-std::string SceneMapData::COL_RESOURCE = "Resource";
-std::string SceneMapData::COL_MINI_MAP = "MiniMap";
+string SceneMapData::COL_ID = "ID";
+string SceneMapData::COL_LABEL = "Label";
+string SceneMapData::COL_RESOURCE = "Resource";
+string SceneMapData::COL_MINI_MAP = "MiniMap";
+string SceneMapData::COL_WIDTH = "Width";
+string SceneMapData::COL_HEIGHT = "Height";
 
 void SQLiteSceneMap::query(int id, SceneMapData& data)
 {
-	std::string conditionString;
+	string conditionString;
 	appendConditionInt(conditionString, SceneMapData::COL_ID, id, "");
-	std::string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
+	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
 
 void SQLiteSceneMap::queryAll(txVector<SceneMapData>& dataList)
 {
-	std::string queryStr = "SELECT * FROM " + mTableName;
+	string queryStr = "SELECT * FROM " + mTableName;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 
 bool SQLiteSceneMap::insert(const SceneMapData& data)
 {
-	std::string valueString;
+	string valueString;
 	appendValueInt(valueString, data.mID);
 	appendValueString(valueString, data.mLabel);
-	appendValueString(valueString, data.mResource, true);
+	appendValueString(valueString, data.mResource);
+	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }
 
 bool SQLiteSceneMap::update(const SceneMapData& data)
 {
-	std::string updateStr;
-	appendUpdateInt(updateStr, SceneMapData::COL_ID, data.mID);
-	appendUpdateString(updateStr, SceneMapData::COL_LABEL, data.mLabel);
-	appendUpdateString(updateStr, SceneMapData::COL_RESOURCE, data.mResource);
-	appendUpdateInt(updateStr, SceneMapData::COL_MINI_MAP, data.mMiniMap, true);
-	std::string conditionStr;
+	string updateString;
+	appendUpdateInt(updateString, SceneMapData::COL_ID, data.mID);
+	appendUpdateString(updateString, SceneMapData::COL_LABEL, data.mLabel);
+	appendUpdateString(updateString, SceneMapData::COL_RESOURCE, data.mResource);
+	appendUpdateInt(updateString, SceneMapData::COL_MINI_MAP, data.mMiniMap);
+	appendUpdateInt(updateString, SceneMapData::COL_WIDTH, data.mWidth);
+	appendUpdateInt(updateString, SceneMapData::COL_HEIGHT, data.mHeight);
+	StringUtility::removeLastComma(updateString);
+	string conditionStr;
 	appendConditionInt(conditionStr, SceneMapData::COL_ID, data.mID, "");
-	return doUpdate(updateStr, conditionStr);
+	return doUpdate(updateString, conditionStr);
 }

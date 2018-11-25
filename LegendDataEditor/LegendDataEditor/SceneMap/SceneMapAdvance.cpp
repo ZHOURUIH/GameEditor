@@ -17,19 +17,22 @@ void SceneMapAdvance::destroy()
 	TRACE_DELETE(mHeader);
 }
 
-void SceneMapAdvance::readFile(const std::string& fileName)
+void SceneMapAdvance::readFile(const string& fileName, bool parseTile)
 {
 	int fileSize = 0;
 	char* fileBuffer = FileUtility::openBinaryFile(fileName, &fileSize);
 	int offset = 0;
 	mHeader->parseHeader(fileBuffer, fileSize, offset);
-	int tileCount = mHeader->mWidth * mHeader->mHeight;
-	TRACE_NEW_ARRAY(MapTileAdvance, tileCount, mTileList);
-	for (int i = 0; i < tileCount; ++i)
+	if (parseTile)
 	{
-		mTileList[i].parseTile(fileBuffer, fileSize, offset);
+		int tileCount = mHeader->mWidth * mHeader->mHeight;
+		TRACE_NEW_ARRAY(MapTileAdvance, tileCount, mTileList);
+		for (int i = 0; i < tileCount; ++i)
+		{
+			mTileList[i].parseTile(fileBuffer, fileSize, offset);
+		}
+		TRACE_DELETE_ARRAY(fileBuffer);
 	}
-	TRACE_DELETE_ARRAY(fileBuffer);
 }
 
 void SceneMapAdvance::initFromMap(SceneMap* oldMap, txMap<int, txMap<int, int>>& objAtlasIndexMap, txMap<int, int>& bngAltasIndexMap)
@@ -53,7 +56,7 @@ void SceneMapAdvance::initFromMap(SceneMap* oldMap, txMap<int, txMap<int, int>>&
 	}
 }
 
-void SceneMapAdvance::saveAdvanceMap(const std::string& fileName)
+void SceneMapAdvance::saveAdvanceMap(const string& fileName)
 {
 	txSerializer serializer;
 	mHeader->saveHeader(&serializer);

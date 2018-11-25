@@ -1,13 +1,13 @@
-#include "MonsterImage.h"
+#include "NPCImage.h"
 #include "Utility.h"
 
-void MonsterImage::setFileName(const std::string& fileName)
+void NPCImage::setFileName(const string& fileName)
 {
-	txVector<std::string> elemList;
+	txVector<string> elemList;
 	StringUtility::split(fileName, "_", elemList);
 	if (elemList.size() != 3)
 	{
-		std::cout << "monster file name error : " << fileName << std::endl;
+		std::cout << "npc file name error : " << fileName << std::endl;
 		return;
 	}
 	mActionName = elemList[0];
@@ -16,7 +16,7 @@ void MonsterImage::setFileName(const std::string& fileName)
 	mActionIndex = -1;
 	for (int i = 0; i < MONSTER_ACTION_COUNT; ++i)
 	{
-		if (MONSTER_ACTION[i].mName == mActionName)
+		if (NPC_ACTION[i].mName == mActionName)
 		{
 			mActionIndex = i;
 			break;

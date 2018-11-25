@@ -6,17 +6,17 @@
 class MonsterFrameData : public SQLiteTableData
 {
 public:
-	static std::string COL_ID;
-	static std::string COL_LABEL;
-	static std::string COL_DIRECTION;
-	static std::string COL_ACTION;
-	static std::string COL_FRAME_COUNT;
-	static std::string COL_POSX;
-	static std::string COL_POSY;
+	static string COL_ID;
+	static string COL_LABEL;
+	static string COL_DIRECTION;
+	static string COL_ACTION;
+	static string COL_FRAME_COUNT;
+	static string COL_POSX;
+	static string COL_POSY;
 	int mID;
-	std::string mLabel;
+	string mLabel;
 	int mDirection;
-	std::string mAction;
+	string mAction;
 	int mFrameCount;
 	txVector<int> mPosX;
 	txVector<int> mPosY;
@@ -53,7 +53,7 @@ public:
 	}
 	void query(int monsterID, txVector<MonsterFrameData>& dataList);
 	void query(int monsterID, int direction, txVector<MonsterFrameData>& dataList);
-	void query(int monsterID, int direction, const std::string& action, txVector<MonsterFrameData>& dataList);
+	void query(int monsterID, int direction, const string& action, txVector<MonsterFrameData>& dataList);
 	bool updateData(const MonsterFrameData& data);
 	bool insert(const MonsterFrameData& data);
 };

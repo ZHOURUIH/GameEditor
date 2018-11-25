@@ -35,7 +35,7 @@ public:
 	void readBuffer(char* buffer, int readLen);
 	void writeString(const char* str);
 	void readString(char* str);
-	void writeToFile(const std::string& fullName);
+	void writeToFile(const string& fullName);
 	const char* getBuffer() const { return mBuffer; }
 	int getBufferSize() { return mBufferSize; }
 	int getDataSize() { return mIndex; }
