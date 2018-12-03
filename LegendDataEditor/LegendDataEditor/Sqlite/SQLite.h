@@ -16,6 +16,7 @@ class SQLiteNPCFrame;
 class SQLiteMonGen;
 class SQLiteMonsterInfo;
 class SQLiteMagic;
+class SQLiteStdItem;
 class SQLite
 {
 public:
@@ -32,6 +33,7 @@ public:
 	SQLiteMonGen* mSQLiteMonGen;
 	SQLiteMonsterInfo* mSQLiteMonsterInfo;
 	SQLiteMagic* mSQLiteMagic;
+	SQLiteStdItem* mSQLiteStdItem;
 public:
 	SQLite(const string& dbFileName);
 	~SQLite() { destroy(); }
