@@ -10,6 +10,11 @@
 #include "SQLiteSceneMap.h"
 #include "SQLiteNPC.h"
 #include "SQLiteNPCFrame.h"
+#include "SQLiteMonGen.h"
+#include "SQLiteMonsterInfo.h"
+
+#define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
+#define DELETE_TABLE(type) TRACE_DELETE(m##type)
 
 SQLite::SQLite(const string& dbFileName)
 {
@@ -20,26 +25,31 @@ SQLite::SQLite(const string& dbFileName)
 		string errorInfo = sqlite3_errmsg(mSQlite3);
 		return;
 	}
-	mSQLiteEquip = TRACE_NEW(SQLiteEquip, mSQLiteEquip, this);
-	mSQLiteEquipFrame = TRACE_NEW(SQLiteEquipFrame, mSQLiteEquipFrame, this);
-	mSQLiteMonster = TRACE_NEW(SQLiteMonster, mSQLiteMonster, this);
-	mSQLiteMonsterFrame = TRACE_NEW(SQLiteMonsterFrame, mSQLiteMonsterFrame, this);
-	mSQLiteEffect = TRACE_NEW(SQLiteEffect, mSQLiteEffect, this);
-	mSQLiteEffectFrame = TRACE_NEW(SQLiteEffectFrame, mSQLiteEffectFrame, this);
-	mSQLiteSceneMap = TRACE_NEW(SQLiteSceneMap, mSQLiteSceneMap, this);
-	mSQLiteNPC = TRACE_NEW(SQLiteNPC, mSQLiteNPC, this);
-	mSQLiteNPCFrame = TRACE_NEW(SQLiteNPCFrame, mSQLiteNPCFrame, this);
+	NEW_TABLE(SQLiteEquip);
+	NEW_TABLE(SQLiteEquipFrame);
+	NEW_TABLE(SQLiteMonster);
+	NEW_TABLE(SQLiteMonsterFrame);
+	NEW_TABLE(SQLiteEffect);
+	NEW_TABLE(SQLiteEffectFrame);
+	NEW_TABLE(SQLiteSceneMap);
+	NEW_TABLE(SQLiteNPC);
+	NEW_TABLE(SQLiteNPCFrame);
+	NEW_TABLE(SQLiteMonGen);
+	NEW_TABLE(SQLiteMonsterInfo);
 }
 void SQLite::destroy()
 {
-	TRACE_DELETE(mSQLiteEquip);
-	TRACE_DELETE(mSQLiteEquipFrame);
-	TRACE_DELETE(mSQLiteMonster);
-	TRACE_DELETE(mSQLiteMonsterFrame);
-	TRACE_DELETE(mSQLiteEffect);
-	TRACE_DELETE(mSQLiteEffectFrame);
-	TRACE_DELETE(mSQLiteSceneMap);
-	TRACE_DELETE(mSQLiteNPC);
+	DELETE_TABLE(SQLiteEquip);
+	DELETE_TABLE(SQLiteEquipFrame);
+	DELETE_TABLE(SQLiteMonster);
+	DELETE_TABLE(SQLiteMonsterFrame);
+	DELETE_TABLE(SQLiteEffect);
+	DELETE_TABLE(SQLiteEffectFrame);
+	DELETE_TABLE(SQLiteSceneMap);
+	DELETE_TABLE(SQLiteNPC);
+	DELETE_TABLE(SQLiteNPCFrame);
+	DELETE_TABLE(SQLiteMonGen);
+	DELETE_TABLE(SQLiteMonsterInfo);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)

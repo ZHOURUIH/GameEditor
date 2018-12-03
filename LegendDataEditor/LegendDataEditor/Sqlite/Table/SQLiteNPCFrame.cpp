@@ -18,12 +18,7 @@ void SQLiteNPCFrame::query(txVector<NPCFrameData>& dataList)
 bool SQLiteNPCFrame::insert(const NPCFrameData& data)
 {
 	string valueString;
-	appendValueInt(valueString, data.mID);
-	appendValueInt(valueString, data.mDirection);
-	appendValueString(valueString, data.mAction);
-	appendValueInt(valueString, data.mFrameCount);
-	appendValueIntArray(valueString, data.mPosX);
-	appendValueIntArray(valueString, data.mPosY);
+	data.insert(valueString);
 	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }

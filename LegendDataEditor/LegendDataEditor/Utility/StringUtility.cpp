@@ -766,3 +766,50 @@ int StringUtility::numberStringAddInt(const string& str)
 	}
 	return ret;
 }
+
+void StringUtility::appendValueString(string& queryStr, const string& str, bool toUTF8)
+{
+	if (toUTF8)
+	{
+		queryStr += "\"" + ANSIToUTF8(str) + "\",";
+	}
+	else
+	{
+		queryStr += "\"" + str + "\",";
+	}
+}
+void StringUtility::appendValueInt(string& queryStr, int value)
+{
+	queryStr += intToString(value) + ",";
+}
+void StringUtility::appendValueIntArray(string& queryStr, const txVector<int>& intArray)
+{
+	appendValueString(queryStr, intArrayToString(intArray));
+}
+void StringUtility::appendConditionString(string& condition, const string& col, const string& str, const string& operate)
+{
+	condition += col + " = " + "\"" + ANSIToUTF8(str) + "\"" + operate;
+}
+void StringUtility::appendConditionInt(string& condition, const string& col, int value, const string& operate)
+{
+	condition += col + " = " + intToString(value) + operate;
+}
+void StringUtility::appendUpdateString(string& updateInfo, const string& col, const string& str, bool toUTF8)
+{
+	if (toUTF8)
+	{
+		updateInfo += col + " = " + "\"" + ANSIToUTF8(str) + "\",";
+	}
+	else
+	{
+		updateInfo += col + " = " + "\"" + str + "\",";
+	}
+}
+void StringUtility::appendUpdateInt(string& updateInfo, const string& col, int value)
+{
+	updateInfo += col + " = " + intToString(value) + ",";
+}
+void StringUtility::appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray)
+{
+	appendUpdateString(updateInfo, col, intArrayToString(intArray));
+}

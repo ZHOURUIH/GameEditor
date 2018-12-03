@@ -14,50 +14,44 @@ string EquipFrameData::COL_POSY = "PosY";
 void SQLiteEquipFrame::query(int id, txVector<EquipFrameData>& dataList)
 {
 	string conditionString;
-	appendConditionInt(conditionString, EquipFrameData::COL_ID, id, "");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_ID, id, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteEquipFrame::query(int id, int direction, txVector<EquipFrameData>& dataList)
 {
 	string conditionString;
-	appendConditionInt(conditionString, EquipFrameData::COL_ID, id, " and ");
-	appendConditionInt(conditionString, EquipFrameData::COL_DIRECTION, direction, "");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_ID, id, " and ");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_DIRECTION, direction, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteEquipFrame::query(int id, int direction, const string& action, txVector<EquipFrameData>& dataList)
 {
 	string conditionString;
-	appendConditionInt(conditionString, EquipFrameData::COL_ID, id, " and ");
-	appendConditionInt(conditionString, EquipFrameData::COL_DIRECTION, direction, " and ");
-	appendConditionString(conditionString, EquipFrameData::COL_ACTION, action, "");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_ID, id, " and ");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_DIRECTION, direction, " and ");
+	StringUtility::appendConditionString(conditionString, EquipFrameData::COL_ACTION, action, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 bool SQLiteEquipFrame::updateData(const EquipFrameData& data)
 {
 	string updateString;
-	appendUpdateInt(updateString, EquipFrameData::COL_FRAME_COUNT, data.mFrameCount);
-	appendUpdateIntArray(updateString, EquipFrameData::COL_POSX, data.mPosX);
-	appendUpdateIntArray(updateString, EquipFrameData::COL_POSY, data.mPosY);
+	StringUtility::appendUpdateInt(updateString, EquipFrameData::COL_FRAME_COUNT, data.mFrameCount);
+	StringUtility::appendUpdateIntArray(updateString, EquipFrameData::COL_POSX, data.mPosX);
+	StringUtility::appendUpdateIntArray(updateString, EquipFrameData::COL_POSY, data.mPosY);
 	StringUtility::removeLastComma(updateString);
 	string conditionString;
-	appendConditionInt(conditionString, EquipFrameData::COL_ID, data.mID, " and ");
-	appendConditionInt(conditionString, EquipFrameData::COL_DIRECTION, data.mDirection, " and ");
-	appendConditionString(conditionString, EquipFrameData::COL_ACTION, data.mAction, "");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_ID, data.mID, " and ");
+	StringUtility::appendConditionInt(conditionString, EquipFrameData::COL_DIRECTION, data.mDirection, " and ");
+	StringUtility::appendConditionString(conditionString, EquipFrameData::COL_ACTION, data.mAction, "");
 	return doUpdate(updateString, conditionString);
 }
 bool SQLiteEquipFrame::insert(const EquipFrameData& data)
 {
 	string valueString;
-	appendValueInt(valueString, data.mID);
-	appendValueString(valueString, data.mLabel);
-	appendValueInt(valueString, data.mDirection);
-	appendValueString(valueString, data.mAction);
-	appendValueInt(valueString, data.mFrameCount);
-	appendValueIntArray(valueString, data.mPosX);
-	appendValueIntArray(valueString, data.mPosY);
+	data.insert(valueString);
 	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }

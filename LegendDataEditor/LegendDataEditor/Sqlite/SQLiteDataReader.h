@@ -23,7 +23,7 @@ public:
 	int getColumnCount();
 	string getColumnName(int col);
 	SQLITE_DATATYPE getDataType(int col);
-	string getString(int col);
+	string getString(int col, bool toANSI = true);
 	int getInt(int col);
 	float getFloat(int col);
 	const char* getBlob(int col, int& length);

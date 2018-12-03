@@ -1,4 +1,5 @@
 ﻿#include "SQLiteDataReader.h"
+#include "Utility.h"
 
 SQLiteDataReader::SQLiteDataReader(sqlite3_stmt* pStmt)
 	:m_pStmt(pStmt)
@@ -45,9 +46,16 @@ SQLITE_DATATYPE SQLiteDataReader::getDataType(int col)
 	return (SQLITE_DATATYPE)sqlite3_column_type(m_pStmt, col);
 }
 
-string SQLiteDataReader::getString(int col)
+string SQLiteDataReader::getString(int col, bool toANSI)
 {
-	return string((char*)sqlite3_column_text(m_pStmt, col));
+	if (toANSI)
+	{
+		return StringUtility::UTF8ToANSI((char*)sqlite3_column_text(m_pStmt, col));
+	}
+	else
+	{
+		return string((char*)sqlite3_column_text(m_pStmt, col));
+	}
 }
 
 int SQLiteDataReader::getInt(int col)

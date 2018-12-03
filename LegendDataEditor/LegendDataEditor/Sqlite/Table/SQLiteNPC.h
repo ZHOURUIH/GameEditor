@@ -14,6 +14,7 @@ public:
 	static string COL_LABEL;
 	static string COL_FLAG;
 	static string COL_APPERANCE;
+public:
 	int mID;
 	string mScript;
 	string mMap;
@@ -33,6 +34,28 @@ public:
 		mLabel = reader->getString(table->getCol(COL_LABEL));
 		mFlag = reader->getInt(table->getCol(COL_FLAG));
 		mApperance = reader->getInt(table->getCol(COL_APPERANCE));
+	}
+	virtual void insert(string& valueString) const
+	{
+		StringUtility::appendValueInt(valueString, mID);
+		StringUtility::appendValueString(valueString, mScript);
+		StringUtility::appendValueString(valueString, mMap);
+		StringUtility::appendValueInt(valueString, mPosX);
+		StringUtility::appendValueInt(valueString, mPosY);
+		StringUtility::appendValueString(valueString, mLabel);
+		StringUtility::appendValueInt(valueString, mFlag);
+		StringUtility::appendValueInt(valueString, mApperance);
+	}
+	virtual void update(string& updateString) const
+	{
+		StringUtility::appendUpdateInt(updateString, COL_ID, mID);
+		StringUtility::appendUpdateString(updateString, COL_SCRIPT, mScript);
+		StringUtility::appendUpdateString(updateString, COL_MAP, mMap);
+		StringUtility::appendUpdateInt(updateString, COL_POSX, mPosX);
+		StringUtility::appendUpdateInt(updateString, COL_POSY, mPosY);
+		StringUtility::appendUpdateString(updateString, COL_LABEL, mLabel);
+		StringUtility::appendUpdateInt(updateString, COL_FLAG, mFlag);
+		StringUtility::appendUpdateInt(updateString, COL_APPERANCE, mApperance);
 	}
 	static void registeColumn(SQLiteTable* table)
 	{

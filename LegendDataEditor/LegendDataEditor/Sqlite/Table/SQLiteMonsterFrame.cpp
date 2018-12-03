@@ -14,51 +14,45 @@ string MonsterFrameData::COL_POSY = "PosY";
 void SQLiteMonsterFrame::query(int monsterID, txVector<MonsterFrameData>& dataList)
 {
 	string conditionString;
-	appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, "");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteMonsterFrame::query(int monsterID, int direction, txVector<MonsterFrameData>& dataList)
 {
 	string conditionString;
-	appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, " and ");
-	appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, direction, "");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, " and ");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, direction, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 void SQLiteMonsterFrame::query(int monsterID, int direction, const string& action, txVector<MonsterFrameData>& dataList)
 {
 	string conditionString;
-	appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, " and ");
-	appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, direction, " and ");
-	appendConditionString(conditionString, MonsterFrameData::COL_ACTION, action, "");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_ID, monsterID, " and ");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, direction, " and ");
+	StringUtility::appendConditionString(conditionString, MonsterFrameData::COL_ACTION, action, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), dataList);
 }
 bool SQLiteMonsterFrame::updateData(const MonsterFrameData& data)
 {
 	string updateString;
-	appendUpdateInt(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mFrameCount);
-	appendUpdateIntArray(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mPosX);
-	appendUpdateIntArray(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mPosY);
+	StringUtility::appendUpdateInt(updateString, MonsterFrameData::COL_FRAME_COUNT, data.mFrameCount);
+	StringUtility::appendUpdateIntArray(updateString, MonsterFrameData::COL_POSX, data.mPosX);
+	StringUtility::appendUpdateIntArray(updateString, MonsterFrameData::COL_POSY, data.mPosY);
 	StringUtility::removeLastComma(updateString);
 	string conditionString;
-	appendConditionInt(conditionString, MonsterFrameData::COL_ID, data.mID, " and ");
-	appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, data.mDirection, " and ");
-	appendConditionString(conditionString, MonsterFrameData::COL_ACTION, data.mAction, "");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_ID, data.mID, " and ");
+	StringUtility::appendConditionInt(conditionString, MonsterFrameData::COL_DIRECTION, data.mDirection, " and ");
+	StringUtility::appendConditionString(conditionString, MonsterFrameData::COL_ACTION, data.mAction, "");
 	return doUpdate(updateString, conditionString);
 }
 
 bool SQLiteMonsterFrame::insert(const MonsterFrameData& data)
 {
 	string valueString;
-	appendValueInt(valueString, data.mID);
-	appendValueString(valueString, data.mLabel);
-	appendValueInt(valueString, data.mDirection);
-	appendValueString(valueString, data.mAction);
-	appendValueInt(valueString, data.mFrameCount);
-	appendValueIntArray(valueString, data.mPosX);
-	appendValueIntArray(valueString, data.mPosY);
+	data.insert(valueString);
 	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }

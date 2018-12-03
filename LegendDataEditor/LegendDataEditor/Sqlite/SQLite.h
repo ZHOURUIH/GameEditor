@@ -13,6 +13,8 @@ class SQLiteDataReader;
 class SQLiteSceneMap;
 class SQLiteNPC;
 class SQLiteNPCFrame;
+class SQLiteMonGen;
+class SQLiteMonsterInfo;
 class SQLite
 {
 public:
@@ -26,6 +28,8 @@ public:
 	SQLiteSceneMap* mSQLiteSceneMap;
 	SQLiteNPC* mSQLiteNPC;
 	SQLiteNPCFrame* mSQLiteNPCFrame;
+	SQLiteMonGen* mSQLiteMonGen;
+	SQLiteMonsterInfo* mSQLiteMonsterInfo;
 public:
 	SQLite(const string& dbFileName);
 	~SQLite() { destroy(); }

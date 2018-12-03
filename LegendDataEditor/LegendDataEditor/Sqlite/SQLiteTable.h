@@ -10,6 +10,8 @@ class SQLiteTableData
 {
 public:
 	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table) = 0;
+	virtual void insert(string& valueString) const = 0;
+	virtual void update(string& updateString) const = 0;
 };
 
 class SQLite;
@@ -40,14 +42,6 @@ public:
 protected:
 	bool doUpdate(const string& updateString, const string& conditionString);
 	bool doInsert(const string& valueString);
-	void appendValueString(string& queryStr, const string& str, bool isEnd = false);
-	void appendValueInt(string& queryStr, int value, bool isEnd = false);
-	void appendValueIntArray(string& queryStr, const txVector<int>& intArray, bool isEnd = false);
-	void appendConditionString(string& condition, const string& col, const string& str, const string& operate);
-	void appendConditionInt(string& condition, const string& col, int value, const string& operate);
-	void appendUpdateString(string& updateInfo, const string& col, const string& str, bool isEnd = false);
-	void appendUpdateInt(string& updateInfo, const string& col, int value, bool isEnd = false);
-	void appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray, bool isEnd = false);
 	template<typename T>
 	void parseReader(SQLiteDataReader* reader, T& data)
 	{

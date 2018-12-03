@@ -12,6 +12,7 @@ public:
 	static string COL_MINI_MAP;
 	static string COL_WIDTH;
 	static string COL_HEIGHT;
+public:
 	int mID;
 	string mLabel;
 	string mResource;
@@ -27,6 +28,24 @@ public:
 		mMiniMap = reader->getInt(table->getCol(COL_MINI_MAP));
 		mWidth = reader->getInt(table->getCol(COL_WIDTH));
 		mHeight = reader->getInt(table->getCol(COL_HEIGHT));
+	}
+	virtual void insert(string& valueString) const
+	{
+		StringUtility::appendValueInt(valueString, mID);
+		StringUtility::appendValueString(valueString, mLabel);
+		StringUtility::appendValueString(valueString, mResource);
+		StringUtility::appendValueInt(valueString, mMiniMap);
+		StringUtility::appendValueInt(valueString, mWidth);
+		StringUtility::appendValueInt(valueString, mHeight);
+	}
+	virtual void update(string& updateString) const
+	{
+		StringUtility::appendUpdateInt(updateString, COL_ID, mID);
+		StringUtility::appendUpdateString(updateString, COL_LABEL, mLabel);
+		StringUtility::appendUpdateString(updateString, COL_RESOURCE, mResource);
+		StringUtility::appendUpdateInt(updateString, COL_MINI_MAP, mMiniMap);
+		StringUtility::appendUpdateInt(updateString, COL_WIDTH, mWidth);
+		StringUtility::appendUpdateInt(updateString, COL_HEIGHT, mHeight);
 	}
 	static void registeColumn(SQLiteTable* table)
 	{

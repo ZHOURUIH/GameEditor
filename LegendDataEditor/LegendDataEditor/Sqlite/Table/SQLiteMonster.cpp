@@ -3,8 +3,8 @@
 #include "SQLiteDataReader.h"
 #include "SQLite.h"
 
-string MonsterData::COL_LABLE = "MonsterLabel";
-string MonsterData::COL_ID = "MonsterID";
+string MonsterData::COL_LABEL = "Label";
+string MonsterData::COL_ID = "ID";
 string MonsterData::COL_DESC = "Desc";
 string MonsterData::COL_PREFAB = "Prefab";
 string MonsterData::COL_RESOURCE = "Resource";
@@ -12,7 +12,7 @@ string MonsterData::COL_RESOURCE = "Resource";
 void SQLiteMonster::query(int monsterID, MonsterData& data)
 {
 	string conditionString;
-	appendConditionInt(conditionString, MonsterData::COL_ID, monsterID, "");
+	StringUtility::appendConditionInt(conditionString, MonsterData::COL_ID, monsterID, "");
 	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
 	parseReader(mSQLite->executeQuery(queryStr), data);
 }
@@ -20,11 +20,7 @@ void SQLiteMonster::query(int monsterID, MonsterData& data)
 bool SQLiteMonster::insert(const MonsterData& data)
 {
 	string valueString;
-	appendValueString(valueString, data.mLabel);
-	appendValueInt(valueString, data.mID);
-	appendValueString(valueString, data.mDesc);
-	appendValueString(valueString, data.mPrefab);
-	appendValueString(valueString, data.mResource);
+	data.insert(valueString);
 	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }

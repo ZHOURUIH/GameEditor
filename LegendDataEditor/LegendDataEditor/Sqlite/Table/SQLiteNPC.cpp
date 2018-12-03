@@ -20,14 +20,7 @@ void SQLiteNPC::query(txVector<NPCData>& dataList)
 bool SQLiteNPC::insert(const NPCData& data)
 {
 	string valueString;
-	appendValueInt(valueString, data.mID);
-	appendValueString(valueString, data.mScript);
-	appendValueString(valueString, data.mMap);
-	appendValueInt(valueString, data.mPosX);
-	appendValueInt(valueString, data.mPosY);
-	appendValueString(valueString, data.mLabel);
-	appendValueInt(valueString, data.mFlag);
-	appendValueInt(valueString, data.mApperance);
+	data.insert(valueString);
 	StringUtility::removeLastComma(valueString);
 	return doInsert(valueString);
 }
