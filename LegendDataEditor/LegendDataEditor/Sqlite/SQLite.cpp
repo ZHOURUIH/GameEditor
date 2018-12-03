@@ -12,6 +12,7 @@
 #include "SQLiteNPCFrame.h"
 #include "SQLiteMonGen.h"
 #include "SQLiteMonsterInfo.h"
+#include "SQLiteMagic.h"
 
 #define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
 #define DELETE_TABLE(type) TRACE_DELETE(m##type)
@@ -36,6 +37,7 @@ SQLite::SQLite(const string& dbFileName)
 	NEW_TABLE(SQLiteNPCFrame);
 	NEW_TABLE(SQLiteMonGen);
 	NEW_TABLE(SQLiteMonsterInfo);
+	NEW_TABLE(SQLiteMagic);
 }
 void SQLite::destroy()
 {
@@ -50,6 +52,7 @@ void SQLite::destroy()
 	DELETE_TABLE(SQLiteNPCFrame);
 	DELETE_TABLE(SQLiteMonGen);
 	DELETE_TABLE(SQLiteMonsterInfo);
+	DELETE_TABLE(SQLiteMagic);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)
