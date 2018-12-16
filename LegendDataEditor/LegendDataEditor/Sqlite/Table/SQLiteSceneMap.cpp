@@ -14,14 +14,12 @@ void SQLiteSceneMap::query(int id, SceneMapData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionInt(conditionString, SceneMapData::COL_ID, id, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 void SQLiteSceneMap::queryAll(txVector<SceneMapData>& dataList)
 {
-	string queryStr = "SELECT * FROM " + mTableName;
-	parseReader(mSQLite->executeQuery(queryStr), dataList);
+	doSelect(dataList);
 }
 
 bool SQLiteSceneMap::insert(const SceneMapData& data)

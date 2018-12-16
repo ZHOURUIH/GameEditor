@@ -17,8 +17,7 @@ void SQLiteEquip::query(int id, EquipData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionInt(conditionString, EquipData::COL_ID, id, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 bool SQLiteEquip::insert(const EquipData& data)

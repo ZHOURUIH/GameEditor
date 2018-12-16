@@ -12,8 +12,7 @@ void SQLiteEffect::query(int weaponID, EffectData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionInt(conditionString, EffectData::COL_ID, weaponID, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 bool SQLiteEffect::insert(const EffectData& data)

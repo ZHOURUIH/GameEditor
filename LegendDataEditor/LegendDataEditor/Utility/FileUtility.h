@@ -13,6 +13,7 @@ public:
 #endif
 	static void findFiles(const string& path, txVector<string>& files, const txVector<string>& patterns = txVector<string>(), bool recursive = true);
 	static void findFolders(const string& path, txVector<string>& folders, bool recursive = false);
+	static bool isEmptyFolder(const string& path);
 	static void deleteFolder(const string& path);
 	static bool deleteEmptyFolder(const string& path);
 	static void deleteFile(const string& path);

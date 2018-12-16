@@ -1,19 +1,16 @@
 ﻿#include "SQLite.h"
 #include "Utility.h"
 #include "SQLiteEquip.h"
-#include "SQLiteEquipFrame.h"
 #include "SQLiteMonster.h"
-#include "SQLiteMonsterFrame.h"
 #include "SQLiteEffect.h"
-#include "SQLiteEffectFrame.h"
 #include "SQLiteDataReader.h"
 #include "SQLiteSceneMap.h"
 #include "SQLiteNPC.h"
-#include "SQLiteNPCFrame.h"
 #include "SQLiteMonGen.h"
 #include "SQLiteMonsterInfo.h"
 #include "SQLiteMagic.h"
 #include "SQLiteStdItem.h"
+#include "SQLiteAnimationFrame.h"
 
 #define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
 #define DELETE_TABLE(type) TRACE_DELETE(m##type)
@@ -28,34 +25,28 @@ SQLite::SQLite(const string& dbFileName)
 		return;
 	}
 	NEW_TABLE(SQLiteEquip);
-	NEW_TABLE(SQLiteEquipFrame);
 	NEW_TABLE(SQLiteMonster);
-	NEW_TABLE(SQLiteMonsterFrame);
 	NEW_TABLE(SQLiteEffect);
-	NEW_TABLE(SQLiteEffectFrame);
 	NEW_TABLE(SQLiteSceneMap);
 	NEW_TABLE(SQLiteNPC);
-	NEW_TABLE(SQLiteNPCFrame);
 	NEW_TABLE(SQLiteMonGen);
 	NEW_TABLE(SQLiteMonsterInfo);
 	NEW_TABLE(SQLiteMagic);
 	NEW_TABLE(SQLiteStdItem);
+	NEW_TABLE(SQLiteAnimationFrame);
 }
 void SQLite::destroy()
 {
 	DELETE_TABLE(SQLiteEquip);
-	DELETE_TABLE(SQLiteEquipFrame);
 	DELETE_TABLE(SQLiteMonster);
-	DELETE_TABLE(SQLiteMonsterFrame);
 	DELETE_TABLE(SQLiteEffect);
-	DELETE_TABLE(SQLiteEffectFrame);
 	DELETE_TABLE(SQLiteSceneMap);
 	DELETE_TABLE(SQLiteNPC);
-	DELETE_TABLE(SQLiteNPCFrame);
 	DELETE_TABLE(SQLiteMonGen);
 	DELETE_TABLE(SQLiteMonsterInfo);
 	DELETE_TABLE(SQLiteMagic);
 	DELETE_TABLE(SQLiteStdItem);
+	DELETE_TABLE(SQLiteAnimationFrame);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)

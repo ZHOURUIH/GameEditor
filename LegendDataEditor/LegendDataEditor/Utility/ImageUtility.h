@@ -20,18 +20,12 @@ public:
 	static void allWixWilToPNG(const string& sourcePath);
 	static void writePositionFile(const string& positionFile, POINT* posList, int posCount);
 	static POINT* readPositionFile(const string& positionFile, int& posCount);
-	static void saveFrameInfo(const string& path, IMAGE_TYPE imageType, SQLite* sqlite);
 	static void renameImage(const string& path);
 	static void renameImageToAnim(const string& path);
-	static void splitPositionFile(const string& path);
-	static void renameByDirection(const string& path);
+	static void splitPositionFile(const string& path, bool pathWithFileName = false);
+	static void renameByDirection(const string& path, int directionCount, bool autoGroup = true);
 	static void sortByFileNumber(txVector<string>& fileList);
 	static void autoMoveFile(const string& path, int groupSize);
-	static void writeSQLite(txMap<string, WeaponActionSet>& actionSetList, SQLite* sqlite);
-	static void writeSQLite(txMap<string, HumanActionSet>& actionSetList, SQLite* sqlite);
-	static void writeSQLite(txMap<string, MonsterActionSet>& actionSetList, SQLite* sqlite);
-	static void writeSQLite(txMap<string, EffectSet>& actionSetList, SQLite* sqlite);
-	static void writeSQLite(txMap<string, NPCActionSet>& actionSetList, SQLite* sqlite);
 	static void autoGroupHumanImage(const string& path);
 	static void autoGroupWeaponImage(const string& path);
 	static void autoGroupMonsterImage0(const string& path);
@@ -56,6 +50,7 @@ public:
 	static void convertMapFile(const string& fileName);
 	static void convertAllMapFile(const string& filePath);
 	static void readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap);
+	static void writeAnimFrameSQLite();
 };
 
 #endif

@@ -13,8 +13,7 @@ void SQLiteMonster::query(int monsterID, MonsterData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionInt(conditionString, MonsterData::COL_ID, monsterID, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 bool SQLiteMonster::insert(const MonsterData& data)

@@ -9,6 +9,7 @@ public:
 	static string COL_MAP;
 	static string COL_POSX;
 	static string COL_POSY;
+	static string COL_ID;
 	static string COL_MONSTER_LABEL;
 	static string COL_RADIUS;
 	static string COL_COUNT;
@@ -17,6 +18,7 @@ public:
 	string mMap;
 	int mPosX;
 	int mPosY;
+	int mID;
 	string mMonsterLabel;
 	int mRadius;
 	int mCount;
@@ -27,6 +29,7 @@ public:
 		mMap = reader->getString(table->getCol(COL_MAP));
 		mPosX = reader->getInt(table->getCol(COL_POSX));
 		mPosY = reader->getInt(table->getCol(COL_POSY));
+		mID = reader->getInt(table->getCol(COL_ID));
 		mMonsterLabel = reader->getString(table->getCol(COL_MONSTER_LABEL));
 		mRadius = reader->getInt(table->getCol(COL_RADIUS));
 		mCount = reader->getInt(table->getCol(COL_COUNT));
@@ -37,6 +40,7 @@ public:
 		StringUtility::appendValueString(valueString, mMap);
 		StringUtility::appendValueInt(valueString, mPosX);
 		StringUtility::appendValueInt(valueString, mPosY);
+		StringUtility::appendValueInt(valueString, mID);
 		StringUtility::appendValueString(valueString, mMonsterLabel);
 		StringUtility::appendValueInt(valueString, mRadius);
 		StringUtility::appendValueInt(valueString, mCount);
@@ -47,6 +51,7 @@ public:
 		StringUtility::appendUpdateString(updateString, COL_MAP, mMap);
 		StringUtility::appendUpdateInt(updateString, COL_POSX, mPosX);
 		StringUtility::appendUpdateInt(updateString, COL_POSY, mPosY);
+		StringUtility::appendUpdateInt(updateString, COL_ID, mID);
 		StringUtility::appendUpdateString(updateString, COL_MONSTER_LABEL, mMonsterLabel);
 		StringUtility::appendUpdateInt(updateString, COL_RADIUS, mRadius);
 		StringUtility::appendUpdateInt(updateString, COL_COUNT, mCount);
@@ -57,6 +62,7 @@ public:
 		table->registeColumn(COL_MAP);
 		table->registeColumn(COL_POSX);
 		table->registeColumn(COL_POSY);
+		table->registeColumn(COL_ID);
 		table->registeColumn(COL_MONSTER_LABEL);
 		table->registeColumn(COL_RADIUS);
 		table->registeColumn(COL_COUNT);
@@ -72,7 +78,8 @@ public:
 	{
 		MonGenData::registeColumn(this);
 	}
-	void query(string map, MonGenData& data);
+	bool query(const MonGenData& data);
+	void query(string map, txVector<MonGenData>& dataList);
 	void queryAll(txVector<MonGenData>& dataList);
 	bool insert(const MonGenData& data);
 };

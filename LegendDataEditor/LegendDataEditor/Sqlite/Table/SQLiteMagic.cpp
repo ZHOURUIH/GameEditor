@@ -27,14 +27,12 @@ void SQLiteMagic::query(const string& name, MagicData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionString(conditionString, MagicData::COL_NAME, name, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 void SQLiteMagic::queryAll(txVector<MagicData>& dataList)
 {
-	string queryStr = "SELECT * FROM " + mTableName;
-	parseReader(mSQLite->executeQuery(queryStr), dataList);
+	doSelect(dataList);
 }
 
 bool SQLiteMagic::insert(const MagicData& data)

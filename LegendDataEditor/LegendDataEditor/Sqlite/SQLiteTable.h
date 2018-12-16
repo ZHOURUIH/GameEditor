@@ -40,16 +40,47 @@ public:
 		COL_NAME.push_back(colName);
 	}
 protected:
+	template<typename T>
+	void doSelect(txVector<T>& dataList, const string& conditionString = "")
+	{
+		string queryStr = "";
+		if (conditionString != "")
+		{
+			queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
+		}
+		else
+		{
+			queryStr = "SELECT * FROM " + mTableName;
+		}
+		parseReader(mSQLite->executeQuery(queryStr), dataList);
+	}
+	template<typename T>
+	bool doSelect(T& data, const string& conditionString = "")
+	{
+		string queryStr = "";
+		if (conditionString != "")
+		{
+			queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
+		}
+		else
+		{
+			queryStr = "SELECT * FROM " + mTableName;
+		}
+		return parseReader(mSQLite->executeQuery(queryStr), data);
+	}
 	bool doUpdate(const string& updateString, const string& conditionString);
 	bool doInsert(const string& valueString);
 	template<typename T>
-	void parseReader(SQLiteDataReader* reader, T& data)
+	bool parseReader(SQLiteDataReader* reader, T& data)
 	{
+		bool ret = false;
 		if (reader->read())
 		{
 			data.parse(reader, this);
+			ret = true;
 		}
 		mSQLite->releaseReader(reader);
+		return ret;
 	}
 	template<typename T>
 	void parseReader(SQLiteDataReader* reader, txVector<T>& dataList)

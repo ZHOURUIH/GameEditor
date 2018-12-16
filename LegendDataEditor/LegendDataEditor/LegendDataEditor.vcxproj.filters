@@ -105,9 +105,6 @@
     <ClCompile Include="Sqlite\Table\SQLiteMonster.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteMonsterFrame.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\sqlite3\sqlite3.c">
       <Filter>Sqlite\sqlite3</Filter>
     </ClCompile>
@@ -115,9 +112,6 @@
       <Filter>Sqlite</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteEffect.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteEffectFrame.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="SceneMap\MapHeader.cpp">
@@ -141,9 +135,6 @@
     <ClCompile Include="Sqlite\Table\SQLiteEquip.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteEquipFrame.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteNPC.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
@@ -162,9 +153,6 @@
     <ClCompile Include="Image\WeaponImage.cpp">
       <Filter>Image</Filter>
     </ClCompile>
-    <ClCompile Include="Sqlite\Table\SQLiteNPCFrame.cpp">
-      <Filter>Sqlite\Table</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteMonGen.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
@@ -175,6 +163,9 @@
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteStdItem.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteAnimationFrame.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
   </ItemGroup>
@@ -278,9 +269,6 @@
     <ClInclude Include="Sqlite\Table\SQLiteMonster.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteMonsterFrame.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
     <ClInclude Include="Sqlite\sqlite3\sqlite3.h">
       <Filter>Sqlite\sqlite3</Filter>
     </ClInclude>
@@ -288,9 +276,6 @@
       <Filter>Sqlite\sqlite3</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteEffect.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteEffectFrame.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="SceneMap\MapHeader.h">
@@ -312,9 +297,6 @@
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteEquip.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteEquipFrame.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteNPC.h">
@@ -350,9 +332,6 @@
     <ClInclude Include="Image\WeaponImage.h">
       <Filter>Image</Filter>
     </ClInclude>
-    <ClInclude Include="Sqlite\Table\SQLiteNPCFrame.h">
-      <Filter>Sqlite\Table</Filter>
-    </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteMonGen.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
@@ -363,6 +342,9 @@
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteStdItem.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteAnimationFrame.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
   </ItemGroup>

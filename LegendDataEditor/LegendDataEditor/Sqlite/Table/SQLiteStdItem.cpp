@@ -32,14 +32,12 @@ void SQLiteStdItem::query(const string& name, StdItemData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionString(conditionString, StdItemData::COL_NAME, name, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 void SQLiteStdItem::queryAll(txVector<StdItemData>& dataList)
 {
-	string queryStr = "SELECT * FROM " + mTableName;
-	parseReader(mSQLite->executeQuery(queryStr), dataList);
+	doSelect(dataList);
 }
 
 bool SQLiteStdItem::insert(const StdItemData& data)

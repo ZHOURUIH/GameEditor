@@ -4,36 +4,30 @@
 #include "ServerDefine.h"
 
 class SQLiteEquip;
-class SQLiteEquipFrame;
 class SQLiteMonster;
-class SQLiteMonsterFrame;
 class SQLiteEffect;
-class SQLiteEffectFrame;
 class SQLiteDataReader;
 class SQLiteSceneMap;
 class SQLiteNPC;
-class SQLiteNPCFrame;
 class SQLiteMonGen;
 class SQLiteMonsterInfo;
 class SQLiteMagic;
 class SQLiteStdItem;
+class SQLiteAnimationFrame;
 class SQLite
 {
 public:
 	sqlite3* mSQlite3;
 	SQLiteEquip* mSQLiteEquip;
-	SQLiteEquipFrame* mSQLiteEquipFrame;
 	SQLiteMonster* mSQLiteMonster;
-	SQLiteMonsterFrame* mSQLiteMonsterFrame;
 	SQLiteEffect* mSQLiteEffect;
-	SQLiteEffectFrame* mSQLiteEffectFrame;
 	SQLiteSceneMap* mSQLiteSceneMap;
 	SQLiteNPC* mSQLiteNPC;
-	SQLiteNPCFrame* mSQLiteNPCFrame;
 	SQLiteMonGen* mSQLiteMonGen;
 	SQLiteMonsterInfo* mSQLiteMonsterInfo;
 	SQLiteMagic* mSQLiteMagic;
 	SQLiteStdItem* mSQLiteStdItem;
+	SQLiteAnimationFrame* mSQLiteAnimationFrame;
 public:
 	SQLite(const string& dbFileName);
 	~SQLite() { destroy(); }

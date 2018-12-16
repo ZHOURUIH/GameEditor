@@ -30,14 +30,12 @@ void SQLiteMonsterInfo::query(const string& name, MonsterInfoData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionString(conditionString, MonsterInfoData::COL_NAME, name, "");
-	string queryStr = "SELECT * FROM " + mTableName + " WHERE " + conditionString;
-	parseReader(mSQLite->executeQuery(queryStr), data);
+	doSelect(data, conditionString);
 }
 
 void SQLiteMonsterInfo::queryAll(txVector<MonsterInfoData>& dataList)
 {
-	string queryStr = "SELECT * FROM " + mTableName;
-	parseReader(mSQLite->executeQuery(queryStr), dataList);
+	doSelect(dataList);
 }
 
 bool SQLiteMonsterInfo::insert(const MonsterInfoData& data)

@@ -13,11 +13,7 @@ void main()
 4:整理怪物文件结构0 \n\
 5:整理怪物文件结构1 \n\
 6:整理特效文件结构 \n\
-7:将角色文件帧数据写入SQLite \n\
-8:将武器文件帧数据写入SQLite \n\
-9:将怪物文件帧数据写入SQLite \n\
-10:将特效文件帧数据写入SQLite \n\
-17:自动计算方向并分组 \n\
+17:自动计算方向 \n\
 18:拆分位置文件 \n\
 19:删除无效图片 \n\
 20:按序号重命名文件 \n\
@@ -30,7 +26,7 @@ void main()
 27:转换全部地图文件\n\
 28:解析所有wix和wil文件\n\
 29:整理NPC文件结构\n\
-30:将npc文件帧数据写入SQLite \n\
+31:将media中全部序列帧数据写入SQLite \n\
 0:退出" << std::endl;
 		int input;
 		std::cin >> input;
@@ -112,67 +108,18 @@ void main()
 			std::cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << std::endl;
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
-		else if (input == 7)
-		{
-			std::cout << "输入文件名:";
-			string fileName;
-			std::cin >> fileName;
-			std::cout << "开始将角色文件帧数据写入SQLite..." << std::endl;
-			long startTime = timeGetTime();
-			string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
-			ImageUtility::saveFrameInfo(filePath, IT_HUMAN, mSQLite);
-			TRACE_DELETE(mSQLite);
-			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
-		}
-		else if (input == 8)
-		{
-			std::cout << "输入文件名:";
-			string fileName;
-			std::cin >> fileName;
-			std::cout << "开始将武器文件帧数据写入SQLite..." << std::endl;
-			long startTime = timeGetTime();
-			string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
-			ImageUtility::saveFrameInfo(filePath, IT_WEAPON, mSQLite);
-			TRACE_DELETE(mSQLite);
-			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
-		}
-		else if (input == 9)
-		{
-			std::cout << "输入文件名:";
-			string fileName;
-			std::cin >> fileName;
-			std::cout << "开始将怪物文件帧数据写入SQLite..." << std::endl;
-			long startTime = timeGetTime();
-			string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
-			ImageUtility::saveFrameInfo(filePath, IT_MONSTER, mSQLite);
-			TRACE_DELETE(mSQLite);
-			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
-		}
-		else if (input == 10)
-		{
-			std::cout << "输入文件名:";
-			string fileName;
-			std::cin >> fileName;
-			std::cout << "开始将特效文件帧数据写入SQLite..." << std::endl;
-			long startTime = timeGetTime();
-			string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
-			ImageUtility::saveFrameInfo(filePath, IT_EFFECT, mSQLite);
-			TRACE_DELETE(mSQLite);
-			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
-		}
 		else if (input == 17)
 		{
 			std::cout << "输入文件夹名:";
 			string fileName;
 			std::cin >> fileName;
-			std::cout << "开始自动计算方向并分组..." << std::endl;
+			std::cout << "输入方向数量:";
+			int directionCount = 1;
+			std::cin >> directionCount;
+			std::cout << "开始自动计算方向..." << std::endl;
 			long startTime = timeGetTime();
 			string filePath = "../media/" + fileName;
-			ImageUtility::renameByDirection(filePath);
+			ImageUtility::renameByDirection(filePath, directionCount, false);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		else if (input == 18)
@@ -304,17 +251,11 @@ void main()
 			std::cout << "文件整理完毕" << std::endl;
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
-		else if (input == 30)
+		else if (input == 31)
 		{
-			std::cout << "输入文件名:";
-			string fileName;
-			std::cin >> fileName;
-			std::cout << "开始将NPC文件帧数据写入SQLite..." << std::endl;
+			std::cout << "开始将所有序列帧数据写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
-			string filePath = "../media/" + fileName;
-			SQLite* mSQLite = TRACE_NEW(SQLite, mSQLite, "../media/DataBase.db");
-			ImageUtility::saveFrameInfo(filePath, IT_NPC, mSQLite);
-			TRACE_DELETE(mSQLite);
+			ImageUtility::writeAnimFrameSQLite();
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		system("pause");

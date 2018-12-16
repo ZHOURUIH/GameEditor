@@ -14,8 +14,7 @@ string NPCData::COL_APPERANCE = "Apperance";
 
 void SQLiteNPC::query(txVector<NPCData>& dataList)
 {
-	string queryStr = "SELECT * FROM " + mTableName;
-	parseReader(mSQLite->executeQuery(queryStr), dataList);
+	doSelect(dataList);
 }
 bool SQLiteNPC::insert(const NPCData& data)
 {

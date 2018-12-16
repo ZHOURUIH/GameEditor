@@ -162,8 +162,7 @@ void FileUtility::findFiles(const string& path, txVector<string>& files, const t
 	do
 	{
 		// 过滤.和..
-		if (strcmp(FindFileData.cFileName, ".") == 0
-			|| strcmp(FindFileData.cFileName, "..") == 0)
+		if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)
 		{
 			continue;
 		}
@@ -212,8 +211,7 @@ void FileUtility::findFolders(const string& path, txVector<string>& folders, boo
 	do
 	{
 		// 过滤.和..
-		if (strcmp(FindFileData.cFileName, ".") == 0
-			|| strcmp(FindFileData.cFileName, "..") == 0)
+		if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)
 		{
 			continue;
 		}
@@ -233,6 +231,37 @@ void FileUtility::findFolders(const string& path, txVector<string>& folders, boo
 	::FindClose(hFind);
 }
 
+bool FileUtility::isEmptyFolder(const string& path)
+{
+	WIN32_FIND_DATAA FindData;
+	// 构造路径
+	string pathName = path + "/*.*";
+	HANDLE hFind = FindFirstFileA(pathName.c_str(), &FindData);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return true;
+	}
+	bool isEmpty = true;
+	do
+	{
+		if (strcmp(FindData.cFileName, ".") == 0 || strcmp(FindData.cFileName, "..") == 0)
+		{
+			continue;
+		}
+
+		// 构造完整路径
+		string fullname = path + "/" + string(FindData.cFileName);
+		// 如果是文件,则直接删除文件
+		if (!(FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			isEmpty = false;
+			break;
+		}
+	} while (::FindNextFileA(hFind, &FindData));
+	::FindClose(hFind);
+	return isEmpty;
+}
+
 void FileUtility::deleteFolder(const string& path)
 {
 	WIN32_FIND_DATAA FindData;
@@ -243,11 +272,10 @@ void FileUtility::deleteFolder(const string& path)
 	{
 		return;
 	}
-	while (::FindNextFileA(hFind, &FindData))
+	do
 	{
 		// 过虑.和..
-		if (strcmp(FindData.cFileName, ".") == 0
-			|| strcmp(FindData.cFileName, "..") == 0)
+		if (strcmp(FindData.cFileName, ".") == 0 || strcmp(FindData.cFileName, "..") == 0)
 		{
 			continue;
 		}
@@ -264,7 +292,7 @@ void FileUtility::deleteFolder(const string& path)
 		{
 			DeleteFileA(fullname.c_str());
 		}
-	}
+	} while (::FindNextFileA(hFind, &FindData));
 	::FindClose(hFind);
 	// 删除文件夹自身
 	RemoveDirectoryA(path.c_str());
@@ -281,11 +309,10 @@ bool FileUtility::deleteEmptyFolder(const string& path)
 		return true;
 	}
 	bool isEmpty = true;
-	while (::FindNextFileA(hFind, &FindData))
+	do
 	{
 		// 过虑.和..
-		if (strcmp(FindData.cFileName, ".") == 0
-			|| strcmp(FindData.cFileName, "..") == 0)
+		if (strcmp(FindData.cFileName, ".") == 0 || strcmp(FindData.cFileName, "..") == 0)
 		{
 			continue;
 		}
@@ -303,7 +330,7 @@ bool FileUtility::deleteEmptyFolder(const string& path)
 		{
 			isEmpty = false;
 		}
-	}
+	} while (::FindNextFileA(hFind, &FindData));
 	::FindClose(hFind);
 	// 删除文件夹自身
 	if (isEmpty)

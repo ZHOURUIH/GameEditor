@@ -4,14 +4,15 @@
 #include "WeaponImage.h"
 #include "SQLite.h"
 #include "SQLiteEquip.h"
-#include "SQLiteEquipFrame.h"
 #include "SQLiteMonster.h"
-#include "SQLiteMonsterFrame.h"
 #include "SQLiteEffect.h"
-#include "SQLiteEffectFrame.h"
 #include "SQLiteSceneMap.h"
 #include "SQLiteNPC.h"
-#include "SQLiteNPCFrame.h"
+#include "SQLiteMonGen.h"
+#include "SQLiteMonsterInfo.h"
+#include "SQLiteMagic.h"
+#include "SQLiteStdItem.h"
+#include "SQLiteAnimationFrame.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "SceneMap.h"
@@ -273,9 +274,11 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 				deleteImageWithPosition(fileList[j]);
 				continue;
 			}
+			
+			string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionName + "/";
 			string actionFolderName = actionName + "_dir" + StringUtility::intToString(direction);
-			string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionFolderName + "/";
-			moveImageWithPosition(fileList[j], destPath + actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true));
+			string fileName = actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true);
+			moveImageWithPosition(fileList[j], destPath + fileName);
 		}
 	}
 }
@@ -315,9 +318,10 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 					deleteImageWithPosition(fileList[j]);
 					continue;
 				}
+				string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionName + "/";
 				string actionFolderName = actionName + "_dir" + StringUtility::intToString(direction);
-				string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionFolderName + "/";
-				moveImageWithPosition(fileList[j], destPath + actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true));
+				string fileName = actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true);
+				moveImageWithPosition(fileList[j], destPath + fileName);
 			}
 		}
 	}
@@ -338,7 +342,7 @@ void ImageUtility::autoGroupMonsterImage1(const string& path)
 	// 重命名文件,将每个文件夹中的图片都重命名为该文件夹中的位置序号
 	ImageUtility::renameImage(path);
 	// 自动计算方向并分组
-	ImageUtility::renameByDirection(path);
+	ImageUtility::renameByDirection(path, DIRECTION_COUNT);
 }
 
 void ImageUtility::autoGroupEffectImage(const string& path)
@@ -381,310 +385,8 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 				continue;
 			}
 			string actionFolderName = actionName + "_dir" + StringUtility::intToString(direction);
-			string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionFolderName + "/";
+			string destPath = StringUtility::getFilePath(fileList[j]) + "/";
 			moveImageWithPosition(fileList[j], destPath + actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true));
-		}
-	}
-}
-
-void ImageUtility::saveFrameInfo(const string& path, IMAGE_TYPE imageType, SQLite* sqlite)
-{
-	if (imageType == IT_MONSTER)
-	{
-		// 第一级文件夹是每个怪物的分类,每个怪物文件夹中有该怪物所有动作的所有方向的序列帧
-		// 查找文件夹中的所有图片
-		txVector<string> folderList;
-		FileUtility::findFolders(path, folderList);
-		int folderCount = folderList.size();
-		for (int i = 0; i < folderCount; ++i)
-		{
-			MonsterImageGroup imageGroup;
-			txVector<string> fileList;
-			FileUtility::findFiles(folderList[i], fileList, ".png");
-			int fileCount = fileList.size();
-			for (int j = 0; j < fileCount; ++j)
-			{
-				POINT pos = getImagePosition(fileList[j]);
-				MonsterImage monsterImage;
-				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
-				monsterImage.mPosX = pos.x;
-				monsterImage.mPosY = pos.y;
-				monsterImage.mMonsterID = -1;
-				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
-				imageGroup.addImage(monsterImage);
-			}
-			// 按序列帧来分组,整理数据后写入数据库
-			writeSQLite(imageGroup.mAllAction, sqlite);
-		}
-	}
-	else if (imageType == IT_HUMAN)
-	{
-		// 第一级文件夹是每个衣服的分类,每个衣服文件夹中有该衣服所有动作的所有方向的序列帧
-		// 查找文件夹中的所有图片
-		txVector<string> folderList;
-		FileUtility::findFolders(path, folderList);
-		int folderCount = folderList.size();
-		for (int i = 0; i < folderCount; ++i)
-		{
-			HumanImageGroup imageGroup;
-			txVector<string> fileList;
-			FileUtility::findFiles(folderList[i], fileList, ".png");
-			int fileCount = fileList.size();
-			for (int j = 0; j < fileCount; ++j)
-			{
-				POINT pos = getImagePosition(fileList[j]);
-				HumanImage humanImage;
-				humanImage.mLabel = StringUtility::getFileName(folderList[i]);
-				humanImage.mPosX = pos.x;
-				humanImage.mPosY = pos.y;
-				humanImage.mClothID = -1;
-				humanImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
-				imageGroup.addImage(humanImage);
-			}
-			// 按序列帧来分组,整理数据后写入数据库
-			writeSQLite(imageGroup.mAllAction, sqlite);
-		}
-	}
-	else if (imageType == IT_WEAPON)
-	{
-		// 第一级文件夹是每个武器的分类,每个武器文件夹中有该武器所有动作的所有方向的序列帧
-		// 查找文件夹中的所有图片
-		txVector<string> folderList;
-		FileUtility::findFolders(path, folderList);
-		int folderCount = folderList.size();
-		for (int i = 0; i < folderCount; ++i)
-		{
-			WeaponImageGroup imageGroup;
-			txVector<string> fileList;
-			FileUtility::findFiles(folderList[i], fileList, ".png");
-			int fileCount = fileList.size();
-			for (int j = 0; j < fileCount; ++j)
-			{
-				POINT pos = getImagePosition(fileList[j]);
-				WeaponImage monsterImage;
-				monsterImage.mLabel = StringUtility::getFileName(folderList[i]);
-				monsterImage.mPosX = pos.x;
-				monsterImage.mPosY = pos.y;
-				monsterImage.mWeaponID = -1;
-				monsterImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
-				imageGroup.addImage(monsterImage);
-			}
-			// 按序列帧来分组,整理数据后写入数据库
-			writeSQLite(imageGroup.mAllAction, sqlite);
-		}
-	}
-	else if (imageType == IT_EFFECT)
-	{
-		// 第一级文件夹是每个特效的分类,每个特效文件夹中有该特效所有方向的序列帧,部分特效只有1个方向
-		// 查找文件夹中的所有图片
-		txVector<string> folderList;
-		FileUtility::findFolders(path, folderList);
-		int folderCount = folderList.size();
-		for (int i = 0; i < folderCount; ++i)
-		{
-			EffectImageGroup imageGroup;
-			txVector<string> fileList;
-			FileUtility::findFiles(folderList[i], fileList, ".png");
-			int fileCount = fileList.size();
-			for (int j = 0; j < fileCount; ++j)
-			{
-				POINT pos = getImagePosition(fileList[j]);
-				EffectImage effectImage;
-				effectImage.mLabel = StringUtility::getFileName(folderList[i]);
-				effectImage.mPosX = pos.x;
-				effectImage.mPosY = pos.y;
-				effectImage.mID = -1;
-				effectImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
-				imageGroup.addImage(effectImage);
-			}
-			// 按序列帧来分组,整理数据后写入数据库
-			writeSQLite(imageGroup.mAllEffect, sqlite);
-		}
-	}
-	else if (imageType == IT_NPC)
-	{
-		// 第一级文件夹是每个衣服的分类,每个衣服文件夹中有该衣服所有动作的所有方向的序列帧
-		// 查找文件夹中的所有图片
-		txVector<string> folderList;
-		FileUtility::findFolders(path, folderList);
-		int folderCount = folderList.size();
-		for (int i = 0; i < folderCount; ++i)
-		{
-			NPCImageGroup imageGroup;
-			txVector<string> fileList;
-			FileUtility::findFiles(folderList[i], fileList, ".png");
-			int fileCount = fileList.size();
-			for (int j = 0; j < fileCount; ++j)
-			{
-				POINT pos = getImagePosition(fileList[j]);
-				NPCImage npcImage;
-				npcImage.mPosX = pos.x;
-				npcImage.mPosY = pos.y;
-				npcImage.mID = StringUtility::stringToInt(StringUtility::getFileName(folderList[i]));
-				npcImage.setFileName(StringUtility::getFileNameNoSuffix(fileList[j]));
-				imageGroup.addImage(npcImage);
-			}
-			// 按序列帧来分组,整理数据后写入数据库
-			writeSQLite(imageGroup.mAllAction, sqlite);
-		}
-	}
-}
-
-void ImageUtility::writeSQLite(txMap<string, WeaponActionSet>& actionSetList, SQLite* sqlite)
-{
-	// 按序列帧来分组,整理数据后写入数据库
-	// 遍历所有动作
-	auto iter = actionSetList.begin();
-	auto iterEnd = actionSetList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		// 遍历该动作的所有方向
-		for (int j = 0; j < DIRECTION_COUNT; ++j)
-		{
-			WeaponActionAnim& actionAnim = iter->second.mDirectionAction[j];
-			EquipFrameData data;
-			data.mID = actionAnim.mImageFrame[0].mWeaponID;
-			data.mLabel = StringUtility::ANSIToUTF8(actionAnim.mImageFrame[0].mLabel);
-			data.mDirection = j;
-			data.mAction = iter->first;
-			data.mFrameCount = actionAnim.mImageFrame.size();
-			// 遍历该动作的所有帧数
-			for (int kk = 0; kk < data.mFrameCount; ++kk)
-			{
-				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
-				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
-			}
-			bool ret = sqlite->mSQLiteEquipFrame->insert(data);
-			if (!ret)
-			{
-				break;
-			}
-		}
-	}
-}
-
-void ImageUtility::writeSQLite(txMap<string, HumanActionSet>& actionSetList, SQLite* sqlite)
-{
-	auto iter = actionSetList.begin();
-	auto iterEnd = actionSetList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		// 遍历该动作的所有方向
-		for (int j = 0; j < DIRECTION_COUNT; ++j)
-		{
-			HumanActionAnim& actionAnim = iter->second.mDirectionAction[j];
-			EquipFrameData data;
-			data.mID = actionAnim.mImageFrame[0].mClothID;
-			data.mLabel = StringUtility::ANSIToUTF8(actionAnim.mImageFrame[0].mLabel);
-			data.mDirection = j;
-			data.mAction = iter->first;
-			data.mFrameCount = actionAnim.mImageFrame.size();
-			// 遍历该动作的所有帧数
-			for (int kk = 0; kk < data.mFrameCount; ++kk)
-			{
-				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
-				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
-			}
-			bool ret = sqlite->mSQLiteEquipFrame->insert(data);
-			if (!ret)
-			{
-				break;
-			}
-		}
-	}
-}
-
-void ImageUtility::writeSQLite(txMap<string, MonsterActionSet>& actionSetList, SQLite* sqlite)
-{
-	auto iter = actionSetList.begin();
-	auto iterEnd = actionSetList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		// 遍历该动作的所有方向
-		for (int j = 0; j < DIRECTION_COUNT; ++j)
-		{
-			MonsterActionAnim& actionAnim = iter->second.mDirectionAction[j];
-			MonsterFrameData data;
-			data.mID = actionAnim.mImageFrame[0].mMonsterID;
-			data.mLabel = StringUtility::ANSIToUTF8(actionAnim.mImageFrame[0].mLabel);
-			data.mDirection = j;
-			data.mAction = iter->first;
-			data.mFrameCount = actionAnim.mImageFrame.size();
-			// 遍历该动作的所有帧数
-			for (int kk = 0; kk < data.mFrameCount; ++kk)
-			{
-				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
-				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
-			}
-			bool ret = sqlite->mSQLiteMonsterFrame->insert(data);
-			if (!ret)
-			{
-				break;
-			}
-		}
-	}
-}
-
-void ImageUtility::writeSQLite(txMap<string, EffectSet>& actionSetList, SQLite* sqlite)
-{
-	auto iter = actionSetList.begin();
-	auto iterEnd = actionSetList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		// 遍历该动作的所有方向
-		auto iterDir = iter->second.mDirectionAction.begin();
-		auto iterDirEnd = iter->second.mDirectionAction.end();
-		for(; iterDir != iterDirEnd; ++iterDir)
-		{
-			EffectAnim& effectAnim = iterDir->second;
-			EffectFrameData data;
-			data.mID = effectAnim.mImageFrame[0].mID;
-			data.mLabel = StringUtility::ANSIToUTF8(effectAnim.mImageFrame[0].mLabel);
-			data.mDirection = iterDir->first;
-			data.mFrameCount = effectAnim.mImageFrame.size();
-			data.mAction = iter->first;
-			// 遍历该动作的所有帧数
-			for (int kk = 0; kk < data.mFrameCount; ++kk)
-			{
-				data.mPosX.push_back(effectAnim.mImageFrame[kk].mPosX);
-				data.mPosY.push_back(effectAnim.mImageFrame[kk].mPosY);
-			}
-			bool ret = sqlite->mSQLiteEffectFrame->insert(data);
-			if (!ret)
-			{
-				break;
-			}
-		}
-	}
-}
-
-void ImageUtility::writeSQLite(txMap<string, NPCActionSet>& actionSetList, SQLite* sqlite)
-{
-	auto iter = actionSetList.begin();
-	auto iterEnd = actionSetList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		// 遍历该动作的所有方向
-		for (int j = 0; j < NPC_DIRECTION_COUNT; ++j)
-		{
-			int direction = j + 3;
-			NPCActionAnim& actionAnim = iter->second.mDirectionAction[direction];
-			NPCFrameData data;
-			data.mID = actionAnim.mImageFrame[0].mID;
-			data.mDirection = direction;
-			data.mAction = iter->first;
-			data.mFrameCount = actionAnim.mImageFrame.size();
-			// 遍历该动作的所有帧数
-			for (int kk = 0; kk < data.mFrameCount; ++kk)
-			{
-				data.mPosX.push_back(actionAnim.mImageFrame[kk].mPosX);
-				data.mPosY.push_back(actionAnim.mImageFrame[kk].mPosY);
-			}
-			bool ret = sqlite->mSQLiteNPCFrame->insert(data);
-			if (!ret)
-			{
-				break;
-			}
 		}
 	}
 }
@@ -720,7 +422,11 @@ void ImageUtility::renameImageToAnim(const string& path)
 	for (int i = 0; i < folderCount; ++i)
 	{
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png");
+		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		if (fileList.size() == 0)
+		{
+			continue;
+		}
 		// 先根据文件名重新排列
 		sortByFileNumber(fileList);
 		int count = fileList.size();
@@ -734,11 +440,21 @@ void ImageUtility::renameImageToAnim(const string& path)
 	}
 }
 
-void ImageUtility::splitPositionFile(const string& path)
+void ImageUtility::splitPositionFile(const string& path, bool pathWithFileName)
 {
 	// 将position.txt文件拆分为单个的txt文件,每个txt文件中只包含一个坐标
 	int posCount = 0;
-	POINT* posList = readPositionFile(path + "/position.txt", posCount);
+	string filePath = path;
+	string pathWithFile = path;
+	if (!pathWithFileName)
+	{
+		pathWithFile += "/position.txt";
+	}
+	else
+	{
+		filePath = StringUtility::getFilePath(filePath);
+	}
+	POINT* posList = readPositionFile(pathWithFile, posCount);
 	if (posList == NULL)
 	{
 		return;
@@ -746,12 +462,12 @@ void ImageUtility::splitPositionFile(const string& path)
 	for (int i = 0; i < posCount; ++i)
 	{
 		string posStr = StringUtility::intToString(posList[i].x) + "," + StringUtility::intToString(posList[i].y);
-		FileUtility::writeFile(path + "/" + StringUtility::intToString(i) + ".txt", posStr);
+		FileUtility::writeFile(filePath + "/" + StringUtility::intToString(i) + ".txt", posStr);
 	}
 	TRACE_DELETE_ARRAY(posList);
 }
 
-void ImageUtility::renameByDirection(const string& path)
+void ImageUtility::renameByDirection(const string& path, int directionCount, bool autoGroup)
 {
 	// 将目录中的所有文件先按照文件名排序,然后按照顺序分组为8个方向,再对每个方向的文件重命名
 	txVector<string> folderList;
@@ -761,23 +477,37 @@ void ImageUtility::renameByDirection(const string& path)
 	{
 		txVector<string> fileList;
 		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		if (fileList.size() == 0)
+		{
+			continue;
+		}
 		sortByFileNumber(fileList);
 		int fileCount = fileList.size();
-		int actionFrameCount = fileCount / DIRECTION_COUNT;
+		if (fileCount % directionCount != 0)
+		{
+			std::cout << "图片数量错误,必须为方向的整数倍, path:" << folderList[i] << std::endl;
+			continue;
+		}
+		int actionFrameCount = fileCount / directionCount;
 		for (int j = 0; j < fileCount; ++j)
 		{
-			if (fileCount % DIRECTION_COUNT != 0)
-			{
-				std::cout << "图片数量错误,必须为方向的整数倍" << std::endl;
-				break;
-			}
 			int imageDir = j / actionFrameCount;
 			int index = j % actionFrameCount;
 			// 把文件移动到一个新建文件夹中
 			string curPath = StringUtility::getFilePath(fileList[j]) + "/";
-			string destFolderName = StringUtility::getFolderName(fileList[j]) + "_dir" + StringUtility::intToString(imageDir);
-			string destPath = StringUtility::getFilePath(curPath) + "/" + destFolderName + "/";
-			moveImageWithPosition(fileList[j], destPath + destFolderName + "_" + StringUtility::intToString(index) + "." + StringUtility::getFileSuffix(fileList[j]));
+			if (autoGroup)
+			{
+				string destFolderName = StringUtility::getFolderName(fileList[j]) + "_dir" + StringUtility::intToString(imageDir);
+				string destPath = StringUtility::getFilePath(curPath) + "/" + destFolderName + "/";
+				string destFileName = destFolderName + "_" + StringUtility::intToString(index) + "." + StringUtility::getFileSuffix(fileList[j]);
+				moveImageWithPosition(fileList[j], destPath + destFileName);
+			}
+			else
+			{
+				string preName = StringUtility::getFolderName(fileList[j]) + "_dir" + StringUtility::intToString(imageDir);
+				string destFileName = preName + "_" + StringUtility::intToString(index) + "." + StringUtility::getFileSuffix(fileList[j]);
+				renameImageWithPosition(fileList[j], curPath + destFileName);
+			}
 		}
 	}
 	// 删除空的目录
@@ -1064,11 +794,14 @@ void ImageUtility::texturePacker(const string& texturePath)
 void ImageUtility::texturePackerAll(const string& texturePath)
 {
 	txVector<string> folderList;
-	FileUtility::findFolders(texturePath, folderList);
+	FileUtility::findFolders(texturePath, folderList, true);
 	int count = folderList.size();
 	for (int i = 0; i < count; ++i)
 	{
-		texturePacker(folderList[i]);
+		if (!FileUtility::isEmptyFolder(folderList[i]))
+		{
+			texturePacker(folderList[i]);
+		}
 	}
 }
 
@@ -1125,4 +858,59 @@ void ImageUtility::convertAllMapFile(const string& filePath)
 	{
 		convertMapFile(fileList[i]);
 	}
+}
+
+void ImageUtility::writeAnimFrameSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<string> folders;
+	FileUtility::findFolders("../media", folders, true);
+	int folderCount = folders.size();
+	for (int i = 0; i < folderCount; ++i)
+	{
+		txVector<string> pngFiles;
+		FileUtility::findFiles(folders[i], pngFiles, ".png", false);
+		if (pngFiles.size() == 0)
+		{
+			continue;
+		}
+		// 1个Atlas中包含多个动画,一个动画有多个帧
+		txMap<string, pair<txVector<int>, txVector<int>>> animationInfo;
+		int pngCount = pngFiles.size();
+		for (int j = 0; j < pngCount; ++j)
+		{
+			string& fullFileName = pngFiles[j];
+			string fileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
+			string animation = fileNameNoSuffix.substr(0, StringUtility::getFileNameNoSuffix(fullFileName).find_last_of('_'));
+			if (!animationInfo.contains(animation))
+			{
+				animationInfo.insert(animation, pair<txVector<int>, txVector<int>>());
+			}
+			string posString = FileUtility::openTxtFile(StringUtility::getFileNameNoSuffix(fullFileName, false) + ".txt");
+			txVector<int> pos;
+			StringUtility::stringToIntArray(posString, pos);
+			if (pos.size() == 2)
+			{
+				animationInfo[animation].first.push_back(pos[0]);
+				animationInfo[animation].second.push_back(pos[1]);
+			}
+			else
+			{
+				std::cout << "位置文件错误：" << StringUtility::getFileNameNoSuffix(fullFileName, false) + ".txt" << std::endl;
+			}
+		}
+		auto iter = animationInfo.begin();
+		auto iterEnd = animationInfo.end();
+		for (; iter != iterEnd; ++iter)
+		{
+			AnimationFrameData animationData;
+			animationData.mAtlas = folders[i].substr(strlen("../media/"));
+			animationData.mAnimation = iter->first;
+			animationData.mFrameCount = iter->second.first.size();
+			animationData.mPosX = iter->second.first;
+			animationData.mPosY = iter->second.second;
+			sqlite->mSQLiteAnimationFrame->insert(animationData);
+		}
+	}
+	TRACE_DELETE(sqlite);
 }
