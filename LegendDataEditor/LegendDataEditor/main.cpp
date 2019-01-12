@@ -27,6 +27,7 @@ void main()
 28:解析所有wix和wil文件\n\
 29:整理NPC文件结构\n\
 31:将media中全部序列帧数据写入SQLite \n\
+32:将图片位置偏移写入SQLite \n\
 0:退出" << std::endl;
 		int input;
 		std::cin >> input;
@@ -256,6 +257,16 @@ void main()
 			std::cout << "开始将所有序列帧数据写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
 			ImageUtility::writeAnimFrameSQLite();
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 32)
+		{
+			std::cout << "输入media下相对路径:";
+			string fileName;
+			std::cin >> fileName;
+			std::cout << "开始将图片位置偏移写入SQLite..." << std::endl;
+			long startTime = timeGetTime();
+			ImageUtility::writeImagePosSQLite("../media/" + fileName);
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		system("pause");

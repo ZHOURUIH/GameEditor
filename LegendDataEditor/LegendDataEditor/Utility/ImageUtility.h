@@ -51,6 +51,7 @@ public:
 	static void convertAllMapFile(const string& filePath);
 	static void readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap);
 	static void writeAnimFrameSQLite();
+	static void writeImagePosSQLite(const string& path);
 };
 
 #endif

@@ -3,9 +3,6 @@
 #include "HumanImage.h"
 #include "WeaponImage.h"
 #include "SQLite.h"
-#include "SQLiteEquip.h"
-#include "SQLiteMonster.h"
-#include "SQLiteEffect.h"
 #include "SQLiteSceneMap.h"
 #include "SQLiteNPC.h"
 #include "SQLiteMonGen.h"
@@ -13,6 +10,7 @@
 #include "SQLiteMagic.h"
 #include "SQLiteStdItem.h"
 #include "SQLiteAnimationFrame.h"
+#include "SQLiteImagePosition.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "SceneMap.h"
@@ -911,6 +909,27 @@ void ImageUtility::writeAnimFrameSQLite()
 			animationData.mPosY = iter->second.second;
 			sqlite->mSQLiteAnimationFrame->insert(animationData);
 		}
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::writeImagePosSQLite(const string& path)
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<std::string> files;
+	FileUtility::findFiles(path, files, ".png");
+	int count = files.size();
+	for (int i = 0; i < count; ++i)
+	{
+		string folder = StringUtility::getFolderName(files[i]);
+		string fileName = StringUtility::getFileNameNoSuffix(files[i]);
+		ImagePositionData data;
+		data.mAtlas = folder;
+		data.mImage = fileName;
+		POINT pos = getImagePosition(files[i]);
+		data.mPosX = pos.x;
+		data.mPosY = pos.y;
+		sqlite->mSQLiteImagePosition->insert(data);
 	}
 	TRACE_DELETE(sqlite);
 }

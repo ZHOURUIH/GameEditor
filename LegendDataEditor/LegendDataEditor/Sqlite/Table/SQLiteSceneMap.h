@@ -20,41 +20,14 @@ public:
 	int mWidth;
 	int mHeight;
 public:
-	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	SceneMapData()
 	{
-		mID = reader->getInt(table->getCol(COL_ID));
-		mLabel = reader->getString(table->getCol(COL_LABEL));
-		mResource = reader->getString(table->getCol(COL_RESOURCE));
-		mMiniMap = reader->getInt(table->getCol(COL_MINI_MAP));
-		mWidth = reader->getInt(table->getCol(COL_WIDTH));
-		mHeight = reader->getInt(table->getCol(COL_HEIGHT));
-	}
-	virtual void insert(string& valueString) const
-	{
-		StringUtility::appendValueInt(valueString, mID);
-		StringUtility::appendValueString(valueString, mLabel);
-		StringUtility::appendValueString(valueString, mResource);
-		StringUtility::appendValueInt(valueString, mMiniMap);
-		StringUtility::appendValueInt(valueString, mWidth);
-		StringUtility::appendValueInt(valueString, mHeight);
-	}
-	virtual void update(string& updateString) const
-	{
-		StringUtility::appendUpdateInt(updateString, COL_ID, mID);
-		StringUtility::appendUpdateString(updateString, COL_LABEL, mLabel);
-		StringUtility::appendUpdateString(updateString, COL_RESOURCE, mResource);
-		StringUtility::appendUpdateInt(updateString, COL_MINI_MAP, mMiniMap);
-		StringUtility::appendUpdateInt(updateString, COL_WIDTH, mWidth);
-		StringUtility::appendUpdateInt(updateString, COL_HEIGHT, mHeight);
-	}
-	static void registeColumn(SQLiteTable* table)
-	{
-		table->registeColumn(COL_ID);
-		table->registeColumn(COL_LABEL);
-		table->registeColumn(COL_RESOURCE);
-		table->registeColumn(COL_MINI_MAP);
-		table->registeColumn(COL_WIDTH);
-		table->registeColumn(COL_HEIGHT);
+		REGISTE_PARAM(mID, COL_ID);
+		REGISTE_PARAM(mLabel, COL_LABEL);
+		REGISTE_PARAM(mResource, COL_RESOURCE);
+		REGISTE_PARAM(mMiniMap, COL_MINI_MAP);
+		REGISTE_PARAM(mWidth, COL_WIDTH);
+		REGISTE_PARAM(mHeight, COL_HEIGHT);
 	}
 };
 
@@ -64,7 +37,7 @@ public:
 	SQLiteSceneMap(SQLite* sqlite)
 		:SQLiteTable("SceneMap", sqlite)
 	{
-		SceneMapData::registeColumn(this);
+		;
 	}
 	void query(int id, SceneMapData& data);
 	void queryAll(txVector<SceneMapData>& dataList);

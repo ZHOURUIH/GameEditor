@@ -3,9 +3,6 @@
 
 #include "ServerDefine.h"
 
-class SQLiteEquip;
-class SQLiteMonster;
-class SQLiteEffect;
 class SQLiteDataReader;
 class SQLiteSceneMap;
 class SQLiteNPC;
@@ -14,13 +11,11 @@ class SQLiteMonsterInfo;
 class SQLiteMagic;
 class SQLiteStdItem;
 class SQLiteAnimationFrame;
+class SQLiteImagePosition;
 class SQLite
 {
 public:
 	sqlite3* mSQlite3;
-	SQLiteEquip* mSQLiteEquip;
-	SQLiteMonster* mSQLiteMonster;
-	SQLiteEffect* mSQLiteEffect;
 	SQLiteSceneMap* mSQLiteSceneMap;
 	SQLiteNPC* mSQLiteNPC;
 	SQLiteMonGen* mSQLiteMonGen;
@@ -28,9 +23,10 @@ public:
 	SQLiteMagic* mSQLiteMagic;
 	SQLiteStdItem* mSQLiteStdItem;
 	SQLiteAnimationFrame* mSQLiteAnimationFrame;
+	SQLiteImagePosition* mSQLiteImagePosition;
 public:
 	SQLite(const string& dbFileName);
-	~SQLite() { destroy(); }
+	virtual ~SQLite() { destroy(); }
 	void destroy();
 	bool executeNonQuery(const string& queryString);
 	SQLiteDataReader* executeQuery(const string& queryString);

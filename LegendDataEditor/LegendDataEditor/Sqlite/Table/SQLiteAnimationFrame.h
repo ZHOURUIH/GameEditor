@@ -18,37 +18,13 @@ public:
 	txVector<int> mPosX;
 	txVector<int> mPosY;
 public:
-	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	AnimationFrameData()
 	{
-		mAtlas = reader->getString(table->getCol(COL_ATLAS));
-		mAnimation = reader->getString(table->getCol(COL_ANIMATION));
-		mFrameCount = reader->getInt(table->getCol(COL_FRAME_COUNT));
-		StringUtility::stringToIntArray(reader->getString(table->getCol(COL_POSX)), mPosX);
-		StringUtility::stringToIntArray(reader->getString(table->getCol(COL_POSY)), mPosY);
-	}
-	virtual void insert(string& valueString) const
-	{
-		StringUtility::appendValueString(valueString, mAtlas);
-		StringUtility::appendValueString(valueString, mAnimation);
-		StringUtility::appendValueInt(valueString, mFrameCount);
-		StringUtility::appendValueIntArray(valueString, mPosX);
-		StringUtility::appendValueIntArray(valueString, mPosY);
-	}
-	virtual void update(string& updateString) const
-	{
-		StringUtility::appendUpdateString(updateString, COL_ATLAS, mAtlas);
-		StringUtility::appendUpdateString(updateString, COL_ANIMATION, mAnimation);
-		StringUtility::appendUpdateInt(updateString, COL_FRAME_COUNT, mFrameCount);
-		StringUtility::appendUpdateIntArray(updateString, COL_POSX, mPosX);
-		StringUtility::appendUpdateIntArray(updateString, COL_POSY, mPosY);
-	}
-	static void registeColumn(SQLiteTable* table)
-	{
-		table->registeColumn(COL_ATLAS);
-		table->registeColumn(COL_ANIMATION);
-		table->registeColumn(COL_FRAME_COUNT);
-		table->registeColumn(COL_POSX);
-		table->registeColumn(COL_POSY);
+		REGISTE_PARAM(mAtlas, COL_ATLAS);
+		REGISTE_PARAM(mAnimation, COL_ANIMATION);
+		REGISTE_PARAM(mFrameCount, COL_FRAME_COUNT);
+		REGISTE_PARAM(mPosX, COL_POSX);
+		REGISTE_PARAM(mPosY, COL_POSY);
 	}
 };
 
@@ -58,7 +34,7 @@ public:
 	SQLiteAnimationFrame(SQLite* sqlite)
 		:SQLiteTable("AnimationFrame", sqlite)
 	{
-		AnimationFrameData::registeColumn(this);
+		;
 	}
 	void query(const string& atlas, const string& animation, txVector<AnimationFrameData>& dataList);
 	bool updateData(const AnimationFrameData& data);

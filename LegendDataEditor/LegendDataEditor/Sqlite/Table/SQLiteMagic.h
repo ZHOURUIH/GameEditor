@@ -46,93 +46,27 @@ public:
 	int mDelay;			// 技能延迟时间
 	string mDescribe;
 public:
-	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table)
+	MagicData()
 	{
-		mID = reader->getInt(table->getCol(COL_ID));
-		mName = reader->getString(table->getCol(COL_NAME));
-		mEffectType = reader->getInt(table->getCol(COL_EFFECT_TYPE));
-		mEffect = reader->getInt(table->getCol(COL_EFFECT));
-		mSpell = reader->getInt(table->getCol(COL_SPELL));
-		mPower = reader->getInt(table->getCol(COL_POWER));
-		mMaxPower = reader->getInt(table->getCol(COL_MAX_POWER));
-		mDefSpell = reader->getInt(table->getCol(COL_DEF_SPELL));
-		mDefPower = reader->getInt(table->getCol(COL_DEF_POWER));
-		mDefMaxPower = reader->getInt(table->getCol(COL_DEF_MAX_POWER));
-		mJob = reader->getInt(table->getCol(COL_JOB));
-		mNeedLevel1 = reader->getInt(table->getCol(COL_NEED_LEVEL_1));
-		mLevelTrain1 = reader->getInt(table->getCol(COL_LEVEL_TRAIN_1));
-		mNeedLevel2 = reader->getInt(table->getCol(COL_NEED_LEVEL_2));
-		mLevelTrain2 = reader->getInt(table->getCol(COL_LEVEL_TRAIN_2));
-		mNeedLevel3 = reader->getInt(table->getCol(COL_NEED_LEVEL_3));
-		mLevelTrain3 = reader->getInt(table->getCol(COL_LEVEL_TRAIN_3));
-		mDelay = reader->getInt(table->getCol(COL_DELAY));
-		mDescribe = reader->getInt(table->getCol(COL_DESCRIBE));
-	}
-	virtual void insert(string& valueString) const
-	{
-		StringUtility::appendValueInt(valueString, mID);
-		StringUtility::appendValueString(valueString, mName);
-		StringUtility::appendValueInt(valueString, mEffectType);
-		StringUtility::appendValueInt(valueString, mEffect);
-		StringUtility::appendValueInt(valueString, mSpell);
-		StringUtility::appendValueInt(valueString, mPower);
-		StringUtility::appendValueInt(valueString, mMaxPower);
-		StringUtility::appendValueInt(valueString, mDefSpell);
-		StringUtility::appendValueInt(valueString, mDefPower);
-		StringUtility::appendValueInt(valueString, mDefMaxPower);
-		StringUtility::appendValueInt(valueString, mJob);
-		StringUtility::appendValueInt(valueString, mNeedLevel1);
-		StringUtility::appendValueInt(valueString, mLevelTrain1);
-		StringUtility::appendValueInt(valueString, mNeedLevel2);
-		StringUtility::appendValueInt(valueString, mLevelTrain2);
-		StringUtility::appendValueInt(valueString, mNeedLevel3);
-		StringUtility::appendValueInt(valueString, mLevelTrain3);
-		StringUtility::appendValueInt(valueString, mDelay);
-		StringUtility::appendValueString(valueString, mDescribe);
-	}
-	virtual void update(string& updateString) const
-	{
-		StringUtility::appendUpdateInt(updateString, COL_ID, mID);
-		StringUtility::appendUpdateString(updateString, COL_NAME, mName);
-		StringUtility::appendUpdateInt(updateString, COL_EFFECT_TYPE, mEffectType);
-		StringUtility::appendUpdateInt(updateString, COL_EFFECT, mEffect);
-		StringUtility::appendUpdateInt(updateString, COL_SPELL, mSpell);
-		StringUtility::appendUpdateInt(updateString, COL_POWER, mPower);
-		StringUtility::appendUpdateInt(updateString, COL_MAX_POWER, mMaxPower);
-		StringUtility::appendUpdateInt(updateString, COL_DEF_SPELL, mDefSpell);
-		StringUtility::appendUpdateInt(updateString, COL_DEF_POWER, mDefPower);
-		StringUtility::appendUpdateInt(updateString, COL_DEF_MAX_POWER, mDefMaxPower);
-		StringUtility::appendUpdateInt(updateString, COL_JOB, mJob);
-		StringUtility::appendUpdateInt(updateString, COL_NEED_LEVEL_1, mNeedLevel1);
-		StringUtility::appendUpdateInt(updateString, COL_LEVEL_TRAIN_1, mLevelTrain1);
-		StringUtility::appendUpdateInt(updateString, COL_NEED_LEVEL_2, mNeedLevel2);
-		StringUtility::appendUpdateInt(updateString, COL_LEVEL_TRAIN_2, mLevelTrain2);
-		StringUtility::appendUpdateInt(updateString, COL_NEED_LEVEL_3, mNeedLevel3);
-		StringUtility::appendUpdateInt(updateString, COL_LEVEL_TRAIN_3, mLevelTrain3);
-		StringUtility::appendUpdateInt(updateString, COL_DELAY, mDelay);
-		StringUtility::appendUpdateString(updateString, COL_DESCRIBE, mDescribe);
-	}
-	static void registeColumn(SQLiteTable* table)
-	{
-		table->registeColumn(COL_ID);
-		table->registeColumn(COL_NAME);
-		table->registeColumn(COL_EFFECT_TYPE);
-		table->registeColumn(COL_EFFECT);
-		table->registeColumn(COL_SPELL);
-		table->registeColumn(COL_POWER);
-		table->registeColumn(COL_MAX_POWER);
-		table->registeColumn(COL_DEF_SPELL);
-		table->registeColumn(COL_DEF_POWER);
-		table->registeColumn(COL_DEF_MAX_POWER);
-		table->registeColumn(COL_JOB);
-		table->registeColumn(COL_NEED_LEVEL_1);
-		table->registeColumn(COL_LEVEL_TRAIN_1);
-		table->registeColumn(COL_NEED_LEVEL_2);
-		table->registeColumn(COL_LEVEL_TRAIN_2);
-		table->registeColumn(COL_NEED_LEVEL_3);
-		table->registeColumn(COL_LEVEL_TRAIN_3);
-		table->registeColumn(COL_DELAY);
-		table->registeColumn(COL_DESCRIBE);
+		REGISTE_PARAM(mID, COL_ID);
+		REGISTE_PARAM(mName, COL_NAME);
+		REGISTE_PARAM(mEffectType, COL_EFFECT_TYPE);
+		REGISTE_PARAM(mEffect, COL_EFFECT);
+		REGISTE_PARAM(mSpell, COL_SPELL);
+		REGISTE_PARAM(mPower, COL_POWER);
+		REGISTE_PARAM(mMaxPower, COL_MAX_POWER);
+		REGISTE_PARAM(mDefSpell, COL_DEF_SPELL);
+		REGISTE_PARAM(mDefPower, COL_DEF_POWER);
+		REGISTE_PARAM(mDefMaxPower, COL_DEF_MAX_POWER);
+		REGISTE_PARAM(mJob, COL_JOB);
+		REGISTE_PARAM(mNeedLevel1, COL_NEED_LEVEL_1);
+		REGISTE_PARAM(mLevelTrain1, COL_LEVEL_TRAIN_1);
+		REGISTE_PARAM(mNeedLevel2, COL_NEED_LEVEL_2);
+		REGISTE_PARAM(mLevelTrain2, COL_LEVEL_TRAIN_2);
+		REGISTE_PARAM(mNeedLevel3, COL_NEED_LEVEL_3);
+		REGISTE_PARAM(mLevelTrain3, COL_LEVEL_TRAIN_3);
+		REGISTE_PARAM(mDelay, COL_DELAY);
+		REGISTE_PARAM(mDescribe, COL_DESCRIBE);
 	}
 };
 
@@ -142,7 +76,7 @@ public:
 	SQLiteMagic(SQLite* sqlite)
 		:SQLiteTable("Magic", sqlite)
 	{
-		MagicData::registeColumn(this);
+		;
 	}
 	void query(const string& name, MagicData& data);
 	void queryAll(txVector<MagicData>& dataList);

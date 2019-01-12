@@ -5,13 +5,31 @@
 #include "SQLiteDataReader.h"
 #include "Utility.h"
 
+class TableParam
+{
+public:
+	void* mPointer;
+	string mCol;
+	string mType;
+	TableParam(void* pointer, const string& col, const string& type)
+	{
+		mPointer = pointer;
+		mCol = col;
+		mType = type;
+	}
+};
+
+#define REGISTE_PARAM(param, col) mParameters.push_back(TableParam(&param, col, typeid(param).name()));
+
 class SQLiteTable;
 class SQLiteTableData
 {
+protected:
+	txVector<TableParam> mParameters;
 public:
-	virtual void parse(SQLiteDataReader* reader, SQLiteTable* table) = 0;
-	virtual void insert(string& valueString) const = 0;
-	virtual void update(string& updateString) const = 0;
+	void parse(SQLiteDataReader* reader, SQLiteTable* table);
+	void insert(string& valueString) const;
+	void update(string& updateString) const;
 };
 
 class SQLite;
