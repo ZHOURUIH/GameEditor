@@ -24,7 +24,7 @@ public:
 	static void renameImageToAnim(const string& path);
 	static void splitPositionFile(const string& path, bool pathWithFileName = false);
 	static void renameByDirection(const string& path, int directionCount, bool autoGroup = true);
-	static void sortByFileNumber(txVector<string>& fileList);
+	static void sortByFileNumber(txVector<string>& fileList, bool fileNameIsNumber = true);
 	static void autoMoveFile(const string& path, int groupSize);
 	static void autoGroupHumanImage(const string& path);
 	static void autoGroupWeaponImage(const string& path);
@@ -50,7 +50,7 @@ public:
 	static void convertMapFile(const string& fileName);
 	static void convertAllMapFile(const string& filePath);
 	static void readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap);
-	static void writeAnimFrameSQLite();
+	static void writeAnimFrameSQLite(bool updateOnly);
 	static void writeImagePosSQLite(const string& path);
 };
 

@@ -5,57 +5,18 @@
 #include "SQLiteDataReader.h"
 #include "Utility.h"
 
-class TableParam
-{
-public:
-	void* mPointer;
-	string mCol;
-	string mType;
-	TableParam(void* pointer, const string& col, const string& type)
-	{
-		mPointer = pointer;
-		mCol = col;
-		mType = type;
-	}
-};
-
-#define REGISTE_PARAM(param, col) mParameters.push_back(TableParam(&param, col, typeid(param).name()));
-
-class SQLiteTable;
-class SQLiteTableData
-{
-protected:
-	txVector<TableParam> mParameters;
-public:
-	void parse(SQLiteDataReader* reader, SQLiteTable* table);
-	void insert(string& valueString) const;
-	void update(string& updateString) const;
-};
-
 class SQLite;
 class SQLiteTable
 {
 protected:
 	string mTableName;
 	SQLite* mSQLite;
-	txVector<string> COL_NAME;
 public:
 	SQLiteTable(const string& name, SQLite* sqlite);
-	int getCol(const string& colName)
+	template<typename T>
+	void queryAll(txVector<T>& dataList)
 	{
-		int count = COL_NAME.size();
-		for (int i = 0; i < count; ++i)
-		{
-			if (COL_NAME[i] == colName)
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
-	void registeColumn(const string& colName)
-	{
-		COL_NAME.push_back(colName);
+		doSelect(dataList);
 	}
 protected:
 	template<typename T>
@@ -94,7 +55,7 @@ protected:
 		bool ret = false;
 		if (reader->read())
 		{
-			data.parse(reader, this);
+			data.parse(reader);
 			ret = true;
 		}
 		mSQLite->releaseReader(reader);
@@ -106,7 +67,7 @@ protected:
 		while (reader->read())
 		{
 			T data;
-			data.parse(reader, this);
+			data.parse(reader);
 			dataList.push_back(data);
 		}
 		mSQLite->releaseReader(reader);

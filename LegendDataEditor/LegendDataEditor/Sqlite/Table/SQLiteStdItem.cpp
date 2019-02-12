@@ -35,11 +35,6 @@ void SQLiteStdItem::query(const string& name, StdItemData& data)
 	doSelect(data, conditionString);
 }
 
-void SQLiteStdItem::queryAll(txVector<StdItemData>& dataList)
-{
-	doSelect(dataList);
-}
-
 bool SQLiteStdItem::insert(const StdItemData& data)
 {
 	string valueString;

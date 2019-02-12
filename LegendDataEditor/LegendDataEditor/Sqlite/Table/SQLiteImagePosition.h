@@ -2,6 +2,7 @@
 #define _SQLITE_IMAGE_POSITION_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class ImagePositionData : public SQLiteTableData
 {

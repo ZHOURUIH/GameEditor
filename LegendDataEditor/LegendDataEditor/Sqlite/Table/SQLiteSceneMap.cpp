@@ -17,11 +17,6 @@ void SQLiteSceneMap::query(int id, SceneMapData& data)
 	doSelect(data, conditionString);
 }
 
-void SQLiteSceneMap::queryAll(txVector<SceneMapData>& dataList)
-{
-	doSelect(dataList);
-}
-
 bool SQLiteSceneMap::insert(const SceneMapData& data)
 {
 	string valueString;

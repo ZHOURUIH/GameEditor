@@ -2,6 +2,7 @@
 #define _SQLITE_STD_ITEM_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class StdItemData : public SQLiteTableData
 {
@@ -94,7 +95,6 @@ public:
 		;
 	}
 	void query(const string& name, StdItemData& data);
-	void queryAll(txVector<StdItemData>& dataList);
 	bool insert(const StdItemData& data);
 	bool update(const StdItemData& data);
 };

@@ -2,6 +2,7 @@
 #define _SQLITE_MAGIC_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class MagicData : public SQLiteTableData
 {
@@ -79,7 +80,6 @@ public:
 		;
 	}
 	void query(const string& name, MagicData& data);
-	void queryAll(txVector<MagicData>& dataList);
 	bool insert(const MagicData& data);
 	bool update(const MagicData& data);
 };

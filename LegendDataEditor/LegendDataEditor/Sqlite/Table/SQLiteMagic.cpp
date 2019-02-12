@@ -30,11 +30,6 @@ void SQLiteMagic::query(const string& name, MagicData& data)
 	doSelect(data, conditionString);
 }
 
-void SQLiteMagic::queryAll(txVector<MagicData>& dataList)
-{
-	doSelect(dataList);
-}
-
 bool SQLiteMagic::insert(const MagicData& data)
 {
 	string valueString;

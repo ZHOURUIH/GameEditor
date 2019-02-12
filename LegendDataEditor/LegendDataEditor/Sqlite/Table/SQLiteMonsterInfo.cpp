@@ -33,11 +33,6 @@ void SQLiteMonsterInfo::query(const string& name, MonsterInfoData& data)
 	doSelect(data, conditionString);
 }
 
-void SQLiteMonsterInfo::queryAll(txVector<MonsterInfoData>& dataList)
-{
-	doSelect(dataList);
-}
-
 bool SQLiteMonsterInfo::insert(const MonsterInfoData& data)
 {
 	string valueString;

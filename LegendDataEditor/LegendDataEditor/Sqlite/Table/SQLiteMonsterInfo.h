@@ -2,6 +2,7 @@
 #define _SQLITE_MONSTER_INFO_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class MonsterInfoData : public SQLiteTableData
 {
@@ -88,7 +89,6 @@ public:
 		;
 	}
 	void query(const string& name, MonsterInfoData& data);
-	void queryAll(txVector<MonsterInfoData>& dataList);
 	bool insert(const MonsterInfoData& data);
 	bool update(const MonsterInfoData& data);
 };

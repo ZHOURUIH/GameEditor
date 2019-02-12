@@ -32,11 +32,6 @@ void SQLiteMonGen::query(string map, txVector<MonGenData>& dataList)
 	doSelect(dataList, conditionString);
 }
 
-void SQLiteMonGen::queryAll(txVector<MonGenData>& dataList)
-{
-	doSelect(dataList);
-}
-
 bool SQLiteMonGen::insert(const MonGenData& data)
 {
 	string valueString;

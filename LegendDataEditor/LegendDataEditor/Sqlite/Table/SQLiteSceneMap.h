@@ -2,6 +2,7 @@
 #define _SQLITE_SCENE_MAP_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class SceneMapData : public SQLiteTableData
 {
@@ -40,7 +41,6 @@ public:
 		;
 	}
 	void query(int id, SceneMapData& data);
-	void queryAll(txVector<SceneMapData>& dataList);
 	bool insert(const SceneMapData& data);
 	bool update(const SceneMapData& data);
 };

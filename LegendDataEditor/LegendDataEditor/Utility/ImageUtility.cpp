@@ -479,7 +479,7 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 		{
 			continue;
 		}
-		sortByFileNumber(fileList);
+		sortByFileNumber(fileList, false);
 		int fileCount = fileList.size();
 		if (fileCount % directionCount != 0)
 		{
@@ -512,25 +512,55 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 	FileUtility::deleteEmptyFolder(path);
 }
 
-void ImageUtility::sortByFileNumber(txVector<string>& fileList)
+void ImageUtility::sortByFileNumber(txVector<string>& fileList, bool fileNameIsNumber)
 {
 	// 根据文件名的数字进行排序
-	txMap<int, string> sortedList;
 	int count = fileList.size();
-	for (int i = 0; i < count; ++i)
+	if (fileNameIsNumber)
 	{
-		sortedList.insert(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])), fileList[i]);
+		txMap<int, string> sortedList;
+		for (int i = 0; i < count; ++i)
+		{
+			sortedList.insert(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])), fileList[i]);
+		}
+		if (sortedList.size() != fileList.size())
+		{
+			return;
+		}
+		fileList.clear();
+		auto iter = sortedList.begin();
+		auto iterEnd = sortedList.end();
+		for (; iter != iterEnd; ++iter)
+		{
+			fileList.push_back(iter->second);
+		}
 	}
-	if (sortedList.size() != fileList.size())
+	else
 	{
-		return;
-	}
-	fileList.clear();
-	auto iter = sortedList.begin();
-	auto iterEnd = sortedList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		fileList.push_back(iter->second);
+		txMap<string, txMap<int, string>> sortedList;
+		for (int i = 0; i < count; ++i)
+		{
+			string fileName = StringUtility::getFileNameNoSuffix(fileList[i]);
+			string preName = fileName.substr(0, fileName.find_last_of('_') + 1);
+			if (!sortedList.contains(preName))
+			{
+				sortedList.insert(preName, txMap<int, string>());
+			}
+			string suffixNumber = fileName.substr(fileName.find_last_of('_') + 1);
+			sortedList[preName].insert(StringUtility::stringToInt(suffixNumber), fileList[i]);
+		}
+		fileList.clear();
+		auto iter = sortedList.begin();
+		auto iterEnd = sortedList.end();
+		for (; iter != iterEnd; ++iter)
+		{
+			auto iterName = iter->second.begin();
+			auto iterNameEnd = iter->second.end();
+			for (; iterName != iterNameEnd; ++iterName)
+			{
+				fileList.push_back(iterName->second);
+			}
+		}
 	}
 }
 
@@ -858,7 +888,7 @@ void ImageUtility::convertAllMapFile(const string& filePath)
 	}
 }
 
-void ImageUtility::writeAnimFrameSQLite()
+void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 {
 	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
 	txVector<string> folders;
@@ -907,7 +937,14 @@ void ImageUtility::writeAnimFrameSQLite()
 			animationData.mFrameCount = iter->second.first.size();
 			animationData.mPosX = iter->second.first;
 			animationData.mPosY = iter->second.second;
-			sqlite->mSQLiteAnimationFrame->insert(animationData);
+			if (updateOnly)
+			{
+				sqlite->mSQLiteAnimationFrame->updateData(animationData);
+			}
+			else
+			{
+				sqlite->mSQLiteAnimationFrame->insert(animationData);
+			}
 		}
 	}
 	TRACE_DELETE(sqlite);

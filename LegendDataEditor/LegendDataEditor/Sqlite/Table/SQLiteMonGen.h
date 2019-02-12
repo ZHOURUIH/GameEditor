@@ -2,6 +2,7 @@
 #define _SQLITE_MON_GEN_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class MonGenData : public SQLiteTableData
 {
@@ -47,7 +48,6 @@ public:
 	}
 	bool query(const MonGenData& data);
 	void query(string map, txVector<MonGenData>& dataList);
-	void queryAll(txVector<MonGenData>& dataList);
 	bool insert(const MonGenData& data);
 };
 

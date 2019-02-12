@@ -2,6 +2,7 @@
 #define _SQLITE_NPC_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class NPCData : public SQLiteTableData
 {

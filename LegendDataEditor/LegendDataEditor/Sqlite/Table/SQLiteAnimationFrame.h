@@ -2,6 +2,7 @@
 #define _SQLITE_ANIMATION_FRAME_H_
 
 #include "SQLiteTable.h"
+#include "SQLiteTableData.h"
 
 class AnimationFrameData : public SQLiteTableData
 {
