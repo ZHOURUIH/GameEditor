@@ -236,8 +236,14 @@ void main()
 		else if (input == 20)
 		{
 			std::cout << "开始将所有序列帧数据写入SQLite..." << std::endl;
+			char updateOnly = 'y';
+			std::cout << "是否只更新数据? y(是)/n(否)";
+			std::cin >> updateOnly;
 			long startTime = timeGetTime();
-			ImageUtility::writeAnimFrameSQLite(false);
+			if (updateOnly == 'y' || updateOnly == 'n')
+			{
+				ImageUtility::writeAnimFrameSQLite(updateOnly == 'y');
+			}
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		else if (input == 21)
