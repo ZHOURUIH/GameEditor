@@ -52,6 +52,8 @@ public:
 	static void readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap);
 	static void writeAnimFrameSQLite(bool updateOnly);
 	static void writeImagePosSQLite(const string& path);
+	static void generateImageCollider(const string& path, POINT& center, POINT& size);
+	static void writeMonsterColliderSQLite(bool updateOnly);
 };
 
 #endif

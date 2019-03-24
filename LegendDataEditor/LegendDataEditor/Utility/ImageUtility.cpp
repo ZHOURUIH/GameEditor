@@ -10,6 +10,7 @@
 #include "SQLiteMagic.h"
 #include "SQLiteStdItem.h"
 #include "SQLiteAnimationFrame.h"
+#include "SQLiteMonsterCollider.h"
 #include "SQLiteImagePosition.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
@@ -967,6 +968,114 @@ void ImageUtility::writeImagePosSQLite(const string& path)
 		data.mPosX = pos.x;
 		data.mPosY = pos.y;
 		sqlite->mSQLiteImagePosition->insert(data);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::generateImageCollider(const string& path, POINT& center, POINT& size)
+{
+	int shadowB = 8;
+	int shadowG = 8;
+	int shadowR = 16;
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(path.c_str());
+	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str());
+	int width = FreeImage_GetWidth(bitmap);
+	int height = FreeImage_GetHeight(bitmap);
+	int minX = width - 1;
+	int maxX = 0;
+	int minY = height - 1;
+	int maxY = 0;
+	for (int y = 0; y < height; ++y)
+	{
+		int lineMinX = width - 1;
+		int lineMaxX = 0;
+		BYTE* lineBytes = FreeImage_GetScanLine(bitmap, y);
+		for (int x = 0; x < width; ++x)
+		{
+			// 找到第一个非透明像素且非影子的像素,就是该行的起始
+			// 找到最后一个非透明像素且非影子像素,就是该行的终止
+			if (!(lineBytes[4 * x + 3] == 0 || (lineBytes[4 * x + 0] == shadowB && lineBytes[4 * x + 1] == shadowG && lineBytes[4 * x + 2] == shadowR)))
+			{
+				lineMinX = MathUtility::getMin(x, lineMinX);
+				lineMaxX = MathUtility::getMax(x, lineMaxX);
+			}
+		}
+		minX = MathUtility::getMin(lineMinX, minX);
+		maxX = MathUtility::getMax(lineMaxX, maxX);
+		// 如果该行不为空像素
+		if (lineMinX <= lineMaxX)
+		{
+			minY = MathUtility::getMin(y, minY);
+			maxY = MathUtility::getMax(y, maxY);
+		}
+	}
+	FreeImage_Unload(bitmap);
+	FreeImage_DeInitialise();
+	size.x = maxX - minX + 1;
+	size.y = maxY - minY + 1;
+	center.x = (int)(size.x / 2.0f + minX - width / 2.0f);
+	center.y = (int)(size.y / 2.0f + minY - height / 2.0f);
+	assert(size.x > 0);
+	assert(size.y > 0);
+}
+
+void ImageUtility::writeMonsterColliderSQLite(bool updateOnly)
+{
+	// 打开指定目录中的所有怪物图片,计算怪物图像范围
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<string> folders;
+	FileUtility::findFolders("../media", folders, true);
+	int folderCount = folders.size();
+	for (int i = 0; i < folderCount; ++i)
+	{
+		txVector<string> pngFiles;
+		FileUtility::findFiles(folders[i], pngFiles, ".png", false);
+		if (pngFiles.size() == 0)
+		{
+			continue;
+		}
+		// 1个Atlas中包含多个动画,一个动画有多个帧
+		txMap<string, MonsterColliderData> animationInfo;
+		int pngCount = pngFiles.size();
+		for (int j = 0; j < pngCount; ++j)
+		{
+			string& fullFileName = pngFiles[j];
+			string fileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
+			string animation = fileNameNoSuffix.substr(0, StringUtility::getFileNameNoSuffix(fullFileName).find_last_of('_'));
+			if (!animationInfo.contains(animation))
+			{
+				animationInfo.insert(animation, MonsterColliderData());
+			}
+			POINT center;
+			POINT size;
+			generateImageCollider(fullFileName, center, size);
+			animationInfo[animation].mCenterX.push_back(center.x);
+			animationInfo[animation].mCenterY.push_back(center.y);
+			animationInfo[animation].mWidth.push_back(size.x);
+			animationInfo[animation].mHeight.push_back(size.y);
+		}
+		auto iter = animationInfo.begin();
+		auto iterEnd = animationInfo.end();
+		for (; iter != iterEnd; ++iter)
+		{
+			MonsterColliderData colliderData;
+			colliderData.mAtlas = folders[i].substr(strlen("../media/"));
+			colliderData.mAnimation = iter->first;
+			colliderData.mFrameCount = iter->second.mCenterX.size();
+			colliderData.mCenterX = iter->second.mCenterX;
+			colliderData.mCenterY = iter->second.mCenterY;
+			colliderData.mWidth = iter->second.mWidth;
+			colliderData.mHeight = iter->second.mHeight;
+			if (updateOnly)
+			{
+				sqlite->mSQLiteMonsterCollider->updateData(colliderData);
+			}
+			else
+			{
+				sqlite->mSQLiteMonsterCollider->insert(colliderData);
+			}
+		}
 	}
 	TRACE_DELETE(sqlite);
 }

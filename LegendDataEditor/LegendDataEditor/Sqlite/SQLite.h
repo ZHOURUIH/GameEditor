@@ -12,6 +12,7 @@ class SQLiteMagic;
 class SQLiteStdItem;
 class SQLiteAnimationFrame;
 class SQLiteImagePosition;
+class SQLiteMonsterCollider;
 class SQLite
 {
 public:
@@ -24,6 +25,7 @@ public:
 	SQLiteStdItem* mSQLiteStdItem;
 	SQLiteAnimationFrame* mSQLiteAnimationFrame;
 	SQLiteImagePosition* mSQLiteImagePosition;
+	SQLiteMonsterCollider* mSQLiteMonsterCollider;
 public:
 	SQLite(const string& dbFileName);
 	virtual ~SQLite() { destroy(); }

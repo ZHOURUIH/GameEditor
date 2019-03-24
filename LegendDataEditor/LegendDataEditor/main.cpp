@@ -28,6 +28,7 @@ void main()
 19:整理NPC文件结构\n\
 20:将media中全部序列帧数据写入SQLite \n\
 21:将图片位置偏移写入SQLite \n\
+22:将怪物碰撞范围写入SQLite \n\
 0:退出" << std::endl;
 		int input;
 		std::cin >> input;
@@ -254,6 +255,19 @@ void main()
 			std::cout << "开始将图片位置偏移写入SQLite..." << std::endl;
 			long startTime = timeGetTime();
 			ImageUtility::writeImagePosSQLite("../media/" + fileName);
+			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
+		}
+		else if (input == 22)
+		{
+			std::cout << "开始将怪物碰撞范围数据写入SQLite..." << std::endl;
+			char updateOnly = 'y';
+			std::cout << "是否只更新数据? y(是)/n(否)";
+			std::cin >> updateOnly;
+			long startTime = timeGetTime();
+			if (updateOnly == 'y' || updateOnly == 'n')
+			{
+				ImageUtility::writeMonsterColliderSQLite(updateOnly == 'y');
+			}
 			std::cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << std::endl;
 		}
 		system("pause");
