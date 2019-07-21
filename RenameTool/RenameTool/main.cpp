@@ -4,7 +4,9 @@
 #include <string>
 #include <map>
 
-void findFiles(const char * pathName, std::vector<std::string>& files, std::vector<std::string> patterns)
+using namespace std;
+
+void findFiles(const char * pathName, vector<string>& files, vector<string> patterns)
 {
 	WIN32_FIND_DATAA FindFileData;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -36,7 +38,7 @@ void findFiles(const char * pathName, std::vector<std::string>& files, std::vect
 		}
 
 		// 构造完整路径
-		std::string fullname = std::string(pathName) + "/" + std::string(FindFileData.cFileName);
+		string fullname = string(pathName) + "/" + string(FindFileData.cFileName);
 		if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			findFiles(fullname.c_str(), files, patterns);
@@ -56,11 +58,11 @@ void findFiles(const char * pathName, std::vector<std::string>& files, std::vect
 	::FindClose(hFind);
 }
 
-std::string intToString(int i, int limitLen = 0)
+string intToString(int i, int limitLen = 0)
 {
 	char str[256];
 	sprintf_s(str, 256, "%d", i);
-	std::string retString(str);
+	string retString(str);
 	int addLen = limitLen - strlen(str);
 	if (addLen > 0)
 	{
@@ -70,13 +72,13 @@ std::string intToString(int i, int limitLen = 0)
 		{
 			addStr[j] = '0';
 		}
-		retString = std::string(addStr) + retString;
+		retString = string(addStr) + retString;
 	}
 
 	return retString;
 }
 
-static void rightToLeft(std::string& str)
+static void rightToLeft(string& str)
 {
 	int pathLength = str.length();
 	for (int i = 0; i < pathLength; ++i)
@@ -88,11 +90,11 @@ static void rightToLeft(std::string& str)
 	}
 }
 
-static std::string getParentDir(std::string dir)
+static string getParentDir(string dir)
 {
 	rightToLeft(dir);
 	int pos = dir.find_last_of('/');
-	std::string tempDir = dir;
+	string tempDir = dir;
 	if (-1 != pos)
 	{
 		tempDir = dir.substr(0, pos);
@@ -100,7 +102,7 @@ static std::string getParentDir(std::string dir)
 	return tempDir;
 }
 
-static std::string getFileName(std::string str)
+static string getFileName(string str)
 {
 	rightToLeft(str);
 	int dotPos = str.find_last_of('/');
@@ -111,7 +113,7 @@ static std::string getFileName(std::string str)
 	return str;
 }
 
-static std::string getFileSuffix(std::string fileName)
+static string getFileSuffix(string fileName)
 {
 	int dotPos = fileName.find_last_of('.');
 	if (dotPos != -1)
@@ -121,26 +123,26 @@ static std::string getFileSuffix(std::string fileName)
 	return fileName;
 }
 
-static int stringToInt(const std::string& str)
+static int stringToInt(const string& str)
 {
 	return atoi(str.c_str());
 }
 
-static void reorderList(std::vector<std::string>& fileList)
+static void reorderList(vector<string>& fileList)
 {
-	std::map<int, std::string> reorderFiles;
+	map<int, string> reorderFiles;
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
 		int lastUnderLine = fileList[i].find_last_of('_');
 		int lastDot = fileList[i].find_last_of('.');
-		std::string numberSuffix = fileList[i].substr(lastUnderLine + 1, lastDot - lastUnderLine - 1);
+		string numberSuffix = fileList[i].substr(lastUnderLine + 1, lastDot - lastUnderLine - 1);
 		int index = stringToInt(numberSuffix);
-		reorderFiles.insert(std::make_pair(index, fileList[i]));
+		reorderFiles.insert(make_pair(index, fileList[i]));
 	}
 	fileList.clear();
-	std::map<int, std::string>::iterator iter = reorderFiles.begin();
-	std::map<int, std::string>::iterator iterEnd = reorderFiles.end();
+	auto iter = reorderFiles.begin();
+	auto iterEnd = reorderFiles.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		fileList.push_back(iter->second);
@@ -149,45 +151,45 @@ static void reorderList(std::vector<std::string>& fileList)
 
 void main()
 {
-	std::vector<std::string> fileList;
-	std::vector<std::string> patterns;
+	vector<string> fileList;
+	vector<string> patterns;
 	patterns.push_back(".png");
 	findFiles("./", fileList, patterns);
 	if (fileList.size() == 0)
 	{
 		return;
 	}
-	std::cout << "1.根据文件夹名自动重命名" << std::endl;
-	std::cout << "2.根据文件名数字后缀排序命名" << std::endl;
-	std::cout << "3.手动输入前缀重命名" << std::endl;
-	std::cout << "请选择:";
+	cout << "1.根据文件夹名自动重命名" << endl;
+	cout << "2.根据文件名数字后缀排序命名" << endl;
+	cout << "3.手动输入前缀重命名" << endl;
+	cout << "请选择:";
 	int input = 0;
-	std::cin >> input;
-	std::string preName;
+	cin >> input;
+	string preName;
 	if (input == 1)
 	{
 		char moduleFileName[MAX_PATH];
 		GetModuleFileNameA(0, moduleFileName, MAX_PATH);
-		std::string curFolder = getFileName(getParentDir(moduleFileName));
+		string curFolder = getFileName(getParentDir(moduleFileName));
 		preName = curFolder + "_";
 	}
 	else if (input == 2)
 	{
-		std::string fileName = getFileName(fileList[0]);
+		string fileName = getFileName(fileList[0]);
 		preName = fileName.substr(0, fileName.find_last_of('_') + 1);
 		reorderList(fileList);
 	}
 	else if (input == 3)
 	{
-		std::cout << "文件前缀:";
-		std::cin >> preName;
+		cout << "文件前缀:";
+		cin >> preName;
 	}
 	// 重命名文件
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
-		std::string fileDir = getParentDir(fileList[i]);
-		std::string newName = preName + intToString(i) + getFileSuffix(fileList[i]);
+		string fileDir = getParentDir(fileList[i]);
+		string newName = preName + intToString(i) + getFileSuffix(fileList[i]);
 		rename(fileList[i].c_str(), (fileDir + "/" + newName).c_str());
 	}
 }
