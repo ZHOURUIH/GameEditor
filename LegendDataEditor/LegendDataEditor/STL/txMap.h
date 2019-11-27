@@ -82,6 +82,25 @@ public:
 	}
 	int size(){return (int)mMap.size();}
 	Value& operator[](const Key& k){return mMap[k];}
+	void keyList(txVector<Key>& list)
+	{
+		iterator iter = mMap.begin();
+		iterator iterEnd = mMap.end();
+		for (; iter != iterEnd; ++iter)
+		{
+			list.push_back(iter->first);
+		}
+	}
+	void valueList(txVector<Value>& list)
+	{
+		list.clear();
+		iterator iter = mMap.begin();
+		iterator iterEnd = mMap.end();
+		for (; iter != iterEnd; ++iter)
+		{
+			list.push_back(iter->second);
+		}
+	}
 protected:
 	std::map<Key, Value> mMap;
 };

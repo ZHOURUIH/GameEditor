@@ -54,6 +54,7 @@ public:
 	static void writeImagePosSQLite(const string& path);
 	static void generateImageCollider(const string& path, POINT& center, POINT& size);
 	static void writeMonsterColliderSQLite(bool updateOnly);
+	static void readDropList();
 };
 
 #endif

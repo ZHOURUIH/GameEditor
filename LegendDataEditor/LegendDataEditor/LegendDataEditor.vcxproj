@@ -14,19 +14,19 @@
     <ProjectGuid>{BB9953F0-C5F8-4F16-AD89-BBD661674530}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>LegendDataEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -109,6 +109,9 @@
     <ClCompile Include="Sqlite\SQLiteTableData.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteAnimationFrame.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteImagePosition.cpp" />
+    <ClCompile Include="Sqlite\Table\SQLiteItemConsumable.cpp" />
+    <ClCompile Include="Sqlite\Table\SQLiteItemEquip.cpp" />
+    <ClCompile Include="Sqlite\Table\SQLiteItemSkillBook.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteMagic.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteMonGen.cpp" />
     <ClCompile Include="Sqlite\Table\SQLiteMonsterCollider.cpp" />
@@ -165,6 +168,9 @@
     <ClInclude Include="Sqlite\SQLiteTableData.h" />
     <ClInclude Include="Sqlite\Table\SQLiteAnimationFrame.h" />
     <ClInclude Include="Sqlite\Table\SQLiteImagePosition.h" />
+    <ClInclude Include="Sqlite\Table\SQLiteItemConsumable.h" />
+    <ClInclude Include="Sqlite\Table\SQLiteItemEquip.h" />
+    <ClInclude Include="Sqlite\Table\SQLiteItemSkillBook.h" />
     <ClInclude Include="Sqlite\Table\SQLiteMagic.h" />
     <ClInclude Include="Sqlite\Table\SQLiteMonGen.h" />
     <ClInclude Include="Sqlite\Table\SQLiteMonsterCollider.h" />

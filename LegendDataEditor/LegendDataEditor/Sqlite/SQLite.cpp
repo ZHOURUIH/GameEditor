@@ -10,6 +10,9 @@
 #include "SQLiteAnimationFrame.h"
 #include "SQLiteImagePosition.h"
 #include "SQLiteMonsterCollider.h"
+#include "SQLiteItemEquip.h"
+#include "SQLiteItemConsumable.h"
+#include "SQLiteItemSkillBook.h"
 
 #define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
 #define DELETE_TABLE(type) TRACE_DELETE(m##type)
@@ -32,6 +35,9 @@ SQLite::SQLite(const string& dbFileName)
 	NEW_TABLE(SQLiteAnimationFrame);
 	NEW_TABLE(SQLiteImagePosition);
 	NEW_TABLE(SQLiteMonsterCollider);
+	NEW_TABLE(SQLiteItemEquip);
+	NEW_TABLE(SQLiteItemConsumable);
+	NEW_TABLE(SQLiteItemSkillBook);
 }
 void SQLite::destroy()
 {
@@ -44,6 +50,9 @@ void SQLite::destroy()
 	DELETE_TABLE(SQLiteAnimationFrame);
 	DELETE_TABLE(SQLiteImagePosition);
 	DELETE_TABLE(SQLiteMonsterCollider);
+	DELETE_TABLE(SQLiteItemEquip);
+	DELETE_TABLE(SQLiteItemConsumable);
+	DELETE_TABLE(SQLiteItemSkillBook);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)

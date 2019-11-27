@@ -12,6 +12,9 @@
 #include "SQLiteAnimationFrame.h"
 #include "SQLiteMonsterCollider.h"
 #include "SQLiteImagePosition.h"
+#include "SQLiteItemEquip.h"
+#include "SQLiteItemConsumable.h"
+#include "SQLiteItemSkillBook.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "SceneMap.h"
@@ -797,7 +800,7 @@ void ImageUtility::texturePacker(const string& texturePath)
 	cmdLine += "--data " + outputPath + "/" + outputFileName + ".txt ";
 	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
 	cmdLine += "--format json ";
-	cmdLine += "--allow-free-size ";
+	cmdLine += "--force-squared ";
 	cmdLine += "--maxrects-heuristics Best ";
 	cmdLine += "--trim-mode None ";
 	cmdLine += "--disable-rotation ";
@@ -811,7 +814,7 @@ void ImageUtility::texturePacker(const string& texturePath)
 	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 	ShExecInfo.hwnd = NULL;
 	ShExecInfo.lpVerb = NULL;
-	ShExecInfo.lpFile = "C:\\Program Files (x86)\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
+	ShExecInfo.lpFile = "C:\\Program Files\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
 	ShExecInfo.lpParameters = cmdLine.c_str();
 	ShExecInfo.lpDirectory = NULL;
 	ShExecInfo.nShow = SW_HIDE;
@@ -904,7 +907,7 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			continue;
 		}
 		// 1个Atlas中包含多个动画,一个动画有多个帧
-		txMap<string, pair<txVector<int>, txVector<int>>> animationInfo;
+		txMap<string, pair<txMap<int, int>, txMap<int, int>>> animationInfo;
 		int pngCount = pngFiles.size();
 		for (int j = 0; j < pngCount; ++j)
 		{
@@ -913,15 +916,16 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			string animation = fileNameNoSuffix.substr(0, StringUtility::getFileNameNoSuffix(fullFileName).find_last_of('_'));
 			if (!animationInfo.contains(animation))
 			{
-				animationInfo.insert(animation, pair<txVector<int>, txVector<int>>());
+				animationInfo.insert(animation, pair<txMap<int, int>, txMap<int, int>>());
 			}
 			string posString = FileUtility::openTxtFile(StringUtility::getFileNameNoSuffix(fullFileName, false) + ".txt");
+			int posIndex = StringUtility::getLastNumber(StringUtility::getFileNameNoSuffix(fullFileName, true));
 			txVector<int> pos;
 			StringUtility::stringToIntArray(posString, pos);
 			if (pos.size() == 2)
 			{
-				animationInfo[animation].first.push_back(pos[0]);
-				animationInfo[animation].second.push_back(pos[1]);
+				animationInfo[animation].first.insert(posIndex, pos[0]);
+				animationInfo[animation].second.insert(posIndex, pos[1]);
 			}
 			else
 			{
@@ -936,8 +940,11 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			animationData.mAtlas = folders[i].substr(strlen("../media/"));
 			animationData.mAnimation = iter->first;
 			animationData.mFrameCount = iter->second.first.size();
-			animationData.mPosX = iter->second.first;
-			animationData.mPosY = iter->second.second;
+			txVector<int> tempList;
+			iter->second.first.valueList(tempList);
+			animationData.mPosX = tempList;
+			iter->second.second.valueList(tempList);
+			animationData.mPosY = tempList;
 			if (updateOnly)
 			{
 				sqlite->mSQLiteAnimationFrame->updateData(animationData);
@@ -956,6 +963,7 @@ void ImageUtility::writeImagePosSQLite(const string& path)
 	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
 	txVector<std::string> files;
 	FileUtility::findFiles(path, files, ".png");
+	// 根据后缀排序
 	int count = files.size();
 	for (int i = 0; i < count; ++i)
 	{
@@ -1078,4 +1086,68 @@ void ImageUtility::writeMonsterColliderSQLite(bool updateOnly)
 		}
 	}
 	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::readDropList()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<string> fileList;
+	FileUtility::findFiles("../media/DropList", fileList, ".txt");
+	int count = fileList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		bool fileChanged = false;
+		string fileString = FileUtility::openTxtFile(fileList[i]);
+		txVector<string> lineList;
+		StringUtility::split(fileString, "\r\n", lineList);
+		int lineCount = lineList.size();
+		for (int j = 0; j < lineCount; ++j)
+		{
+			string& line = lineList[j];
+			bool lineChanged = false;
+			txVector<string> lineElements;
+			StringUtility::split(line, " ", lineElements);
+			if (lineElements.size() == 2)
+			{
+				ItemEquipData equip;
+				if (sqlite->mSQLiteItemEquip->query(lineElements[1], equip))
+				{
+					lineElements.insert(lineElements.begin() + 1, StringUtility::intToString(equip.mID), true);
+					line = lineElements[0] + "   " + lineElements[1] + " " + lineElements[2]; 
+					fileChanged = true;
+					lineChanged = true;
+				}
+				ItemConsumableData consumable;
+				if (!lineChanged && sqlite->mSQLiteItemConsumable->query(lineElements[1], consumable))
+				{
+					lineElements.insert(lineElements.begin() + 1, StringUtility::intToString(consumable.mID), true);
+					line = lineElements[0] + "   " + lineElements[1] + " " + lineElements[2];
+					fileChanged = true;
+					lineChanged = true;
+				}
+				ItemSkillBookData skillBook;
+				if (!lineChanged && sqlite->mSQLiteItemSkillBook->query(lineElements[1], skillBook))
+				{
+					lineElements.insert(lineElements.begin() + 1, StringUtility::intToString(skillBook.mID), true);
+					line = lineElements[0] + "   " + lineElements[1] + " " + lineElements[2];
+					fileChanged = true;
+					lineChanged = true;
+				}
+			}
+		}
+		// 重新写入文件
+		if (fileChanged)
+		{
+			string newFile;
+			for (int j = 0; j < lineCount; ++j)
+			{
+				newFile += lineList[j];
+				if (j != lineCount - 1)
+				{
+					newFile += "\r\n";
+				}
+			}
+			FileUtility::writeFile(fileList[i], newFile);
+		}
+	}
 }
