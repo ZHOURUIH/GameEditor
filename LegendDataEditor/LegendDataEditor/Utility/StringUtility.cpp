@@ -786,6 +786,14 @@ void StringUtility::appendValueIntArray(string& queryStr, const txVector<int>& i
 {
 	appendValueString(queryStr, intArrayToString(intArray));
 }
+void StringUtility::appendValueFloat(string& queryStr, float value)
+{
+	queryStr += floatToString(value) + ",";
+}
+void StringUtility::appendValueFloatArray(string& queryStr, const txVector<float>& floatArray)
+{
+	appendValueString(queryStr, floatArrayToString(floatArray));
+}
 void StringUtility::appendConditionString(string& condition, const string& col, const string& str, const string& operate)
 {
 	condition += col + " = " + "\"" + ANSIToUTF8(str) + "\"" + operate;
@@ -812,4 +820,12 @@ void StringUtility::appendUpdateInt(string& updateInfo, const string& col, int v
 void StringUtility::appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray)
 {
 	appendUpdateString(updateInfo, col, intArrayToString(intArray));
+}
+void StringUtility::appendUpdateFloat(string& updateInfo, const string& col, float value)
+{
+	updateInfo += col + " = " + floatToString(value) + ",";
+}
+void StringUtility::appendUpdateFloatArray(string& updateInfo, const string& col, const txVector<float>& floatArray)
+{
+	appendUpdateString(updateInfo, col, floatArrayToString(floatArray));
 }

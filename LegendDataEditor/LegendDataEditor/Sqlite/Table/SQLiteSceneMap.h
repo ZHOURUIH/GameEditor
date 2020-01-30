@@ -13,6 +13,8 @@ public:
 	static string COL_MINI_MAP;
 	static string COL_WIDTH;
 	static string COL_HEIGHT;
+	static string COL_MONSTER_REGION;
+	static string COL_NPC;
 public:
 	int mID;
 	string mLabel;
@@ -20,6 +22,8 @@ public:
 	int mMiniMap;
 	int mWidth;
 	int mHeight;
+	txVector<int> mMonsterRegion;
+	txVector<int> mNPC;
 public:
 	SceneMapData()
 	{
@@ -29,6 +33,8 @@ public:
 		REGISTE_PARAM(mMiniMap, COL_MINI_MAP);
 		REGISTE_PARAM(mWidth, COL_WIDTH);
 		REGISTE_PARAM(mHeight, COL_HEIGHT);
+		REGISTE_PARAM(mMonsterRegion, COL_MONSTER_REGION);
+		REGISTE_PARAM(mNPC, COL_NPC);
 	}
 };
 

@@ -88,11 +88,15 @@ public:
 	static void appendValueString(string& queryStr, const string& str, bool toUTF8 = true);
 	static void appendValueInt(string& queryStr, int value);
 	static void appendValueIntArray(string& queryStr, const txVector<int>& intArray);
+	static void appendValueFloat(string& queryStr, float value);
+	static void appendValueFloatArray(string& queryStr, const txVector<float>& value);
 	static void appendConditionString(string& condition, const string& col, const string& str, const string& operate);
 	static void appendConditionInt(string& condition, const string& col, int value, const string& operate);
 	static void appendUpdateString(string& updateInfo, const string& col, const string& str, bool toUTF8 = true);
 	static void appendUpdateInt(string& updateInfo, const string& col, int value);
 	static void appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray);
+	static void appendUpdateFloat(string& updateInfo, const string& col, float value);
+	static void appendUpdateFloatArray(string& updateInfo, const string& col, const txVector<float>& floatArray);
 };
 
 #endif

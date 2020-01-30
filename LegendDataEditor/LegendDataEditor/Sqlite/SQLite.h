@@ -7,15 +7,18 @@ class SQLiteDataReader;
 class SQLiteSceneMap;
 class SQLiteNPC;
 class SQLiteMonGen;
-class SQLiteMonsterInfo;
+class SQLiteMonster;
+class SQLiteMonsterTemplate;
 class SQLiteMagic;
 class SQLiteStdItem;
-class SQLiteAnimationFrame;
-class SQLiteImagePosition;
+class SQLiteImagePositionAnimation;
+class SQLiteImagePositionEffect;
+class SQLiteImagePositionIcon;
 class SQLiteMonsterCollider;
 class SQLiteItemEquip;
 class SQLiteItemConsumable;
 class SQLiteItemSkillBook;
+class SQLiteSkillEffectDirection;
 class SQLite
 {
 public:
@@ -23,15 +26,18 @@ public:
 	SQLiteSceneMap* mSQLiteSceneMap;
 	SQLiteNPC* mSQLiteNPC;
 	SQLiteMonGen* mSQLiteMonGen;
-	SQLiteMonsterInfo* mSQLiteMonsterInfo;
+	SQLiteMonster* mSQLiteMonster;
+	SQLiteMonsterTemplate* mSQLiteMonsterTemplate;
 	SQLiteMagic* mSQLiteMagic;
 	SQLiteStdItem* mSQLiteStdItem;
-	SQLiteAnimationFrame* mSQLiteAnimationFrame;
-	SQLiteImagePosition* mSQLiteImagePosition;
+	SQLiteImagePositionAnimation* mSQLiteImagePositionAnimation;
+	SQLiteImagePositionEffect* mSQLiteImagePositionEffect;
+	SQLiteImagePositionIcon* mSQLiteImagePositionIcon;
 	SQLiteMonsterCollider* mSQLiteMonsterCollider;
 	SQLiteItemEquip* mSQLiteItemEquip;
 	SQLiteItemConsumable* mSQLiteItemConsumable;
 	SQLiteItemSkillBook* mSQLiteItemSkillBook;
+	SQLiteSkillEffectDirection* mSQLiteSkillEffectDirection;
 public:
 	SQLite(const string& dbFileName);
 	virtual ~SQLite() { destroy(); }

@@ -5,14 +5,14 @@
 
 string NPCData::COL_ID = "ID";
 string NPCData::COL_SCRIPT = "Script";
-string NPCData::COL_MAP = "Map";
+string NPCData::COL_MAP_ID = "MapID";
 string NPCData::COL_POSX = "PosX";
 string NPCData::COL_POSY = "PosY";
 string NPCData::COL_LABEL = "Label";
 string NPCData::COL_FLAG = "Flag";
 string NPCData::COL_APPERANCE = "Apperance";
 
-void SQLiteNPC::query(txVector<NPCData>& dataList)
+void SQLiteNPC::query(txVector<NPCData*>& dataList)
 {
 	doSelect(dataList);
 }

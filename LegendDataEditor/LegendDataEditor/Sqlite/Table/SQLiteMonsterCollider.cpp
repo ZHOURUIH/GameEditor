@@ -11,7 +11,7 @@ string MonsterColliderData::COL_CENTER_Y = "CenterY";
 string MonsterColliderData::COL_WIDTH = "Width";
 string MonsterColliderData::COL_HEIGHT = "Height";
 
-void SQLiteMonsterCollider::query(const string& atlas, const string& animation, txVector<MonsterColliderData>& dataList)
+void SQLiteMonsterCollider::query(const string& atlas, const string& animation, txVector<MonsterColliderData*>& dataList)
 {
 	string conditionString;
 	StringUtility::appendConditionString(conditionString, MonsterColliderData::COL_ATLAS, atlas, " and ");

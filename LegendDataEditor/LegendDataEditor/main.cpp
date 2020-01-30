@@ -29,8 +29,6 @@ void main()
 18:解析所有wix和wil文件\n\
 19:整理NPC文件结构\n\
 20:将media中全部序列帧数据写入SQLite \n\
-21:将图片位置偏移写入SQLite \n\
-22:将怪物碰撞范围写入SQLite \n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -246,29 +244,6 @@ void main()
 			if (updateOnly == 'y' || updateOnly == 'n')
 			{
 				ImageUtility::writeAnimFrameSQLite(updateOnly == 'y');
-			}
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 21)
-		{
-			cout << "输入media下相对路径:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始将图片位置偏移写入SQLite..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::writeImagePosSQLite("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 22)
-		{
-			cout << "开始将怪物碰撞范围数据写入SQLite..." << endl;
-			char updateOnly = 'y';
-			cout << "是否只更新数据? y(是)/n(否)";
-			cin >> updateOnly;
-			long startTime = timeGetTime();
-			if (updateOnly == 'y' || updateOnly == 'n')
-			{
-				ImageUtility::writeMonsterColliderSQLite(updateOnly == 'y');
 			}
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}

@@ -41,7 +41,7 @@ public:
 	SQLiteMonsterCollider(SQLite* sqlite)
 		:SQLiteTable("MonsterCollider", sqlite)
 	{}
-	void query(const string& atlas, const string& animation, txVector<MonsterColliderData>& dataList);
+	void query(const string& atlas, const string& animation, txVector<MonsterColliderData*>& dataList);
 	bool updateData(const MonsterColliderData& data);
 	bool insert(const MonsterColliderData& data);
 };

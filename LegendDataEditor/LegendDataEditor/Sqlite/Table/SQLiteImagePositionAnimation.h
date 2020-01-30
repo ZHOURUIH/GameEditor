@@ -4,23 +4,26 @@
 #include "SQLiteTable.h"
 #include "SQLiteTableData.h"
 
-class AnimationFrameData : public SQLiteTableData
+class ImagePositionAnimationData : public SQLiteTableData
 {
 public:
+	static string COL_ID;
 	static string COL_ATLAS;
 	static string COL_ANIMATION;
 	static string COL_FRAME_COUNT;
 	static string COL_POSX;
 	static string COL_POSY;
 public:
+	int mID;
 	string mAtlas;
 	string mAnimation;
 	int mFrameCount;
 	txVector<int> mPosX;
 	txVector<int> mPosY;
 public:
-	AnimationFrameData()
+	ImagePositionAnimationData()
 	{
+		REGISTE_PARAM(mID, COL_ID);
 		REGISTE_PARAM(mAtlas, COL_ATLAS);
 		REGISTE_PARAM(mAnimation, COL_ANIMATION);
 		REGISTE_PARAM(mFrameCount, COL_FRAME_COUNT);
@@ -29,17 +32,13 @@ public:
 	}
 };
 
-class SQLiteAnimationFrame : SQLiteTable
+class SQLiteImagePositionAnimation : public SQLiteTable
 {
 public:
-	SQLiteAnimationFrame(SQLite* sqlite)
-		:SQLiteTable("AnimationFrame", sqlite)
-	{
-		;
-	}
-	void query(const string& atlas, const string& animation, txVector<AnimationFrameData>& dataList);
-	bool updateData(const AnimationFrameData& data);
-	bool insert(const AnimationFrameData& data);
+	SQLiteImagePositionAnimation(SQLite* sqlite)
+		:SQLiteTable("ImagePositionAnimation", sqlite){}
+	void query(const string& atlas, const string& animation, txVector<ImagePositionAnimationData*>& dataList);
+	bool updateData(const ImagePositionAnimationData& data);
 };
 
 #endif

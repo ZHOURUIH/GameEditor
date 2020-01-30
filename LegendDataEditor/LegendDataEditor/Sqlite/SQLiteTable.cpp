@@ -18,3 +18,17 @@ bool SQLiteTable::doInsert(const string& valueString)
 	string queryString = "INSERT INTO " + mTableName + " VALUES (" + valueString + ")";
 	return mSQLite->executeNonQuery(queryString);
 }
+
+bool SQLiteTable::doDelete(const string& condition)
+{
+	if (condition != EMPTY_STRING)
+	{
+		string str = "DELETE FROM " + mTableName + " WHERE " + condition;
+		return mSQLite->executeNonQuery(str);
+	}
+	else
+	{
+		string str = "DELETE FROM " + mTableName;
+		return mSQLite->executeNonQuery(str);
+	}
+}

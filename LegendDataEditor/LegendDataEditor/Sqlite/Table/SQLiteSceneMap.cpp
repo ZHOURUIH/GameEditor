@@ -9,6 +9,8 @@ string SceneMapData::COL_RESOURCE = "Resource";
 string SceneMapData::COL_MINI_MAP = "MiniMap";
 string SceneMapData::COL_WIDTH = "Width";
 string SceneMapData::COL_HEIGHT = "Height";
+string SceneMapData::COL_MONSTER_REGION = "MonsterRegion";
+string SceneMapData::COL_NPC = "NPC";
 
 void SQLiteSceneMap::query(int id, SceneMapData& data)
 {
