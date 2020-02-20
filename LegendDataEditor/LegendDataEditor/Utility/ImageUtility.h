@@ -47,13 +47,12 @@ public:
 	static void groupAtlas(const string& filePath, int countInAltas);
 	static void texturePacker(const string& texturePath);
 	static void texturePackerAll(const string& texturePath);
+	static void packMapTexture(const string& texturePath);
+	static void packMapTextureAll(const string& texturePath);
 	static void convertMapFile(const string& fileName);
 	static void convertAllMapFile(const string& filePath);
 	static void readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap);
 	static void writeAnimFrameSQLite(bool updateOnly);
-	static void readDropList();
-	static void findMap();
-	static void fillID();
 };
 
 #endif

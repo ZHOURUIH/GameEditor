@@ -840,6 +840,57 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 	}
 }
 
+void ImageUtility::packMapTexture(const string& texturePath)
+{
+	string folderName = StringUtility::getFileName(texturePath);
+	int blockIndex = StringUtility::stringToInt(folderName);
+	string secondFolderName = StringUtility::getFileName(StringUtility::getFilePath(texturePath));
+	int objectIndex = StringUtility::getLastNumber(secondFolderName) - 1;
+	MathUtility::clampMin(objectIndex, 0);
+	string outputPath = StringUtility::getFilePath(texturePath);
+	string outputFileName = "Objects_" + StringUtility::intToString(objectIndex) + "_" + StringUtility::intToString(blockIndex);
+	string cmdLine;
+	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
+	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
+	cmdLine += "--format unity-texture2d ";
+	cmdLine += "--alpha-handling KeepTransparentPixels ";
+	cmdLine += "--force-squared ";
+	cmdLine += "--maxrects-heuristics Best ";
+	cmdLine += "--trim-mode None ";
+	cmdLine += "--disable-rotation ";
+	cmdLine += "--size-constraints POT ";
+	cmdLine += "--max-size 2048 ";
+	cmdLine += "--shape-padding 1 ";
+	cmdLine += texturePath;
+
+	SHELLEXECUTEINFOA ShExecInfo = { 0 };
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFOA);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = NULL;
+	ShExecInfo.lpVerb = NULL;
+	ShExecInfo.lpFile = "C:\\Program Files\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
+	ShExecInfo.lpParameters = cmdLine.c_str();
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_HIDE;
+	ShExecInfo.hInstApp = NULL;
+	BOOL ret = ShellExecuteExA(&ShExecInfo);
+	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+}
+
+void ImageUtility::packMapTextureAll(const string& texturePath)
+{
+	txVector<string> folderList;
+	FileUtility::findFolders(texturePath, folderList, false);
+	int count = folderList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (!FileUtility::isEmptyFolder(folderList[i]))
+		{
+			packMapTexture(folderList[i]);
+		}
+	}
+}
+
 void ImageUtility::readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap)
 {
 	int fileSize = 0;
@@ -957,105 +1008,6 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			{
 				sqlite->mSQLiteImagePositionAnimation->insert(animationData);
 			}
-		}
-	}
-	TRACE_DELETE(sqlite);
-}
-
-void ImageUtility::readDropList()
-{
-	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
-	txVector<string> fileList;
-	FileUtility::findFiles("../media/DropList", fileList, ".txt");
-	int count = fileList.size();
-	for (int i = 0; i < count; ++i)
-	{
-		bool fileChanged = false;
-		string fileString = FileUtility::openTxtFile(fileList[i]);
-		txVector<string> lineList;
-		StringUtility::split(fileString, "\r\n", lineList);
-		int lineCount = lineList.size();
-		for (int j = 0; j < lineCount; ++j)
-		{
-			string& line = lineList[j];
-			bool lineChanged = false;
-			txVector<string> lineElements;
-			StringUtility::split(line, " ", lineElements);
-			if (lineElements.size() == 2)
-			{
-				ItemEquipData equip;
-				if (sqlite->mSQLiteItemEquip->query(lineElements[1], equip))
-				{
-					lineElements.insert(lineElements.begin() + 1, StringUtility::intToString(equip.mID), true);
-					line = lineElements[0] + "   " + lineElements[1] + " " + lineElements[2]; 
-					fileChanged = true;
-					lineChanged = true;
-				}
-				ItemConsumableData consumable;
-				if (!lineChanged && sqlite->mSQLiteItemConsumable->query(lineElements[1], consumable))
-				{
-					lineElements.insert(lineElements.begin() + 1, StringUtility::intToString(consumable.mID), true);
-					line = lineElements[0] + "   " + lineElements[1] + " " + lineElements[2];
-					fileChanged = true;
-					lineChanged = true;
-				}
-				ItemSkillBookData skillBook;
-				if (!lineChanged && sqlite->mSQLiteItemSkillBook->query(lineElements[1], skillBook))
-				{
-					lineElements.insert(lineElements.begin() + 1, StringUtility::intToString(skillBook.mID), true);
-					line = lineElements[0] + "   " + lineElements[1] + " " + lineElements[2];
-					fileChanged = true;
-					lineChanged = true;
-				}
-			}
-		}
-		// 重新写入文件
-		if (fileChanged)
-		{
-			string newFile;
-			for (int j = 0; j < lineCount; ++j)
-			{
-				newFile += lineList[j];
-				if (j != lineCount - 1)
-				{
-					newFile += "\r\n";
-				}
-			}
-			FileUtility::writeFile(fileList[i], newFile);
-		}
-	}
-	TRACE_DELETE(sqlite);
-}
-
-void ImageUtility::findMap()
-{
-	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
-	txVector<MonGenData*> regionList;
-	sqlite->mSQLiteMonGen->queryAll(regionList);
-	for (int i = 0; i < regionList.size(); ++i)
-	{
-		regionList[i]->mMonsterID += 1;
-		sqlite->mSQLiteMonGen->update(*regionList[i]);
-		TRACE_DELETE(regionList[i]);
-	}
-	TRACE_DELETE(sqlite);
-}
-
-void ImageUtility::fillID()
-{
-	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
-	txVector<SkillEffectDirectionData*> frameList;
-	sqlite->mSQLiteSkillEffectDirection->queryAll(frameList);
-	for (int i = 0; i < frameList.size(); ++i)
-	{
-		frameList[i]->mID = i + 1;
-	}
-	sqlite->mSQLiteSkillEffectDirection->deleteAll();
-	for (int i = 0; i < frameList.size(); ++i)
-	{
-		if (!sqlite->mSQLiteSkillEffectDirection->insert(*frameList[i]))
-		{
-			break;
 		}
 	}
 	TRACE_DELETE(sqlite);
