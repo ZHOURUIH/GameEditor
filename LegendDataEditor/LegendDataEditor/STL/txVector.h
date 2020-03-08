@@ -33,6 +33,18 @@ public:
 		}
 		return erase(begin() + index);
 	}
+	int find(const T& value)
+	{
+		int count = (int)mVector.size();
+		for(int i = 0; i < count; ++i)
+		{
+			if (mVector[i] == value)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
 	void clear()
 	{
 		checkLock();
@@ -82,6 +94,14 @@ public:
 	bool contains(const T& value)
 	{
 		return std::find(begin(), end(), value) != end();
+	}
+	void merge(const txVector<T>& other)
+	{
+		int count = other.mVector.size();
+		for(int i = 0; i < count; ++i)
+		{
+			push_back(other[i]);
+		}
 	}
 protected:
 protected:

@@ -35,7 +35,11 @@ else													\
 	try													\
 	{													\
 		ptr = new className[count];						\
-		memset(ptr, 0, sizeof(className)* count);		\
+		/*如果是char数组类型,则需要将数组清零*/			\
+		if (typeid(className).hash_code() == typeid(char).hash_code())\
+		{												\
+			memset(ptr, 0, sizeof(className) * count);	\
+		}												\
 		if (check)										\
 		{												\
 			txMemoryCheck::usePtr(ptr);					\
@@ -45,7 +49,7 @@ else													\
 	{													\
 		ptr = NULL;										\
 	}													\
-}														\
+}
 
 // 正常的释放内存
 #define DELETE_MEMORY(ptr, check)		\

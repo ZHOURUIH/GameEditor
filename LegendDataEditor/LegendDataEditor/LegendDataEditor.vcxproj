@@ -54,13 +54,16 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;./SceneMap;./Image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;./SceneMap;./Image;./Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>FreeImage.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>
+      </StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -73,7 +76,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;./SceneMap;./Image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Utility;./Common;./;./FreeImage;./STL;./Memory;./Thread;./Serialize;./Sqlite;./Sqlite/Table;./Sqlite/sqlite3;./SceneMap;./Image;./Math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,6 +86,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>FreeImage.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../lib</AdditionalLibraryDirectories>
+      <StackReserveSize>
+      </StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -92,14 +98,16 @@
     <ClCompile Include="Image\NPCImage.cpp" />
     <ClCompile Include="Image\WeaponImage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Math\Color.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Memory\txMemoryCheck.cpp" />
     <ClCompile Include="Memory\txMemoryTrace.cpp" />
     <ClCompile Include="Memory\txShareMemoryServer.cpp" />
     <ClCompile Include="SceneMap\MapHeader.cpp" />
     <ClCompile Include="SceneMap\MapTile.cpp" />
-    <ClCompile Include="SceneMap\MapTileAdvance.cpp" />
-    <ClCompile Include="SceneMap\SceneMap.cpp" />
-    <ClCompile Include="SceneMap\SceneMapAdvance.cpp" />
+    <ClCompile Include="SceneMap\MapData.cpp" />
+    <ClCompile Include="SceneMap\UnreachTileGroup.cpp" />
     <ClCompile Include="Serialize\txSerializedData.cpp" />
     <ClCompile Include="Serialize\txSerializer.cpp" />
     <ClCompile Include="Sqlite\SQLite.cpp" />
@@ -151,6 +159,10 @@
     <ClInclude Include="Image\NPCImage.h" />
     <ClInclude Include="Image\WeaponAction.h" />
     <ClInclude Include="Image\WeaponImage.h" />
+    <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Memory\MemoryDefine.h" />
     <ClInclude Include="Memory\MemoryInfo.h" />
     <ClInclude Include="Memory\txMemoryCheck.h" />
@@ -158,9 +170,8 @@
     <ClInclude Include="Memory\txShareMemoryServer.h" />
     <ClInclude Include="SceneMap\MapHeader.h" />
     <ClInclude Include="SceneMap\MapTile.h" />
-    <ClInclude Include="SceneMap\MapTileAdvance.h" />
-    <ClInclude Include="SceneMap\SceneMap.h" />
-    <ClInclude Include="SceneMap\SceneMapAdvance.h" />
+    <ClInclude Include="SceneMap\MapData.h" />
+    <ClInclude Include="SceneMap\UnreachTileGroup.h" />
     <ClInclude Include="Serialize\txSerializedData.h" />
     <ClInclude Include="Serialize\txSerializer.h" />
     <ClInclude Include="Sqlite\SQLite.h" />

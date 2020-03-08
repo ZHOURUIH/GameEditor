@@ -20,11 +20,10 @@
 #include "SQLiteSkillEffectDirection.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
-#include "SceneMap.h"
+#include "MapData.h"
 #include "MapHeader.h"
 #include "MapTile.h"
-#include "SceneMapAdvance.h"
-#include "MapTileAdvance.h"
+#include "UnreachTileGroup.h"
 
 void ImageUtility::encodePNG(const string& path, unsigned char* color, int width, int height, FREE_IMAGE_FORMAT format)
 {
@@ -750,26 +749,6 @@ POINT ImageUtility::getImagePosition(const string& imageFullPath)
 	return pos;
 }
 
-void ImageUtility::collectMapTexture(const string& fileName)
-{
-	string file = StringUtility::getFileNameNoSuffix(fileName);
-	SceneMap* map = TRACE_NEW(SceneMap, map);
-	map->readFile(fileName + ".map");
-	int tileCount = map->mHeader->mWidth * map->mHeader->mHeight;
-	for (int i = 0; i < tileCount; ++i)
-	{
-		string srcFilePath = "../media/Objects" + StringUtility::intToString(map->mTileList[i].mObjFileIdx + 1) + "/";
-		string srcFileName = StringUtility::intToString(map->mTileList[i].mObjImgIdx) + ".png";
-		string destFilePath = "../media/MapTexture/" + file + "/";
-		if (FileUtility::isFileExist(srcFilePath + srcFileName))
-		{
-			FileUtility::copyFile(srcFilePath + srcFileName, destFilePath + srcFileName);
-			FileUtility::copyFile(srcFilePath + srcFileName + ".meta", destFilePath + srcFileName + ".meta");
-		}
-	}
-	TRACE_DELETE(map);
-}
-
 void ImageUtility::groupAtlas(const string& filePath, int countInAltas)
 {
 	string atlasInfo;
@@ -800,16 +779,17 @@ void ImageUtility::texturePacker(const string& texturePath)
 	string outputFileName = StringUtility::getFileName(texturePath);
 	string outputPath = StringUtility::getFilePath(texturePath);
 	string cmdLine;
-	cmdLine += "--data " + outputPath + "/" + outputFileName + ".txt ";
+	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
 	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
-	cmdLine += "--format json ";
+	cmdLine += "--format unity-texture2d ";
+	cmdLine += "--alpha-handling KeepTransparentPixels ";
 	cmdLine += "--force-squared ";
 	cmdLine += "--maxrects-heuristics Best ";
 	cmdLine += "--trim-mode None ";
 	cmdLine += "--disable-rotation ";
 	cmdLine += "--size-constraints POT ";
 	cmdLine += "--max-size 2048 ";
-	cmdLine += "--padding 1 ";
+	cmdLine += "--shape-padding 1 ";
 	cmdLine += texturePath;
 
 	SHELLEXECUTEINFOA ShExecInfo = { 0 };
@@ -891,62 +871,7 @@ void ImageUtility::packMapTextureAll(const string& texturePath)
 	}
 }
 
-void ImageUtility::readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap)
-{
-	int fileSize = 0;
-	char* fileBuffer = FileUtility::openBinaryFile(fileName, &fileSize);
-	txSerializer serializer(fileBuffer, fileSize);
-	int indexCount = fileSize / 3;
-	for (int j = 0; j < indexCount; ++j)
-	{
-		unsigned short imageIndex;
-		unsigned char atlasIndex;
-		serializer.read(imageIndex);
-		serializer.read(atlasIndex);
-		if (!indexMap.insert(imageIndex, atlasIndex).second)
-		{
-			SystemUtility::print("读取图集下标文件失败,有重复的图片文件! image index : " + StringUtility::intToString(imageIndex));
-		}
-	}
-	TRACE_DELETE_ARRAY(fileBuffer);
-}
-
-void ImageUtility::convertMapFile(const string& fileName)
-{
-	string fileNoSuffix = StringUtility::getFileNameNoSuffix(fileName, false);
-	SceneMap* map = TRACE_NEW(SceneMap, map);
-	map->readFile(fileNoSuffix + ".map");
-	// 物体图集下标
-	txMap<int, txMap<int, int>> objAtlasIndexMap;
-	// 目前只有7个总的物体图片文件夹
-	for (int i = 0; i < 7; ++i)
-	{
-		txMap<int, int> indexMap;
-		readAtlasIndexFile("../media/Objects" + StringUtility::intToString(i + 1) + "/atlas.index", indexMap);
-		objAtlasIndexMap.insert(i + 1, indexMap);
-	}
-	// 大地砖图集下标
-	txMap<int, int> bngAtlasIndexMap;
-	readAtlasIndexFile("../media/Tiles/atlas.index", bngAtlasIndexMap);
-	SceneMapAdvance* mapAdvance = TRACE_NEW(SceneMapAdvance, mapAdvance);
-	mapAdvance->initFromMap(map, objAtlasIndexMap, bngAtlasIndexMap);
-	mapAdvance->saveAdvanceMap(fileNoSuffix + ".amap");
-	TRACE_DELETE(map);
-	TRACE_DELETE(mapAdvance);
-}
-
-void ImageUtility::convertAllMapFile(const string& filePath)
-{
-	txVector<string> fileList;
-	FileUtility::findFiles(filePath, fileList, ".map", false);
-	int count = fileList.size();
-	for (int i = 0; i < count; ++i)
-	{
-		convertMapFile(fileList[i]);
-	}
-}
-
-void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
+void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 {
 	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
 	txVector<string> folders;
@@ -1000,9 +925,16 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			animationData.mPosX = tempList;
 			iter->second.second.valueList(tempList);
 			animationData.mPosY = tempList;
-			if (updateOnly)
+			txVector<ImagePositionAnimationData*> existDataList;
+			sqlite->mSQLiteImagePositionAnimation->query(animationData.mAtlas, animationData.mAnimation, existDataList);
+			if (existDataList.size() > 0 && updateIfExist)
 			{
 				sqlite->mSQLiteImagePositionAnimation->updateData(animationData);
+				int count = existDataList.size();
+				for (int i = 0; i < count; ++i)
+				{
+					TRACE_DELETE(existDataList[i]);
+				}
 			}
 			else
 			{
@@ -1011,4 +943,216 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 		}
 	}
 	TRACE_DELETE(sqlite);
+}
+
+int ImageUtility::tileIndexToTileX(int index, int mapHeight)
+{
+	return index / mapHeight;
+}
+int ImageUtility::tileIndexToTileY(int index, int mapHeight)
+{
+	return index % mapHeight;
+}
+Vector2 ImageUtility::tileIndexToTilePos(int index, int mapHeight)
+{
+	return Vector2(index / mapHeight, index % mapHeight);
+}
+int ImageUtility::tilePosToTileIndex(int x, int y, int mapHeight)
+{
+	return x * mapHeight + y;
+}
+int ImageUtility::pixelPosToTileX(Vector2 pixelPos, int mapHeight, int mapWidth)
+{
+	int tileX = MathUtility::round(pixelPosToTilePos(pixelPos, mapHeight).x);
+	if (tileX < 0 || tileX >= mapWidth)
+	{
+		return -1;
+	}
+	return tileX;
+}
+int ImageUtility::pixelPosToTileY(Vector2 pixelPos, int mapHeight)
+{
+	int tileY = MathUtility::round(pixelPosToTilePos(pixelPos, mapHeight).y);
+	if (tileY < 0 || tileY >= mapHeight)
+	{
+		return -1;
+	}
+	return tileY;
+}
+int ImageUtility::pixelPosToTileIndex(Vector2 pixelPos, int mapHeight, int mapWidth)
+{
+	int tileX = pixelPosToTileX(pixelPos, mapHeight, mapWidth);
+	int tileY = pixelPosToTileY(pixelPos, mapHeight);
+	if (tileX < 0 || tileY < 0)
+	{
+		return -1;
+	}
+	return tilePosToTileIndex(tileX, tileY, mapHeight);
+}
+// 根据地砖左下角的像素坐标转换为地砖下标的x和y
+Vector2 ImageUtility::pixelPosToTilePos(Vector2 pixelPos, int mapHeight)
+{
+	return Vector2((int)(pixelPos.x * (1.0f / TILE_WIDTH)), (int)((mapHeight * TILE_HEIGHT - pixelPos.y) * (1.0f / TILE_HEIGHT)));
+}
+// 计算出地砖坐标所对应的像素坐标,是地砖左下角的像素坐标
+Vector2 ImageUtility::tilePosToPixelPos(int x, int y, int mapHeight)
+{
+	return Vector2(TILE_WIDTH * x, mapHeight * TILE_HEIGHT - TILE_HEIGHT * y - TILE_HEIGHT);
+}
+// 计算出地砖下所对应的像素坐标,是地砖左下角的像素坐标
+Vector2 ImageUtility::tileIndexToPixelPos(int index, int mapHeight)
+{
+	int x = index / mapHeight;
+	int y = index % mapHeight;
+	return Vector2(TILE_WIDTH * x, mapHeight * TILE_HEIGHT - TILE_HEIGHT * y - TILE_HEIGHT);
+}
+// 以地砖左下角为原点的像素坐标所处的三角形下标
+TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
+{
+	if (pos.x < 0.0f || pos.x > TILE_WIDTH || pos.y < 0.0f || pos.y > TILE_HEIGHT)
+	{
+		return TT_MAX;
+	}
+	// 对角线斜率
+	float k = (float)TILE_HEIGHT / TILE_WIDTH;
+	// 位于左半部分
+	if (pos.x <= TILE_WIDTH * 0.5f)
+	{
+		// 位于左下部分小矩形中
+		if (pos.y <= TILE_HEIGHT * 0.5f)
+		{
+			// 相对于小矩形的右下角的相对坐标
+			Vector2 relative = pos - Vector2(TILE_WIDTH * 0.5f, 0.0f);
+			// 根据相对坐标的斜率判断属于哪个三角形
+			if (abs(relative.y / relative.x) > k)
+			{
+				return TT_INNER_LEFT_BOTTOM;
+			}
+			else
+			{
+				return TT_LEFT_BOTTOM;
+			}
+		}
+		// 位于左上部分
+		else
+		{
+			// 相对于地砖中左上角小矩形的左下角的相对坐标
+			Vector2 relative = pos - Vector2(0.0f, TILE_HEIGHT * 0.5f);
+			// 根据相对坐标的斜率判断属于哪个三角形
+			if (abs(relative.y / relative.x) > k)
+			{
+				return TT_LEFT_TOP;
+			}
+			else
+			{
+				return TT_INNER_LEFT_TOP;
+			}
+		}
+	}
+	// 位于右半部分
+	else
+	{
+		// 位于右下部分
+		if (pos.y <= TILE_HEIGHT * 0.5f)
+		{
+			// 相对于地砖中右下角小矩形的左下角的相对坐标
+			Vector2 relative = pos - Vector2(TILE_WIDTH * 0.5f, 0.0f);
+			// 根据相对坐标的斜率判断属于哪个三角形
+			if (abs(relative.y / relative.x) > k)
+			{
+				return TT_INNER_RIGHT_BOTTOM;
+			}
+			else
+			{
+				return TT_RIGHT_BOTTOM;
+			}
+		}
+		// 位于右上部分
+		else
+		{
+			// 相对于地砖中右上角小矩形的左下角的相对坐标
+			Vector2 relative = pos - Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
+			// 根据相对坐标的斜率判断属于哪个三角形
+			if (abs(relative.y / relative.x) > k)
+			{
+				return TT_RIGHT_TOP;
+			}
+			else
+			{
+				return TT_INNER_RIGHT_TOP;
+			}
+		}
+	}
+}
+// 获取指定位置上的三角形三个顶点的坐标,坐标是相对于所属地砖左下角
+void ImageUtility::getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2)
+{
+	if (pos == TT_LEFT_TOP)
+	{
+		point0 = Vector2(0.0f, TILE_HEIGHT);
+		point1 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
+		point2 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
+	}
+	else if (pos == TT_RIGHT_TOP)
+	{
+		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
+		point1 = Vector2(TILE_WIDTH, TILE_HEIGHT);
+		point2 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
+	}
+	else if (pos == TT_RIGHT_BOTTOM)
+	{
+		point0 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
+		point1 = Vector2(TILE_WIDTH, 0.0f);
+		point2 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
+	}
+	else if (pos == TT_LEFT_BOTTOM)
+	{
+		point0 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
+		point1 = Vector2(0.0f, 0.0f);
+		point2 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
+	}
+	else if (pos == TT_INNER_LEFT_TOP)
+	{
+		point0 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
+		point1 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
+		point2 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
+	}
+	else if (pos == TT_INNER_RIGHT_TOP)
+	{
+		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
+		point1 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
+		point2 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
+	}
+	else if (pos == TT_INNER_RIGHT_BOTTOM)
+	{
+		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
+		point1 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
+		point2 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
+	}
+	else if (pos == TT_INNER_LEFT_BOTTOM)
+	{
+		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
+		point1 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
+		point2 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
+	}
+}
+
+void ImageUtility::generateUnreachFile(string path)
+{
+	MapData* mapData = TRACE_NEW(MapData, mapData);
+	mapData->readFile(path);
+	mapData->writeUnreachFile();
+	TRACE_DELETE(mapData);
+}
+
+void ImageUtility::generateAllUnreachFile(string path)
+{
+	txVector<string> fileList;
+	FileUtility::findFiles(path, fileList, ".map");
+	int fileCount = fileList.size();
+	for (int i = 0; i < fileCount; ++i)
+	{
+		generateUnreachFile(fileList[i]);
+		SystemUtility::print("完成计算阻挡区域:" + StringUtility::getFileName(fileList[i]));
+	}
 }

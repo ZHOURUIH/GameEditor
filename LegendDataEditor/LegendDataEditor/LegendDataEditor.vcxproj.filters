@@ -46,6 +46,9 @@
     <Filter Include="Image">
       <UniqueIdentifier>{85cefcf8-04e5-4ebd-88b5-4b0084f49303}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{071a5e6c-6a95-4760-baee-999f48e1f065}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -114,15 +117,6 @@
     <ClCompile Include="SceneMap\MapTile.cpp">
       <Filter>SceneMap</Filter>
     </ClCompile>
-    <ClCompile Include="SceneMap\SceneMap.cpp">
-      <Filter>SceneMap</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneMap\MapTileAdvance.cpp">
-      <Filter>SceneMap</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneMap\SceneMapAdvance.cpp">
-      <Filter>SceneMap</Filter>
-    </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteSceneMap.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
@@ -185,6 +179,21 @@
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteSkillEffectDirection.cpp">
       <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMap\UnreachTileGroup.cpp">
+      <Filter>SceneMap</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMap\MapData.cpp">
+      <Filter>SceneMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Color.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector3.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,15 +305,6 @@
     <ClInclude Include="SceneMap\MapTile.h">
       <Filter>SceneMap</Filter>
     </ClInclude>
-    <ClInclude Include="SceneMap\SceneMap.h">
-      <Filter>SceneMap</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneMap\MapTileAdvance.h">
-      <Filter>SceneMap</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneMap\SceneMapAdvance.h">
-      <Filter>SceneMap</Filter>
-    </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteSceneMap.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
@@ -382,6 +382,24 @@
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteSkillEffectDirection.h">
       <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMap\UnreachTileGroup.h">
+      <Filter>SceneMap</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMap\MapData.h">
+      <Filter>SceneMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Color.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector4.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,8 @@
 #include "Utility.h"
 #include "SQLite.h"
 
+#pragma comment(linker, "/STACK:204857600,204857600")
+
 using namespace std;
 
 void main()
@@ -20,16 +22,15 @@ void main()
 9:删除无效图片 \n\
 10:按序号重命名文件 \n\
 11:重命名为序列帧格式 \n\
-12:提取地图资源\n\
 13:分组图集\n\
 14:打包图集\n\
 15:打包全部图集\n\
-16:转换地图文件\n\
-17:转换全部地图文件\n\
 18:解析所有wix和wil文件\n\
 19:整理NPC文件结构\n\
 20:将media中全部序列帧数据写入SQLite \n\
 21:打包地图图集 \n\
+22:生成地图阻挡文件 \n\
+23:生成所有地图阻挡文件 \n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -157,16 +158,6 @@ void main()
 			ImageUtility::renameImageToAnim("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 12)
-		{
-			cout << "输入地图编号:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始提取地图资源..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::collectMapTexture("../media/Map/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 13)
 		{
 			cout << "输入文件夹名:";
@@ -195,26 +186,6 @@ void main()
 			cout << "开始打包全部图集..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::texturePackerAll("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 16)
-		{
-			cout << "输入地图名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始转换地图文件..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::convertMapFile("../media/Map/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 17)
-		{
-			cout << "输入文件夹名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始转换地图文件..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::convertAllMapFile("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 18)
@@ -256,6 +227,23 @@ void main()
 			cout << "开始打包地图图集..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::packMapTextureAll("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 22)
+		{
+			cout << "输入media下相对路径:";
+			string fileName;
+			cin >> fileName;
+			cout << "正在生成阻挡文件..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::generateUnreachFile("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 23)
+		{
+			cout << "正在生成阻挡文件..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::generateAllUnreachFile("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

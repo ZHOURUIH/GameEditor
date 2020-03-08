@@ -43,16 +43,26 @@ public:
 	static void deleteInvalidImage(const string& path);
 	static bool isInvalidImage(const string& fileName);
 	static POINT getImagePosition(const string& imagePath);
-	static void collectMapTexture(const string& fileName);
 	static void groupAtlas(const string& filePath, int countInAltas);
 	static void texturePacker(const string& texturePath);
 	static void texturePackerAll(const string& texturePath);
 	static void packMapTexture(const string& texturePath);
 	static void packMapTextureAll(const string& texturePath);
-	static void convertMapFile(const string& fileName);
-	static void convertAllMapFile(const string& filePath);
-	static void readAtlasIndexFile(const string& fileName, txMap<int, int>& indexMap);
-	static void writeAnimFrameSQLite(bool updateOnly);
+	static void writeAnimFrameSQLite(bool updateIfExist);
+	static int tileIndexToTileX(int index, int mapHeight);
+	static int tileIndexToTileY(int index, int mapHeight);
+	static Vector2 tileIndexToTilePos(int index, int mapHeight);
+	static int tilePosToTileIndex(int x, int y, int mapHeight);
+	static int pixelPosToTileX(Vector2 pixelPos, int mapHeight, int mapWidth);
+	static int pixelPosToTileY(Vector2 pixelPos, int mapHeight);
+	static int pixelPosToTileIndex(Vector2 pixelPos, int mapHeight, int mapWidth);
+	static Vector2 pixelPosToTilePos(Vector2 pixelPos, int mapHeight);
+	static Vector2 tilePosToPixelPos(int x, int y, int mapHeight);
+	static Vector2 tileIndexToPixelPos(int index, int mapHeight);
+	static TILE_TRIANGLE pixelPosToTriangleIndex(Vector2 pos);
+	static void getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2);
+	static void generateUnreachFile(string path);
+	static void generateAllUnreachFile(string path);
 };
 
 #endif

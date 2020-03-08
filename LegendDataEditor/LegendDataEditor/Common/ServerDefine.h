@@ -67,6 +67,9 @@
 #include "ServerEnum.h"
 #include "ServerCallback.h"
 #include "sqlite3.h"
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
 
 using namespace std;
 //-----------------------------------------------------------------------------------------------------------------------------------------------

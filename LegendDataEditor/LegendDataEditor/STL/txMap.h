@@ -56,13 +56,13 @@ public:
 		}
 		return iter;
 	}
-	void erase(iterator iter, bool check = true)
+	iterator erase(iterator iter, bool check = true)
 	{
 		if (check)
 		{
 			checkLock();
 		}
-		mMap.erase(iter);
+		return mMap.erase(iter);
 	}
 	// 返回值表示移除成功或失败
 	bool tryErase(const Key& key, bool check = true)

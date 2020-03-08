@@ -168,6 +168,24 @@ public:
 		}
 	}
 	float HueToRGB(float v1, float v2, float vH);
+	// 四舍五入
+	static int round(float value)
+	{
+		if (value > 0.0f)
+		{
+			return (int)(value + 0.5f);
+		}
+		else
+		{
+			return (int)(value - 0.5f);
+		}
+	}
+	static void round(Vector3& value)
+	{
+		value.x = (float)round(value.x);
+		value.y = (float)round(value.y);
+		value.z = (float)round(value.z);
+	}
 };
 
 #endif

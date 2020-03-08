@@ -105,4 +105,21 @@ enum IMAGE_TYPE
 	IT_NPC,
 };
 
+// 一块地砖中的三角形定义
+enum TILE_TRIANGLE
+{
+	TT_LEFT_TOP,            // 左上角
+	TT_RIGHT_TOP,           // 右上角
+	TT_RIGHT_BOTTOM,        // 右下角
+	TT_LEFT_BOTTOM,         // 左下角
+	TT_INNER_LEFT_TOP,      // 中心左上角
+	TT_INNER_RIGHT_TOP,     // 中心右上角
+	TT_INNER_RIGHT_BOTTOM,  // 中心右下角
+	TT_INNER_LEFT_BOTTOM,   // 中心左下角
+	TT_MAX,
+};
+
+const int TILE_WIDTH = 48;				// 地砖的像素宽度
+const int TILE_HEIGHT = 32;				// 地砖的像素高度
+
 #endif

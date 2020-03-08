@@ -49,9 +49,9 @@ public:
 	static void print(const string& str)
 	{
 #if RUN_PLATFORM == PLATFORM_WINDOWS
-		std::cout << str;
+		std::cout << str << std::endl;
 #elif RUN_PLATFORM == PLATFORM_LINUX
-		printf(str.c_str());
+		printf((str + "\n").c_str());
 #endif
 	}
 	static void input(string& str)
