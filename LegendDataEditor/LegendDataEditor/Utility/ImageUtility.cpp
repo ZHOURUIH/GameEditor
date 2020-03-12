@@ -992,7 +992,7 @@ int ImageUtility::pixelPosToTileIndex(Vector2 pixelPos, int mapHeight, int mapWi
 // 根据地砖左下角的像素坐标转换为地砖下标的x和y
 Vector2 ImageUtility::pixelPosToTilePos(Vector2 pixelPos, int mapHeight)
 {
-	return Vector2((int)(pixelPos.x * (1.0f / TILE_WIDTH)), (int)((mapHeight * TILE_HEIGHT - pixelPos.y) * (1.0f / TILE_HEIGHT)));
+	return Vector2(floor(pixelPos.x * (1.0f / TILE_WIDTH)), floor((mapHeight * TILE_HEIGHT - pixelPos.y) * (1.0f / TILE_HEIGHT)));
 }
 // 计算出地砖坐标所对应的像素坐标,是地砖左下角的像素坐标
 Vector2 ImageUtility::tilePosToPixelPos(int x, int y, int mapHeight)
@@ -1004,7 +1004,7 @@ Vector2 ImageUtility::tileIndexToPixelPos(int index, int mapHeight)
 {
 	int x = index / mapHeight;
 	int y = index % mapHeight;
-	return Vector2(TILE_WIDTH * x, mapHeight * TILE_HEIGHT - TILE_HEIGHT * y - TILE_HEIGHT);
+	return tilePosToPixelPos(x, y, mapHeight);
 }
 // 以地砖左下角为原点的像素坐标所处的三角形下标
 TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
