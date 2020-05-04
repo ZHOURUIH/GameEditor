@@ -2,8 +2,6 @@
 #include "Utility.h"
 #include "SQLite.h"
 
-#pragma comment(linker, "/STACK:204857600,204857600")
-
 using namespace std;
 
 void main()
@@ -31,6 +29,10 @@ void main()
 21:打包地图图集 \n\
 22:生成地图阻挡文件 \n\
 23:生成所有地图阻挡文件 \n\
+24:更新场景传送点列表 \n\
+25:更新场景NPC列表 \n\
+26:更新场景刷怪区域列表 \n\
+27:处理图片阴影\n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -244,6 +246,34 @@ void main()
 			cout << "正在生成阻挡文件..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::generateAllUnreachFile("../media");
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 24)
+		{
+			cout << "正在更新场景传送点列表..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::updateSceneMapTransferSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 25)
+		{
+			cout << "正在更新场景NPC列表..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::updateSceneMapNPCSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 26)
+		{
+			cout << "正在更新场景刷怪区域列表..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::updateSceneMapMonsterRegionSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 27)
+		{
+			cout << "正在处理图片阴影..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::processAllShadow("../media/");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

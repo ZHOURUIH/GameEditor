@@ -2,6 +2,7 @@
 #include "Utility.h"
 #include "SQLiteDataReader.h"
 #include "SQLiteSceneMap.h"
+#include "SQLiteSceneMapTransfer.h"
 #include "SQLiteNPC.h"
 #include "SQLiteMonGen.h"
 #include "SQLiteMonster.h"
@@ -30,6 +31,7 @@ SQLite::SQLite(const string& dbFileName)
 		return;
 	}
 	NEW_TABLE(SQLiteSceneMap);
+	NEW_TABLE(SQLiteSceneMapTransfer);
 	NEW_TABLE(SQLiteNPC);
 	NEW_TABLE(SQLiteMonGen);
 	NEW_TABLE(SQLiteMonster);
@@ -48,6 +50,7 @@ SQLite::SQLite(const string& dbFileName)
 void SQLite::destroy()
 {
 	DELETE_TABLE(SQLiteSceneMap);
+	DELETE_TABLE(SQLiteSceneMapTransfer);
 	DELETE_TABLE(SQLiteNPC);
 	DELETE_TABLE(SQLiteMonGen);
 	DELETE_TABLE(SQLiteMonster);

@@ -11,6 +11,7 @@ string SceneMapData::COL_WIDTH = "Width";
 string SceneMapData::COL_HEIGHT = "Height";
 string SceneMapData::COL_MONSTER_REGION = "MonsterRegion";
 string SceneMapData::COL_NPC = "NPC";
+string SceneMapData::COL_TRANSFER_POINT = "TransferPoint";
 
 void SQLiteSceneMap::query(int id, SceneMapData& data)
 {

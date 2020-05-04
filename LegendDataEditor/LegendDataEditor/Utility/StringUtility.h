@@ -26,11 +26,12 @@ public:
 	static bool stringToBool(const string& str) { return str == "True" || str == "true"; }
 	// 将str中的[begin,end)替换为reStr
 	static string strReplace(const string& str, int begin, int end, const string& reStr);
-	static void StringUtility::replaceAll(string& str, const char* string_to_replace, const char* new_string);
+	static void replaceAll(string& str, const char* string_to_replace, const char* new_string);
 	// limitLen是字符串的最小长度,如果整数的位数不足最小长度,则会在前面加0
 	static string intToString(int i, int limitLen = 0); 
 	static string intArrayToString(const txVector<int>& intArray, int limitLen = 0, const string& key = ",");
 	static int stringToInt(const string& str){return atoi(str.c_str());}
+	static void stringToVector2i(const string& str, Vector2i& vec2, const string& key = ",");
 	static void stringToIntArray(const string& str, txVector<int>& intArray, const string& key = ",");
 	//precision为精度,保留的小数的位数,removeZero为是否去除末尾无用的0
 	static string floatToString(float f, int precision = 4, bool removeZero = true);
@@ -42,10 +43,10 @@ public:
 	static bool endWith(const string& oriString, const string& pattern, bool sensitive = true);
 	// 判断oriString是否以pattern开头,sensitive为是否大小写敏感
 	static bool startWith(const string& oriString, const string& pattern, bool sensitive = true);
-	static std::wstring ANSIToUnicode(const string& str);
-	static string UnicodeToANSI(const std::wstring& str);
-	static string UnicodeToUTF8(const std::wstring& str);
-	static std::wstring UTF8ToUnicode(const string& str);
+	static wstring ANSIToUnicode(const string& str);
+	static string UnicodeToANSI(const wstring& str);
+	static string UnicodeToUTF8(const wstring& str);
+	static wstring UTF8ToUnicode(const string& str);
 	static string ANSIToUTF8(const string& str, bool addBOM = false);
 	static string UTF8ToANSI(const string& str, bool removeBOM = false);
 	// json
@@ -87,6 +88,7 @@ public:
 	// sqlite语法相关字符串处理
 	static void appendValueString(string& queryStr, const string& str, bool toUTF8 = true);
 	static void appendValueInt(string& queryStr, int value);
+	static void appendValueVector2i(string& queryStr, const Vector2i& value);
 	static void appendValueIntArray(string& queryStr, const txVector<int>& intArray);
 	static void appendValueFloat(string& queryStr, float value);
 	static void appendValueFloatArray(string& queryStr, const txVector<float>& value);
@@ -95,6 +97,7 @@ public:
 	static void appendUpdateString(string& updateInfo, const string& col, const string& str, bool toUTF8 = true);
 	static void appendUpdateInt(string& updateInfo, const string& col, int value);
 	static void appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray);
+	static void appendUpdateVector2i(string& updateInfo, const string& col, const Vector2i& intArray);
 	static void appendUpdateFloat(string& updateInfo, const string& col, float value);
 	static void appendUpdateFloatArray(string& updateInfo, const string& col, const txVector<float>& floatArray);
 };

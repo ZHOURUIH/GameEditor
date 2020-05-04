@@ -5,6 +5,7 @@
 
 class SQLiteDataReader;
 class SQLiteSceneMap;
+class SQLiteSceneMapTransfer;
 class SQLiteNPC;
 class SQLiteMonGen;
 class SQLiteMonster;
@@ -24,6 +25,7 @@ class SQLite
 public:
 	sqlite3* mSQlite3;
 	SQLiteSceneMap* mSQLiteSceneMap;
+	SQLiteSceneMapTransfer* mSQLiteSceneMapTransfer;
 	SQLiteNPC* mSQLiteNPC;
 	SQLiteMonGen* mSQLiteMonGen;
 	SQLiteMonster* mSQLiteMonster;

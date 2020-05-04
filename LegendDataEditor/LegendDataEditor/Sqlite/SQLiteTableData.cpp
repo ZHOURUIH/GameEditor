@@ -19,6 +19,10 @@ void SQLiteTableData::parse(SQLiteDataReader* reader)
 		{
 			*((float*)mParameters[i].mPointer) = reader->getFloat(i);
 		}
+		else if (mParameters[i].mType == typeid(Vector2i).name())
+		{
+			StringUtility::stringToVector2i(reader->getString(i), *((Vector2i*)mParameters[i].mPointer));
+		}
 		else if (mParameters[i].mType == typeid(txVector<int>).name())
 		{
 			StringUtility::stringToIntArray(reader->getString(i), *((txVector<int>*)mParameters[i].mPointer));
@@ -46,6 +50,10 @@ void SQLiteTableData::insert(string& valueString) const
 		{
 			StringUtility::appendValueFloat(valueString, *((float*)mParameters[i].mPointer));
 		}
+		else if (mParameters[i].mType == typeid(Vector2i).name())
+		{
+			StringUtility::appendValueVector2i(valueString, *((Vector2i*)mParameters[i].mPointer));
+		}
 		else if (mParameters[i].mType == typeid(txVector<int>).name())
 		{
 			StringUtility::appendValueIntArray(valueString, *((txVector<int>*)mParameters[i].mPointer));
@@ -72,6 +80,10 @@ void SQLiteTableData::update(string& updateString) const
 		else if (mParameters[i].mType == typeid(float).name())
 		{
 			StringUtility::appendUpdateFloat(updateString, mParameters[i].mCol, *((float*)mParameters[i].mPointer));
+		}
+		else if (mParameters[i].mType == typeid(Vector2i).name())
+		{
+			StringUtility::appendUpdateVector2i(updateString, mParameters[i].mCol, *((Vector2i*)mParameters[i].mPointer));
 		}
 		else if (mParameters[i].mType == typeid(txVector<int>).name())
 		{

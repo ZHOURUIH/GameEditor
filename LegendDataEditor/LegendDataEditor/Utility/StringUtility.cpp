@@ -199,6 +199,17 @@ string StringUtility::intArrayToString(const txVector<int>& intArray, int limitL
 	return str;
 }
 
+void StringUtility::stringToVector2i(const string& str, Vector2i& vec2, const string& key)
+{
+	txVector<string> strList;
+	split(str, key, strList);
+	if (strList.size() >= 2)
+	{
+		vec2.x = stringToInt(strList[0]);
+		vec2.y = stringToInt(strList[1]);
+	}
+}
+
 void StringUtility::stringToIntArray(const string& str, txVector<int>& intArray, const string& key)
 {
 	txVector<string> strList;
@@ -786,6 +797,10 @@ void StringUtility::appendValueIntArray(string& queryStr, const txVector<int>& i
 {
 	appendValueString(queryStr, intArrayToString(intArray));
 }
+void StringUtility::appendValueVector2i(string& queryStr, const Vector2i& value)
+{
+	appendValueString(queryStr, intToString(value.x) + "," + intToString(value.y));
+}
 void StringUtility::appendValueFloat(string& queryStr, float value)
 {
 	queryStr += floatToString(value) + ",";
@@ -820,6 +835,10 @@ void StringUtility::appendUpdateInt(string& updateInfo, const string& col, int v
 void StringUtility::appendUpdateIntArray(string& updateInfo, const string& col, const txVector<int>& intArray)
 {
 	appendUpdateString(updateInfo, col, intArrayToString(intArray));
+}
+void StringUtility::appendUpdateVector2i(string& updateInfo, const string& col, const Vector2i& value)
+{
+	appendUpdateString(updateInfo, col, intToString(value.x) + "," + intToString(value.y));
 }
 void StringUtility::appendUpdateFloat(string& updateInfo, const string& col, float value)
 {

@@ -51,18 +51,24 @@ public:
 	static void writeAnimFrameSQLite(bool updateIfExist);
 	static int tileIndexToTileX(int index, int mapHeight);
 	static int tileIndexToTileY(int index, int mapHeight);
-	static Vector2 tileIndexToTilePos(int index, int mapHeight);
+	static Vector2i tileIndexToTilePos(int index, int mapHeight);
 	static int tilePosToTileIndex(int x, int y, int mapHeight);
 	static int pixelPosToTileX(Vector2 pixelPos, int mapHeight, int mapWidth);
 	static int pixelPosToTileY(Vector2 pixelPos, int mapHeight);
 	static int pixelPosToTileIndex(Vector2 pixelPos, int mapHeight, int mapWidth);
-	static Vector2 pixelPosToTilePos(Vector2 pixelPos, int mapHeight);
+	static Vector2i pixelPosToTilePos(Vector2 pixelPos, int mapHeight);
 	static Vector2 tilePosToPixelPos(int x, int y, int mapHeight);
 	static Vector2 tileIndexToPixelPos(int index, int mapHeight);
 	static TILE_TRIANGLE pixelPosToTriangleIndex(Vector2 pos);
 	static void getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2);
 	static void generateUnreachFile(string path);
 	static void generateAllUnreachFile(string path);
+	static void updateSceneMapTransferSQLite();
+	static void updateSceneMapNPCSQLite();
+	static void updateSceneMapMonsterRegionSQLite();
+	static void processAllShadow(const string& path);
+	static void processShadowHorizontal(const string& filePath);
+	static void processShadowVertical(const string& filePath);
 };
 
 #endif

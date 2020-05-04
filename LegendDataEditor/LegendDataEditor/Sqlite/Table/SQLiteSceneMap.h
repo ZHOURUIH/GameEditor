@@ -15,6 +15,7 @@ public:
 	static string COL_HEIGHT;
 	static string COL_MONSTER_REGION;
 	static string COL_NPC;
+	static string COL_TRANSFER_POINT;
 public:
 	int mID;
 	string mLabel;
@@ -24,6 +25,7 @@ public:
 	int mHeight;
 	txVector<int> mMonsterRegion;
 	txVector<int> mNPC;
+	txVector<int> mTransferPoint;
 public:
 	SceneMapData()
 	{
@@ -35,6 +37,7 @@ public:
 		REGISTE_PARAM(mHeight, COL_HEIGHT);
 		REGISTE_PARAM(mMonsterRegion, COL_MONSTER_REGION);
 		REGISTE_PARAM(mNPC, COL_NPC);
+		REGISTE_PARAM(mTransferPoint, COL_TRANSFER_POINT);
 	}
 };
 
@@ -42,10 +45,7 @@ class SQLiteSceneMap : public SQLiteTable
 {
 public:
 	SQLiteSceneMap(SQLite* sqlite)
-		:SQLiteTable("SceneMap", sqlite)
-	{
-		;
-	}
+		:SQLiteTable("SceneMap", sqlite){}
 	void query(int id, SceneMapData& data);
 	bool insert(const SceneMapData& data);
 	bool update(const SceneMapData& data);

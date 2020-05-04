@@ -4,6 +4,7 @@
 #include "WeaponImage.h"
 #include "SQLite.h"
 #include "SQLiteSceneMap.h"
+#include "SQLiteSceneMapTransfer.h"
 #include "SQLiteNPC.h"
 #include "SQLiteMonGen.h"
 #include "SQLiteMonster.h"
@@ -953,9 +954,9 @@ int ImageUtility::tileIndexToTileY(int index, int mapHeight)
 {
 	return index % mapHeight;
 }
-Vector2 ImageUtility::tileIndexToTilePos(int index, int mapHeight)
+Vector2i ImageUtility::tileIndexToTilePos(int index, int mapHeight)
 {
-	return Vector2(index / mapHeight, index % mapHeight);
+	return Vector2i(index / mapHeight, index % mapHeight);
 }
 int ImageUtility::tilePosToTileIndex(int x, int y, int mapHeight)
 {
@@ -963,7 +964,7 @@ int ImageUtility::tilePosToTileIndex(int x, int y, int mapHeight)
 }
 int ImageUtility::pixelPosToTileX(Vector2 pixelPos, int mapHeight, int mapWidth)
 {
-	int tileX = MathUtility::round(pixelPosToTilePos(pixelPos, mapHeight).x);
+	int tileX = pixelPosToTilePos(pixelPos, mapHeight).x;
 	if (tileX < 0 || tileX >= mapWidth)
 	{
 		return -1;
@@ -972,7 +973,7 @@ int ImageUtility::pixelPosToTileX(Vector2 pixelPos, int mapHeight, int mapWidth)
 }
 int ImageUtility::pixelPosToTileY(Vector2 pixelPos, int mapHeight)
 {
-	int tileY = MathUtility::round(pixelPosToTilePos(pixelPos, mapHeight).y);
+	int tileY = pixelPosToTilePos(pixelPos, mapHeight).y;
 	if (tileY < 0 || tileY >= mapHeight)
 	{
 		return -1;
@@ -990,14 +991,14 @@ int ImageUtility::pixelPosToTileIndex(Vector2 pixelPos, int mapHeight, int mapWi
 	return tilePosToTileIndex(tileX, tileY, mapHeight);
 }
 // 根据地砖左下角的像素坐标转换为地砖下标的x和y
-Vector2 ImageUtility::pixelPosToTilePos(Vector2 pixelPos, int mapHeight)
+Vector2i ImageUtility::pixelPosToTilePos(Vector2 pixelPos, int mapHeight)
 {
-	return Vector2(floor(pixelPos.x * (1.0f / TILE_WIDTH)), floor((mapHeight * TILE_HEIGHT - pixelPos.y) * (1.0f / TILE_HEIGHT)));
+	return Vector2i((int)floor(pixelPos.x * (1.0f / TILE_WIDTH)), (int)floor((mapHeight * TILE_HEIGHT - pixelPos.y) * (1.0f / TILE_HEIGHT)));
 }
 // 计算出地砖坐标所对应的像素坐标,是地砖左下角的像素坐标
 Vector2 ImageUtility::tilePosToPixelPos(int x, int y, int mapHeight)
 {
-	return Vector2(TILE_WIDTH * x, mapHeight * TILE_HEIGHT - TILE_HEIGHT * y - TILE_HEIGHT);
+	return Vector2(TILE_WIDTH * (float)x, mapHeight * TILE_HEIGHT - TILE_HEIGHT * (float)y - TILE_HEIGHT);
 }
 // 计算出地砖下所对应的像素坐标,是地砖左下角的像素坐标
 Vector2 ImageUtility::tileIndexToPixelPos(int index, int mapHeight)
@@ -1155,4 +1156,395 @@ void ImageUtility::generateAllUnreachFile(string path)
 		generateUnreachFile(fileList[i]);
 		SystemUtility::print("完成计算阻挡区域:" + StringUtility::getFileName(fileList[i]));
 	}
+}
+
+void ImageUtility::updateSceneMapTransferSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<SceneMapTransferData*> transferList;
+	sqlite->mSQLiteSceneMapTransfer->queryAll(transferList);
+	txMap<int, txVector<int>> sceneTransferList;
+	int count = transferList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (sceneTransferList.contains(transferList[i]->mSourceMap))
+		{
+			sceneTransferList.insert(transferList[i]->mSourceMap, txVector<int>());
+		}
+		sceneTransferList[transferList[i]->mSourceMap].push_back(transferList[i]->mID);
+	}
+	txVector<SceneMapData*> sceneMapDataList;
+	sqlite->mSQLiteSceneMap->queryAll(sceneMapDataList);
+	int sceneCount = sceneMapDataList.size();
+	for (int i = 0; i < sceneCount; ++i)
+	{
+		int sceneID = sceneMapDataList[i]->mID;
+		if (sceneTransferList.contains(sceneID))
+		{
+			sceneMapDataList[i]->mTransferPoint = sceneTransferList[sceneID];
+		}
+		else
+		{
+			sceneMapDataList[i]->mTransferPoint.clear();
+		}
+		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::updateSceneMapNPCSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<NPCData*> npcList;
+	sqlite->mSQLiteNPC->queryAll(npcList);
+	txMap<int, txVector<int>> sceneNPCList;
+	int count = npcList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (sceneNPCList.contains(npcList[i]->mMapID))
+		{
+			sceneNPCList.insert(npcList[i]->mMapID, txVector<int>());
+		}
+		sceneNPCList[npcList[i]->mMapID].push_back(npcList[i]->mID);
+	}
+	txVector<SceneMapData*> sceneMapDataList;
+	sqlite->mSQLiteSceneMap->queryAll(sceneMapDataList);
+	int sceneCount = sceneMapDataList.size();
+	for (int i = 0; i < sceneCount; ++i)
+	{
+		int sceneID = sceneMapDataList[i]->mID;
+		if (sceneNPCList.contains(sceneID))
+		{
+			sceneMapDataList[i]->mNPC = sceneNPCList[sceneID];
+		}
+		else
+		{
+			sceneMapDataList[i]->mNPC.clear();
+		}
+		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::updateSceneMapMonsterRegionSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<MonGenData*> monsterRegionList;
+	sqlite->mSQLiteMonGen->queryAll(monsterRegionList);
+	txMap<int, txVector<int>> sceneMonsterRegionList;
+	int count = monsterRegionList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (sceneMonsterRegionList.contains(monsterRegionList[i]->mMapID))
+		{
+			sceneMonsterRegionList.insert(monsterRegionList[i]->mMapID, txVector<int>());
+		}
+		sceneMonsterRegionList[monsterRegionList[i]->mMapID].push_back(monsterRegionList[i]->mID);
+	}
+	txVector<SceneMapData*> sceneMapDataList;
+	sqlite->mSQLiteSceneMap->queryAll(sceneMapDataList);
+	int sceneCount = sceneMapDataList.size();
+	for (int i = 0; i < sceneCount; ++i)
+	{
+		int sceneID = sceneMapDataList[i]->mID;
+		if (sceneMonsterRegionList.contains(sceneID))
+		{
+			sceneMapDataList[i]->mMonsterRegion = sceneMonsterRegionList[sceneID];
+		}
+		else
+		{
+			sceneMapDataList[i]->mMonsterRegion.clear();
+		}
+		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::processAllShadow(const string& path)
+{
+	txVector<string> fileList;
+	FileUtility::findFiles(path, fileList, ".png");
+	int fileCount = fileList.size();
+	for (int i = 0; i < fileCount; ++i)
+	{
+		processShadowVertical(fileList[i]);
+		processShadowHorizontal(fileList[i]);
+		cout << "已处理文件数:" << i + 1 << "/" << fileCount << endl;
+	}
+}
+
+void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb)
+{
+	if (bpp == 24)
+	{
+		pixelData[0] = rgb.rgbBlue;
+		pixelData[1] = rgb.rgbGreen;
+		pixelData[2] = rgb.rgbRed;
+	}
+	else if (bpp == 32)
+	{
+		pixelData[0] = rgb.rgbBlue;
+		pixelData[1] = rgb.rgbGreen;
+		pixelData[2] = rgb.rgbRed;
+		pixelData[3] = rgb.rgbReserved;
+	}
+}
+
+RGBQUAD getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette)
+{
+	RGBQUAD pixel;
+	pixel.rgbBlue = 0;
+	pixel.rgbGreen = 0;
+	pixel.rgbRed = 0;
+	pixel.rgbReserved = 0;
+	if (bpp == 8)
+	{
+		if (palette != NULL)
+		{
+			pixel = palette[*pixelData];
+			bool isEmpty = (pixel.rgbBlue + pixel.rgbGreen + pixel.rgbRed) == 0;
+			pixel.rgbReserved = isEmpty ? 0 : 255;
+		}
+	}
+	else if (bpp == 24)
+	{
+		pixel.rgbBlue = pixelData[0];
+		pixel.rgbGreen = pixelData[1];
+		pixel.rgbRed = pixelData[2];
+		pixel.rgbReserved = 255;
+	}
+	else if (bpp == 32)
+	{
+		pixel.rgbBlue = pixelData[0];
+		pixel.rgbGreen = pixelData[1];
+		pixel.rgbRed = pixelData[2];
+		pixel.rgbReserved = pixelData[3];
+	}
+	return pixel;
+}
+
+bool isBlack(const RGBQUAD& rgb)
+{
+	if (rgb.rgbReserved == 127)
+	{
+		return rgb.rgbBlue == 0 && rgb.rgbGreen == 0 && rgb.rgbRed == 0;
+	}
+	if (rgb.rgbReserved > 0)
+	{
+		return (rgb.rgbBlue == 8 && rgb.rgbGreen == 8 && rgb.rgbRed == 16 ||
+				rgb.rgbBlue == 0 && rgb.rgbGreen == 0 && rgb.rgbRed == 8);
+	}
+	return false;
+}
+
+bool isEmpty(const RGBQUAD& rgb)
+{
+	return rgb.rgbReserved == 0;
+}
+
+RGBQUAD getColor(FIBITMAP* bitmap, int x, int y)
+{
+	BYTE* line = FreeImage_GetScanLine(bitmap, y);
+	RGBQUAD* palette = NULL;
+	int bpp = FreeImage_GetBPP(bitmap);
+	if (bpp == 8)
+	{
+		palette = FreeImage_GetPalette(bitmap);
+	}
+	return getPixel(line + x * bpp / 8, bpp, palette);
+}
+
+void setColor(FIBITMAP* bitmap, int x, int y, const RGBQUAD& rgb)
+{
+	int bpp = FreeImage_GetBPP(bitmap);
+	BYTE* line = FreeImage_GetScanLine(bitmap, y);
+	setPixel(line + x * bpp / 8, bpp, rgb);
+}
+
+void ImageUtility::processShadowHorizontal(const string& filePath)
+{
+	FreeImage_Initialise(1);
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(filePath.c_str());
+	FIBITMAP* bitmap = FreeImage_Load(format, filePath.c_str());
+	if (!FreeImage_IsTransparent(bitmap))
+	{
+		FreeImage_Unload(bitmap);
+		FreeImage_DeInitialise();
+		return;
+	}
+	int width = FreeImage_GetWidth(bitmap);
+	int height = FreeImage_GetHeight(bitmap);
+	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
+	for (int y = 0; y < height; ++y)
+	{
+		bool lastShadowMark = false;
+		int startIndex = -1;
+		txVector<pair<int, int>> shadowBlockList;
+		for (int x = 0; x < width; ++x)
+		{
+			// 检查这一行是否有影子
+			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
+			int blackOrEmpty = 0;
+			RGBQUAD rgb = getColor(bitmap, x, y);
+			if (isBlack(rgb))
+			{
+				blackOrEmpty = 1;
+			}
+			else if(isEmpty(rgb))
+			{
+				blackOrEmpty = 2;
+			}
+			// 还未开始阴影部分或者阴影部分已经结束
+			if (blackOrEmpty == 0 || x == width - 1)
+			{
+				// 阴影部分结束,则重新计算开始部分
+				if (startIndex >= 0)
+				{
+					if (x - startIndex > 1)
+					{
+						shadowBlockList.push_back(make_pair(startIndex, x));
+					}
+					startIndex = -1;
+				}
+				continue;
+			}
+			bool curShadowMark = blackOrEmpty == 1;
+			if (startIndex == -1)
+			{
+				startIndex = x;
+				lastShadowMark = curShadowMark;
+				continue;
+			}
+			// 不符合阴影像素的规律,阴影部分结束,则重新计算开始部分
+			if (lastShadowMark == curShadowMark)
+			{
+				if (x - startIndex > 1)
+				{
+					shadowBlockList.push_back(make_pair(startIndex, x));
+				}
+				startIndex = -1;
+			}
+			lastShadowMark = curShadowMark;
+		}
+		// 拷贝原图,并且重新设置阴影部分颜色
+		for (int j = 0; j < width; ++j)
+		{
+			RGBQUAD pixel = getColor(bitmap, j, y);
+			setColor(newBitmap, j, y, pixel);
+		}
+		RGBQUAD halfTransparent;
+		halfTransparent.rgbRed = 0;
+		halfTransparent.rgbGreen = 0;
+		halfTransparent.rgbBlue = 0;
+		halfTransparent.rgbReserved = 127;
+		// 重新绘制阴影部分
+		int shadowCount = shadowBlockList.size();
+		for (int j = 0; j < shadowCount; ++j)
+		{
+			int start = shadowBlockList[j].first;
+			int end = shadowBlockList[j].second;
+			for (int k = start; k <= end; ++k)
+			{
+				setColor(newBitmap, k, y, halfTransparent);
+			}
+		}
+	}
+	FreeImage_Save(format, newBitmap, filePath.c_str());
+	FreeImage_Unload(bitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
+}
+
+void ImageUtility::processShadowVertical(const string& filePath)
+{
+	FreeImage_Initialise(1);
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(filePath.c_str());
+	FIBITMAP* bitmap = FreeImage_Load(format, filePath.c_str());
+	if (!FreeImage_IsTransparent(bitmap))
+	{
+		FreeImage_Unload(bitmap);
+		FreeImage_DeInitialise();
+		return;
+	}
+	int width = FreeImage_GetWidth(bitmap);
+	int height = FreeImage_GetHeight(bitmap);
+	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
+	for (int x = 0; x < width; ++x)
+	{
+		bool lastShadowMark = false;
+		int startIndex = -1;
+		txVector<pair<int, int>> shadowBlockList;
+		for (int y = 0; y < height; ++y)
+		{
+			// 检查这一行是否有影子
+			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
+			int blackOrEmpty = 0;
+			RGBQUAD rgb = getColor(bitmap, x, y);
+			if (isBlack(rgb))
+			{
+				blackOrEmpty = 1;
+			}
+			else if (isEmpty(rgb))
+			{
+				blackOrEmpty = 2;
+			}
+			// 还未开始阴影部分或者阴影部分已经结束
+			if (blackOrEmpty == 0 || y == height - 1)
+			{
+				// 阴影部分结束,则重新计算开始部分
+				if (startIndex >= 0)
+				{
+					if (y - startIndex > 1)
+					{
+						shadowBlockList.push_back(make_pair(startIndex, y));
+					}
+					startIndex = -1;
+				}
+				continue;
+			}
+			bool curShadowMark = blackOrEmpty == 1;
+			if (startIndex == -1)
+			{
+				startIndex = y;
+				lastShadowMark = curShadowMark;
+				continue;
+			}
+			// 不符合阴影像素的规律,阴影部分结束,则重新计算开始部分
+			if (lastShadowMark == curShadowMark)
+			{
+				if (y - startIndex > 1)
+				{
+					shadowBlockList.push_back(make_pair(startIndex, y));
+				}
+				startIndex = -1;
+			}
+			lastShadowMark = curShadowMark;
+		}
+		// 拷贝原图,并且重新设置阴影部分颜色
+		for (int j = 0; j < height; ++j)
+		{
+			RGBQUAD pixel = getColor(bitmap, x, j);
+			setColor(newBitmap, x, j, pixel);
+		}
+		RGBQUAD halfTransparent;
+		halfTransparent.rgbRed = 0;
+		halfTransparent.rgbGreen = 0;
+		halfTransparent.rgbBlue = 0;
+		halfTransparent.rgbReserved = 127;
+		// 重新绘制阴影部分
+		int shadowCount = shadowBlockList.size();
+		for (int j = 0; j < shadowCount; ++j)
+		{
+			int start = shadowBlockList[j].first;
+			int end = shadowBlockList[j].second;
+			for (int k = start; k <= end; ++k)
+			{
+				setColor(newBitmap, x, k, halfTransparent);
+			}
+		}
+	}
+	FreeImage_Save(format, newBitmap, filePath.c_str());
+	FreeImage_Unload(bitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
 }
