@@ -17,6 +17,7 @@
 #include "SQLiteItemConsumable.h"
 #include "SQLiteItemSkillBook.h"
 #include "SQLiteSkillEffectDirection.h"
+#include "SQLitePeaceArea.h"
 
 #define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
 #define DELETE_TABLE(type) TRACE_DELETE(m##type)
@@ -46,6 +47,7 @@ SQLite::SQLite(const string& dbFileName)
 	NEW_TABLE(SQLiteItemConsumable);
 	NEW_TABLE(SQLiteItemSkillBook);
 	NEW_TABLE(SQLiteSkillEffectDirection);
+	NEW_TABLE(SQLitePeaceArea);
 }
 void SQLite::destroy()
 {
@@ -65,6 +67,7 @@ void SQLite::destroy()
 	DELETE_TABLE(SQLiteItemConsumable);
 	DELETE_TABLE(SQLiteItemSkillBook);
 	DELETE_TABLE(SQLiteSkillEffectDirection);
+	DELETE_TABLE(SQLitePeaceArea);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)

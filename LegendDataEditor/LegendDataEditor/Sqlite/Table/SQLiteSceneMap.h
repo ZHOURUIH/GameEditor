@@ -16,6 +16,7 @@ public:
 	static string COL_MONSTER_REGION;
 	static string COL_NPC;
 	static string COL_TRANSFER_POINT;
+	static string COL_PEACE_AREA;
 public:
 	int mID;
 	string mLabel;
@@ -26,6 +27,7 @@ public:
 	txVector<int> mMonsterRegion;
 	txVector<int> mNPC;
 	txVector<int> mTransferPoint;
+	txVector<int> mPeaceArea;
 public:
 	SceneMapData()
 	{
@@ -38,6 +40,7 @@ public:
 		REGISTE_PARAM(mMonsterRegion, COL_MONSTER_REGION);
 		REGISTE_PARAM(mNPC, COL_NPC);
 		REGISTE_PARAM(mTransferPoint, COL_TRANSFER_POINT);
+		REGISTE_PARAM(mPeaceArea, COL_PEACE_AREA);
 	}
 };
 

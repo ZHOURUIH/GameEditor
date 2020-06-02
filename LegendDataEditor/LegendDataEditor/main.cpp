@@ -32,7 +32,8 @@ void main()
 24:更新场景传送点列表 \n\
 25:更新场景NPC列表 \n\
 26:更新场景刷怪区域列表 \n\
-27:处理图片阴影\n\
+27:更新场景安全区列表 \n\
+28:处理图片阴影\n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -270,6 +271,13 @@ void main()
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 27)
+		{
+		cout << "正在更新场景安全区列表..." << endl;
+		long startTime = timeGetTime();
+		ImageUtility::updateSceneMapPeaceAreaSQLite();
+		cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 28)
 		{
 			cout << "正在处理图片阴影..." << endl;
 			long startTime = timeGetTime();

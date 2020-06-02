@@ -19,6 +19,7 @@
 #include "SQLiteItemConsumable.h"
 #include "SQLiteItemSkillBook.h"
 #include "SQLiteSkillEffectDirection.h"
+#include "SQLitePeaceArea.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "MapData.h"
@@ -1254,6 +1255,40 @@ void ImageUtility::updateSceneMapMonsterRegionSQLite()
 		else
 		{
 			sceneMapDataList[i]->mMonsterRegion.clear();
+		}
+		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::updateSceneMapPeaceAreaSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<PeaceAreaData*> peaceAreaList;
+	sqlite->mSQLitePeaceArea->queryAll(peaceAreaList);
+	txMap<int, txVector<int>> scenePeaceAreaList;
+	int count = peaceAreaList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (scenePeaceAreaList.contains(peaceAreaList[i]->mMapID))
+		{
+			scenePeaceAreaList.insert(peaceAreaList[i]->mMapID, txVector<int>());
+		}
+		scenePeaceAreaList[peaceAreaList[i]->mMapID].push_back(peaceAreaList[i]->mID);
+	}
+	txVector<SceneMapData*> sceneMapDataList;
+	sqlite->mSQLiteSceneMap->queryAll(sceneMapDataList);
+	int sceneCount = sceneMapDataList.size();
+	for (int i = 0; i < sceneCount; ++i)
+	{
+		int sceneID = sceneMapDataList[i]->mID;
+		if (scenePeaceAreaList.contains(sceneID))
+		{
+			sceneMapDataList[i]->mPeaceArea = scenePeaceAreaList[sceneID];
+		}
+		else
+		{
+			sceneMapDataList[i]->mPeaceArea.clear();
 		}
 		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
 	}
