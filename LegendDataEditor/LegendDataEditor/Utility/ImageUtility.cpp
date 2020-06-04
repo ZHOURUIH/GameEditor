@@ -1367,7 +1367,8 @@ bool isBlack(const RGBQUAD& rgb)
 	if (rgb.rgbReserved > 0)
 	{
 		return (rgb.rgbBlue == 8 && rgb.rgbGreen == 8 && rgb.rgbRed == 16 ||
-				rgb.rgbBlue == 0 && rgb.rgbGreen == 0 && rgb.rgbRed == 8);
+				rgb.rgbBlue == 0 && rgb.rgbGreen == 0 && rgb.rgbRed == 8 || 
+				rgb.rgbBlue == 24 && rgb.rgbGreen == 24 && rgb.rgbRed == 29);
 	}
 	return false;
 }
