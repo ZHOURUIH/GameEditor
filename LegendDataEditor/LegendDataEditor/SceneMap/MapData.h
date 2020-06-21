@@ -13,7 +13,7 @@ public:
 	MapHeader* mHeader;
 	MapTile* mTileList;
 	txMap<int, UnreachTileGroup*> mUnreachTileGroupList;    // key是组ID,value是该组中所有的地砖
-	static int mIDSeed;
+	int mIDSeed;
 public:
 	MapData();
 	~MapData() { destroy(); }
@@ -22,8 +22,8 @@ public:
 	void writeUnreachFile();
 protected:
 	// 递归方式查找不可行走区域组,但是如果地砖太多,就会因为递归太深而堆栈溢出
-	void findAllUnreachGroup();
-	void findGroup(int x, int y, int id);
+	//void findAllUnreachGroup();
+	//void findGroup(int x, int y, int id);
 	// 非递归方式查找不可行走区域组
 	void findAllUnreachGroupNoRecursive();
 	void assignGroupID(MapTile* tile, UnreachTileGroup* group, txVector<int>& waitForList);

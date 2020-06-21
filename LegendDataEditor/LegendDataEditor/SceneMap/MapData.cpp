@@ -4,12 +4,11 @@
 #include "MapHeader.h"
 #include "UnreachTileGroup.h"
 
-int MapData::mIDSeed = 0;
-
 MapData::MapData()
 {
 	TRACE_NEW(MapHeader, mHeader);
 	mTileList = NULL;
+	mIDSeed = 0;
 }
 
 void MapData::destroy()
@@ -47,84 +46,86 @@ void MapData::writeUnreachFile()
 {
 	txSerializer serializer;
 	// 组数量
-	serializer.write(mUnreachTileGroupList.size());
+	serializer.write((unsigned short)mUnreachTileGroupList.size());
 	auto iter = mUnreachTileGroupList.begin();
 	auto iterEnd = mUnreachTileGroupList.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		// 组ID
-		serializer.write(iter->first);
+		serializer.write((unsigned short)iter->first);
 		// 地砖数量
-		auto& group = iter->second;
-		serializer.write(group->mTriangleList.size());
+		UnreachTileGroup* group = iter->second;
+		serializer.write((unsigned int)group->mTriangleList.size());
 		auto iterTile = group->mTriangleList.begin();
 		auto iterTileEnd = group->mTriangleList.end();
 		for (; iterTile != iterTileEnd; ++iterTile)
 		{
 			// 地砖下标
-			serializer.write(iterTile->first);
+			serializer.write((unsigned int)iterTile->first);
 			// 三角形数量
+			// 每个地砖最多有8个三角形,所以可以使用一个字节的8位表示是否有指定的三角形
+			byte triangleFlag = 0;
 			auto& triangleList = iterTile->second;
-			serializer.write((unsigned char)triangleList.size());
 			for (int i = 0; i < triangleList.size(); ++i)
 			{
-				serializer.write((unsigned char)triangleList[i]);
+				triangleFlag |= 1 << triangleList[i];
 			}
+			serializer.write(triangleFlag);
 		}
 	}
 	serializer.writeToFile(StringUtility::getFileNameNoSuffix(mFileName, false) + ".unreach");
 }
 
-void MapData::findAllUnreachGroup()
-{
-	int tileCount = mHeader->mWidth * mHeader->mHeight;
-	for (int i = 0; i < tileCount; ++i)
-	{
-		MapTile& tile = mTileList[i];
-		if (!tile.mCanWalk && tile.mUnreachGroupID == -1)
-		{
-			int id = ++mIDSeed;
-			mUnreachTileGroupList.insert(id, new UnreachTileGroup(id, this));
-			int x = ImageUtility::tileIndexToTileX(tile.mIndex, mHeader->mHeight);
-			int y = ImageUtility::tileIndexToTileY(tile.mIndex, mHeader->mHeight);
-			findGroup(x, y, id);
-		}
-	}
-	// 优化阻挡区域
-	auto iter = mUnreachTileGroupList.begin();
-	auto iterEnd = mUnreachTileGroupList.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		iter->second->optimizeUnreach();
-	}
-}
+//void MapData::findAllUnreachGroup()
+//{
+//	int tileCount = mHeader->mWidth * mHeader->mHeight;
+//	for (int i = 0; i < tileCount; ++i)
+//	{
+//		MapTile& tile = mTileList[i];
+//		if (!tile.mCanWalk && tile.mUnreachGroupID == -1)
+//		{
+//			int id = ++mIDSeed;
+//			mUnreachTileGroupList.insert(id, new UnreachTileGroup(id, this));
+//			int x = ImageUtility::tileIndexToTileX(tile.mIndex, mHeader->mHeight);
+//			int y = ImageUtility::tileIndexToTileY(tile.mIndex, mHeader->mHeight);
+//			findGroup(x, y, id);
+//		}
+//	}
+//	// 优化阻挡区域
+//	auto iter = mUnreachTileGroupList.begin();
+//	auto iterEnd = mUnreachTileGroupList.end();
+//	for (; iter != iterEnd; ++iter)
+//	{
+//		iter->second->optimizeUnreach();
+//	}
+//}
 
-void MapData::findGroup(int x, int y, int id)
-{
-	// 判断当前坐标是否允许行走
-	if (x < 0 || x >= mHeader->mWidth || y < 0 || y >= mHeader->mHeight)
-	{
-		return;
-	}
-	{
-		int tileIndex = ImageUtility::tilePosToTileIndex(x, y, mHeader->mHeight);
-		MapTile& tile = mTileList[tileIndex];
-		if (tile.mCanWalk || tile.mUnreachGroupID != -1)
-		{
-			return;
-		}
-		tile.mUnreachGroupID = id;
-		mUnreachTileGroupList[id]->addTile(&tile);
-	}
-	// 上
-	findGroup(x, y - 1, id);
-	// 下
-	findGroup(x, y + 1, id);
-	// 左
-	findGroup(x - 1, y, id);
-	// 右
-	findGroup(x + 1, y, id);
-}
+//void MapData::findGroup(int x, int y, int id)
+//{
+//	// 判断当前坐标是否允许行走
+//	if (x < 0 || x >= mHeader->mWidth || y < 0 || y >= mHeader->mHeight)
+//	{
+//		return;
+//	}
+//	{
+//		int tileIndex = ImageUtility::tilePosToTileIndex(x, y, mHeader->mHeight);
+//		MapTile& tile = mTileList[tileIndex];
+//		if (tile.mCanWalk || tile.mUnreachGroupID != -1)
+//		{
+//			return;
+//		}
+//		tile.mUnreachGroupID = id;
+//		mUnreachTileGroupList[id]->addTile(&tile);
+//	}
+//	// 上
+//	findGroup(x, y - 1, id);
+//	// 下
+//	findGroup(x, y + 1, id);
+//	// 左
+//	findGroup(x - 1, y, id);
+//	// 右
+//	findGroup(x + 1, y, id);
+//}
 
 int MapData::getTileUnreachIndex(int x, int y)
 {
@@ -161,7 +162,7 @@ void MapData::findAllUnreachGroupNoRecursive()
 			break;
 		}
 		int id = ++mIDSeed;
-		UnreachTileGroup* group = TRACE_NEW(UnreachTileGroup, group, id, this)
+		UnreachTileGroup* group = TRACE_NEW(UnreachTileGroup, group, id, this);
 		mUnreachTileGroupList.insert(id, group);
 		txVector<int> waitForList;
 		waitForList.push_back(*tileNearList.begin());
