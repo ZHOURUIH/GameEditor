@@ -26,7 +26,6 @@ void main()
 18:解析所有wix和wil文件\n\
 19:整理NPC文件结构\n\
 20:将media中全部序列帧数据写入SQLite \n\
-21:打包地图图集 \n\
 22:生成地图阻挡文件 \n\
 23:生成所有地图阻挡文件 \n\
 24:更新场景传送点列表 \n\
@@ -34,6 +33,7 @@ void main()
 26:更新场景刷怪区域列表 \n\
 27:更新场景安全区列表 \n\
 28:处理图片阴影\n\
+29:移动并覆盖地图图片\n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -222,16 +222,6 @@ void main()
 			}
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 21)
-		{
-			cout << "输入media下相对路径:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始打包地图图集..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::packMapTextureAll("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 22)
 		{
 			cout << "输入media下相对路径:";
@@ -282,6 +272,16 @@ void main()
 			cout << "正在处理图片阴影..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::processAllShadow("../media/");
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 29)
+		{
+			cout << "输入路径:";
+			string fileName;
+			cin >> fileName;
+			cout << "正在移动图片..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::moveMapObjectTexture(fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

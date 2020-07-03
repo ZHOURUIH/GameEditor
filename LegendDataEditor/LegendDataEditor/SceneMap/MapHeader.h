@@ -11,8 +11,8 @@ class txSerializer;
 class MapHeader
 {
 public:
-	short mWidth;
-	short mHeight;
+	unsigned short mWidth;
+	unsigned short mHeight;
 	char mTitle[TITLE_LENGTH];
 	char mUpdateTime[UPDATE_TIME_LENGTH];
 	char mReserved[RESERVED_LENGTH];

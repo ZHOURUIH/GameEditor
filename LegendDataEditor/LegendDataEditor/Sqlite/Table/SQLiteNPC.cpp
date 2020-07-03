@@ -6,6 +6,7 @@
 string NPCData::COL_ID = "ID";
 string NPCData::COL_SCRIPT = "Script";
 string NPCData::COL_MAP_ID = "MapID";
+string NPCData::COL_MAP_NAME = "MapName";
 string NPCData::COL_POSX = "PosX";
 string NPCData::COL_POSY = "PosY";
 string NPCData::COL_LABEL = "Label";

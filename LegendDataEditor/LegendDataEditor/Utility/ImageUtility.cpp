@@ -746,7 +746,7 @@ POINT ImageUtility::getImagePosition(const string& imageFullPath)
 	}
 	else
 	{
-		std::cout << "位置文件内容错误 : " << imageFullPath << std::endl;
+		cout << "位置文件内容错误 : " << imageFullPath << endl;
 	}
 	return pos;
 }
@@ -787,11 +787,13 @@ void ImageUtility::texturePacker(const string& texturePath)
 	cmdLine += "--alpha-handling KeepTransparentPixels ";
 	cmdLine += "--force-squared ";
 	cmdLine += "--maxrects-heuristics Best ";
-	cmdLine += "--trim-mode None ";
 	cmdLine += "--disable-rotation ";
 	cmdLine += "--size-constraints POT ";
 	cmdLine += "--max-size 2048 ";
+	cmdLine += "--trim-mode None ";
+	cmdLine += "--extrude 1 ";
 	cmdLine += "--shape-padding 1 ";
+	cmdLine += "--border-padding 1 ";
 	cmdLine += texturePath;
 
 	SHELLEXECUTEINFOA ShExecInfo = { 0 };
@@ -818,57 +820,7 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 		if (!FileUtility::isEmptyFolder(folderList[i]))
 		{
 			texturePacker(folderList[i]);
-		}
-	}
-}
-
-void ImageUtility::packMapTexture(const string& texturePath)
-{
-	string folderName = StringUtility::getFileName(texturePath);
-	int blockIndex = StringUtility::stringToInt(folderName);
-	string secondFolderName = StringUtility::getFileName(StringUtility::getFilePath(texturePath));
-	int objectIndex = StringUtility::getLastNumber(secondFolderName) - 1;
-	MathUtility::clampMin(objectIndex, 0);
-	string outputPath = StringUtility::getFilePath(texturePath);
-	string outputFileName = "Objects_" + StringUtility::intToString(objectIndex) + "_" + StringUtility::intToString(blockIndex);
-	string cmdLine;
-	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
-	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
-	cmdLine += "--format unity-texture2d ";
-	cmdLine += "--alpha-handling KeepTransparentPixels ";
-	cmdLine += "--force-squared ";
-	cmdLine += "--maxrects-heuristics Best ";
-	cmdLine += "--trim-mode None ";
-	cmdLine += "--disable-rotation ";
-	cmdLine += "--size-constraints POT ";
-	cmdLine += "--max-size 2048 ";
-	cmdLine += "--shape-padding 1 ";
-	cmdLine += texturePath;
-
-	SHELLEXECUTEINFOA ShExecInfo = { 0 };
-	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFOA);
-	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	ShExecInfo.hwnd = NULL;
-	ShExecInfo.lpVerb = NULL;
-	ShExecInfo.lpFile = "C:\\Program Files\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
-	ShExecInfo.lpParameters = cmdLine.c_str();
-	ShExecInfo.lpDirectory = NULL;
-	ShExecInfo.nShow = SW_HIDE;
-	ShExecInfo.hInstApp = NULL;
-	BOOL ret = ShellExecuteExA(&ShExecInfo);
-	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-}
-
-void ImageUtility::packMapTextureAll(const string& texturePath)
-{
-	txVector<string> folderList;
-	FileUtility::findFolders(texturePath, folderList, false);
-	int count = folderList.size();
-	for (int i = 0; i < count; ++i)
-	{
-		if (!FileUtility::isEmptyFolder(folderList[i]))
-		{
-			packMapTexture(folderList[i]);
+			cout << "已打包:" << i + 1 << "/" << count << endl;
 		}
 	}
 }
@@ -1583,4 +1535,30 @@ void ImageUtility::processShadowVertical(const string& filePath)
 	FreeImage_Unload(bitmap);
 	FreeImage_Unload(newBitmap);
 	FreeImage_DeInitialise();
+}
+
+void ImageUtility::moveMapObjectTexture(const string& sourcePath)
+{
+	txVector<string> targetFileList;
+	FileUtility::findFiles("./", targetFileList);
+	int targetFileCount = targetFileList.size();
+	txVector<string> sourceFileList;
+	FileUtility::findFiles(sourcePath, sourceFileList);
+	int sourceFileCount = sourceFileList.size();
+	for (int i = 0; i < sourceFileCount; ++i)
+	{
+		// 找到同名且不同路径的文件
+		string sourceFileName = StringUtility::getFileName(sourceFileList[i]);
+		string sourceFileFolder = StringUtility::getFolderName(sourceFileList[i]);
+		for (int j = 0; j < targetFileCount; ++j)
+		{
+			string targetFileName = StringUtility::getFileName(targetFileList[j]);
+			string targetFileFolder = StringUtility::getFolderName(targetFileList[j]);
+			if (targetFileName == sourceFileName && sourceFileFolder != targetFileFolder)
+			{
+				FileUtility::moveFile(sourceFileList[i], targetFileList[j]);
+				break;
+			}
+		}
+	}
 }

@@ -46,8 +46,6 @@ public:
 	static void groupAtlas(const string& filePath, int countInAltas);
 	static void texturePacker(const string& texturePath);
 	static void texturePackerAll(const string& texturePath);
-	static void packMapTexture(const string& texturePath);
-	static void packMapTextureAll(const string& texturePath);
 	static void writeAnimFrameSQLite(bool updateIfExist);
 	static int tileIndexToTileX(int index, int mapHeight);
 	static int tileIndexToTileY(int index, int mapHeight);
@@ -70,6 +68,7 @@ public:
 	static void processAllShadow(const string& path);
 	static void processShadowHorizontal(const string& filePath);
 	static void processShadowVertical(const string& filePath);
+	static void moveMapObjectTexture(const string& sourcePath);
 };
 
 #endif

@@ -10,6 +10,7 @@ public:
 	static string COL_ID;
 	static string COL_SCRIPT;
 	static string COL_MAP_ID;
+	static string COL_MAP_NAME;
 	static string COL_POSX;
 	static string COL_POSY;
 	static string COL_LABEL;
@@ -19,6 +20,7 @@ public:
 	int mID;
 	string mScript;
 	int mMapID;
+	string mMapName;
 	int mPosX;
 	int mPosY;
 	string mLabel;
@@ -30,6 +32,7 @@ public:
 		REGISTE_PARAM(mID, COL_ID);
 		REGISTE_PARAM(mScript, COL_SCRIPT);
 		REGISTE_PARAM(mMapID, COL_MAP_ID);
+		REGISTE_PARAM(mMapName, COL_MAP_NAME);
 		REGISTE_PARAM(mPosX, COL_POSX);
 		REGISTE_PARAM(mPosY, COL_POSY);
 		REGISTE_PARAM(mLabel, COL_LABEL);

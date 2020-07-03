@@ -370,7 +370,11 @@ void FileUtility::moveFile(const string& sourceFile, const string& destFile)
 	// 如果目标文件所在的目录不存在,则先创建目录
 	createFolder(StringUtility::getFilePath(destFile));
 #if RUN_PLATFORM == PLATFORM_WINDOWS
-	MoveFileA(sourceFile.c_str(), destFile.c_str());
+	if (isFileExist(destFile))
+	{
+		deleteFile(destFile);
+	}
+	BOOL ret = MoveFileA(sourceFile.c_str(), destFile.c_str());
 #endif
 }
 

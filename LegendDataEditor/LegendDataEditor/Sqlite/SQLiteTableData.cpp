@@ -31,6 +31,10 @@ void SQLiteTableData::parse(SQLiteDataReader* reader)
 		{
 			StringUtility::stringToFloatArray(reader->getString(i), *((txVector<float>*)mParameters[i].mPointer));
 		}
+		else
+		{
+			cout << "类型错误" << endl;
+		}
 	}
 }
 void SQLiteTableData::insert(string& valueString) const
@@ -62,6 +66,10 @@ void SQLiteTableData::insert(string& valueString) const
 		{
 			StringUtility::appendValueFloatArray(valueString, *((txVector<float>*)mParameters[i].mPointer));
 		}
+		else
+		{
+			cout << "类型错误" << endl;
+		}
 	}
 }
 void SQLiteTableData::update(string& updateString) const
@@ -92,6 +100,10 @@ void SQLiteTableData::update(string& updateString) const
 		else if (mParameters[i].mType == typeid(txVector<float>).name())
 		{
 			StringUtility::appendUpdateFloatArray(updateString, mParameters[i].mCol, *((txVector<float>*)mParameters[i].mPointer));
+		}
+		else
+		{
+			cout << "类型错误" << endl;
 		}
 	}
 }

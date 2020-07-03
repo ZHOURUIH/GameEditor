@@ -45,14 +45,14 @@ void MapData::readFile(const string& fileName)
 void MapData::writeUnreachFile()
 {
 	txSerializer serializer;
+	serializer.write(mHeader->mWidth);
+	serializer.write(mHeader->mHeight);
 	// 组数量
 	serializer.write((unsigned short)mUnreachTileGroupList.size());
 	auto iter = mUnreachTileGroupList.begin();
 	auto iterEnd = mUnreachTileGroupList.end();
 	for (; iter != iterEnd; ++iter)
 	{
-		// 组ID
-		serializer.write((unsigned short)iter->first);
 		// 地砖数量
 		UnreachTileGroup* group = iter->second;
 		serializer.write((unsigned int)group->mTriangleList.size());
