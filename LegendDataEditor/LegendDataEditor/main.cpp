@@ -34,6 +34,7 @@ void main()
 27:更新场景安全区列表 \n\
 28:处理图片阴影\n\
 29:移动并覆盖地图图片\n\
+30:更新NPC商品列表\n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -262,10 +263,10 @@ void main()
 		}
 		else if (input == 27)
 		{
-		cout << "正在更新场景安全区列表..." << endl;
-		long startTime = timeGetTime();
-		ImageUtility::updateSceneMapPeaceAreaSQLite();
-		cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+			cout << "正在更新场景安全区列表..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::updateSceneMapPeaceAreaSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 28)
 		{
@@ -282,6 +283,13 @@ void main()
 			cout << "正在移动图片..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::moveMapObjectTexture(fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 30)
+		{
+			cout << "正在更新NPC商品列表..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::updateNPCGoodsSQLite();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

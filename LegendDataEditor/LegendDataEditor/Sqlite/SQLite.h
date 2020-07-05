@@ -21,6 +21,7 @@ class SQLiteItemConsumable;
 class SQLiteItemSkillBook;
 class SQLiteSkillEffectDirection;
 class SQLitePeaceArea;
+class SQLiteGoods;
 class SQLite
 {
 public:
@@ -42,6 +43,7 @@ public:
 	SQLiteItemSkillBook* mSQLiteItemSkillBook;
 	SQLiteSkillEffectDirection* mSQLiteSkillEffectDirection;
 	SQLitePeaceArea* mSQLitePeaceArea;
+	SQLiteGoods* mSQLiteGoods;
 public:
 	SQLite(const string& dbFileName);
 	virtual ~SQLite() { destroy(); }

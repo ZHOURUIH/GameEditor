@@ -6,6 +6,7 @@
 #include "SQLiteSceneMap.h"
 #include "SQLiteSceneMapTransfer.h"
 #include "SQLiteNPC.h"
+#include "SQLiteGoods.h"
 #include "SQLiteMonGen.h"
 #include "SQLiteMonster.h"
 #include "SQLiteMonsterTemplate.h"
@@ -1243,6 +1244,40 @@ void ImageUtility::updateSceneMapPeaceAreaSQLite()
 			sceneMapDataList[i]->mPeaceArea.clear();
 		}
 		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::updateNPCGoodsSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<GoodsData*> goodsList;
+	sqlite->mSQLiteGoods->queryAll(goodsList);
+	txMap<int, txVector<int>> npcGoodsList;
+	int count = goodsList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (npcGoodsList.contains(goodsList[i]->mNPC))
+		{
+			npcGoodsList.insert(goodsList[i]->mNPC, txVector<int>());
+		}
+		npcGoodsList[goodsList[i]->mNPC].push_back(goodsList[i]->mID);
+	}
+	txVector<NPCData*> npcDataList;
+	sqlite->mSQLiteNPC->queryAll(npcDataList);
+	int sceneCount = npcDataList.size();
+	for (int i = 0; i < sceneCount; ++i)
+	{
+		int sceneID = npcDataList[i]->mID;
+		if (npcGoodsList.contains(sceneID))
+		{
+			npcDataList[i]->mGoods = npcGoodsList[sceneID];
+		}
+		else
+		{
+			npcDataList[i]->mGoods.clear();
+		}
+		sqlite->mSQLiteNPC->update(*npcDataList[i]);
 	}
 	TRACE_DELETE(sqlite);
 }

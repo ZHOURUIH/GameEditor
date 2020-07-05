@@ -4,6 +4,7 @@
 #include "SQLiteSceneMap.h"
 #include "SQLiteSceneMapTransfer.h"
 #include "SQLiteNPC.h"
+#include "SQLiteGoods.h"
 #include "SQLiteMonGen.h"
 #include "SQLiteMonster.h"
 #include "SQLiteMonsterTemplate.h"
@@ -48,6 +49,7 @@ SQLite::SQLite(const string& dbFileName)
 	NEW_TABLE(SQLiteItemSkillBook);
 	NEW_TABLE(SQLiteSkillEffectDirection);
 	NEW_TABLE(SQLitePeaceArea);
+	NEW_TABLE(SQLiteGoods);
 }
 void SQLite::destroy()
 {
@@ -68,6 +70,7 @@ void SQLite::destroy()
 	DELETE_TABLE(SQLiteItemSkillBook);
 	DELETE_TABLE(SQLiteSkillEffectDirection);
 	DELETE_TABLE(SQLitePeaceArea);
+	DELETE_TABLE(SQLiteGoods);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)
