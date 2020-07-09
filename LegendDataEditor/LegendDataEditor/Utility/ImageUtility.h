@@ -8,9 +8,10 @@
 #include "MonsterAction.h"
 #include "EffectFrame.h"
 #include "NPCAction.h"
+#include "SystemUtility.h"
 
 class SQLite;
-class ImageUtility
+class ImageUtility : public SystemUtility
 {
 public:
 	static void encodePNG(const string& path, unsigned char* color, int width, int height, FREE_IMAGE_FORMAT format);
@@ -59,8 +60,8 @@ public:
 	static Vector2 tileIndexToPixelPos(int index, int mapHeight);
 	static TILE_TRIANGLE pixelPosToTriangleIndex(Vector2 pos);
 	static void getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2);
-	static void generateUnreachFile(string path);
-	static void generateAllUnreachFile(string path);
+	static void generateUnreachFile(const string& path);
+	static void generateAllUnreachFile(const string& path);
 	static void updateSceneMapTransferSQLite();
 	static void updateSceneMapNPCSQLite();
 	static void updateSceneMapMonsterRegionSQLite();
@@ -70,6 +71,7 @@ public:
 	static void processShadowHorizontal(const string& filePath);
 	static void processShadowVertical(const string& filePath);
 	static void moveMapObjectTexture(const string& sourcePath);
+	static void updateMapEffect();
 };
 
 #endif

@@ -2,8 +2,9 @@
 #define _MATH_UTILITY_H_
 
 #include "ServerDefine.h"
+#include "BinaryUtility.h"
 
-class MathUtility
+class MathUtility : public BinaryUtility
 {
 public:
 	static const float MATH_PI;

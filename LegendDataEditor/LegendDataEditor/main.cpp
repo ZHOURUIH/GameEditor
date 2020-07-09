@@ -35,6 +35,7 @@ void main()
 28:处理图片阴影\n\
 29:移动并覆盖地图图片\n\
 30:更新NPC商品列表\n\
+31:更新地图中的特效信息到SQLite\n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -290,6 +291,13 @@ void main()
 			cout << "正在更新NPC商品列表..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateNPCGoodsSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 31)
+		{
+			cout << "正在更新地图中的特效信息到SQLite..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::updateMapEffect();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

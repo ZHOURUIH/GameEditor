@@ -5,6 +5,7 @@
 
 class SQLiteDataReader;
 class SQLiteSceneMap;
+class SQLiteSceneMapFile;
 class SQLiteSceneMapTransfer;
 class SQLiteNPC;
 class SQLiteMonGen;
@@ -22,11 +23,13 @@ class SQLiteItemSkillBook;
 class SQLiteSkillEffectDirection;
 class SQLitePeaceArea;
 class SQLiteGoods;
+class SQLiteMapEffect;
 class SQLite
 {
 public:
 	sqlite3* mSQlite3;
 	SQLiteSceneMap* mSQLiteSceneMap;
+	SQLiteSceneMapFile* mSQLiteSceneMapFile;
 	SQLiteSceneMapTransfer* mSQLiteSceneMapTransfer;
 	SQLiteNPC* mSQLiteNPC;
 	SQLiteMonGen* mSQLiteMonGen;
@@ -44,6 +47,7 @@ public:
 	SQLiteSkillEffectDirection* mSQLiteSkillEffectDirection;
 	SQLitePeaceArea* mSQLitePeaceArea;
 	SQLiteGoods* mSQLiteGoods;
+	SQLiteMapEffect* mSQLiteMapEffect;
 public:
 	SQLite(const string& dbFileName);
 	virtual ~SQLite() { destroy(); }

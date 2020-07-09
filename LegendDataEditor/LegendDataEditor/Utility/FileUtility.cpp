@@ -1,4 +1,5 @@
 ﻿#include "Utility.h"
+#include "md5.h"
 
 string FileUtility::validPath(const string& path)
 {
@@ -522,4 +523,45 @@ string FileUtility::openTxtFile(const string& filePath)
 char* FileUtility::openBinaryFile(const string& filePath, int* bufferSize)
 {
 	return openFile(filePath, bufferSize, false);
+}
+
+string FileUtility::generateFileMD5(const string& fileName, char* buffer, int bufferSize)
+{
+	FILE* pFile = NULL;
+#if RUN_PLATFORM == PLATFORM_WINDOWS
+	fopen_s(&pFile, fileName.c_str(), "rb");
+#elif RUN_PLATFORM == PLATFORM_LINUX
+	pFile = fopen(fileName.c_str(), "rb");
+#endif
+	if (pFile == NULL)
+	{
+		return "";
+	}
+	fseek(pFile, 0, SEEK_END);
+	int fileSize = (int)ftell(pFile);
+	rewind(pFile);
+	MD5 md5;
+	int times = fileSize / bufferSize;
+	for(int i = 0; i < times; ++i)
+	{
+		// 读取文件一段内存
+		int readCount = fread(buffer, sizeof(char), bufferSize, pFile);
+		if (readCount != bufferSize)
+		{
+			//LOG_ERROR("read error");
+		}
+		md5.update(buffer, bufferSize);
+	}
+	int remainLength = fileSize - bufferSize * times;
+	if (remainLength > 0)
+	{
+		int readCount = fread(buffer, sizeof(char), remainLength, pFile);
+		if (readCount != remainLength)
+		{
+			//LOG_ERROR("read error");
+		}
+		md5.update(buffer, remainLength);
+	}
+	fclose(pFile);
+	return md5.finalize().hexdigest();
 }

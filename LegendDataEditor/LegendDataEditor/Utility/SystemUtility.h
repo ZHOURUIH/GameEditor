@@ -3,8 +3,9 @@
 
 #include "txMemoryTrace.h"
 #include "ThreadLock.h"
+#include "FileUtility.h"
 
-class SystemUtility
+class SystemUtility : public FileUtility
 {
 	static ThreadLock mTimeLock;
 public:

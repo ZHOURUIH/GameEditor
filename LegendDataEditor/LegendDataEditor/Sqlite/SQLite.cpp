@@ -2,6 +2,7 @@
 #include "Utility.h"
 #include "SQLiteDataReader.h"
 #include "SQLiteSceneMap.h"
+#include "SQLiteSceneMapFile.h"
 #include "SQLiteSceneMapTransfer.h"
 #include "SQLiteNPC.h"
 #include "SQLiteGoods.h"
@@ -19,6 +20,7 @@
 #include "SQLiteItemSkillBook.h"
 #include "SQLiteSkillEffectDirection.h"
 #include "SQLitePeaceArea.h"
+#include "SQLiteMapEffect.h"
 
 #define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
 #define DELETE_TABLE(type) TRACE_DELETE(m##type)
@@ -33,6 +35,7 @@ SQLite::SQLite(const string& dbFileName)
 		return;
 	}
 	NEW_TABLE(SQLiteSceneMap);
+	NEW_TABLE(SQLiteSceneMapFile);
 	NEW_TABLE(SQLiteSceneMapTransfer);
 	NEW_TABLE(SQLiteNPC);
 	NEW_TABLE(SQLiteMonGen);
@@ -50,10 +53,12 @@ SQLite::SQLite(const string& dbFileName)
 	NEW_TABLE(SQLiteSkillEffectDirection);
 	NEW_TABLE(SQLitePeaceArea);
 	NEW_TABLE(SQLiteGoods);
+	NEW_TABLE(SQLiteMapEffect);
 }
 void SQLite::destroy()
 {
 	DELETE_TABLE(SQLiteSceneMap);
+	DELETE_TABLE(SQLiteSceneMapFile);
 	DELETE_TABLE(SQLiteSceneMapTransfer);
 	DELETE_TABLE(SQLiteNPC);
 	DELETE_TABLE(SQLiteMonGen);
@@ -71,6 +76,7 @@ void SQLite::destroy()
 	DELETE_TABLE(SQLiteSkillEffectDirection);
 	DELETE_TABLE(SQLitePeaceArea);
 	DELETE_TABLE(SQLiteGoods);
+	DELETE_TABLE(SQLiteMapEffect);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)

@@ -2,8 +2,9 @@
 #define _FILE_UTILITY_H_
 
 #include "ServerDefine.h"
+#include "StringUtility.h"
 
-class FileUtility
+class FileUtility : public StringUtility
 {
 public:
 	static string validPath(const string& path);
@@ -31,6 +32,7 @@ public:
 	static char* openFile(const string& filePath, int* bufferSize, bool addZero);
 	static string openTxtFile(const string& filePath);
 	static char* openBinaryFile(const string& filePath, int* bufferSize);
+	static string generateFileMD5(const string& fileName, char* buffer, int bufferSize);
 };
 
 #endif

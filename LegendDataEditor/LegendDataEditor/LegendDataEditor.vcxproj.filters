@@ -49,6 +49,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{071a5e6c-6a95-4760-baee-999f48e1f065}</UniqueIdentifier>
     </Filter>
+    <Filter Include="md5">
+      <UniqueIdentifier>{18504be2-3e00-4628-a078-00235b1e15ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -202,6 +205,15 @@
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
     <ClCompile Include="Sqlite\Table\SQLiteGoods.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="md5\md5.cpp">
+      <Filter>md5</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteMapEffect.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteSceneMapFile.cpp">
       <Filter>Sqlite\Table</Filter>
     </ClCompile>
   </ItemGroup>
@@ -420,6 +432,15 @@
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Table\SQLiteGoods.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="md5\md5.h">
+      <Filter>md5</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteMapEffect.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteSceneMapFile.h">
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
   </ItemGroup>

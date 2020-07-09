@@ -2,8 +2,9 @@
 #define _STRING_UTILITY_H_
 
 #include "ServerDefine.h"
+#include "MathUtility.h"
 
-class StringUtility
+class StringUtility : public MathUtility
 {
 public:
 	static string removeSuffix(const string& str);

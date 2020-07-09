@@ -63,6 +63,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <atomic>
+#include <array>
 
 #include "ServerEnum.h"
 #include "ServerCallback.h"

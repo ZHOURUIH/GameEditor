@@ -4,6 +4,7 @@
 #include "WeaponImage.h"
 #include "SQLite.h"
 #include "SQLiteSceneMap.h"
+#include "SQLiteSceneMapFile.h"
 #include "SQLiteSceneMapTransfer.h"
 #include "SQLiteNPC.h"
 #include "SQLiteGoods.h"
@@ -21,6 +22,7 @@
 #include "SQLiteItemSkillBook.h"
 #include "SQLiteSkillEffectDirection.h"
 #include "SQLitePeaceArea.h"
+#include "SQLiteMapEffect.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "MapData.h"
@@ -30,8 +32,8 @@
 
 void ImageUtility::encodePNG(const string& path, unsigned char* color, int width, int height, FREE_IMAGE_FORMAT format)
 {
-	string dir = StringUtility::getFilePath(path);
-	FileUtility::createFolder(dir);
+	string dir = getFilePath(path);
+	createFolder(dir);
 	FreeImage_Initialise();
 	FIBITMAP* bitmap = FreeImage_Allocate(width, height, 32);
 	BYTE* bits = FreeImage_GetBits(bitmap);
@@ -44,7 +46,7 @@ void ImageUtility::encodePNG(const string& path, unsigned char* color, int width
 bool ImageUtility::readWixFile(const string& filePath, WIXFileImageInfo& info)
 {
 	int fileSize = 0;
-	char* fileBuffer = FileUtility::openBinaryFile(filePath, &fileSize);
+	char* fileBuffer = openBinaryFile(filePath, &fileSize);
 	if (fileBuffer == NULL)
 	{
 		return false;
@@ -67,7 +69,7 @@ bool ImageUtility::readWixFile(const string& filePath, WIXFileImageInfo& info)
 bool ImageUtility::readWilHeader(const string& filePath, WILFileHeader& header)
 {
 	int fileSize = 0;
-	char* fileBuffer = FileUtility::openBinaryFile(filePath, &fileSize);
+	char* fileBuffer = openBinaryFile(filePath, &fileSize);
 	if (fileBuffer == NULL)
 	{
 		return false;
@@ -89,7 +91,7 @@ void ImageUtility::wixWilToPNG(const string& wixFileName, const string& wilFileN
 	WIXFileImageInfo wixFileHeader;
 	if (!readWixFile(wixFileName, wixFileHeader))
 	{
-		std::cout << "找不到wix文件" << std::endl;
+		cout << "找不到wix文件" << endl;
 		return;
 	}
 
@@ -97,7 +99,7 @@ void ImageUtility::wixWilToPNG(const string& wixFileName, const string& wilFileN
 	WILFileHeader wilHeader;
 	if(!readWilHeader(wilFileName, wilHeader))
 	{
-		std::cout << "找不到wil文件" << std::endl;
+		cout << "找不到wil文件" << endl;
 		return;
 	}
 	// 位图的位数,8位图或者16位图,8位图使用调色板,16位图使用16位表示颜色
@@ -110,11 +112,11 @@ void ImageUtility::wixWilToPNG(const string& wixFileName, const string& wilFileN
 	{
 		bpp = 16;
 	}
-	string fileNameNoSuffix = StringUtility::getFileNameNoSuffix(wilFileName);
-	std::cout << "正在解析" << fileNameNoSuffix << ", 图片数量 : " << wilHeader.mImageCount << ", 颜色位数 : " << bpp << std::endl;
+	string fileNameNoSuffix = getFileNameNoSuffix(wilFileName);
+	cout << "正在解析" << fileNameNoSuffix << ", 图片数量 : " << wilHeader.mImageCount << ", 颜色位数 : " << bpp << endl;
 	POINT* posList = TRACE_NEW_ARRAY(POINT, wixFileHeader.mPositionList.size(), posList);
 	int fileSize = 0;
-	char* fileBuffer = FileUtility::openBinaryFile(wilFileName, &fileSize);
+	char* fileBuffer = openBinaryFile(wilFileName, &fileSize);
 	txSerializer serializer(fileBuffer, fileSize);
 	for (int i = 0; i < wixFileHeader.mPositionList.size(); ++i)
 	{
@@ -189,7 +191,7 @@ void ImageUtility::wixWilToPNG(const string& wixFileName, const string& wilFileN
 		posList[i].x = curInfo.mPosX;
 		posList[i].y = curInfo.mPosY;
 		// 将图片转换为png
-		encodePNG(outputPath + StringUtility::intToString(i) + ".png", curInfo.mColor, curInfo.mWidth, curInfo.mHeight, FIF_PNG);
+		encodePNG(outputPath + intToString(i) + ".png", curInfo.mColor, curInfo.mWidth, curInfo.mHeight, FIF_PNG);
 		TRACE_DELETE_ARRAY(curInfo.mColor);
 	}
 	TRACE_DELETE_ARRAY(fileBuffer);
@@ -203,13 +205,13 @@ void ImageUtility::allWixWilToPNG(const string& sourcePath)
 	txVector<string> fileList;
 	txVector<string> patterns;
 	patterns.push_back(".wil");
-	FileUtility::findFiles(sourcePath, fileList, patterns);
+	findFiles(sourcePath, fileList, patterns);
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
-		string wixFile = StringUtility::getFileNameNoSuffix(fileList[i], false) + ".wix";
-		string filePath = StringUtility::getFilePath(fileList[i]);
-		string folderName = StringUtility::getFileNameNoSuffix(fileList[i]);
+		string wixFile = getFileNameNoSuffix(fileList[i], false) + ".wix";
+		string filePath = getFilePath(fileList[i]);
+		string folderName = getFileNameNoSuffix(fileList[i]);
 		wixWilToPNG(wixFile, fileList[i], filePath + "/" + folderName + "/");
 	}
 }
@@ -219,35 +221,35 @@ void ImageUtility::writePositionFile(const string& positionFile, POINT* posList,
 	string posStr;
 	for (int i = 0; i < posCount; ++i)
 	{
-		posStr += StringUtility::intToString(posList[i].x);
+		posStr += intToString(posList[i].x);
 		posStr += ",";
-		posStr += StringUtility::intToString(posList[i].y);
+		posStr += intToString(posList[i].y);
 		posStr += "\n";
 	}
-	FileUtility::writeFile(positionFile, posStr);
+	writeFile(positionFile, posStr);
 }
 
 POINT* ImageUtility::readPositionFile(const string& positionFile, int& posCount)
 {
-	string posStr = FileUtility::openTxtFile(positionFile);
+	string posStr = openTxtFile(positionFile);
 	if (posStr == "")
 	{
 		return NULL;
 	}
 	txVector<string> posStrList;
-	StringUtility::split(posStr, "\n", posStrList);
+	split(posStr, "\n", posStrList);
 	posCount = posStrList.size();
 	POINT* posList = TRACE_NEW_ARRAY(POINT, posCount, posList);
 	for (int i = 0; i < posCount; ++i)
 	{
 		txVector<string> pointList;
-		StringUtility::split(posStrList[i], ",", pointList);
+		split(posStrList[i], ",", pointList);
 		if (pointList.size() != 2)
 		{
 			continue;
 		}
-		posList[i].x = StringUtility::stringToInt(pointList[0]);
-		posList[i].y = StringUtility::stringToInt(pointList[1]);
+		posList[i].x = stringToInt(pointList[0]);
+		posList[i].y = stringToInt(pointList[1]);
 	}
 	return posList;
 }
@@ -260,13 +262,13 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 	autoMoveFile(path, HUMAN_GROUP_SIZE);
 
 	txVector<string> folderList;
-	FileUtility::findFolders(path, folderList);
+	findFolders(path, folderList);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		// 按照动作重命名
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
 		int fileCount = fileList.size();
 		for (int j = 0; j < fileCount; ++j)
@@ -281,10 +283,9 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 				deleteImageWithPosition(fileList[j]);
 				continue;
 			}
-			
-			string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionName + "/";
-			string actionFolderName = actionName + "_dir" + StringUtility::intToString(direction);
-			string fileName = actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true);
+			string destPath = getFilePath(fileList[j]) + "/" + actionName + "/";
+			string actionFolderName = actionName + "_dir" + intToString(direction);
+			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j], true);
 			moveImageWithPosition(fileList[j], destPath + fileName);
 		}
 	}
@@ -298,13 +299,13 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 	autoMoveFile(path, WEAPON_GROUP_SIZE);
 	// 因为武器文件是角色文件的2倍,可能是左右手的区别,所以暂时只解析前一半的文件,后面的删除
 	txVector<string> folderList;
-	FileUtility::findFolders(path, folderList);
+	findFolders(path, folderList);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		// 按照动作重命名
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
 		int fileCount = fileList.size();
 		for (int j = 0; j < fileCount; ++j)
@@ -325,9 +326,9 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 					deleteImageWithPosition(fileList[j]);
 					continue;
 				}
-				string destPath = StringUtility::getFilePath(fileList[j]) + "/" + actionName + "/";
-				string actionFolderName = actionName + "_dir" + StringUtility::intToString(direction);
-				string fileName = actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true);
+				string destPath = getFilePath(fileList[j]) + "/" + actionName + "/";
+				string actionFolderName = actionName + "_dir" + intToString(direction);
+				string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j], true);
 				moveImageWithPosition(fileList[j], destPath + fileName);
 			}
 		}
@@ -337,9 +338,9 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 void ImageUtility::autoGroupMonsterImage0(const string& path)
 {
 	// 拆分位置文件
-	ImageUtility::splitPositionFile(path);
+	splitPositionFile(path);
 	// 然后按360个文件一组,移动到单独的文件夹
-	ImageUtility::autoMoveFile(path, MONSTER_GROUP_SIZE);
+	autoMoveFile(path, MONSTER_GROUP_SIZE);
 	// 怪物图片不像角色和武器图片那样会有规律排列,所以只能在大致分组后手动对每个文件夹进行动作分组
 }
 
@@ -347,9 +348,9 @@ void ImageUtility::autoGroupMonsterImage1(const string& path)
 {
 	// 手动对动作进行分组后,就可以对每组动作文件进行方向分组
 	// 重命名文件,将每个文件夹中的图片都重命名为该文件夹中的位置序号
-	ImageUtility::renameImage(path);
+	renameImage(path);
 	// 自动计算方向并分组
-	ImageUtility::renameByDirection(path, DIRECTION_COUNT);
+	renameByDirection(path, DIRECTION_COUNT);
 }
 
 void ImageUtility::autoGroupEffectImage(const string& path)
@@ -370,13 +371,13 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 	autoMoveFile(path, NPC_GROUP_SIZE);
 
 	txVector<string> folderList;
-	FileUtility::findFolders(path, folderList);
+	findFolders(path, folderList);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		// 按照动作重命名
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
 		int fileCount = fileList.size();
 		for (int j = 0; j < fileCount; ++j)
@@ -391,9 +392,9 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 				deleteImageWithPosition(fileList[j]);
 				continue;
 			}
-			string actionFolderName = actionName + "_dir" + StringUtility::intToString(direction);
-			string destPath = StringUtility::getFilePath(fileList[j]) + "/";
-			moveImageWithPosition(fileList[j], destPath + actionFolderName + "_" + StringUtility::intToString(frameIndex) + StringUtility::getFileSuffix(fileList[j], true));
+			string actionFolderName = actionName + "_dir" + intToString(direction);
+			string destPath = getFilePath(fileList[j]) + "/";
+			moveImageWithPosition(fileList[j], destPath + actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j], true));
 		}
 	}
 }
@@ -402,20 +403,20 @@ void ImageUtility::renameImage(const string& path)
 {
 	// 将目录中的文件按文件名排序后,重命名为从0开始的数字
 	txVector<string> folderList;
-	FileUtility::findFolders(path, folderList, true);
+	findFolders(path, folderList, true);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png");
+		findFiles(folderList[i], fileList, ".png");
 		// 先根据文件名重新排列
 		sortByFileNumber(fileList);
 		int count = fileList.size();
 		for (int j = 0; j < count; ++j)
 		{
-			string curFilePath = StringUtility::getFilePath(fileList[j]) + "/";
-			string suffix = StringUtility::getFileSuffix(fileList[j]);
-			renameImageWithPosition(fileList[j], curFilePath + StringUtility::intToString(j) + "." + suffix);
+			string curFilePath = getFilePath(fileList[j]) + "/";
+			string suffix = getFileSuffix(fileList[j]);
+			renameImageWithPosition(fileList[j], curFilePath + intToString(j) + "." + suffix);
 		}
 	}
 }
@@ -424,12 +425,12 @@ void ImageUtility::renameImageToAnim(const string& path)
 {
 	// 将目录中的文件按文件名排序后,重命名为序列帧格式的名字,以文件夹名开头,以从0开始的数字结尾
 	txVector<string> folderList;
-	FileUtility::findFolders(path, folderList, true);
+	findFolders(path, folderList, true);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		findFiles(folderList[i], fileList, ".png", false);
 		if (fileList.size() == 0)
 		{
 			continue;
@@ -439,10 +440,10 @@ void ImageUtility::renameImageToAnim(const string& path)
 		int count = fileList.size();
 		for (int j = 0; j < count; ++j)
 		{
-			string folderName = StringUtility::getFolderName(fileList[j]);
-			string curFilePath = StringUtility::getFilePath(fileList[j]) + "/";
-			string suffix = StringUtility::getFileSuffix(fileList[j]);
-			renameImageWithPosition(fileList[j], curFilePath + folderName + "_" + StringUtility::intToString(j) + "." + suffix);
+			string folderName = getFolderName(fileList[j]);
+			string curFilePath = getFilePath(fileList[j]) + "/";
+			string suffix = getFileSuffix(fileList[j]);
+			renameImageWithPosition(fileList[j], curFilePath + folderName + "_" + intToString(j) + "." + suffix);
 		}
 	}
 }
@@ -459,7 +460,7 @@ void ImageUtility::splitPositionFile(const string& path, bool pathWithFileName)
 	}
 	else
 	{
-		filePath = StringUtility::getFilePath(filePath);
+		filePath = getFilePath(filePath);
 	}
 	POINT* posList = readPositionFile(pathWithFile, posCount);
 	if (posList == NULL)
@@ -468,8 +469,8 @@ void ImageUtility::splitPositionFile(const string& path, bool pathWithFileName)
 	}
 	for (int i = 0; i < posCount; ++i)
 	{
-		string posStr = StringUtility::intToString(posList[i].x) + "," + StringUtility::intToString(posList[i].y);
-		FileUtility::writeFile(filePath + "/" + StringUtility::intToString(i) + ".txt", posStr);
+		string posStr = intToString(posList[i].x) + "," + intToString(posList[i].y);
+		writeFile(filePath + "/" + intToString(i) + ".txt", posStr);
 	}
 	TRACE_DELETE_ARRAY(posList);
 }
@@ -478,12 +479,12 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 {
 	// 将目录中的所有文件先按照文件名排序,然后按照顺序分组为8个方向,再对每个方向的文件重命名
 	txVector<string> folderList;
-	FileUtility::findFolders(path, folderList, true);
+	findFolders(path, folderList, true);
 	int folderCount = folderList.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		txVector<string> fileList;
-		FileUtility::findFiles(folderList[i], fileList, ".png", false);
+		findFiles(folderList[i], fileList, ".png", false);
 		if (fileList.size() == 0)
 		{
 			continue;
@@ -492,7 +493,7 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 		int fileCount = fileList.size();
 		if (fileCount % directionCount != 0)
 		{
-			std::cout << "图片数量错误,必须为方向的整数倍, path:" << folderList[i] << std::endl;
+			cout << "图片数量错误,必须为方向的整数倍, path:" << folderList[i] << endl;
 			continue;
 		}
 		int actionFrameCount = fileCount / directionCount;
@@ -501,24 +502,24 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 			int imageDir = j / actionFrameCount;
 			int index = j % actionFrameCount;
 			// 把文件移动到一个新建文件夹中
-			string curPath = StringUtility::getFilePath(fileList[j]) + "/";
+			string curPath = getFilePath(fileList[j]) + "/";
 			if (autoGroup)
 			{
-				string destFolderName = StringUtility::getFolderName(fileList[j]) + "_dir" + StringUtility::intToString(imageDir);
-				string destPath = StringUtility::getFilePath(curPath) + "/" + destFolderName + "/";
-				string destFileName = destFolderName + "_" + StringUtility::intToString(index) + "." + StringUtility::getFileSuffix(fileList[j]);
+				string destFolderName = getFolderName(fileList[j]) + "_dir" + intToString(imageDir);
+				string destPath = getFilePath(curPath) + "/" + destFolderName + "/";
+				string destFileName = destFolderName + "_" + intToString(index) + "." + getFileSuffix(fileList[j]);
 				moveImageWithPosition(fileList[j], destPath + destFileName);
 			}
 			else
 			{
-				string preName = StringUtility::getFolderName(fileList[j]) + "_dir" + StringUtility::intToString(imageDir);
-				string destFileName = preName + "_" + StringUtility::intToString(index) + "." + StringUtility::getFileSuffix(fileList[j]);
+				string preName = getFolderName(fileList[j]) + "_dir" + intToString(imageDir);
+				string destFileName = preName + "_" + intToString(index) + "." + getFileSuffix(fileList[j]);
 				renameImageWithPosition(fileList[j], curPath + destFileName);
 			}
 		}
 	}
 	// 删除空的目录
-	FileUtility::deleteEmptyFolder(path);
+	deleteEmptyFolder(path);
 }
 
 void ImageUtility::sortByFileNumber(txVector<string>& fileList, bool fileNameIsNumber)
@@ -530,7 +531,7 @@ void ImageUtility::sortByFileNumber(txVector<string>& fileList, bool fileNameIsN
 		txMap<int, string> sortedList;
 		for (int i = 0; i < count; ++i)
 		{
-			sortedList.insert(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])), fileList[i]);
+			sortedList.insert(stringToInt(getFileNameNoSuffix(fileList[i])), fileList[i]);
 		}
 		if (sortedList.size() != fileList.size())
 		{
@@ -549,14 +550,14 @@ void ImageUtility::sortByFileNumber(txVector<string>& fileList, bool fileNameIsN
 		txMap<string, txMap<int, string>> sortedList;
 		for (int i = 0; i < count; ++i)
 		{
-			string fileName = StringUtility::getFileNameNoSuffix(fileList[i]);
+			string fileName = getFileNameNoSuffix(fileList[i]);
 			string preName = fileName.substr(0, fileName.find_last_of('_') + 1);
 			if (!sortedList.contains(preName))
 			{
 				sortedList.insert(preName, txMap<int, string>());
 			}
 			string suffixNumber = fileName.substr(fileName.find_last_of('_') + 1);
-			sortedList[preName].insert(StringUtility::stringToInt(suffixNumber), fileList[i]);
+			sortedList[preName].insert(stringToInt(suffixNumber), fileList[i]);
 		}
 		fileList.clear();
 		auto iter = sortedList.begin();
@@ -576,15 +577,15 @@ void ImageUtility::sortByFileNumber(txVector<string>& fileList, bool fileNameIsN
 void ImageUtility::autoMoveFile(const string& path, int groupSize)
 {
 	txVector<string> fileList;
-	FileUtility::findFiles(path, fileList, ".png");
+	findFiles(path, fileList, ".png");
 	sortByFileNumber(fileList);
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
 		int groupIndex = i / groupSize;
-		string destFolderName = StringUtility::intToString(groupIndex, 3);
-		string destPath = StringUtility::getFilePath(fileList[i]) + "/" + destFolderName + "/";
-		moveImageWithPosition(fileList[i], destPath + StringUtility::getFileName(fileList[i]));
+		string destFolderName = intToString(groupIndex, 3);
+		string destPath = getFilePath(fileList[i]) + "/" + destFolderName + "/";
+		moveImageWithPosition(fileList[i], destPath + getFileName(fileList[i]));
 	}
 }
 
@@ -629,14 +630,14 @@ bool ImageUtility::getNPCActionInfo(int index, string& actionName, int& dir, int
 
 void ImageUtility::moveImageWithPosition(const string& fullFileName, const string& destFullFileName)
 {
-	string sourceFileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
-	string destFileNameNoSuffix = StringUtility::getFileNameNoSuffix(destFullFileName);
-	string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
-	string destPath = StringUtility::getFilePath(destFullFileName) + "/";
+	string sourceFileNameNoSuffix = getFileNameNoSuffix(fullFileName);
+	string destFileNameNoSuffix = getFileNameNoSuffix(destFullFileName);
+	string sourcePath = getFilePath(fullFileName) + "/";
+	string destPath = getFilePath(destFullFileName) + "/";
 	moveFileWithMeta(fullFileName, destFullFileName);
 	// 如果有同名位置文件,也需要一起移动
 	string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
-	if (FileUtility::isFileExist(positionFileName))
+	if (isFileExist(positionFileName))
 	{
 		string destPosFileName = destPath + destFileNameNoSuffix + ".txt";
 		moveFileWithMeta(positionFileName, destPosFileName);
@@ -645,14 +646,14 @@ void ImageUtility::moveImageWithPosition(const string& fullFileName, const strin
 
 void ImageUtility::renameImageWithPosition(const string& fullFileName, const string& destFullFileName)
 {
-	string sourceFileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
-	string destFileNameNoSuffix = StringUtility::getFileNameNoSuffix(destFullFileName);
-	string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
-	string destPath = StringUtility::getFilePath(destFullFileName) + "/";
+	string sourceFileNameNoSuffix = getFileNameNoSuffix(fullFileName);
+	string destFileNameNoSuffix = getFileNameNoSuffix(destFullFileName);
+	string sourcePath = getFilePath(fullFileName) + "/";
+	string destPath = getFilePath(destFullFileName) + "/";
 	renameFileWithMeta(fullFileName, destFullFileName);
 	// 如果有同名位置文件,也需要一起重命名
 	string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
-	if (FileUtility::isFileExist(positionFileName))
+	if (isFileExist(positionFileName))
 	{
 		string destPosFileName = destPath + destFileNameNoSuffix + ".txt";
 		renameFileWithMeta(positionFileName, destPosFileName);
@@ -661,12 +662,12 @@ void ImageUtility::renameImageWithPosition(const string& fullFileName, const str
 
 void ImageUtility::deleteImageWithPosition(const string& fullFileName)
 {
-	string sourceFileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
-	string sourcePath = StringUtility::getFilePath(fullFileName) + "/";
+	string sourceFileNameNoSuffix = getFileNameNoSuffix(fullFileName);
+	string sourcePath = getFilePath(fullFileName) + "/";
 	deleteFileWithMeta(fullFileName);
 	// 如果有同名位置文件,也需要一起删除
 	string positionFileName = sourcePath + sourceFileNameNoSuffix + ".txt";
-	if (FileUtility::isFileExist(positionFileName))
+	if (isFileExist(positionFileName))
 	{
 		deleteFileWithMeta(positionFileName);
 	}
@@ -675,40 +676,40 @@ void ImageUtility::deleteImageWithPosition(const string& fullFileName)
 void ImageUtility::moveFileWithMeta(const string& fullFileName, const string& destFullFileName)
 {
 	// 移动文件和同名meta文件
-	FileUtility::moveFile(fullFileName, destFullFileName);
+	moveFile(fullFileName, destFullFileName);
 	string metaFile = fullFileName + ".meta";
-	if (FileUtility::isFileExist(metaFile))
+	if (isFileExist(metaFile))
 	{
-		FileUtility::moveFile(metaFile, destFullFileName + ".meta");
+		moveFile(metaFile, destFullFileName + ".meta");
 	}
 }
 
 void ImageUtility::renameFileWithMeta(const string& fullFileName, const string& destFullFileName)
 {
 	// 重命名文件和同名meta文件
-	FileUtility::renameFile(fullFileName, destFullFileName);
+	renameFile(fullFileName, destFullFileName);
 	string metaFile = fullFileName + ".meta";
-	if (FileUtility::isFileExist(metaFile))
+	if (isFileExist(metaFile))
 	{
-		FileUtility::renameFile(metaFile, destFullFileName + ".meta");
+		renameFile(metaFile, destFullFileName + ".meta");
 	}
 }
 
 void ImageUtility::deleteFileWithMeta(const string& fullFileName)
 {
 	// 删除文件和同名meta文件
-	FileUtility::deleteFile(fullFileName);
+	deleteFile(fullFileName);
 	string metaFile = fullFileName + ".meta";
-	if (FileUtility::isFileExist(metaFile))
+	if (isFileExist(metaFile))
 	{
-		FileUtility::deleteFile(metaFile);
+		deleteFile(metaFile);
 	}
 }
 
 void ImageUtility::deleteInvalidImage(const string& path)
 {
 	txVector<string> fileList;
-	FileUtility::findFiles(path, fileList, ".png");
+	findFiles(path, fileList, ".png");
 	sortByFileNumber(fileList);
 	int count = fileList.size();
 	for (int i = 0; i < count; ++i)
@@ -718,7 +719,7 @@ void ImageUtility::deleteInvalidImage(const string& path)
 			deleteImageWithPosition(fileList[i]);
 		}
 	}
-	FileUtility::deleteEmptyFolder(path);
+	deleteEmptyFolder(path);
 }
 
 bool ImageUtility::isInvalidImage(const string& fileName)
@@ -736,10 +737,10 @@ bool ImageUtility::isInvalidImage(const string& fileName)
 POINT ImageUtility::getImagePosition(const string& imageFullPath)
 {
 	POINT pos;
-	string posFileName = StringUtility::getFilePath(imageFullPath) + "/" + StringUtility::getFileNameNoSuffix(imageFullPath) + ".txt";
-	string posFile = FileUtility::openTxtFile(posFileName);
+	string posFileName = getFilePath(imageFullPath) + "/" + getFileNameNoSuffix(imageFullPath) + ".txt";
+	string posFile = openTxtFile(posFileName);
 	txVector<int> posValue;
-	StringUtility::stringToIntArray(posFile, posValue);
+	stringToIntArray(posFile, posValue);
 	if (posValue.size() == 2)
 	{
 		pos.x = posValue[0];
@@ -757,30 +758,30 @@ void ImageUtility::groupAtlas(const string& filePath, int countInAltas)
 	string atlasInfo;
 	txSerializer serializer;
 	txVector<string> fileList;
-	FileUtility::findFiles(filePath, fileList, ".png", false);
+	findFiles(filePath, fileList, ".png", false);
 	sortByFileNumber(fileList);
 	int count = fileList.size();
 	for (int i = 0; i < count; ++i)
 	{
 		int atlasIndex = i / countInAltas;
-		string curFile = StringUtility::getFileNameNoSuffix(fileList[i]);
-		string folderName = StringUtility::intToString(atlasIndex);
-		string newPath = StringUtility::getFilePath(fileList[i]) + "/" + folderName + "/";
-		FileUtility::moveFile(fileList[i], newPath + curFile + ".png");
-		FileUtility::moveFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
+		string curFile = getFileNameNoSuffix(fileList[i]);
+		string folderName = intToString(atlasIndex);
+		string newPath = getFilePath(fileList[i]) + "/" + folderName + "/";
+		moveFile(fileList[i], newPath + curFile + ".png");
+		moveFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
 		// 每一行需要记录图片在图集中的位置
-		atlasInfo += StringUtility::getFileName(fileList[i]) + ":" + StringUtility::intToString(atlasIndex) + "\n";
-		serializer.write<unsigned short>(StringUtility::stringToInt(StringUtility::getFileNameNoSuffix(fileList[i])));
+		atlasInfo += getFileName(fileList[i]) + ":" + intToString(atlasIndex) + "\n";
+		serializer.write<unsigned short>(stringToInt(getFileNameNoSuffix(fileList[i])));
 		serializer.write<unsigned char>(atlasIndex);
 	}
-	FileUtility::writeFile(filePath + "/atlas.txt", atlasInfo);
-	FileUtility::writeFile(filePath + "/atlas.index", serializer.getBuffer(), serializer.getDataSize());
+	writeFile(filePath + "/atlas.txt", atlasInfo);
+	writeFile(filePath + "/atlas.index", serializer.getBuffer(), serializer.getDataSize());
 }
 
 void ImageUtility::texturePacker(const string& texturePath)
 {
-	string outputFileName = StringUtility::getFileName(texturePath);
-	string outputPath = StringUtility::getFilePath(texturePath);
+	string outputFileName = getFileName(texturePath);
+	string outputPath = getFilePath(texturePath);
 	string cmdLine;
 	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
 	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
@@ -814,11 +815,11 @@ void ImageUtility::texturePacker(const string& texturePath)
 void ImageUtility::texturePackerAll(const string& texturePath)
 {
 	txVector<string> folderList;
-	FileUtility::findFolders(texturePath, folderList, true);
+	findFolders(texturePath, folderList, true);
 	int count = folderList.size();
 	for (int i = 0; i < count; ++i)
 	{
-		if (!FileUtility::isEmptyFolder(folderList[i]))
+		if (!isEmptyFolder(folderList[i]))
 		{
 			texturePacker(folderList[i]);
 			cout << "已打包:" << i + 1 << "/" << count << endl;
@@ -830,12 +831,12 @@ void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 {
 	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
 	txVector<string> folders;
-	FileUtility::findFolders("../media", folders, true);
+	findFolders("../media", folders, true);
 	int folderCount = folders.size();
 	for (int i = 0; i < folderCount; ++i)
 	{
 		txVector<string> pngFiles;
-		FileUtility::findFiles(folders[i], pngFiles, ".png", false);
+		findFiles(folders[i], pngFiles, ".png", false);
 		if (pngFiles.size() == 0)
 		{
 			continue;
@@ -846,16 +847,16 @@ void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 		for (int j = 0; j < pngCount; ++j)
 		{
 			string& fullFileName = pngFiles[j];
-			string fileNameNoSuffix = StringUtility::getFileNameNoSuffix(fullFileName);
-			string animation = fileNameNoSuffix.substr(0, StringUtility::getFileNameNoSuffix(fullFileName).find_last_of('_'));
+			string fileNameNoSuffix = getFileNameNoSuffix(fullFileName);
+			string animation = fileNameNoSuffix.substr(0, getFileNameNoSuffix(fullFileName).find_last_of('_'));
 			if (!animationInfo.contains(animation))
 			{
 				animationInfo.insert(animation, pair<txMap<int, int>, txMap<int, int>>());
 			}
-			string posString = FileUtility::openTxtFile(StringUtility::getFileNameNoSuffix(fullFileName, false) + ".txt");
-			int posIndex = StringUtility::getLastNumber(StringUtility::getFileNameNoSuffix(fullFileName, true));
+			string posString = openTxtFile(getFileNameNoSuffix(fullFileName, false) + ".txt");
+			int posIndex = getLastNumber(getFileNameNoSuffix(fullFileName, true));
 			txVector<int> pos;
-			StringUtility::stringToIntArray(posString, pos);
+			stringToIntArray(posString, pos);
 			if (pos.size() == 2)
 			{
 				animationInfo[animation].first.insert(posIndex, pos[0]);
@@ -863,7 +864,7 @@ void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 			}
 			else
 			{
-				std::cout << "位置文件错误：" << StringUtility::getFileNameNoSuffix(fullFileName, false) + ".txt" << std::endl;
+				cout << "位置文件错误：" << getFileNameNoSuffix(fullFileName, false) + ".txt" << endl;
 			}
 		}
 		auto iter = animationInfo.begin();
@@ -1092,7 +1093,7 @@ void ImageUtility::getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2
 	}
 }
 
-void ImageUtility::generateUnreachFile(string path)
+void ImageUtility::generateUnreachFile(const string& path)
 {
 	MapData* mapData = TRACE_NEW(MapData, mapData);
 	mapData->readFile(path);
@@ -1100,15 +1101,15 @@ void ImageUtility::generateUnreachFile(string path)
 	TRACE_DELETE(mapData);
 }
 
-void ImageUtility::generateAllUnreachFile(string path)
+void ImageUtility::generateAllUnreachFile(const string& path)
 {
 	txVector<string> fileList;
-	FileUtility::findFiles(path, fileList, ".map");
+	findFiles(path, fileList, ".map");
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
 		generateUnreachFile(fileList[i]);
-		SystemUtility::print("完成计算阻挡区域:" + StringUtility::getFileName(fileList[i]));
+		print("完成计算阻挡区域:" + getFileName(fileList[i]));
 	}
 }
 
@@ -1285,7 +1286,7 @@ void ImageUtility::updateNPCGoodsSQLite()
 void ImageUtility::processAllShadow(const string& path)
 {
 	txVector<string> fileList;
-	FileUtility::findFiles(path, fileList, ".png");
+	findFiles(path, fileList, ".png");
 	int fileCount = fileList.size();
 	for (int i = 0; i < fileCount; ++i)
 	{
@@ -1575,25 +1576,91 @@ void ImageUtility::processShadowVertical(const string& filePath)
 void ImageUtility::moveMapObjectTexture(const string& sourcePath)
 {
 	txVector<string> targetFileList;
-	FileUtility::findFiles("./", targetFileList);
+	findFiles("./", targetFileList);
 	int targetFileCount = targetFileList.size();
 	txVector<string> sourceFileList;
-	FileUtility::findFiles(sourcePath, sourceFileList);
+	findFiles(sourcePath, sourceFileList);
 	int sourceFileCount = sourceFileList.size();
 	for (int i = 0; i < sourceFileCount; ++i)
 	{
 		// 找到同名且不同路径的文件
-		string sourceFileName = StringUtility::getFileName(sourceFileList[i]);
-		string sourceFileFolder = StringUtility::getFolderName(sourceFileList[i]);
+		string sourceFileName = getFileName(sourceFileList[i]);
+		string sourceFileFolder = getFolderName(sourceFileList[i]);
 		for (int j = 0; j < targetFileCount; ++j)
 		{
-			string targetFileName = StringUtility::getFileName(targetFileList[j]);
-			string targetFileFolder = StringUtility::getFolderName(targetFileList[j]);
+			string targetFileName = getFileName(targetFileList[j]);
+			string targetFileFolder = getFolderName(targetFileList[j]);
 			if (targetFileName == sourceFileName && sourceFileFolder != targetFileFolder)
 			{
-				FileUtility::moveFile(sourceFileList[i], targetFileList[j]);
+				moveFile(sourceFileList[i], targetFileList[j]);
 				break;
 			}
 		}
 	}
+}
+
+void ImageUtility::updateMapEffect()
+{
+	txVector<pair<int, int>> effectImage;
+	// 查找特效序列帧所在目录
+	txVector<string> folders;
+	findFolders("../media/", folders, true);
+	int folderCount = folders.size();
+	for (int i = 0; i < folderCount; ++i)
+	{
+		txVector<string> files;
+		findFiles(folders[i], files, ".png", false);
+		int fileCount = files.size();
+		if (fileCount == 0)
+		{
+			continue;
+		}
+		string effectIndex = getFolderName(files[0]);
+		string effectFileIndex = getFolderName(getFilePath(files[0]));
+		// 因为只有地图中存储的图片下标是从1开始的,其他所有地方都是从0开始的,所以此处图片下标+1
+		effectImage.push_back(make_pair(stringToInt(effectFileIndex), stringToInt(effectIndex) + 1));
+	}
+	// 检查所有地图文件,找出所有用到了特效的地方,然后保存到表格中
+	txVector<MapEffectData*> mapEffectList;
+	int effectCount = effectImage.size();
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<SceneMapFileData*> mapFileDataList;
+	sqlite->mSQLiteSceneMapFile->queryAll(mapFileDataList);
+	int fileDataCount = mapFileDataList.size();
+	for (int i = 0; i < fileDataCount; ++i)
+	{
+		MapData* mapData = TRACE_NEW(MapData, mapData);
+		mapData->readFile("../media/" + mapFileDataList[i]->mFileName);
+		int tileCount = mapData->mHeader->mWidth * mapData->mHeader->mHeight;
+		for (int j = 0; j < tileCount; ++j)
+		{
+			MapTile& tile = mapData->mTileList[j];
+			Vector2i tilePos = tileIndexToTilePos(j, mapData->mHeader->mHeight);
+			for (int k = 0; k < effectCount; ++k)
+			{
+				if (tile.mObjFileIdx == effectImage[k].first &&
+					tile.mObjImgIdx == effectImage[k].second)
+				{
+					MapEffectData* effectData = TRACE_NEW(MapEffectData, effectData);
+					effectData->mID = mapEffectList.size() + 1;
+					effectData->mMapFileID = mapFileDataList[i]->mID;
+					effectData->mTilePosition = tilePos;
+					effectData->mEffectFileIndex = tile.mObjFileIdx;
+					effectData->mEffectIndex = tile.mObjImgIdx - 1;
+					effectData->mSpeed = 0.5f;
+					effectData->mBlendType = 0;
+					mapEffectList.push_back(effectData);
+					break;
+				}
+			}
+		}
+		TRACE_DELETE(mapData);
+	}
+	sqlite->mSQLiteMapEffect->deleteAll();
+	int mapEffectCount = mapEffectList.size();
+	for (int i = 0; i < mapEffectCount; ++i)
+	{
+		sqlite->mSQLiteMapEffect->insert(*mapEffectList[i]);
+	}
+	TRACE_DELETE(sqlite);
 }
