@@ -967,7 +967,7 @@ TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
 {
 	if (pos.x < 0.0f || pos.x > TILE_WIDTH || pos.y < 0.0f || pos.y > TILE_HEIGHT)
 	{
-		return TT_MAX;
+		return TILE_TRIANGLE::MAX;
 	}
 	// 对角线斜率
 	float k = (float)TILE_HEIGHT / TILE_WIDTH;
@@ -982,11 +982,11 @@ TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
 			// 根据相对坐标的斜率判断属于哪个三角形
 			if (abs(relative.y / relative.x) > k)
 			{
-				return TT_INNER_LEFT_BOTTOM;
+				return TILE_TRIANGLE::INNER_LEFT_BOTTOM;
 			}
 			else
 			{
-				return TT_LEFT_BOTTOM;
+				return TILE_TRIANGLE::LEFT_BOTTOM;
 			}
 		}
 		// 位于左上部分
@@ -997,11 +997,11 @@ TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
 			// 根据相对坐标的斜率判断属于哪个三角形
 			if (abs(relative.y / relative.x) > k)
 			{
-				return TT_LEFT_TOP;
+				return TILE_TRIANGLE::LEFT_TOP;
 			}
 			else
 			{
-				return TT_INNER_LEFT_TOP;
+				return TILE_TRIANGLE::INNER_LEFT_TOP;
 			}
 		}
 	}
@@ -1016,11 +1016,11 @@ TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
 			// 根据相对坐标的斜率判断属于哪个三角形
 			if (abs(relative.y / relative.x) > k)
 			{
-				return TT_INNER_RIGHT_BOTTOM;
+				return TILE_TRIANGLE::INNER_RIGHT_BOTTOM;
 			}
 			else
 			{
-				return TT_RIGHT_BOTTOM;
+				return TILE_TRIANGLE::RIGHT_BOTTOM;
 			}
 		}
 		// 位于右上部分
@@ -1031,11 +1031,11 @@ TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
 			// 根据相对坐标的斜率判断属于哪个三角形
 			if (abs(relative.y / relative.x) > k)
 			{
-				return TT_RIGHT_TOP;
+				return TILE_TRIANGLE::RIGHT_TOP;
 			}
 			else
 			{
-				return TT_INNER_RIGHT_TOP;
+				return TILE_TRIANGLE::INNER_RIGHT_TOP;
 			}
 		}
 	}
@@ -1043,49 +1043,49 @@ TILE_TRIANGLE ImageUtility::pixelPosToTriangleIndex(Vector2 pos)
 // 获取指定位置上的三角形三个顶点的坐标,坐标是相对于所属地砖左下角
 void ImageUtility::getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2)
 {
-	if (pos == TT_LEFT_TOP)
+	if (pos == TILE_TRIANGLE::LEFT_TOP)
 	{
 		point0 = Vector2(0.0f, TILE_HEIGHT);
 		point1 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
 		point2 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
 	}
-	else if (pos == TT_RIGHT_TOP)
+	else if (pos == TILE_TRIANGLE::RIGHT_TOP)
 	{
 		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
 		point1 = Vector2(TILE_WIDTH, TILE_HEIGHT);
 		point2 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
 	}
-	else if (pos == TT_RIGHT_BOTTOM)
+	else if (pos == TILE_TRIANGLE::RIGHT_BOTTOM)
 	{
 		point0 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
 		point1 = Vector2(TILE_WIDTH, 0.0f);
 		point2 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
 	}
-	else if (pos == TT_LEFT_BOTTOM)
+	else if (pos == TILE_TRIANGLE::LEFT_BOTTOM)
 	{
 		point0 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
 		point1 = Vector2(0.0f, 0.0f);
 		point2 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
 	}
-	else if (pos == TT_INNER_LEFT_TOP)
+	else if (pos == TILE_TRIANGLE::INNER_LEFT_TOP)
 	{
 		point0 = Vector2(0.0f, TILE_HEIGHT * 0.5f);
 		point1 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
 		point2 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
 	}
-	else if (pos == TT_INNER_RIGHT_TOP)
+	else if (pos == TILE_TRIANGLE::INNER_RIGHT_TOP)
 	{
 		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
 		point1 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT);
 		point2 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
 	}
-	else if (pos == TT_INNER_RIGHT_BOTTOM)
+	else if (pos == TILE_TRIANGLE::INNER_RIGHT_BOTTOM)
 	{
 		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
 		point1 = Vector2(TILE_WIDTH, TILE_HEIGHT * 0.5f);
 		point2 = Vector2(TILE_WIDTH * 0.5f, 0.0f);
 	}
-	else if (pos == TT_INNER_LEFT_BOTTOM)
+	else if (pos == TILE_TRIANGLE::INNER_LEFT_BOTTOM)
 	{
 		point0 = Vector2(TILE_WIDTH * 0.5f, TILE_HEIGHT * 0.5f);
 		point1 = Vector2(TILE_WIDTH * 0.5f, 0.0f);

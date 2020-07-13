@@ -25,7 +25,7 @@ void UnreachTileGroup::addTile(MapTile* tile)
 		mTriangleList.insert(tile->mIndex, txVector<int>());
 	}
 	// 一个地砖中右8个三角形,左上角0,右上角1,右下角2,左下角3,中心左上角4,中心右上角5,中心右下角6,中心左下角7
-	for (int i = 0; i < TT_MAX; ++i)
+	for (int i = 0; i < (int)TILE_TRIANGLE::MAX; ++i)
 	{
 		if (!mTriangleList[tile->mIndex].contains(i))
 		{
@@ -50,22 +50,22 @@ void UnreachTileGroup::optimizeUnreach()
 		// 左边和上边都没有与组中的地砖,则去掉左上角的三角形
 		if (leftTileIndex == -1 && topTileIndex == -1)
 		{
-			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TT_LEFT_TOP));
+			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TILE_TRIANGLE::LEFT_TOP));
 		}
 		// 右边和上边都没有与组中的地砖,则去掉右上角的三角形
 		if (rightTileIndex == -1 && topTileIndex == -1)
 		{
-			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TT_RIGHT_TOP));
+			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TILE_TRIANGLE::RIGHT_TOP));
 		}
 		// 右边和下边都没有与组中的地砖,则去掉右下角的三角形
 		if (rightTileIndex == -1 && bottomTileIndex == -1)
 		{
-			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TT_RIGHT_BOTTOM));
+			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TILE_TRIANGLE::RIGHT_BOTTOM));
 		}
 		// 左边和下边都没有与组中的地砖,则去掉左下角的三角形
 		if (leftTileIndex == -1 && bottomTileIndex == -1)
 		{
-			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TT_LEFT_BOTTOM));
+			mTriangleList[iter->first].erase(mTriangleList[iter->first].find((int)TILE_TRIANGLE::LEFT_BOTTOM));
 		}
 	}
 	// 添加补充的三角形
@@ -136,80 +136,41 @@ bool UnreachTileGroup::generateAddTriangle(int x, int y)
 		int bottomTile = getTileIndexInList(x, y + 1);
 		int leftTile = getTileIndexInList(x - 1, y);
 		int rightTile = getTileIndexInList(x + 1, y);
-		int blockCount = 0;
-		if (topTile != -1)
+		bool topTile_RightBottomTriangle = topTile != -1 && mTriangleList[topTile].contains((int)TILE_TRIANGLE::RIGHT_BOTTOM);
+		bool topTile_LeftBottomTriangle = topTile != -1 && mTriangleList[topTile].contains((int)TILE_TRIANGLE::LEFT_BOTTOM);
+		bool bottomTile_RightTopTriangle = bottomTile != -1 && mTriangleList[bottomTile].contains((int)TILE_TRIANGLE::RIGHT_TOP);
+		bool bottomTile_LeftTopTriangle = bottomTile != -1 && mTriangleList[bottomTile].contains((int)TILE_TRIANGLE::LEFT_TOP);
+		bool leftTile_RightTopTriangle = leftTile != -1 && mTriangleList[leftTile].contains((int)TILE_TRIANGLE::RIGHT_TOP);
+		bool leftTile_RightBottomTriangle = leftTile != -1 && mTriangleList[leftTile].contains((int)TILE_TRIANGLE::RIGHT_BOTTOM);
+		bool rightTile_LeftTopTriangle = rightTile != -1 && mTriangleList[rightTile].contains((int)TILE_TRIANGLE::LEFT_TOP);
+		bool rightTile_LeftBottomTriangle = rightTile != -1 && mTriangleList[rightTile].contains((int)TILE_TRIANGLE::LEFT_BOTTOM);
+		// 补充左上角的三角形
+		if (topTile_LeftBottomTriangle && leftTile_RightTopTriangle)
 		{
-			++blockCount;
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::LEFT_TOP);
 		}
-		if (bottomTile != -1)
+		// 补充右上角的三角形
+		if (topTile_RightBottomTriangle && rightTile_LeftTopTriangle)
 		{
-			++blockCount;
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::RIGHT_TOP);
 		}
-		if (leftTile != -1)
+		// 补充左下角的三角形
+		if (bottomTile_LeftTopTriangle && leftTile_RightBottomTriangle)
 		{
-			++blockCount;
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::LEFT_BOTTOM);
 		}
-		if (rightTile != -1)
+		// 补充右下角的三角形
+		if (bottomTile_RightTopTriangle && rightTile_LeftBottomTriangle)
 		{
-			++blockCount;
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::RIGHT_BOTTOM);
 		}
-		// 周围只有一个不可行走的地砖,则不补充
-		if (blockCount == 1)
+		// 如果四个角的三角形都补充了,则把中间的三角形也填充满
+		if (mTempAddTriangles.size() == 4)
 		{
-			return false;
-		}
-		// 周围有两个不可行走的地砖,补充1个三角形
-		else if (blockCount == 2)
-		{
-			if (leftTile != -1 && topTile != -1)
-			{
-				mTempAddTriangles.push_back((int)TT_LEFT_TOP);
-			}
-			else if (rightTile != -1 && topTile != -1)
-			{
-				mTempAddTriangles.push_back((int)TT_RIGHT_TOP);
-			}
-			else if (rightTile != -1 && bottomTile != -1)
-			{
-				mTempAddTriangles.push_back((int)TT_RIGHT_BOTTOM);
-			}
-			else if (leftTile != -1 && bottomTile != -1)
-			{
-				mTempAddTriangles.push_back((int)TT_LEFT_BOTTOM);
-			}
-		}
-		// 有三个地砖,补充2个三角形
-		else if (blockCount == 3)
-		{
-			// 只缺左边的,则补充右边的两个三角形
-			if (leftTile == -1)
-			{
-				mTempAddTriangles.push_back((int)TT_RIGHT_BOTTOM);
-				mTempAddTriangles.push_back((int)TT_RIGHT_TOP);
-			}
-			else if (rightTile == -1)
-			{
-				mTempAddTriangles.push_back((int)TT_LEFT_BOTTOM);
-				mTempAddTriangles.push_back((int)TT_LEFT_TOP);
-			}
-			else if (topTile == -1)
-			{
-				mTempAddTriangles.push_back((int)TT_LEFT_BOTTOM);
-				mTempAddTriangles.push_back((int)TT_RIGHT_BOTTOM);
-			}
-			else if (bottomTile == -1)
-			{
-				mTempAddTriangles.push_back((int)TT_LEFT_TOP);
-				mTempAddTriangles.push_back((int)TT_RIGHT_TOP);
-			}
-		}
-		// 有三个以上地砖,补充8个三角形
-		else
-		{
-			for (int i = 0; i < (int)TT_MAX; ++i)
-			{
-				mTempAddTriangles.push_back(i);
-			}
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::INNER_LEFT_TOP);
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::INNER_RIGHT_TOP);
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::INNER_RIGHT_BOTTOM);
+			mTempAddTriangles.push_back((int)TILE_TRIANGLE::INNER_LEFT_BOTTOM);
 		}
 		if (!mTriangleList.contains(tileIndex))
 		{
