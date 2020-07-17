@@ -18,13 +18,24 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	string tempPacketName;
 	FOR_VECTOR_CONST(lines)
 	{
+		string line = lines[i];
 		// 忽略注释
-		if (startWith(lines[i], "//"))
+		if (startWith(line, "//"))
 		{
 			continue;
 		}
+		// 如果后面插有注释,则去除
+		int pos = -1;
+		if (findString(line.c_str(), "//", &pos))
+		{
+			line = line.substr(0, pos);
+		}
+		// 去除所有制表符
+		strReplaceAll(line, "\t", "");
+		// 去除所有的分号
+		strReplaceAll(line, ";", "");
 		// 没有成员变量的消息包
-		if (lines[i] == "{}")
+		if (line == "{}")
 		{
 			PacketInfo info;
 			info.mPacketName = lines[i - 1];
@@ -32,7 +43,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 			continue;
 		}
 		// 成员变量列表起始
-		if (lines[i] == "{")
+		if (line == "{")
 		{
 			packetStart = true;
 			tempPacketName = lines[i - 1];
@@ -40,7 +51,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 			continue;
 		}
 		// 成员变量列表结束
-		if (lines[i] == "}")
+		if (line == "}")
 		{
 			PacketInfo info;
 			info.mPacketName = tempPacketName;
@@ -53,7 +64,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 		}
 		if (packetStart)
 		{
-			tempMemberList.push_back(parseMemberLine(lines[i]));
+			tempMemberList.push_back(parseMemberLine(line));
 		}
 	}
 	deleteFolder(cppHeaderFilePath);
@@ -73,6 +84,171 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	// c#
 	generateCSharpPacketDefineFile(packetInfoList, csPacketDefineFilePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csPacketDefineFilePath);
+}
+
+void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
+{
+	// 解析模板文件
+	string fileContent;
+	openTxtFile("SQLite.txt", fileContent);
+	if (fileContent.length() == 0)
+	{
+		ERROR("未找到表格格式文件SQLite.txt");
+		return;
+	}
+	fileContent = UTF8ToANSI(fileContent.c_str(), true);
+	myVector<string> lines;
+	split(fileContent.c_str(), "\r\n", lines);
+	bool packetStart = false;
+	myVector<SQLiteInfo> sqliteInfoList;
+	SQLiteInfo tempInfo;
+	FOR_VECTOR_CONST(lines)
+	{
+		string line = lines[i];
+		// 忽略注释
+		if (startWith(line, "//"))
+		{
+			continue;
+		}
+		// 如果后面插有注释,则去除
+		int pos = -1;
+		if (findString(line.c_str(), "//", &pos))
+		{
+			line = line.substr(0, pos);
+		}
+		// 去除所有制表符
+		strReplaceAll(line, "\t", "");
+		// 去除所有的分号
+		strReplaceAll(line, ";", "");
+		// 成员变量列表起始
+		if (line == "{")
+		{
+			packetStart = true;
+			string lastLine = lines[i - 1];
+			int startIndex = -1;
+			int endIndex = -1;
+			findString(lastLine.c_str(), "[", &startIndex);
+			findString(lastLine.c_str(), "]", &endIndex, startIndex);
+			if (startIndex >= 0 && endIndex >= 0)
+			{
+				tempInfo.mSQLiteName = lastLine.substr(0, startIndex);
+				string owner = lastLine.substr(startIndex, endIndex - startIndex + 1);
+				if (owner == "[Client]")
+				{
+					tempInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+				}
+				else if (owner == "[Server]")
+				{
+					tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
+				}
+				else
+				{
+					tempInfo.mOwner = SQLITE_OWNER::BOTH;
+				}
+			}
+			else
+			{
+				tempInfo.mSQLiteName = lastLine;
+				tempInfo.mOwner = SQLITE_OWNER::BOTH;
+			}
+			tempInfo.mMemberList.clear();
+			// 添加默认的ID字段
+			SQLiteMember idMember;
+			idMember.mMemberName = "ID";
+			idMember.mOwner = SQLITE_OWNER::BOTH;
+			idMember.mTypeName = "int";
+			tempInfo.mMemberList.push_back(idMember);
+			continue;
+		}
+		// 成员变量列表结束
+		if (line == "}")
+		{
+			sqliteInfoList.push_back(tempInfo);
+			packetStart = false;
+			continue;
+		}
+		if (packetStart)
+		{
+			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line));
+		}
+	}
+	deleteFolder(cppDataPath);
+	deleteFolder(csDataPath);
+	FOR_VECTOR_CONST(sqliteInfoList)
+	{
+		// 生成代码文件
+		// .h代码
+		generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath);
+		// .cs代码
+		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataPath);
+	}
+}
+
+// TDSQLite.h和TDSQLite.cpp文件
+void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath)
+{
+	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+	{
+		return;
+	}
+	string headerFileContent;
+	string className = "TD" + sqliteInfo.mSQLiteName;
+	string headerMacro = "_TD" + sqliteNameToUpper(sqliteInfo.mSQLiteName) + "_H_";
+	headerFileContent += "#ifndef " + headerMacro + "\r\n";
+	headerFileContent += "#define " + headerMacro + "\r\n"; 
+	headerFileContent += "\r\n";
+	headerFileContent += "#include \"SQLiteData.h\"\r\n";
+	headerFileContent += "\r\n";
+	headerFileContent += "class " + className + " : public SQLiteData\r\n";
+	headerFileContent += "{\r\n";
+	headerFileContent += "public:\r\n";
+	uint memberCount = sqliteInfo.mMemberList.size();
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		{
+			headerFileContent += "\tCOL_EMPTY(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+		}
+		else
+		{
+			headerFileContent += "\tCOL(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+		}
+	}
+	headerFileContent += "public:\r\n";
+	headerFileContent += "\t" + className + "()\r\n";
+	headerFileContent += "\t{\r\n";
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		{
+			headerFileContent += "\t\tREGISTE_PARAM_EMPTY(" + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+		}
+		else
+		{
+			headerFileContent += "\t\tREGISTE_PARAM(" + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+		}
+	}
+	headerFileContent += "\t}\r\n";
+	headerFileContent += "};\r\n";
+	headerFileContent += "\r\n";
+	headerFileContent += "#endif";
+
+	string sourceFileContent;
+	sourceFileContent += "#include \"" + className + ".h\"\r\n";
+	sourceFileContent += "\r\n";
+	FOR_I(memberCount)
+	{
+		sourceFileContent += "COL_DEFINE(" + className + ", " + sqliteInfo.mMemberList[i].mMemberName + ");";
+		if (i != memberCount - 1)
+		{
+			sourceFileContent += "\r\n";
+		}
+	}
+	validPath(filePath);
+	headerFileContent = ANSIToUTF8(headerFileContent.c_str(), true);
+	sourceFileContent = ANSIToUTF8(sourceFileContent.c_str(), true);
+	writeFile(filePath + className + ".h", headerFileContent);
+	writeFile(filePath + className + ".cpp", sourceFileContent);
 }
 
 // PacketHeader.h和PacketDeclareHeader.h文件
@@ -255,6 +431,84 @@ void CodeGenerator::generateCppHeaderFile(const myVector<MemberInfo>& memberInfo
 	writeFile(filePath + packetName + "_Declare.h", fileString);
 }
 
+// TDSQLite.cs文件
+void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath)
+{
+	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
+	{
+		return;
+	}
+	string fileContent;
+	string className = "TD" + sqliteInfo.mSQLiteName;
+	fileContent += "using Mono.Data.Sqlite;\r\n";
+	fileContent += "using System;\r\n";
+	fileContent += "using System.Collections.Generic;\r\n";
+	fileContent += "using UnityEngine;\r\n";
+	fileContent += "\r\n";
+	fileContent += "public class " + className + " : TableData\r\n";
+	fileContent += "{\r\n";
+	uint memberCount = sqliteInfo.mMemberList.size();
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mMemberName == "ID")
+		{
+			continue;
+		}
+		fileContent += "\tpublic static string " + sqliteInfo.mMemberList[i].mMemberName + " = \"" + sqliteInfo.mMemberList[i].mMemberName + "\";\r\n";
+	}
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mMemberName == "ID")
+		{
+			continue;
+		}
+		string typeName = sqliteInfo.mMemberList[i].mTypeName;
+		// 将myVector替换为List,Vector2UShort替换为Vector2Int
+		if (startWith(typeName, "myVector"))
+		{
+			strReplaceAll(typeName, "myVector", "List");
+		}
+		else if (typeName == "Vector2UShort")
+		{
+			typeName = "Vector2Int";
+		}
+		if (findString(typeName.c_str(), "List", NULL))
+		{
+			fileContent += "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + " = new " + typeName + "();\r\n";
+		}
+		else
+		{
+			fileContent += "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";\r\n";
+		}
+	}
+	fileContent += "\tpublic override void parse(SqliteDataReader reader)\r\n";
+	fileContent += "\t{\r\n";
+	fileContent += "\t\tbase.parse(reader);\r\n";
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mMemberName == "ID")
+		{
+			continue;
+		}
+		fileContent += "\t\tparseParam(reader, ref m" + sqliteInfo.mMemberList[i].mMemberName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+	}
+	fileContent += "\t}\r\n";
+	fileContent += "\tpublic static void link(SQLiteTable table)\r\n";
+	fileContent += "\t{\r\n";
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mLinkTable.length() > 0)
+		{
+			fileContent += "\t\ttable.link(" + sqliteInfo.mMemberList[i].mMemberName + ", mSQLite" + sqliteInfo.mMemberList[i].mLinkTable + ");\r\n";
+		}
+	}
+	fileContent += "\t}\r\n";
+	fileContent += "}";
+	validPath(filePath);
+	fileContent = ANSIToUTF8(fileContent.c_str(), true);
+	writeFile(filePath + className + ".cs", fileContent);
+}
+
 // PacketDefine.cs文件
 void CodeGenerator::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath)
 {
@@ -372,6 +626,49 @@ void CodeGenerator::generateCSharpFile(const myVector<MemberInfo>& memberInfoLis
 	writeFile(filePath + packetName + "_Declare.cs", fileString);
 }
 
+SQLiteMember CodeGenerator::parseSQLiteMemberLine(string line)
+{
+	SQLiteMember memberInfo;
+	// 该字段属于客户端还是服务器
+	int rectStartIndex = line.find_first_of('[');
+	int rectEndIndex = line.find_first_of(']', rectStartIndex);
+	if (rectStartIndex >= 0 && rectEndIndex >= 0)
+	{
+		string owner = line.substr(rectStartIndex, rectEndIndex - rectStartIndex + 1);
+		if (owner == "[Client]")
+		{
+			memberInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+		}
+		else if (owner == "[Server]")
+		{
+			memberInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
+		}
+		else
+		{
+			memberInfo.mOwner = SQLITE_OWNER::BOTH;
+		}
+		line.erase(rectStartIndex, rectEndIndex - rectStartIndex + 1);
+	}
+	else
+	{
+		memberInfo.mOwner = SQLITE_OWNER::BOTH;
+	}
+	// 该字段索引的表格
+	int roundStartIndex = line.find_first_of('(');
+	int roundEndIndex = line.find_first_of(')');
+	if (roundStartIndex >= 0 && roundEndIndex >= 0)
+	{
+		memberInfo.mLinkTable = line.substr(roundStartIndex + 1, roundEndIndex - roundStartIndex - 1);
+		line.erase(roundStartIndex, roundEndIndex - roundStartIndex + 1);
+	}
+	// 字段类型和字段名
+	myVector<string> memberStrList;
+	split(line.c_str(), " ", memberStrList);
+	memberInfo.mTypeName = memberStrList[0];
+	memberInfo.mMemberName = memberStrList[1];
+	return memberInfo;
+}
+
 MemberInfo CodeGenerator::parseMemberLine(const string& line)
 {
 	MemberInfo memberInfo;
@@ -444,6 +741,31 @@ string CodeGenerator::packetNameToUpper(const string& packetName)
 	}
 	macroList.push_back(packetName.substr(lastIndex, length - lastIndex));
 	string headerMacro = packetName.substr(0, prefixLength);
+	FOR_VECTOR_CONST(macroList)
+	{
+		headerMacro += "_" + toUpper(macroList[i]);
+	}
+	return headerMacro;
+}
+
+string CodeGenerator::sqliteNameToUpper(const string& sqliteName)
+{
+	// 根据大写字母拆分
+	myVector<string> macroList;
+	int length = sqliteName.length();
+	int lastIndex = 0;
+	// 从1开始,因为第0个始终都是大写,会截取出空字符串
+	for (int i = 1; i < length; ++i)
+	{
+		// 已大写字母为分隔符
+		if (sqliteName[i] >= 'A' && sqliteName[i] <= 'Z')
+		{
+			macroList.push_back(sqliteName.substr(lastIndex, i - lastIndex));
+			lastIndex = i;
+		}
+	}
+	macroList.push_back(sqliteName.substr(lastIndex, length - lastIndex));
+	string headerMacro;
 	FOR_VECTOR_CONST(macroList)
 	{
 		headerMacro += "_" + toUpper(macroList[i]);

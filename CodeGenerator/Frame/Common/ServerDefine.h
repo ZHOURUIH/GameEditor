@@ -633,6 +633,8 @@ NORMAL_DELETE_ARRAY(ptr)
 #include "Vector4Int.h"
 #include "Color.h"
 
+using namespace std;
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 // 结构体定义
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -655,12 +657,6 @@ public:
 	static const string EMPTY_STRING;
 	static const char* DESTROY_CHARACTER_STATE;
 	static const char* ZERO_ONE;
-};
-
-class IClient
-{
-public:
-	virtual uint getClientGUID() const = 0;
 };
 
 #endif

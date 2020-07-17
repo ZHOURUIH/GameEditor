@@ -882,7 +882,7 @@ public:
 	// 将字符串全部转为小写再查找
 	static bool findSubstrLower(const string& res, const string& sub, int* pos = NULL, uint startIndex = 0, bool direction = true);
 	static bool findSubstr(const string& res, const string& dst, int* pos = NULL, uint startIndex = 0, bool direction = true);
-	static bool findString(const char* str, const char* key, int* pos, uint startPos);
+	static bool findString(const char* str, const char* key, int* pos, uint startPos = 0);
 	static string checkString(const string& str, const string& valid);
 	static string checkFloatString(const string& str, const string& valid = "");
 	static string checkIntString(const string& str, const string& valid = "");

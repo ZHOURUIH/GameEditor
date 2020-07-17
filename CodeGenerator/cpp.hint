@@ -4,3 +4,4 @@
 #define FOR_VECTOR(stl) uint stl##Count = stl.size(); FOR(stl, uint i = 0; i < stl##Count; ++i)
 #define FOR_VECTOR_CONST(stl) uint stl##Count = stl.size(); for(uint i = 0; i < stl##Count; ++i)
 #define FOR_I(count) for (uint i = 0; i < count; ++i)
+#define FOR_J(count) for (uint j = 0; j < count; ++j)

@@ -1738,23 +1738,42 @@ bool StringUtility::findSubstr(const string& res, const string& sub, int* pos, u
 	{
 		return false;
 	}
-	int start = direction ? startIndex : searchLength;
-	int delta = direction ? 1 : -1;
-	int end = (direction ? searchLength : startIndex) + delta;
-	for (int i = start; i != end; i += delta)
+	if (direction)
 	{
-		uint j = 0;
-		for (j = 0; j < subLen; ++j)
+		for (int i = startIndex; i <= searchLength; ++i)
 		{
-			if (res[i + j] != sub[j])
+			uint j = 0;
+			for (j = 0; j < subLen; ++j)
 			{
+				if (res[i + j] != sub[j])
+				{
+					break;
+				}
+			}
+			if (j == subLen)
+			{
+				posFind = i;
 				break;
 			}
 		}
-		if (j == subLen)
+	}
+	else
+	{
+		for (uint i = searchLength; i >= startIndex; --i)
 		{
-			posFind = i;
-			break;
+			uint j = 0;
+			for (j = 0; j < subLen; ++j)
+			{
+				if (res[i + j] != sub[j])
+				{
+					break;
+				}
+			}
+			if (j == subLen)
+			{
+				posFind = i;
+				break;
+			}
 		}
 	}
 	if (pos != NULL)
@@ -1766,6 +1785,7 @@ bool StringUtility::findSubstr(const string& res, const string& sub, int* pos, u
 
 bool StringUtility::findString(const char* str, const char* key, int* pos, uint startPos)
 {
+	CLAMP_MIN(startPos, 0);
 	uint length = strlen(str);
 	uint keyLen = strlen(key);
 	for (uint i = startPos; i < length; ++i)
