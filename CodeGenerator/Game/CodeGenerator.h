@@ -40,13 +40,28 @@ struct SQLiteInfo
 	string mSQLiteName;
 };
 
+struct MySQLMember
+{
+	string mTypeName;
+	string mMemberName;
+	bool mUTF8;
+};
+
+struct MySQLInfo
+{
+	myVector<MySQLMember> mMemberList;
+	string mSQLiteName;
+};
+
 class CodeGenerator : public SystemUtility
 {
 public:
 	static void generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath);
 	static void generateSQLiteCode(string cppDataPath, string csDataPath);
+	static void generateMySQLCode(string cppDataPath);
 protected:
 	//c++
+	static void generateCppMySQLDataFile(const MySQLInfo& sqliteInfo, string filePath);
 	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
 	static void generateCppPacketHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
@@ -57,10 +72,11 @@ protected:
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpFile(const myVector<MemberInfo>& memberInfoList, const string& packetName, string filePath);
+	static MySQLMember parseMySQLMemberLine(string line);
 	static SQLiteMember parseSQLiteMemberLine(string line);
 	static MemberInfo parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
-	static string sqliteNameToUpper(const string& sqliteName);
+	static string nameToUpper(const string& sqliteName);
 	static string cppPushParamString(const MemberInfo& memberInfo);
 	static string cppMemberDeclareString(const MemberInfo& memberInfo);
 	static string cSharpPushParamString(const MemberInfo& memberInfo);

@@ -184,6 +184,187 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 	}
 }
 
+void CodeGenerator::generateMySQLCode(string cppDataPath)
+{
+	// 解析模板文件
+	string fileContent;
+	openTxtFile("MySQL.txt", fileContent);
+	if (fileContent.length() == 0)
+	{
+		ERROR("未找到表格格式文件MySQL.txt");
+		return;
+	}
+	fileContent = UTF8ToANSI(fileContent.c_str(), true);
+	myVector<string> lines;
+	split(fileContent.c_str(), "\r\n", lines);
+	bool packetStart = false;
+	myVector<MySQLInfo> mysqlInfoList;
+	MySQLInfo tempInfo;
+	FOR_VECTOR_CONST(lines)
+	{
+		string line = lines[i];
+		// 忽略注释
+		if (startWith(line, "//"))
+		{
+			continue;
+		}
+		// 如果后面插有注释,则去除
+		int pos = -1;
+		if (findString(line.c_str(), "//", &pos))
+		{
+			line = line.substr(0, pos);
+		}
+		// 去除所有制表符
+		strReplaceAll(line, "\t", "");
+		// 去除所有的分号
+		strReplaceAll(line, ";", "");
+		// 成员变量列表起始
+		if (line == "{")
+		{
+			packetStart = true;
+			tempInfo.mSQLiteName = lines[i - 1];
+			tempInfo.mMemberList.clear();
+			continue;
+		}
+		// 成员变量列表结束
+		if (line == "}")
+		{
+			mysqlInfoList.push_back(tempInfo);
+			packetStart = false;
+			continue;
+		}
+		if (packetStart)
+		{
+			tempInfo.mMemberList.push_back(parseMySQLMemberLine(line));
+		}
+	}
+	deleteFolder(cppDataPath);
+	FOR_VECTOR_CONST(mysqlInfoList)
+	{
+		// 生成代码文件
+		generateCppMySQLDataFile(mysqlInfoList[i], cppDataPath);
+	}
+}
+
+// 生成MySQLData.h和MySQLData.cpp文件
+void CodeGenerator::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string filePath)
+{
+	// 头文件
+	string headerFileContent;
+	string className = "MySQLData" + mysqlInfo.mSQLiteName;
+	string headerMacro = "_MYSQL_DATA" + nameToUpper(mysqlInfo.mSQLiteName) + "_H_";
+	headerFileContent += "#ifndef " + headerMacro + "\r\n";
+	headerFileContent += "#define " + headerMacro + "\r\n";
+	headerFileContent += "\r\n";
+	headerFileContent += "#include \"MySQLData.h\"\r\n";
+	headerFileContent += "\r\n";
+	headerFileContent += "class MySQLTable;\r\n";
+	headerFileContent += "class " + className + " : public MySQLData\r\n";
+	headerFileContent += "{\r\n";
+	headerFileContent += "public:\r\n";
+	uint memberCount = mysqlInfo.mMemberList.size();
+	FOR_I(memberCount)
+	{
+		headerFileContent += "\tCOL(" + mysqlInfo.mMemberList[i].mTypeName + ", " + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+	}
+	headerFileContent += "public:\r\n";
+	headerFileContent += "\tstatic void fillColName(MySQLTable* table);\r\n";
+	headerFileContent += "\tvoid resultRowToTableData(myMap<const char*, char*>& resultRow) override;\r\n";
+	headerFileContent += "\tvoid paramList(char* params, uint size) override;\r\n";
+	headerFileContent += "\tvoid resetProperty() override;\r\n";
+	headerFileContent += "};\r\n";
+	headerFileContent += "\r\n";
+	headerFileContent += "#endif";
+
+	// 源文件
+	string sourceFileContent;
+	sourceFileContent += "#include \"" + className + ".h\"\r\n";
+	sourceFileContent += "#include \"Utility.h\"\r\n";
+	sourceFileContent += "#include \"MySQLTable.h\"\r\n";
+	sourceFileContent += "\r\n";
+	// 字段静态变量定义
+	FOR_I(memberCount)
+	{
+		sourceFileContent += "COL_DEFINE(" + className + ", " + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+	}
+	// fillColName函数
+	sourceFileContent += "\r\n";
+	sourceFileContent += "void " + className + "::fillColName(MySQLTable* table)\r\n";
+	sourceFileContent += "{\r\n";
+	FOR_I(memberCount)
+	{
+		sourceFileContent += "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+	}
+	sourceFileContent += "}\r\n";
+	sourceFileContent += "\r\n";
+	// resultRowToTableData函数
+	sourceFileContent += "void " + className + "::resultRowToTableData(myMap<const char*, char*>& resultRow)\r\n";
+	sourceFileContent += "{\r\n";
+	FOR_I(memberCount)
+	{
+		sourceFileContent += "\tPARSE(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+	}
+	sourceFileContent += "}\r\n";
+	sourceFileContent += "\r\n";
+	// paramList函数
+	sourceFileContent += "void " + className + "::paramList(char* params, uint size)\r\n";
+	sourceFileContent += "{\r\n";
+	FOR_I(memberCount)
+	{
+		if (i != memberCount - 1)
+		{
+			if (mysqlInfo.mMemberList[i].mTypeName == "string")
+			{
+				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
+				sourceFileContent += "\tAPPEND_STRING(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");\r\n";
+			}
+			else
+			{
+				sourceFileContent += "\tAPPEND_VALUE(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+			}
+		}
+		else
+		{
+			if (mysqlInfo.mMemberList[i].mTypeName == "string")
+			{
+				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
+				sourceFileContent += "\tAPPEND_STRING_END(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");\r\n";
+			}
+			else
+			{
+				sourceFileContent += "\tAPPEND_VALUE_END(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+			}
+		}
+	}
+	sourceFileContent += "}\r\n";
+	sourceFileContent += "\r\n";
+	// resetProperty函数
+	sourceFileContent += "void " + className + "::resetProperty()\r\n";
+	sourceFileContent += "{\r\n";
+	sourceFileContent += "\tMySQLData::resetProperty();\r\n";
+	FOR_I(memberCount)
+	{
+		if (mysqlInfo.mMemberList[i].mTypeName == "string")
+		{
+			sourceFileContent += "\tm" + mysqlInfo.mMemberList[i].mMemberName + ".clear();\r\n";
+		}
+		else if (mysqlInfo.mMemberList[i].mTypeName == "float")
+		{
+			sourceFileContent += "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0.0f;\r\n";
+		}
+		else
+		{
+			sourceFileContent += "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0;\r\n";
+		}
+	}
+	sourceFileContent += "}";
+	validPath(filePath);
+	headerFileContent = ANSIToUTF8(headerFileContent.c_str(), true);
+	sourceFileContent = ANSIToUTF8(sourceFileContent.c_str(), true);
+	writeFile(filePath + className + ".h", headerFileContent);
+	writeFile(filePath + className + ".cpp", sourceFileContent);
+}
+
 // TDSQLite.h和TDSQLite.cpp文件
 void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath)
 {
@@ -193,7 +374,7 @@ void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	}
 	string headerFileContent;
 	string className = "TD" + sqliteInfo.mSQLiteName;
-	string headerMacro = "_TD" + sqliteNameToUpper(sqliteInfo.mSQLiteName) + "_H_";
+	string headerMacro = "_TD" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
 	headerFileContent += "#ifndef " + headerMacro + "\r\n";
 	headerFileContent += "#define " + headerMacro + "\r\n"; 
 	headerFileContent += "\r\n";
@@ -626,6 +807,26 @@ void CodeGenerator::generateCSharpFile(const myVector<MemberInfo>& memberInfoLis
 	writeFile(filePath + packetName + "_Declare.cs", fileString);
 }
 
+MySQLMember CodeGenerator::parseMySQLMemberLine(string line)
+{
+	MySQLMember memberInfo;
+	// 字段类型和字段名
+	myVector<string> memberStrList;
+	split(line.c_str(), " ", memberStrList);
+	if (findString(memberStrList[0].c_str(), "(utf8)", NULL))
+	{
+		strReplaceAll(memberStrList[0], "(utf8)", "");
+		memberInfo.mUTF8 = true;
+	}
+	else
+	{
+		memberInfo.mUTF8 = false;
+	}
+	memberInfo.mTypeName = memberStrList[0];
+	memberInfo.mMemberName = memberStrList[1];
+	return memberInfo;
+}
+
 SQLiteMember CodeGenerator::parseSQLiteMemberLine(string line)
 {
 	SQLiteMember memberInfo;
@@ -748,7 +949,7 @@ string CodeGenerator::packetNameToUpper(const string& packetName)
 	return headerMacro;
 }
 
-string CodeGenerator::sqliteNameToUpper(const string& sqliteName)
+string CodeGenerator::nameToUpper(const string& sqliteName)
 {
 	// 根据大写字母拆分
 	myVector<string> macroList;
