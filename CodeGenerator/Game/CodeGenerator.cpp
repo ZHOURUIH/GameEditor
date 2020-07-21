@@ -202,6 +202,15 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 	}
 	headerPath = getFilePath(headerPath);
 	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
+
+	// 在上一层目录生成SQLiteRegister.cs文件
+	string registerPath = csDataPath;
+	if (registerPath[registerPath.length() - 1] == '/' || registerPath[registerPath.length() - 1] == '\\')
+	{
+		registerPath = registerPath.substr(0, registerPath.length() - 1);
+	}
+	registerPath = getFilePath(registerPath);
+	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, registerPath);
 }
 
 void CodeGenerator::generateMySQLCode(string cppDataPath)
@@ -731,6 +740,39 @@ void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, s
 	validPath(filePath);
 	fileContent = ANSIToUTF8(fileContent.c_str(), true);
 	writeFile(filePath + className + ".cs", fileContent);
+}
+
+// SQLiteRegister.cs文件
+void CodeGenerator::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string filePath)
+{
+	string fileContent;
+	fileContent += "using System;\r\n";
+	fileContent += "using System.Collections;\r\n";
+	fileContent += "using System.Collections.Generic;\r\n";
+	fileContent += "\r\n";
+	fileContent += "public class SQLiteRegister : GameBase\r\n";
+	fileContent += "{\r\n";
+	fileContent += "\tpublic static void registeAllTable()\r\n";
+	fileContent += "\t{\r\n";
+	uint count = sqliteInfo.size();
+	FOR_I(count)
+	{
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY)
+		{
+			fileContent += "\t\tregisteTable(ref mSQLite" + sqliteInfo[i].mSQLiteName + ", \"" + sqliteInfo[i].mSQLiteName + "\");\r\n";
+		}
+	}
+	fileContent += "\t\tmSQLite.linkAllTable();\r\n";
+	fileContent += "\t}\r\n";
+	fileContent += "\t//-------------------------------------------------------------------------------------------------------------\r\n";
+	fileContent += "\tprotected static void registeTable<T>(ref T table, string tableName) where T : SQLiteTable, new()\r\n";
+	fileContent += "\t{\r\n";
+	fileContent += "\t\ttable = mSQLite.registeTable<T>(tableName);\r\n";
+	fileContent += "\t}\r\n";
+	fileContent += "}";
+	validPath(filePath);
+	fileContent = ANSIToUTF8(fileContent.c_str(), true);
+	writeFile(filePath + "SQLiteRegister.cs", fileContent);
 }
 
 // PacketDefine.cs文件

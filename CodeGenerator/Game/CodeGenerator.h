@@ -70,6 +70,7 @@ protected:
 	static void generateCppPacketHeaderFile(const PacketInfo& packetName, string filePath);
 	//c#
 	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
+	static void generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string filePath);
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpFile(const PacketInfo& packetName, string filePath);
