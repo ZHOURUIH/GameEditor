@@ -14,7 +14,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	split(fileContent.c_str(), "\r\n", lines);
 	bool packetStart = false;
 	myVector<PacketInfo> packetInfoList;
-	myVector<MemberInfo> tempMemberList;
+	myVector<PacketMember> tempMemberList;
 	string tempPacketName;
 	FOR_VECTOR_CONST(lines)
 	{
@@ -79,14 +79,14 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	{
 		// 生成代码文件
 		// .h代码
-		generateCppHeaderFile(packetInfoList[i].mMemberList, packetInfoList[i].mPacketName, cppHeaderFilePath);
+		generateCppPacketHeaderFile(packetInfoList[i], cppHeaderFilePath);
 		// .cs代码
-		generateCSharpFile(packetInfoList[i].mMemberList, packetInfoList[i].mPacketName, csFilePath);
+		generateCSharpFile(packetInfoList[i], csFilePath);
 	}
 	// c++
 	generateCppPacketDefineFile(packetInfoList, cppPacketDefineFilePath);
 	generateCppPacketRegisteFile(packetInfoList, cppPacketDefineFilePath);
-	generateCppPacketHeaderFile(packetInfoList, cppPacketDefineFilePath);
+	generateCppPacketTotalHeaderFile(packetInfoList, cppPacketDefineFilePath);
 	// c#
 	generateCSharpPacketDefineFile(packetInfoList, csPacketDefineFilePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csPacketDefineFilePath);
@@ -194,6 +194,14 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 		// .cs代码
 		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataPath);
 	}
+	// 在上一层目录生成SQLiteHeader.h文件
+	string headerPath = cppDataPath;
+	if (headerPath[headerPath.length() - 1] == '/' || headerPath[headerPath.length() - 1] == '\\')
+	{
+		headerPath = headerPath.substr(0, headerPath.length() - 1);
+	}
+	headerPath = getFilePath(headerPath);
+	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
 }
 
 void CodeGenerator::generateMySQLCode(string cppDataPath)
@@ -444,8 +452,31 @@ void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	writeFile(filePath + className + ".cpp", sourceFileContent);
 }
 
+// SQLiteHeader.h文件
+void CodeGenerator::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath)
+{
+	string str0;
+	str0 += "#ifndef _SQLITE_HEADER_H_\r\n";
+	str0 += "#define _SQLITE_HEADER_H_\r\n";
+	str0 += "\r\n";
+	str0 += "#include \"SQLite.h\"\r\n";
+	uint packetCount = sqliteList.size();
+	FOR_I(packetCount)
+	{
+		if (sqliteList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
+		{
+			str0 += "#include \"SQLite" + sqliteList[i].mSQLiteName + ".h\"\r\n";
+		}
+	}
+	str0 += "\r\n";
+	str0 += "#endif";
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "SQLiteHeader.h", str0);
+}
+
 // PacketHeader.h和PacketDeclareHeader.h文件
-void CodeGenerator::generateCppPacketHeaderFile(const myVector<PacketInfo>& packetList, string filePath)
+void CodeGenerator::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath)
 {
 	// PacketHeader.h
 	string str0;
@@ -585,24 +616,24 @@ void CodeGenerator::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 }
 
 // _Declare.h文件
-void CodeGenerator::generateCppHeaderFile(const myVector<MemberInfo>& memberInfoList, const string& packetName, string filePath)
+void CodeGenerator::generateCppPacketHeaderFile(const PacketInfo& packetInfo, string filePath)
 {
-	string headerMacro = "_" + packetNameToUpper(packetName) + "_DECLARE_H_";
+	string headerMacro = "_" + packetNameToUpper(packetInfo.mPacketName) + "_DECLARE_H_";
 	string fileString;
 	fileString += "#ifndef " + headerMacro + "\r\n";
 	fileString += "#define " + headerMacro + "\r\n";
 	fileString += "\r\n";
-	fileString += "#define " + packetName + "_Declare \\\r\n";
+	fileString += "#define " + packetInfo.mPacketName + "_Declare \\\r\n";
 	fileString += "public:\\\r\n";
 	// 注册成员变量
-	uint memberCount = memberInfoList.size();
+	uint memberCount = packetInfo.mMemberList.size();
 	if (memberCount != 0)
 	{
 		fileString += "\tvirtual void fillParams()\\\r\n";
 		fileString += "\t{\\\r\n";
 		FOR_I(memberCount)
 		{
-			fileString += cppPushParamString(memberInfoList[i]);
+			fileString += cppPushParamString(packetInfo.mMemberList[i]);
 		}
 		fileString += "\t}\\\r\n";
 	}
@@ -614,14 +645,14 @@ void CodeGenerator::generateCppHeaderFile(const myVector<MemberInfo>& memberInfo
 	fileString += "public:\\\r\n";
 	FOR_I(memberCount)
 	{
-		fileString += cppMemberDeclareString(memberInfoList[i]);
+		fileString += cppMemberDeclareString(packetInfo.mMemberList[i]);
 	}
 	removeLast(fileString, '\\');
 	fileString += "\r\n";
 	fileString += "#endif";
 	validPath(filePath);
 	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + packetName + "_Declare.h", fileString);
+	writeFile(filePath + packetInfo.mPacketName + "_Declare.h", fileString);
 }
 
 // TDSQLite.cs文件
@@ -784,10 +815,10 @@ void CodeGenerator::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 }
 
 // _Declare.cs文件
-void CodeGenerator::generateCSharpFile(const myVector<MemberInfo>& memberInfoList, const string& packetName, string filePath)
+void CodeGenerator::generateCSharpFile(const PacketInfo& packetInfo, string filePath)
 {
 	const int prefixLength = 2;
-	if (packetName.substr(0, prefixLength) != "CS" && packetName.substr(0, prefixLength) != "SC")
+	if (packetInfo.mPacketName.substr(0, prefixLength) != "CS" && packetInfo.mPacketName.substr(0, prefixLength) != "SC")
 	{
 		ERROR("包名前缀错误");
 		return;
@@ -796,12 +827,12 @@ void CodeGenerator::generateCSharpFile(const myVector<MemberInfo>& memberInfoLis
 	fileString += "using System.Collections;\r\n";
 	fileString += "using System.Collections.Generic;\r\n";
 	fileString += "\r\n";
-	fileString += "public partial class " + packetName + " : SocketPacket\r\n";
+	fileString += "public partial class " + packetInfo.mPacketName + " : SocketPacket\r\n";
 	fileString += "{\r\n";
-	uint memberCount = memberInfoList.size();
+	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		fileString += cSharpMemberDeclareString(memberInfoList[i]);
+		fileString += cSharpMemberDeclareString(packetInfo.mMemberList[i]);
 	}
 	if (memberCount > 0)
 	{
@@ -809,14 +840,14 @@ void CodeGenerator::generateCSharpFile(const myVector<MemberInfo>& memberInfoLis
 		fileString += "\t{\r\n";
 		FOR_I(memberCount)
 		{
-			fileString += cSharpPushParamString(memberInfoList[i]);
+			fileString += cSharpPushParamString(packetInfo.mMemberList[i]);
 		}
 		fileString += "\t}\r\n";
 	}
 	fileString += "}";
 	validPath(filePath);
 	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + packetName + "_Declare.cs", fileString);
+	writeFile(filePath + packetInfo.mPacketName + "_Declare.cs", fileString);
 }
 
 MySQLMember CodeGenerator::parseMySQLMemberLine(string line)
@@ -882,9 +913,9 @@ SQLiteMember CodeGenerator::parseSQLiteMemberLine(string line)
 	return memberInfo;
 }
 
-MemberInfo CodeGenerator::parseMemberLine(const string& line)
+PacketMember CodeGenerator::parseMemberLine(const string& line)
 {
-	MemberInfo memberInfo;
+	PacketMember memberInfo;
 	// 数组成员变量
 	if (line.find_first_of('[') != -1)
 	{
@@ -920,7 +951,7 @@ MemberInfo CodeGenerator::parseMemberLine(const string& line)
 		if (memberStrList.size() != 2 && memberStrList.size() != 3)
 		{
 			ERROR("成员变量行错误:" + line);
-			return MemberInfo();
+			return PacketMember();
 		}
 		memberInfo.mTypeName = memberStrList[0];
 		strReplaceAll(memberInfo.mTypeName, "\t", "");
@@ -986,7 +1017,7 @@ string CodeGenerator::nameToUpper(const string& sqliteName)
 	return headerMacro;
 }
 
-string CodeGenerator::cppPushParamString(const MemberInfo& memberInfo)
+string CodeGenerator::cppPushParamString(const PacketMember& memberInfo)
 {
 	string str;
 	if (memberInfo.mIsArray)
@@ -1011,7 +1042,7 @@ string CodeGenerator::cppPushParamString(const MemberInfo& memberInfo)
 	return str;
 }
 
-string CodeGenerator::cppMemberDeclareString(const MemberInfo& memberInfo)
+string CodeGenerator::cppMemberDeclareString(const PacketMember& memberInfo)
 {
 	string str;
 	if (memberInfo.mIsArray)
@@ -1035,7 +1066,7 @@ string CodeGenerator::cppMemberDeclareString(const MemberInfo& memberInfo)
 	return str;
 }
 
-string CodeGenerator::cSharpPushParamString(const MemberInfo& memberInfo)
+string CodeGenerator::cSharpPushParamString(const PacketMember& memberInfo)
 {
 	string str;
 	if (memberInfo.mIsArray)
@@ -1049,7 +1080,7 @@ string CodeGenerator::cSharpPushParamString(const MemberInfo& memberInfo)
 	return str;
 }
 
-string CodeGenerator::cSharpMemberDeclareString(const MemberInfo& memberInfo)
+string CodeGenerator::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = memberInfo.mTypeName;

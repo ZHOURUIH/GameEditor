@@ -3,7 +3,7 @@
 
 #include "Utility.h"
 
-struct MemberInfo
+struct PacketMember
 {
 	bool mIsArray;
 	myVector<string> mArrayLengthMacro;	// 多个常量只能相乘
@@ -14,7 +14,7 @@ struct MemberInfo
 
 struct PacketInfo
 {
-	myVector<MemberInfo> mMemberList;
+	myVector<PacketMember> mMemberList;
 	string mPacketName;
 };
 
@@ -63,24 +63,25 @@ protected:
 	//c++
 	static void generateCppMySQLDataFile(const MySQLInfo& sqliteInfo, string filePath);
 	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
-	static void generateCppPacketHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
+	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
+	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
-	static void generateCppHeaderFile(const myVector<MemberInfo>& memberInfoList, const string& packetName, string filePath);
+	static void generateCppPacketHeaderFile(const PacketInfo& packetName, string filePath);
 	//c#
 	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
-	static void generateCSharpFile(const myVector<MemberInfo>& memberInfoList, const string& packetName, string filePath);
+	static void generateCSharpFile(const PacketInfo& packetName, string filePath);
 	static MySQLMember parseMySQLMemberLine(string line);
 	static SQLiteMember parseSQLiteMemberLine(string line);
-	static MemberInfo parseMemberLine(const string& line);
+	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName);
-	static string cppPushParamString(const MemberInfo& memberInfo);
-	static string cppMemberDeclareString(const MemberInfo& memberInfo);
-	static string cSharpPushParamString(const MemberInfo& memberInfo);
-	static string cSharpMemberDeclareString(const MemberInfo& memberInfo);
+	static string cppPushParamString(const PacketMember& memberInfo);
+	static string cppMemberDeclareString(const PacketMember& memberInfo);
+	static string cSharpPushParamString(const PacketMember& memberInfo);
+	static string cSharpMemberDeclareString(const PacketMember& memberInfo);
 };
 
 #endif
