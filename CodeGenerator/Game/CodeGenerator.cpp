@@ -68,7 +68,13 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 		}
 	}
 	deleteFolder(cppHeaderFilePath);
-	deleteFolder(csFilePath);
+	// c#的只删除代码文件,不删除meta文件
+	myVector<string> csFileList;
+	findFiles(csFilePath, csFileList, ".cs");
+	FOR_VECTOR_CONST(csFileList)
+	{
+		deleteFile(csFileList[i]);
+	}
 	FOR_VECTOR_CONST(packetInfoList)
 	{
 		// 生成代码文件
@@ -173,7 +179,13 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 		}
 	}
 	deleteFolder(cppDataPath);
-	deleteFolder(csDataPath);
+	// c#的只删除代码文件,不删除meta文件
+	myVector<string> csFileList;
+	findFiles(csDataPath, csFileList, ".cs");
+	FOR_VECTOR_CONST(csFileList)
+	{
+		deleteFile(csFileList[i]);
+	}
 	FOR_VECTOR_CONST(sqliteInfoList)
 	{
 		// 生成代码文件
