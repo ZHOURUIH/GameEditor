@@ -50,24 +50,36 @@ struct MySQLMember
 struct MySQLInfo
 {
 	myVector<MySQLMember> mMemberList;
-	string mSQLiteName;
+	string mMySQLName;
 };
 
 class CodeGenerator : public SystemUtility
 {
 public:
-	static void generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath);
+	static void generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath);
 	static void generateSQLiteCode(string cppDataPath, string csDataPath);
-	static void generateMySQLCode(string cppDataPath);
+	static void generateMySQLCode(string cppDataPath, string cppStringDefinePath);
+	static void generateCmdCode(string filePath, string headerPath);
+	static void generateStateCode(string filePath, string headerPath);
+	static void generateSkillCode(string filePath, string headerPath);
 protected:
 	//c++
 	static void generateCppMySQLDataFile(const MySQLInfo& sqliteInfo, string filePath);
 	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
 	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
+	static void generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath);
+	static void generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath);
+	static void generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath);
+	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath);
 	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketHeaderFile(const PacketInfo& packetName, string filePath);
+	static void generateStringDefineCmd(const myVector<string>& cmdList, string filePath);
+	static void generateStringDefineSkill(const myVector<string>& skillList, string filePath);
+	static void generateStringDefineMySQL(const myVector<string>& mysqlList, string filePath);
+	static void generateStringDefineState(const myVector<string>& stateList, string filePath);
+	static void generateStringDefinePacket(const myVector<string>& packetList, string filePath);
 	//c#
 	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
 	static void generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string filePath);

@@ -1,6 +1,6 @@
 #include "CodeGenerator.h"
 
-void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath)
+void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath)
 {
 	// 解析模板文件
 	string fileContent;
@@ -75,6 +75,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	{
 		deleteFile(csFileList[i]);
 	}
+	myVector<string> packetList;
 	FOR_VECTOR_CONST(packetInfoList)
 	{
 		// 生成代码文件
@@ -82,11 +83,13 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 		generateCppPacketHeaderFile(packetInfoList[i], cppHeaderFilePath);
 		// .cs代码
 		generateCSharpFile(packetInfoList[i], csFilePath);
+		packetList.push_back(packetInfoList[i].mPacketName);
 	}
 	// c++
 	generateCppPacketDefineFile(packetInfoList, cppPacketDefineFilePath);
 	generateCppPacketRegisteFile(packetInfoList, cppPacketDefineFilePath);
 	generateCppPacketTotalHeaderFile(packetInfoList, cppPacketDefineFilePath);
+	generateStringDefinePacket(packetList, cppStringDefinePath);
 	// c#
 	generateCSharpPacketDefineFile(packetInfoList, csPacketDefineFilePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csPacketDefineFilePath);
@@ -196,7 +199,7 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 	}
 	// 在上一层目录生成SQLiteHeader.h文件
 	string headerPath = cppDataPath;
-	if (headerPath[headerPath.length() - 1] == '/' || headerPath[headerPath.length() - 1] == '\\')
+	if (endWith(headerPath, "/") || endWith(headerPath, "\\"))
 	{
 		headerPath = headerPath.substr(0, headerPath.length() - 1);
 	}
@@ -213,7 +216,7 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, registerPath);
 }
 
-void CodeGenerator::generateMySQLCode(string cppDataPath)
+void CodeGenerator::generateMySQLCode(string cppDataPath, string cppStringDefinePath)
 {
 	// 解析模板文件
 	string fileContent;
@@ -251,7 +254,7 @@ void CodeGenerator::generateMySQLCode(string cppDataPath)
 		if (line == "{")
 		{
 			packetStart = true;
-			tempInfo.mSQLiteName = lines[i - 1];
+			tempInfo.mMySQLName = lines[i - 1];
 			tempInfo.mMemberList.clear();
 			continue;
 		}
@@ -268,11 +271,73 @@ void CodeGenerator::generateMySQLCode(string cppDataPath)
 		}
 	}
 	deleteFolder(cppDataPath);
+	myVector<string> mysqlList;
 	FOR_VECTOR_CONST(mysqlInfoList)
 	{
 		// 生成代码文件
 		generateCppMySQLDataFile(mysqlInfoList[i], cppDataPath);
+		mysqlList.push_back(mysqlInfoList[i].mMySQLName);
 	}
+	// 上一层目录生成MySQLHeader.h
+	string totalHeaderPath = cppDataPath;
+	if (endWith(totalHeaderPath, "/") || endWith(totalHeaderPath, "\\"))
+	{
+		totalHeaderPath = totalHeaderPath.substr(0, totalHeaderPath.length() - 1);
+	}
+	totalHeaderPath = getFilePath(totalHeaderPath);
+	generateCppMySQLTotalHeaderFile(mysqlInfoList, totalHeaderPath);
+	generateStringDefineMySQL(mysqlList, cppStringDefinePath);
+}
+
+void CodeGenerator::generateCmdCode(string filePath, string headerPath)
+{
+	string cmdFile;
+	openTxtFile("Cmd.txt", cmdFile);
+	if (cmdFile.length() == 0)
+	{
+		ERROR("未找文件Cmd.txt");
+		return;
+	}
+	myVector<string> cmdList;
+	split(cmdFile.c_str(), "\r\n", cmdList);
+	// 生成StringDefineCmd文件
+	generateStringDefineCmd(cmdList, filePath);
+	// 生成CommandHeader.h文件
+	generateCppCmdTotalHeaderFile(cmdList, headerPath);
+}
+
+void CodeGenerator::generateStateCode(string filePath, string headerPath)
+{
+	string stateFile;
+	openTxtFile("State.txt", stateFile);
+	if (stateFile.length() == 0)
+	{
+		ERROR("未找文件State.txt");
+		return;
+	}
+	myVector<string> stateList;
+	split(stateFile.c_str(), "\r\n", stateList);
+	// 生成StringDefineState文件
+	generateStringDefineState(stateList, filePath);
+	// 生成StateHeader.h文件
+	generateCppStateTotalHeaderFile(stateList, headerPath);
+}
+
+void CodeGenerator::generateSkillCode(string filePath, string headerPath)
+{
+	string skillFile;
+	openTxtFile("Skill.txt", skillFile);
+	if (skillFile.length() == 0)
+	{
+		ERROR("未找文件Skill.txt");
+		return;
+	}
+	myVector<string> skillList;
+	split(skillFile.c_str(), "\r\n", skillList);
+	// 生成StringDefineSkill文件
+	generateStringDefineSkill(skillList, filePath);
+	// 生成CharacterSkillHeader.h文件
+	generateCppSkillTotalHeaderFile(skillList, headerPath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -280,8 +345,8 @@ void CodeGenerator::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string 
 {
 	// 头文件
 	string headerFileContent;
-	string className = "MySQLData" + mysqlInfo.mSQLiteName;
-	string headerMacro = "_MYSQL_DATA" + nameToUpper(mysqlInfo.mSQLiteName) + "_H_";
+	string className = "MySQLData" + mysqlInfo.mMySQLName;
+	string headerMacro = "_MYSQL_DATA" + nameToUpper(mysqlInfo.mMySQLName) + "_H_";
 	headerFileContent += "#ifndef " + headerMacro + "\r\n";
 	headerFileContent += "#define " + headerMacro + "\r\n";
 	headerFileContent += "\r\n";
@@ -484,6 +549,94 @@ void CodeGenerator::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>&
 	writeFile(filePath + "SQLiteHeader.h", str0);
 }
 
+// MySQLHeader.h文件
+void CodeGenerator::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath)
+{
+	string str0;
+	str0 += "#ifndef _MYSQL_HEADER_H_\r\n";
+	str0 += "#define _MYSQL_HEADER_H_\r\n";
+	str0 += "\r\n";
+	str0 += "#include \"SQLite.h\"\r\n";
+	uint packetCount = mysqlList.size();
+	FOR_I(packetCount)
+	{
+		str0 += "#include \"MySQLData" + mysqlList[i].mMySQLName + ".h\"\r\n";
+	}
+	str0 += "\r\n";
+	FOR_I(packetCount)
+	{
+		str0 += "#include \"MySQLTable" + mysqlList[i].mMySQLName + ".h\"\r\n";
+	}
+	str0 += "\r\n";
+	str0 += "#endif";
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "MySQLHeader.h", str0);
+}
+
+// CommandHeader.h文件
+void CodeGenerator::generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath)
+{
+	string str0;
+	str0 += "#ifndef _COMMAND_HEADER_H_\r\n";
+	str0 += "#define _COMMAND_HEADER_H_\r\n";
+	str0 += "\r\n";
+	str0 += "#include \"CommandHeaderBase.h\"\r\n";
+	str0 += "\r\n";
+	uint count = cmdList.size();
+	FOR_I(count)
+	{
+		str0 += "#include \"" + cmdList[i] + ".h\"\r\n";
+	}
+	str0 += "\r\n";
+	str0 += "#include \"StringDefine.h\"\r\n";
+	str0 += "\r\n";
+	str0 += "#endif";
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "CommandHeader.h", str0);
+}
+
+void CodeGenerator::generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath)
+{
+	string str0;
+	str0 += "#ifndef _STATE_HEADER_H_\r\n";
+	str0 += "#define _STATE_HEADER_H_\r\n";
+	str0 += "\r\n";
+	uint count = stateList.size();
+	FOR_I(count)
+	{
+		str0 += "#include \"" + stateList[i] + ".h\"\r\n";
+	}
+	str0 += "\r\n";
+	str0 += "#include \"StateInterfaceHeader.h\"\r\n";
+	str0 += "\r\n";
+	str0 += "#endif";
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "StateHeader.h", str0);
+}
+
+void CodeGenerator::generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath)
+{
+	string str0;
+	str0 += "#ifndef _CHARACTER_SKILL_HEADER_H_\r\n";
+	str0 += "#define _CHARACTER_SKILL_HEADER_H_\r\n";
+	str0 += "\r\n";
+	uint count = skillList.size();
+	FOR_I(count)
+	{
+		str0 += "#include \"" + skillList[i] + ".h\"\r\n";
+	}
+	str0 += "\r\n";
+	str0 += "#include \"StateInterfaceHeader.h\"\r\n";
+	str0 += "\r\n";
+	str0 += "#endif";
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "CharacterSkillHeader.h", str0);
+}
+
 // PacketHeader.h和PacketDeclareHeader.h文件
 void CodeGenerator::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath)
 {
@@ -662,6 +815,141 @@ void CodeGenerator::generateCppPacketHeaderFile(const PacketInfo& packetInfo, st
 	validPath(filePath);
 	fileString = ANSIToUTF8(fileString.c_str(), true);
 	writeFile(filePath + packetInfo.mPacketName + "_Declare.h", fileString);
+}
+
+// StringDefineCmd.h和StringDefineCmd.cpp
+void CodeGenerator::generateStringDefineCmd(const myVector<string>& cmdList, string filePath)
+{
+	// 头文件
+	string fileString;
+	uint cmdCount = cmdList.size();
+	FOR_I(cmdCount)
+	{
+		fileString += "DECLARE_STRING(" + cmdList[i] + ");\r\n";
+	}
+	validPath(filePath);
+	fileString = ANSIToUTF8(fileString.c_str(), true);
+	writeFile(filePath + "StringDefineCmd.h", fileString);
+
+	// 源文件
+	string sourceFileString;
+	sourceFileString += "#include \"StringDefine.h\"\r\n";
+	sourceFileString += "#include \"CommandHeader.h\"\r\n";
+	sourceFileString += "\r\n";
+	FOR_I(cmdCount)
+	{
+		sourceFileString += "DEFINE_STRING(" + cmdList[i] + ");\r\n";
+	}
+	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
+	writeFile(filePath + "StringDefineCmd.cpp", sourceFileString);
+}
+
+// StringDefineSkill.h和StringDefineSkill.cpp
+void CodeGenerator::generateStringDefineSkill(const myVector<string>& skillList, string filePath)
+{
+	// 头文件
+	string fileString;
+	uint cmdCount = skillList.size();
+	FOR_I(cmdCount)
+	{
+		fileString += "DECLARE_STRING(" + skillList[i] + ");\r\n";
+	}
+	validPath(filePath);
+	fileString = ANSIToUTF8(fileString.c_str(), true);
+	writeFile(filePath + "StringDefineSkill.h", fileString);
+
+	// 源文件
+	string sourceFileString;
+	sourceFileString += "#include \"StringDefine.h\"\r\n";
+	sourceFileString += "#include \"CharacterSkillHeader.h\"\r\n";
+	sourceFileString += "\r\n";
+	FOR_I(cmdCount)
+	{
+		sourceFileString += "DEFINE_STRING(" + skillList[i] + ");\r\n";
+	}
+	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
+	writeFile(filePath + "StringDefineSkill.cpp", sourceFileString);
+}
+
+// StringDefineMySQL.h和StringDefineMySQL.cpp
+void CodeGenerator::generateStringDefineMySQL(const myVector<string>& mysqlList, string filePath)
+{
+	// 头文件
+	string fileString;
+	uint cmdCount = mysqlList.size();
+	FOR_I(cmdCount)
+	{
+		fileString += "DECLARE_STRING(MySQLData" + mysqlList[i] + ");\r\n";
+	}
+	validPath(filePath);
+	fileString = ANSIToUTF8(fileString.c_str(), true);
+	writeFile(filePath + "StringDefineMySQL.h", fileString);
+
+	// 源文件
+	string sourceFileString;
+	sourceFileString += "#include \"StringDefine.h\"\r\n";
+	sourceFileString += "#include \"MySQLHeader.h\"\r\n";
+	sourceFileString += "\r\n";
+	FOR_I(cmdCount)
+	{
+		sourceFileString += "DEFINE_STRING(MySQLData" + mysqlList[i] + ");\r\n";
+	}
+	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
+	writeFile(filePath + "StringDefineMySQL.cpp", sourceFileString);
+}
+
+// StringDefineState.h和StringDefineState.cpp
+void CodeGenerator::generateStringDefineState(const myVector<string>& stateList, string filePath)
+{
+	// 头文件
+	string fileString;
+	uint cmdCount = stateList.size();
+	FOR_I(cmdCount)
+	{
+		fileString += "DECLARE_STRING(" + stateList[i] + ");\r\n";
+	}
+	validPath(filePath);
+	fileString = ANSIToUTF8(fileString.c_str(), true);
+	writeFile(filePath + "StringDefineState.h", fileString);
+
+	// 源文件
+	string sourceFileString;
+	sourceFileString += "#include \"StringDefine.h\"\r\n";
+	sourceFileString += "#include \"StateHeader.h\"\r\n";
+	sourceFileString += "\r\n";
+	FOR_I(cmdCount)
+	{
+		sourceFileString += "DEFINE_STRING(" + stateList[i] + ");\r\n";
+	}
+	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
+	writeFile(filePath + "StringDefineState.cpp", sourceFileString);
+}
+
+// StringDefinePacket.h和StringDefinePacket.cpp
+void CodeGenerator::generateStringDefinePacket(const myVector<string>& packetList, string filePath)
+{
+	// 头文件
+	string fileString;
+	uint cmdCount = packetList.size();
+	FOR_I(cmdCount)
+	{
+		fileString += "DECLARE_STRING(" + packetList[i] + ");\r\n";
+	}
+	validPath(filePath);
+	fileString = ANSIToUTF8(fileString.c_str(), true);
+	writeFile(filePath + "StringDefinePacket.h", fileString);
+
+	// 源文件
+	string sourceFileString;
+	sourceFileString += "#include \"StringDefine.h\"\r\n";
+	sourceFileString += "#include \"PacketHeader.h\"\r\n";
+	sourceFileString += "\r\n";
+	FOR_I(cmdCount)
+	{
+		sourceFileString += "DEFINE_STRING(" + packetList[i] + ");\r\n";
+	}
+	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
+	writeFile(filePath + "StringDefinePacket.cpp", sourceFileString);
 }
 
 // TDSQLite.cs文件
