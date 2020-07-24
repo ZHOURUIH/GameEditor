@@ -13,11 +13,7 @@ void main()
 	cout << "6.生成状态结构代码" << endl;
 	int input;
 	cin >> input;
-	if (input == 0)
-	{
-		;
-	}
-	else if (input == 1)
+	if (input == 1)
 	{
 		string cppHeaderPath = cppGamePath + "Socket/PacketHeader";
 		string cppPacketDefinePath = cppGamePath + "Socket";
