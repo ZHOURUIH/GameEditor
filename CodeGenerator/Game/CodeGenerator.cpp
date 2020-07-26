@@ -791,7 +791,7 @@ void CodeGenerator::generateCppPacketHeaderFile(const PacketInfo& packetInfo, st
 	uint memberCount = packetInfo.mMemberList.size();
 	if (memberCount != 0)
 	{
-		fileString += "\tvirtual void fillParams()\\\r\n";
+		fileString += "\tvoid fillParams() override\\\r\n";
 		fileString += "\t{\\\r\n";
 		FOR_I(memberCount)
 		{
@@ -801,7 +801,7 @@ void CodeGenerator::generateCppPacketHeaderFile(const PacketInfo& packetInfo, st
 	}
 	else
 	{
-		fileString += "\tvirtual void fillParams(){}\\\r\n";
+		fileString += "\tvoid fillParams() override{}\\\r\n";
 	}
 	// 成员变量的声明
 	fileString += "public:\\\r\n";
