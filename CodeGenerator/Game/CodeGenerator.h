@@ -57,7 +57,7 @@ class CodeGenerator : public SystemUtility
 {
 public:
 	static void generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath);
-	static void generateSQLiteCode(string cppDataPath, string csDataPath);
+	static void generateSQLiteCode(string cppDataPath, string cppTablePath, string csDataPath, string csTablePath);
 	static void generateMySQLCode(string cppDataPath, string cppStringDefinePath);
 	static void generateCmdCode(string filePath, string headerPath);
 	static void generateStateCode(string filePath, string headerPath);
@@ -65,7 +65,7 @@ public:
 protected:
 	//c++
 	static void generateCppMySQLDataFile(const MySQLInfo& sqliteInfo, string filePath);
-	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
+	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath);
 	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
 	static void generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath);
@@ -81,7 +81,7 @@ protected:
 	static void generateStringDefineState(const myVector<string>& stateList, string filePath);
 	static void generateStringDefinePacket(const myVector<string>& packetList, string filePath);
 	//c#
-	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath);
+	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath);
 	static void generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string filePath);
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);

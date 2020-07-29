@@ -95,7 +95,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	generateCSharpPacketRegisteFile(packetInfoList, csPacketDefineFilePath);
 }
 
-void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
+void CodeGenerator::generateSQLiteCode(string cppDataPath, string cppTablePath, string csDataPath, string csTablePath)
 {
 	// 解析模板文件
 	string fileContent;
@@ -181,22 +181,32 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string csDataPath)
 			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line));
 		}
 	}
+	// 删除C++的代码文件
 	deleteFolder(cppDataPath);
-	// c#的只删除代码文件,不删除meta文件
-	myVector<string> csFileList;
-	findFiles(csDataPath, csFileList, ".cs");
-	FOR_VECTOR_CONST(csFileList)
+	deleteFolder(cppTablePath);
+	// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
+	myVector<string> csDataFileList;
+	findFiles(csDataPath, csDataFileList, ".cs");
+	FOR_VECTOR_CONST(csDataFileList)
 	{
-		deleteFile(csFileList[i]);
+		deleteFile(csDataFileList[i]);
 	}
+	myVector<string> csTableFileList;
+	findFiles(csTablePath, csTableFileList, ".cs");
+	FOR_VECTOR_CONST(csTableFileList)
+	{
+		deleteFile(csTableFileList[i]);
+	}
+
+	// 生成代码文件
 	FOR_VECTOR_CONST(sqliteInfoList)
 	{
-		// 生成代码文件
 		// .h代码
-		generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath);
+		generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath, cppTablePath);
 		// .cs代码
-		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataPath);
+		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataPath, csTablePath);
 	}
+
 	// 在上一层目录生成SQLiteHeader.h文件
 	string headerPath = cppDataPath;
 	if (endWith(headerPath, "/") || endWith(headerPath, "\\"))
@@ -459,22 +469,23 @@ void CodeGenerator::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string 
 	writeFile(filePath + className + ".cpp", sourceFileContent);
 }
 
-// TDSQLite.h和TDSQLite.cpp文件
-void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath)
+// TDSQLite.h和TDSQLite.cpp,SQLiteTable.h文件
+void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath)
 {
 	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY)
 	{
 		return;
 	}
+	// TDSQLite.h
 	string headerFileContent;
-	string className = "TD" + sqliteInfo.mSQLiteName;
+	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
 	string headerMacro = "_TD" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
 	headerFileContent += "#ifndef " + headerMacro + "\r\n";
 	headerFileContent += "#define " + headerMacro + "\r\n"; 
 	headerFileContent += "\r\n";
 	headerFileContent += "#include \"SQLiteData.h\"\r\n";
 	headerFileContent += "\r\n";
-	headerFileContent += "class " + className + " : public SQLiteData\r\n";
+	headerFileContent += "class " + dataClassName + " : public SQLiteData\r\n";
 	headerFileContent += "{\r\n";
 	headerFileContent += "public:\r\n";
 	uint memberCount = sqliteInfo.mMemberList.size();
@@ -490,7 +501,7 @@ void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		}
 	}
 	headerFileContent += "public:\r\n";
-	headerFileContent += "\t" + className + "()\r\n";
+	headerFileContent += "\t" + dataClassName + "()\r\n";
 	headerFileContent += "\t{\r\n";
 	FOR_I(memberCount)
 	{
@@ -508,22 +519,44 @@ void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	headerFileContent += "\r\n";
 	headerFileContent += "#endif";
 
+	// TDSQLite.cpp
 	string sourceFileContent;
-	sourceFileContent += "#include \"" + className + ".h\"\r\n";
+	sourceFileContent += "#include \"" + dataClassName + ".h\"\r\n";
 	sourceFileContent += "\r\n";
 	FOR_I(memberCount)
 	{
-		sourceFileContent += "COL_DEFINE(" + className + ", " + sqliteInfo.mMemberList[i].mMemberName + ");";
+		sourceFileContent += "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");";
 		if (i != memberCount - 1)
 		{
 			sourceFileContent += "\r\n";
 		}
 	}
-	validPath(filePath);
+	validPath(dataFilePath);
 	headerFileContent = ANSIToUTF8(headerFileContent.c_str(), true);
 	sourceFileContent = ANSIToUTF8(sourceFileContent.c_str(), true);
-	writeFile(filePath + className + ".h", headerFileContent);
-	writeFile(filePath + className + ".cpp", sourceFileContent);
+	writeFile(dataFilePath + dataClassName + ".h", headerFileContent);
+	writeFile(dataFilePath + dataClassName + ".cpp", sourceFileContent);
+
+	// SQLiteTable.h
+	string tableFileContent;
+	string tableHeaderMarco = "_SQLITE" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
+	tableFileContent += "#ifndef " + tableHeaderMarco + "\r\n";
+	tableFileContent += "#define " + tableHeaderMarco + "\r\n";
+	tableFileContent += "\r\n";
+	tableFileContent += "#include \"" + dataClassName + ".h\"\r\n";
+	tableFileContent += "\r\n";
+	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
+	tableFileContent += "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">\r\n";
+	tableFileContent += "{\r\n";
+	tableFileContent += "public:\r\n";
+	tableFileContent += "\t" + tableClassName + "(const char* tableName, ISQLite* sqlite)\r\n";
+	tableFileContent += "\t\t:SQLiteTable(tableName, sqlite) {}\r\n";
+	tableFileContent += "};\r\n";
+	tableFileContent += "\r\n";
+	tableFileContent += "#endif";
+	validPath(tableFilePath);
+	tableFileContent = ANSIToUTF8(tableFileContent.c_str(), true);
+	writeFile(tableFilePath + tableClassName + ".h", tableFileContent);
 }
 
 // SQLiteHeader.h文件
@@ -952,21 +985,22 @@ void CodeGenerator::generateStringDefinePacket(const myVector<string>& packetLis
 	writeFile(filePath + "StringDefinePacket.cpp", sourceFileString);
 }
 
-// TDSQLite.cs文件
-void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string filePath)
+// TDSQLite.cs和SQLiteTable.cs文件
+void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath)
 {
 	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
 	{
 		return;
 	}
+	// TDSQLite.cs文件
 	string fileContent;
-	string className = "TD" + sqliteInfo.mSQLiteName;
+	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
 	fileContent += "using Mono.Data.Sqlite;\r\n";
 	fileContent += "using System;\r\n";
 	fileContent += "using System.Collections.Generic;\r\n";
 	fileContent += "using UnityEngine;\r\n";
 	fileContent += "\r\n";
-	fileContent += "public class " + className + " : TableData\r\n";
+	fileContent += "public class " + dataClassName + " : TableData\r\n";
 	fileContent += "{\r\n";
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -1025,9 +1059,29 @@ void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, s
 	}
 	fileContent += "\t}\r\n";
 	fileContent += "}";
-	validPath(filePath);
+	validPath(dataFilePath);
 	fileContent = ANSIToUTF8(fileContent.c_str(), true);
-	writeFile(filePath + className + ".cs", fileContent);
+	writeFile(dataFilePath + dataClassName + ".cs", fileContent);
+
+	// SQLiteTable.cs文件
+	string tableFileContent;
+	tableFileContent += "using System;\r\n";
+	tableFileContent += "using System.Collections.Generic;\r\n";
+	tableFileContent += "\r\n";
+	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
+	tableFileContent += "public partial class " + tableClassName + " : SQLiteTable\r\n";
+	tableFileContent += "{\r\n";
+	tableFileContent += "\tpublic " + tableClassName + "()\r\n";
+	tableFileContent += "\t\t:base(typeof(" + dataClassName + ")) {}\r\n";
+	tableFileContent += "\tpublic override void linkTable()\r\n";
+	tableFileContent += "\t{\r\n";
+	tableFileContent += "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成\r\n";
+	tableFileContent += "\t\t" + dataClassName + ".link(this);\r\n";
+	tableFileContent += "\t}\r\n";
+	tableFileContent += "}\r\n";
+	validPath(tableFilePath);
+	tableFileContent = ANSIToUTF8(tableFileContent.c_str(), true);
+	writeFile(tableFilePath + tableClassName + ".cs", tableFileContent);
 }
 
 // SQLiteRegister.cs文件

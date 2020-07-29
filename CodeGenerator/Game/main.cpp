@@ -25,8 +25,10 @@ void main()
 	else if (input == 2)
 	{
 		string cppDataPath = cppGamePath + "DataBase/SQLite/Data";
-		string csDataPath = csGamePath + "DataBase/SQLite/SQLiteData";
-		CodeGenerator::generateSQLiteCode(cppDataPath, csDataPath);
+		string cppTablePath = cppGamePath + "DataBase/SQLite/Table";
+		string csDataPath = csGamePath + "DataBase/SQLite/Data";
+		string csTablePath = csGamePath + "DataBase/SQLite/Table";
+		CodeGenerator::generateSQLiteCode(cppDataPath, cppTablePath, csDataPath, csTablePath);
 	}
 	else if (input == 3)
 	{
