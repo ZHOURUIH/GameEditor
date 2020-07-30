@@ -215,6 +215,7 @@ void CodeGenerator::generateSQLiteCode(string cppDataPath, string cppTablePath, 
 	}
 	headerPath = getFilePath(headerPath);
 	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
+	generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
 
 	// 在上一层目录生成SQLiteRegister.cs文件
 	string registerPath = csDataPath;
@@ -296,6 +297,7 @@ void CodeGenerator::generateMySQLCode(string cppDataPath, string cppStringDefine
 	}
 	totalHeaderPath = getFilePath(totalHeaderPath);
 	generateCppMySQLTotalHeaderFile(mysqlInfoList, totalHeaderPath);
+	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
 	generateStringDefineMySQL(mysqlList, cppStringDefinePath);
 }
 
@@ -354,65 +356,65 @@ void CodeGenerator::generateSkillCode(string filePath, string headerPath)
 void CodeGenerator::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string filePath)
 {
 	// 头文件
-	string headerFileContent;
-	string className = "MySQLData" + mysqlInfo.mMySQLName;
-	string headerMacro = "_MYSQL_DATA" + nameToUpper(mysqlInfo.mMySQLName) + "_H_";
-	headerFileContent += "#ifndef " + headerMacro + "\r\n";
-	headerFileContent += "#define " + headerMacro + "\r\n";
-	headerFileContent += "\r\n";
-	headerFileContent += "#include \"MySQLData.h\"\r\n";
-	headerFileContent += "\r\n";
-	headerFileContent += "class MySQLTable;\r\n";
-	headerFileContent += "class " + className + " : public MySQLData\r\n";
-	headerFileContent += "{\r\n";
-	headerFileContent += "public:\r\n";
+	string header;
+	string className = "MD" + mysqlInfo.mMySQLName;
+	string headerMacro = "_MD" + nameToUpper(mysqlInfo.mMySQLName) + "_H_";
+	line(header, "#ifndef " + headerMacro);
+	line(header, "#define " + headerMacro);
+	line(header, "");
+	line(header, "#include \"MySQLData.h\"");
+	line(header, "");
+	line(header, "class MySQLTable;");
+	line(header, "class " + className + " : public MySQLData");
+	line(header, "{");
+	line(header, "public:");
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		headerFileContent += "\tCOL(" + mysqlInfo.mMemberList[i].mTypeName + ", " + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+		line(header, "\tCOL(" + mysqlInfo.mMemberList[i].mTypeName + ", " + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
-	headerFileContent += "public:\r\n";
-	headerFileContent += "\tstatic void fillColName(MySQLTable* table);\r\n";
-	headerFileContent += "\tvoid resultRowToTableData(myMap<const char*, char*>& resultRow) override;\r\n";
-	headerFileContent += "\tvoid paramList(char* params, uint size) override;\r\n";
-	headerFileContent += "\tvoid resetProperty() override;\r\n";
-	headerFileContent += "};\r\n";
-	headerFileContent += "\r\n";
-	headerFileContent += "#endif";
+	line(header, "public:");
+	line(header, "\tstatic void fillColName(MySQLTable* table);");
+	line(header, "\tvoid resultRowToTableData(myMap<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid paramList(char* params, uint size) override;");
+	line(header, "\tvoid resetProperty() override;");
+	line(header, "};");
+	line(header, "");
+	line(header, "#endif", false);
 
 	// 源文件
-	string sourceFileContent;
-	sourceFileContent += "#include \"" + className + ".h\"\r\n";
-	sourceFileContent += "#include \"Utility.h\"\r\n";
-	sourceFileContent += "#include \"MySQLTable.h\"\r\n";
-	sourceFileContent += "\r\n";
+	string source;
+	line(source, "#include \"" + className + ".h\"");
+	line(source, "#include \"Utility.h\"");
+	line(source, "#include \"MySQLTable.h\"");
+	line(source, "");
 	// 字段静态变量定义
 	FOR_I(memberCount)
 	{
-		sourceFileContent += "COL_DEFINE(" + className + ", " + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+		line(source, "COL_DEFINE(" + className + ", " + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
 	// fillColName函数
-	sourceFileContent += "\r\n";
-	sourceFileContent += "void " + className + "::fillColName(MySQLTable* table)\r\n";
-	sourceFileContent += "{\r\n";
+	line(source, "");
+	line(source, "void " + className + "::fillColName(MySQLTable* table)");
+	line(source, "{");
 	FOR_I(memberCount)
 	{
-		sourceFileContent += "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+		line(source, "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
-	sourceFileContent += "}\r\n";
-	sourceFileContent += "\r\n";
+	line(source, "}");
+	line(source, "");
 	// resultRowToTableData函数
-	sourceFileContent += "void " + className + "::resultRowToTableData(myMap<const char*, char*>& resultRow)\r\n";
-	sourceFileContent += "{\r\n";
+	line(source, "void " + className + "::resultRowToTableData(myMap<const char*, char*>& resultRow)");
+	line(source, "{");
 	FOR_I(memberCount)
 	{
-		sourceFileContent += "\tPARSE(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+		line(source, "\tPARSE(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
-	sourceFileContent += "}\r\n";
-	sourceFileContent += "\r\n";
+	line(source, "}");
+	line(source, "");
 	// paramList函数
-	sourceFileContent += "void " + className + "::paramList(char* params, uint size)\r\n";
-	sourceFileContent += "{\r\n";
+	line(source, "void " + className + "::paramList(char* params, uint size)");
+	line(source, "{");
 	FOR_I(memberCount)
 	{
 		if (i != memberCount - 1)
@@ -420,11 +422,11 @@ void CodeGenerator::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string 
 			if (mysqlInfo.mMemberList[i].mTypeName == "string")
 			{
 				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
-				sourceFileContent += "\tAPPEND_STRING(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");\r\n";
+				line(source, "\tAPPEND_STRING(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");");
 			}
 			else
 			{
-				sourceFileContent += "\tAPPEND_VALUE(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+				line(source, "\tAPPEND_VALUE(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 			}
 		}
 		else
@@ -432,41 +434,41 @@ void CodeGenerator::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string 
 			if (mysqlInfo.mMemberList[i].mTypeName == "string")
 			{
 				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
-				sourceFileContent += "\tAPPEND_STRING_END(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");\r\n";
+				line(source, "\tAPPEND_STRING_END(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");");
 			}
 			else
 			{
-				sourceFileContent += "\tAPPEND_VALUE_END(" + mysqlInfo.mMemberList[i].mMemberName + ");\r\n";
+				line(source, "\tAPPEND_VALUE_END(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 			}
 		}
 	}
-	sourceFileContent += "}\r\n";
-	sourceFileContent += "\r\n";
+	line(source, "}");
+	line(source, "");
 	// resetProperty函数
-	sourceFileContent += "void " + className + "::resetProperty()\r\n";
-	sourceFileContent += "{\r\n";
-	sourceFileContent += "\tMySQLData::resetProperty();\r\n";
+	line(source, "void " + className + "::resetProperty()");
+	line(source, "{");
+	line(source, "\tMySQLData::resetProperty();");
 	FOR_I(memberCount)
 	{
 		if (mysqlInfo.mMemberList[i].mTypeName == "string")
 		{
-			sourceFileContent += "\tm" + mysqlInfo.mMemberList[i].mMemberName + ".clear();\r\n";
+			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + ".clear();");
 		}
 		else if (mysqlInfo.mMemberList[i].mTypeName == "float")
 		{
-			sourceFileContent += "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0.0f;\r\n";
+			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0.0f;");
 		}
 		else
 		{
-			sourceFileContent += "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0;\r\n";
+			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0;");
 		}
 	}
-	sourceFileContent += "}";
+	line(source, "}", false);
 	validPath(filePath);
-	headerFileContent = ANSIToUTF8(headerFileContent.c_str(), true);
-	sourceFileContent = ANSIToUTF8(sourceFileContent.c_str(), true);
-	writeFile(filePath + className + ".h", headerFileContent);
-	writeFile(filePath + className + ".cpp", sourceFileContent);
+	header = ANSIToUTF8(header.c_str(), true);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(filePath + className + ".h", header);
+	writeFile(filePath + className + ".cpp", source);
 }
 
 // TDSQLite.h和TDSQLite.cpp,SQLiteTable.h文件
@@ -477,194 +479,278 @@ void CodeGenerator::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		return;
 	}
 	// TDSQLite.h
-	string headerFileContent;
+	string header;
 	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
 	string headerMacro = "_TD" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
-	headerFileContent += "#ifndef " + headerMacro + "\r\n";
-	headerFileContent += "#define " + headerMacro + "\r\n"; 
-	headerFileContent += "\r\n";
-	headerFileContent += "#include \"SQLiteData.h\"\r\n";
-	headerFileContent += "\r\n";
-	headerFileContent += "class " + dataClassName + " : public SQLiteData\r\n";
-	headerFileContent += "{\r\n";
-	headerFileContent += "public:\r\n";
+	line(header, "#ifndef " + headerMacro);
+	line(header, "#define " + headerMacro);
+	line(header, "");
+	line(header, "#include \"SQLiteData.h\"");
+	line(header, "");
+	line(header, "class " + dataClassName + " : public SQLiteData");
+	line(header, "{");
+	line(header, "public:");
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
 		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
 		{
-			headerFileContent += "\tCOL_EMPTY(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+			line(header, "\tCOL_EMPTY(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 		}
 		else
 		{
-			headerFileContent += "\tCOL(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+			line(header, "\tCOL(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 		}
 	}
-	headerFileContent += "public:\r\n";
-	headerFileContent += "\t" + dataClassName + "()\r\n";
-	headerFileContent += "\t{\r\n";
+	line(header, "public:");
+	line(header, "\t" + dataClassName + "()");
+	line(header, "\t{");
 	FOR_I(memberCount)
 	{
 		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
 		{
-			headerFileContent += "\t\tREGISTE_PARAM_EMPTY(" + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+			line(header, "\t\tREGISTE_PARAM_EMPTY(" + sqliteInfo.mMemberList[i].mMemberName + ");");
 		}
 		else
 		{
-			headerFileContent += "\t\tREGISTE_PARAM(" + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+			line(header, "\t\tREGISTE_PARAM(" + sqliteInfo.mMemberList[i].mMemberName + ");");
 		}
 	}
-	headerFileContent += "\t}\r\n";
-	headerFileContent += "};\r\n";
-	headerFileContent += "\r\n";
-	headerFileContent += "#endif";
+	line(header, "\t}");
+	line(header, "};");
+	line(header, "");
+	line(header, "#endif", false);
 
 	// TDSQLite.cpp
-	string sourceFileContent;
-	sourceFileContent += "#include \"" + dataClassName + ".h\"\r\n";
-	sourceFileContent += "\r\n";
+	string source;
+	line(source, "#include \"" + dataClassName + ".h\"");
+	line(source, "");
 	FOR_I(memberCount)
 	{
-		sourceFileContent += "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");";
-		if (i != memberCount - 1)
-		{
-			sourceFileContent += "\r\n";
-		}
+		line(source, "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 	validPath(dataFilePath);
-	headerFileContent = ANSIToUTF8(headerFileContent.c_str(), true);
-	sourceFileContent = ANSIToUTF8(sourceFileContent.c_str(), true);
-	writeFile(dataFilePath + dataClassName + ".h", headerFileContent);
-	writeFile(dataFilePath + dataClassName + ".cpp", sourceFileContent);
+	header = ANSIToUTF8(header.c_str(), true);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(dataFilePath + dataClassName + ".h", header);
+	writeFile(dataFilePath + dataClassName + ".cpp", source);
 
 	// SQLiteTable.h
-	string tableFileContent;
+	string table;
 	string tableHeaderMarco = "_SQLITE" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
-	tableFileContent += "#ifndef " + tableHeaderMarco + "\r\n";
-	tableFileContent += "#define " + tableHeaderMarco + "\r\n";
-	tableFileContent += "\r\n";
-	tableFileContent += "#include \"" + dataClassName + ".h\"\r\n";
-	tableFileContent += "\r\n";
+	line(table, "#ifndef " + tableHeaderMarco);
+	line(table, "#define " + tableHeaderMarco);
+	line(table, "");
+	line(table, "#include \"" + dataClassName + ".h\"");
+	line(table, "");
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
-	tableFileContent += "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">\r\n";
-	tableFileContent += "{\r\n";
-	tableFileContent += "public:\r\n";
-	tableFileContent += "\t" + tableClassName + "(const char* tableName, ISQLite* sqlite)\r\n";
-	tableFileContent += "\t\t:SQLiteTable(tableName, sqlite) {}\r\n";
-	tableFileContent += "};\r\n";
-	tableFileContent += "\r\n";
-	tableFileContent += "#endif";
+	line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
+	line(table, "{");
+	line(table, "public:");
+	line(table, "\t" + tableClassName + "(const char* tableName, ISQLite* sqlite)");
+	line(table, "\t\t:SQLiteTable(tableName, sqlite) {}");
+	line(table, "};");
+	line(table, "");
+	line(table, "#endif", false);
 	validPath(tableFilePath);
-	tableFileContent = ANSIToUTF8(tableFileContent.c_str(), true);
-	writeFile(tableFilePath + tableClassName + ".h", tableFileContent);
+	table = ANSIToUTF8(table.c_str(), true);
+	writeFile(tableFilePath + tableClassName + ".h", table);
 }
 
 // SQLiteHeader.h文件
 void CodeGenerator::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath)
 {
 	string str0;
-	str0 += "#ifndef _SQLITE_HEADER_H_\r\n";
-	str0 += "#define _SQLITE_HEADER_H_\r\n";
-	str0 += "\r\n";
-	str0 += "#include \"SQLite.h\"\r\n";
+	line(str0, "#ifndef _SQLITE_HEADER_H_");
+	line(str0, "#define _SQLITE_HEADER_H_");
+	line(str0, "");
+	line(str0, "#include \"SQLite.h\"");
 	uint packetCount = sqliteList.size();
 	FOR_I(packetCount)
 	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
 		{
-			str0 += "#include \"SQLite" + sqliteList[i].mSQLiteName + ".h\"\r\n";
+			continue;
 		}
+		line(str0, "#include \"SQLite" + sqliteList[i].mSQLiteName + ".h\"");
 	}
-	str0 += "\r\n";
-	str0 += "#endif";
+	line(str0, "");
+	line(str0, "#endif", false);
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "SQLiteHeader.h", str0);
+}
+
+// SQLiteRegister.h和SQLiteRegister.cpp文件
+void CodeGenerator::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, string filePath)
+{
+	// MySQLRegiste.h
+	string str0;
+	line(str0, "#ifndef _SQLITE_REGISTER_H_");
+	line(str0, "#define _SQLITE_REGISTER_H_");
+	line(str0, "");
+	line(str0, "#include \"GameBase.h\"");
+	line(str0, "");
+	line(str0, "class SQLiteRegister : public GameBase");
+	line(str0, "{");
+	line(str0, "public:");
+	line(str0, "\tstatic void registeAll();");
+	line(str0, "};");
+	line(str0, "");
+	line(str0, "#endif", false);
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "SQLiteRegister.h", str0);
+
+	string str1;
+	line(str1, "#include \"SQLiteRegister.h\"");
+	line(str1, "#include \"SQLiteManager.h\"");
+	line(str1, "#include \"GameDefine.h\"");
+	line(str1, "#include \"SQLiteHeader.h\"");
+	line(str1, "");
+	line(str1, "#define REGISTE_SQLITE(classType, tableName) m##classType = NEW(classType, m##classType, tableName, sqlite);sqlite->addTable(m##classType);");
+	line(str1, "");
+	line(str1, "void SQLiteRegister::registeAll()");
+	line(str1, "{");
+	line(str1, "\tSQLite* sqlite = mSQLiteManager->createSQLite(GameDefine::SQLITE_DATA_BASE);");
+	uint count = sqliteList.size();
+	FOR_I(count)
+	{
+		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		{
+			continue;
+		}
+		line(str1, "\tREGISTE_SQLITE(SQLite" + sqliteList[i].mSQLiteName + ", \"" + sqliteList[i].mSQLiteName + "\");");
+	}
+	line(str1, "}", false);
+	str1 = ANSIToUTF8(str1.c_str(), true);
+	writeFile(filePath + "SQLiteRegister.cpp", str1);
 }
 
 // MySQLHeader.h文件
 void CodeGenerator::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath)
 {
 	string str0;
-	str0 += "#ifndef _MYSQL_HEADER_H_\r\n";
-	str0 += "#define _MYSQL_HEADER_H_\r\n";
-	str0 += "\r\n";
-	str0 += "#include \"SQLite.h\"\r\n";
+	line(str0, "#ifndef _MYSQL_HEADER_H_");
+	line(str0, "#define _MYSQL_HEADER_H_");
+	line(str0, "");
 	uint packetCount = mysqlList.size();
 	FOR_I(packetCount)
 	{
-		str0 += "#include \"MySQLData" + mysqlList[i].mMySQLName + ".h\"\r\n";
+		line(str0, "#include \"MD" + mysqlList[i].mMySQLName + ".h\"");
 	}
-	str0 += "\r\n";
+	line(str0, "");
 	FOR_I(packetCount)
 	{
-		str0 += "#include \"MySQLTable" + mysqlList[i].mMySQLName + ".h\"\r\n";
+		line(str0, "#include \"MySQL" + mysqlList[i].mMySQLName + ".h\"");
 	}
-	str0 += "\r\n";
-	str0 += "#endif";
+	line(str0, "");
+	line(str0, "#endif", false);
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "MySQLHeader.h", str0);
+}
+
+// MySQLRegiste.h和MySQLRegiste.cpp文件
+void CodeGenerator::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, string filePath)
+{
+	// MySQLRegiste.h
+	string str0;
+	line(str0, "#ifndef _MYSQL_REGISTER_H_");
+	line(str0, "#define _MYSQL_REGISTER_H_");
+	line(str0, "");
+	line(str0, "#include \"GameBase.h\"");
+	line(str0, "");
+	line(str0, "class MySQLRegister : public GameBase");
+	line(str0, "{");
+	line(str0, "public:");
+	line(str0, "\tstatic void registeAll();");
+	line(str0, "};");
+	line(str0, "");
+	line(str0, "#endif", false);
+	validPath(filePath);
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "MySQLRegister.h", str0);
+
+	string str1;
+	line(str1, "#include \"MySQLRegister.h\"");
+	line(str1, "#include \"MySQLDataBase.h\"");
+	line(str1, "#include \"MySQLHeader.h\"");
+	line(str1, "");
+	line(str1, "#define REGISTE_MYSQL(classType, tableName) m##classType = mMySQLDataBase->registeTable<classType>(tableName);");
+	line(str1, "");
+	line(str1, "void MySQLRegister::registeAll()");
+	line(str1, "{");
+	uint count = mysqlList.size();
+	FOR_I(count)
+	{
+		line(str1, "\tREGISTE_MYSQL(MySQL" + mysqlList[i].mMySQLName + ", \"" + mysqlList[i].mMySQLName + "\");");
+	}
+	line(str1, "}", false);
+	str1 = ANSIToUTF8(str1.c_str(), true);
+	writeFile(filePath + "MySQLRegister.cpp", str1);
 }
 
 // CommandHeader.h文件
 void CodeGenerator::generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath)
 {
 	string str0;
-	str0 += "#ifndef _COMMAND_HEADER_H_\r\n";
-	str0 += "#define _COMMAND_HEADER_H_\r\n";
-	str0 += "\r\n";
-	str0 += "#include \"CommandHeaderBase.h\"\r\n";
-	str0 += "\r\n";
+	line(str0, "#ifndef _COMMAND_HEADER_H_");
+	line(str0, "#define _COMMAND_HEADER_H_");
+	line(str0, "");
+	line(str0, "#include \"CommandHeaderBase.h\"");
+	line(str0, "");
 	uint count = cmdList.size();
 	FOR_I(count)
 	{
-		str0 += "#include \"" + cmdList[i] + ".h\"\r\n";
+		line(str0, "#include \"" + cmdList[i] + ".h\"");
 	}
-	str0 += "\r\n";
-	str0 += "#include \"StringDefine.h\"\r\n";
-	str0 += "\r\n";
-	str0 += "#endif";
+	line(str0, "");
+	line(str0, "#include \"StringDefine.h\"");
+	line(str0, "");
+	line(str0, "#endif", false);
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "CommandHeader.h", str0);
 }
 
+// StateHeader.h
 void CodeGenerator::generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath)
 {
 	string str0;
-	str0 += "#ifndef _STATE_HEADER_H_\r\n";
-	str0 += "#define _STATE_HEADER_H_\r\n";
-	str0 += "\r\n";
+	line(str0, "#ifndef _STATE_HEADER_H_");
+	line(str0, "#define _STATE_HEADER_H_");
+	line(str0, "");
 	uint count = stateList.size();
 	FOR_I(count)
 	{
-		str0 += "#include \"" + stateList[i] + ".h\"\r\n";
+		line(str0, "#include \"" + stateList[i] + ".h\"");
 	}
-	str0 += "\r\n";
-	str0 += "#include \"StateInterfaceHeader.h\"\r\n";
-	str0 += "\r\n";
-	str0 += "#endif";
+	line(str0, "");
+	line(str0, "#include \"StateInterfaceHeader.h\"");
+	line(str0, "");
+	line(str0, "#endif", false);
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "StateHeader.h", str0);
 }
 
+// CharacterSkillHeader.h
 void CodeGenerator::generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath)
 {
 	string str0;
-	str0 += "#ifndef _CHARACTER_SKILL_HEADER_H_\r\n";
-	str0 += "#define _CHARACTER_SKILL_HEADER_H_\r\n";
-	str0 += "\r\n";
+	line(str0, "#ifndef _CHARACTER_SKILL_HEADER_H_");
+	line(str0, "#define _CHARACTER_SKILL_HEADER_H_");
+	line(str0, "");
 	uint count = skillList.size();
 	FOR_I(count)
 	{
-		str0 += "#include \"" + skillList[i] + ".h\"\r\n";
+		line(str0, "#include \"" + skillList[i] + ".h\"");
 	}
-	str0 += "\r\n";
-	str0 += "#include \"StateInterfaceHeader.h\"\r\n";
-	str0 += "\r\n";
-	str0 += "#endif";
+	line(str0, "");
+	line(str0, "#include \"StateInterfaceHeader.h\"");
+	line(str0, "");
+	line(str0, "#endif", false);
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "CharacterSkillHeader.h", str0);
@@ -675,54 +761,54 @@ void CodeGenerator::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>&
 {
 	// PacketHeader.h
 	string str0;
-	str0 += "#ifndef _PACKET_HEADER_H_\r\n";
-	str0 += "#define _PACKET_HEADER_H_\r\n";
-	str0 += "\r\n";
+	line(str0, "#ifndef _PACKET_HEADER_H_");
+	line(str0, "#define _PACKET_HEADER_H_");
+	line(str0, "");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			str0 += "#include \"" + packetList[i].mPacketName + ".h\"\r\n";
+			line(str0, "#include \"" + packetList[i].mPacketName + ".h\"");
 		}
 	}
-	str0 += "\r\n";
+	line(str0, "");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			str0 += "#include \"" + packetList[i].mPacketName + ".h\"\r\n";
+			line(str0, "#include \"" + packetList[i].mPacketName + ".h\"");
 		}
 	}
-	str0 += "#include \"StringDefine.h\"\r\n";
-	str0 += "\r\n";
-	str0 += "#endif";
+	line(str0, "#include \"StringDefine.h\"");
+	line(str0, "");
+	line(str0, "#endif", false);
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "PacketHeader.h", str0);
 
 	// PacketDeclareHeader.h
 	string str1;
-	str1 += "#ifndef _PACKET_DECLARE_HEADER_H_\r\n";
-	str1 += "#define _PACKET_DECLARE_HEADER_H_\r\n";
-	str1 += "\r\n";
+	line(str1, "#ifndef _PACKET_DECLARE_HEADER_H_");
+	line(str1, "#define _PACKET_DECLARE_HEADER_H_");
+	line(str1, "");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			str1 += "#include \"" + packetList[i].mPacketName + "_Declare.h\"\r\n";
+			line(str1, "#include \"" + packetList[i].mPacketName + "_Declare.h\"");
 		}
 	}
-	str1 += "\r\n";
+	line(str1, "");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			str1 += "#include \"" + packetList[i].mPacketName + "_Declare.h\"\r\n";
+			line(str1, "#include \"" + packetList[i].mPacketName + "_Declare.h\"");
 		}
 	}
-	str1 += "\r\n";
-	str1 += "#endif";
+	line(str1, "");
+	line(str1, "#endif", false);
 	validPath(filePath);
 	str1 = ANSIToUTF8(str1.c_str(), true);
 	writeFile(filePath + "PacketDeclareHeader.h", str1);
@@ -732,39 +818,38 @@ void CodeGenerator::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>&
 void CodeGenerator::generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath)
 {
 	string str;
-	str += "#ifndef _PACKET_DEFINE_H_\r\n";
-	str += "#define _PACKET_DEFINE_H_\r\n";
-	str += "\r\n";
-	str += "#include \"ServerDefine.h\"\r\n";
-	str += "\r\n";
-	str += "enum class PACKET_TYPE : ushort\r\n";
-	str += "{\r\n";
-	str += "\tMIN,\r\n";
-	str += "\r\n";
-	str += "\tCS_MIN = 10000,\r\n";
+	line(str, "#ifndef _PACKET_DEFINE_H_");
+	line(str, "#define _PACKET_DEFINE_H_");
+	line(str, "");
+	line(str, "#include \"ServerDefine.h\"");
+	line(str, "");
+	line(str, "enum class PACKET_TYPE : ushort");
+	line(str, "{");
+	line(str, "\tMIN,");
+	line(str, "");
+	line(str, "\tCS_MIN = 10000,");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			str += "\t" + packetNameToUpper(packetList[i].mPacketName) + ",\r\n";
+			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	str += "\tCS_MAX,\r\n";
-
-	str += "\r\n";
-	str += "\tSC_MIN = 20000,\r\n";
+	line(str, "\tCS_MAX,");
+	line(str, "");
+	line(str, "\tSC_MIN = 20000,");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			str += "\t" + packetNameToUpper(packetList[i].mPacketName) + ",\r\n";
+			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	str += "\tSC_MAX,\r\n";
-	str += "};\r\n";
-	str += "\r\n";
-	str += "#endif";
+	line(str, "\tSC_MAX,");
+	line(str, "};");
+	line(str, "");
+	line(str, "#endif", false);
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketDefine.h", str);
@@ -774,215 +859,215 @@ void CodeGenerator::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 void CodeGenerator::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath)
 {
 	string str;
-	str += "#include \"PacketHeader.h\"\r\n";
-	str += "#include \"GameLog.h\"\r\n";
-	str += "#include \"NetServer.h\"\r\n";
-	str += "#include \"PacketFactoryManager.h\"\r\n";
-	str += "#include \"PacketRegister.h\"\r\n";
-	str += "\r\n";
-	str += "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(PACKET_TYPE::type, NAME(packet));\r\n";
-	str += "\r\n";
-	str += "void PacketRegister::registeAllPacket()\r\n";
-	str += "{\r\n";
-	str += "\tuint preCount = mPacketFactoryManager->getFactoryCount();\r\n";
+	line(str, "#include \"PacketHeader.h\"");
+	line(str, "#include \"GameLog.h\"");
+	line(str, "#include \"NetServer.h\"");
+	line(str, "#include \"PacketFactoryManager.h\"");
+	line(str, "#include \"PacketRegister.h\"");
+	line(str, "");
+	line(str, "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(PACKET_TYPE::type, NAME(packet));");
+	line(str, "");
+	line(str, "void PacketRegister::registeAll()");
+	line(str, "{");
+	line(str, "\tuint preCount = mPacketFactoryManager->getFactoryCount();");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			str += "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", " + packetNameToUpper(packetList[i].mPacketName) + ");\r\n";
+			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", " + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	str += "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::CS_MAX - (int)PACKET_TYPE::CS_MIN - 1, \"CS\");\r\n";
-	str += "\r\n";
-	str += "\tpreCount = mPacketFactoryManager->getFactoryCount();\r\n";
+	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::CS_MAX - (int)PACKET_TYPE::CS_MIN - 1, \"CS\");");
+	line(str, "");
+	line(str, "\tpreCount = mPacketFactoryManager->getFactoryCount();");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			str += "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", " + packetNameToUpper(packetList[i].mPacketName) + ");\r\n";
+			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", " + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	str += "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::SC_MAX - (int)PACKET_TYPE::SC_MIN - 1, \"SC\");\r\n";
-	str += "};\r\n";
+	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::SC_MAX - (int)PACKET_TYPE::SC_MIN - 1, \"SC\");");
+	line(str, "};");
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketRegister.cpp", str);
 }
 
-// _Declare.h文件
+// Packet_Declare.h文件
 void CodeGenerator::generateCppPacketHeaderFile(const PacketInfo& packetInfo, string filePath)
 {
 	string headerMacro = "_" + packetNameToUpper(packetInfo.mPacketName) + "_DECLARE_H_";
-	string fileString;
-	fileString += "#ifndef " + headerMacro + "\r\n";
-	fileString += "#define " + headerMacro + "\r\n";
-	fileString += "\r\n";
-	fileString += "#define " + packetInfo.mPacketName + "_Declare \\\r\n";
-	fileString += "public:\\\r\n";
+	string file;
+	line(file, "#ifndef " + headerMacro);
+	line(file, "#define " + headerMacro);
+	line(file, "");
+	line(file, "#define " + packetInfo.mPacketName + "_Declare \\");
+	line(file, "public:\\");
 	// 注册成员变量
 	uint memberCount = packetInfo.mMemberList.size();
 	if (memberCount != 0)
 	{
-		fileString += "\tvoid fillParams() override\\\r\n";
-		fileString += "\t{\\\r\n";
+		line(file, "\tvoid fillParams() override\\");
+		line(file, "\t{\\");
 		FOR_I(memberCount)
 		{
-			fileString += cppPushParamString(packetInfo.mMemberList[i]);
+			line(file, cppPushParamString(packetInfo.mMemberList[i]));
 		}
-		fileString += "\t}\\\r\n";
+		line(file, "\t}\\");
 	}
 	else
 	{
-		fileString += "\tvoid fillParams() override{}\\\r\n";
+		line(file, "\tvoid fillParams() override{}\\");
 	}
 	// 成员变量的声明
-	fileString += "public:\\\r\n";
+	line(file, "public:\\");
 	FOR_I(memberCount)
 	{
-		fileString += cppMemberDeclareString(packetInfo.mMemberList[i]);
+		line(file, cppMemberDeclareString(packetInfo.mMemberList[i]));
 	}
-	removeLast(fileString, '\\');
-	fileString += "\r\n";
-	fileString += "#endif";
+	removeLast(file, '\\');
+	line(file, "");
+	line(file, "#endif", false);
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + packetInfo.mPacketName + "_Declare.h", fileString);
+	file = ANSIToUTF8(file.c_str(), true);
+	writeFile(filePath + packetInfo.mPacketName + "_Declare.h", file);
 }
 
 // StringDefineCmd.h和StringDefineCmd.cpp
 void CodeGenerator::generateStringDefineCmd(const myVector<string>& cmdList, string filePath)
 {
 	// 头文件
-	string fileString;
+	string header;
 	uint cmdCount = cmdList.size();
 	FOR_I(cmdCount)
 	{
-		fileString += "DECLARE_STRING(" + cmdList[i] + ");\r\n";
+		line(header, "DECLARE_STRING(" + cmdList[i] + ");");
 	}
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + "StringDefineCmd.h", fileString);
+	header = ANSIToUTF8(header.c_str(), true);
+	writeFile(filePath + "StringDefineCmd.h", header);
 
 	// 源文件
-	string sourceFileString;
-	sourceFileString += "#include \"StringDefine.h\"\r\n";
-	sourceFileString += "#include \"CommandHeader.h\"\r\n";
-	sourceFileString += "\r\n";
+	string source;
+	line(source, "#include \"StringDefine.h\"");
+	line(source, "#include \"CommandHeader.h\"");
+	line(source, "");
 	FOR_I(cmdCount)
 	{
-		sourceFileString += "DEFINE_STRING(" + cmdList[i] + ");\r\n";
+		line(source, "DEFINE_STRING(" + cmdList[i] + ");");
 	}
-	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
-	writeFile(filePath + "StringDefineCmd.cpp", sourceFileString);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(filePath + "StringDefineCmd.cpp", source);
 }
 
 // StringDefineSkill.h和StringDefineSkill.cpp
 void CodeGenerator::generateStringDefineSkill(const myVector<string>& skillList, string filePath)
 {
 	// 头文件
-	string fileString;
+	string header;
 	uint cmdCount = skillList.size();
 	FOR_I(cmdCount)
 	{
-		fileString += "DECLARE_STRING(" + skillList[i] + ");\r\n";
+		line(header, "DECLARE_STRING(" + skillList[i] + ");");
 	}
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + "StringDefineSkill.h", fileString);
+	header = ANSIToUTF8(header.c_str(), true);
+	writeFile(filePath + "StringDefineSkill.h", header);
 
 	// 源文件
-	string sourceFileString;
-	sourceFileString += "#include \"StringDefine.h\"\r\n";
-	sourceFileString += "#include \"CharacterSkillHeader.h\"\r\n";
-	sourceFileString += "\r\n";
+	string source;
+	line(source, "#include \"StringDefine.h\"");
+	line(source, "#include \"CharacterSkillHeader.h\"");
+	line(source, "");
 	FOR_I(cmdCount)
 	{
-		sourceFileString += "DEFINE_STRING(" + skillList[i] + ");\r\n";
+		line(source, "DEFINE_STRING(" + skillList[i] + ");");
 	}
-	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
-	writeFile(filePath + "StringDefineSkill.cpp", sourceFileString);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(filePath + "StringDefineSkill.cpp", source);
 }
 
 // StringDefineMySQL.h和StringDefineMySQL.cpp
 void CodeGenerator::generateStringDefineMySQL(const myVector<string>& mysqlList, string filePath)
 {
 	// 头文件
-	string fileString;
+	string header;
 	uint cmdCount = mysqlList.size();
 	FOR_I(cmdCount)
 	{
-		fileString += "DECLARE_STRING(MySQLData" + mysqlList[i] + ");\r\n";
+		line(header, "DECLARE_STRING(MD" + mysqlList[i] + ");");
 	}
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + "StringDefineMySQL.h", fileString);
+	header = ANSIToUTF8(header.c_str(), true);
+	writeFile(filePath + "StringDefineMySQL.h", header);
 
 	// 源文件
-	string sourceFileString;
-	sourceFileString += "#include \"StringDefine.h\"\r\n";
-	sourceFileString += "#include \"MySQLHeader.h\"\r\n";
-	sourceFileString += "\r\n";
+	string source;
+	line(source, "#include \"StringDefine.h\"");
+	line(source, "#include \"MySQLHeader.h\"");
+	line(source, "");
 	FOR_I(cmdCount)
 	{
-		sourceFileString += "DEFINE_STRING(MySQLData" + mysqlList[i] + ");\r\n";
+		line(source, "DEFINE_STRING(MD" + mysqlList[i] + ");");
 	}
-	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
-	writeFile(filePath + "StringDefineMySQL.cpp", sourceFileString);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(filePath + "StringDefineMySQL.cpp", source);
 }
 
 // StringDefineState.h和StringDefineState.cpp
 void CodeGenerator::generateStringDefineState(const myVector<string>& stateList, string filePath)
 {
 	// 头文件
-	string fileString;
+	string header;
 	uint cmdCount = stateList.size();
 	FOR_I(cmdCount)
 	{
-		fileString += "DECLARE_STRING(" + stateList[i] + ");\r\n";
+		line(header, "DECLARE_STRING(" + stateList[i] + ");");
 	}
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + "StringDefineState.h", fileString);
+	header = ANSIToUTF8(header.c_str(), true);
+	writeFile(filePath + "StringDefineState.h", header);
 
 	// 源文件
-	string sourceFileString;
-	sourceFileString += "#include \"StringDefine.h\"\r\n";
-	sourceFileString += "#include \"StateHeader.h\"\r\n";
-	sourceFileString += "\r\n";
+	string source;
+	line(source, "#include \"StringDefine.h\"");
+	line(source, "#include \"StateHeader.h\"");
+	line(source, "");
 	FOR_I(cmdCount)
 	{
-		sourceFileString += "DEFINE_STRING(" + stateList[i] + ");\r\n";
+		line(source, "DEFINE_STRING(" + stateList[i] + ");");
 	}
-	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
-	writeFile(filePath + "StringDefineState.cpp", sourceFileString);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(filePath + "StringDefineState.cpp", source);
 }
 
 // StringDefinePacket.h和StringDefinePacket.cpp
 void CodeGenerator::generateStringDefinePacket(const myVector<string>& packetList, string filePath)
 {
 	// 头文件
-	string fileString;
+	string header;
 	uint cmdCount = packetList.size();
 	FOR_I(cmdCount)
 	{
-		fileString += "DECLARE_STRING(" + packetList[i] + ");\r\n";
+		line(header, "DECLARE_STRING(" + packetList[i] + ");");
 	}
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + "StringDefinePacket.h", fileString);
+	header = ANSIToUTF8(header.c_str(), true);
+	writeFile(filePath + "StringDefinePacket.h", header);
 
 	// 源文件
-	string sourceFileString;
-	sourceFileString += "#include \"StringDefine.h\"\r\n";
-	sourceFileString += "#include \"PacketHeader.h\"\r\n";
-	sourceFileString += "\r\n";
+	string source;
+	line(source, "#include \"StringDefine.h\"");
+	line(source, "#include \"PacketHeader.h\"");
+	line(source, "");
 	FOR_I(cmdCount)
 	{
-		sourceFileString += "DEFINE_STRING(" + packetList[i] + ");\r\n";
+		line(source, "DEFINE_STRING(" + packetList[i] + ");");
 	}
-	sourceFileString = ANSIToUTF8(sourceFileString.c_str(), true);
-	writeFile(filePath + "StringDefinePacket.cpp", sourceFileString);
+	source = ANSIToUTF8(source.c_str(), true);
+	writeFile(filePath + "StringDefinePacket.cpp", source);
 }
 
 // TDSQLite.cs和SQLiteTable.cs文件
@@ -993,15 +1078,15 @@ void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, s
 		return;
 	}
 	// TDSQLite.cs文件
-	string fileContent;
+	string file;
 	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
-	fileContent += "using Mono.Data.Sqlite;\r\n";
-	fileContent += "using System;\r\n";
-	fileContent += "using System.Collections.Generic;\r\n";
-	fileContent += "using UnityEngine;\r\n";
-	fileContent += "\r\n";
-	fileContent += "public class " + dataClassName + " : TableData\r\n";
-	fileContent += "{\r\n";
+	line(file, "using Mono.Data.Sqlite;");
+	line(file, "using System;");
+	line(file, "using System.Collections.Generic;");
+	line(file, "using UnityEngine;");
+	line(file, "");
+	line(file, "public class " + dataClassName + " : TableData");
+	line(file, "{");
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
@@ -1009,7 +1094,7 @@ void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, s
 		{
 			continue;
 		}
-		fileContent += "\tpublic static string " + sqliteInfo.mMemberList[i].mMemberName + " = \"" + sqliteInfo.mMemberList[i].mMemberName + "\";\r\n";
+		line(file, "\tpublic static string " + sqliteInfo.mMemberList[i].mMemberName + " = \"" + sqliteInfo.mMemberList[i].mMemberName + "\";");
 	}
 	FOR_I(memberCount)
 	{
@@ -1029,127 +1114,126 @@ void CodeGenerator::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, s
 		}
 		if (findString(typeName.c_str(), "List", NULL))
 		{
-			fileContent += "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + " = new " + typeName + "();\r\n";
+			line(file, "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + " = new " + typeName + "();");
 		}
 		else
 		{
-			fileContent += "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";\r\n";
+			line(file, "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";");
 		}
 	}
-	fileContent += "\tpublic override void parse(SqliteDataReader reader)\r\n";
-	fileContent += "\t{\r\n";
-	fileContent += "\t\tbase.parse(reader);\r\n";
+	line(file, "\tpublic override void parse(SqliteDataReader reader)");
+	line(file, "\t{");
+	line(file, "\t\tbase.parse(reader);");
 	FOR_I(memberCount)
 	{
 		if (sqliteInfo.mMemberList[i].mMemberName == "ID")
 		{
 			continue;
 		}
-		fileContent += "\t\tparseParam(reader, ref m" + sqliteInfo.mMemberList[i].mMemberName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");\r\n";
+		line(file, "\t\tparseParam(reader, ref m" + sqliteInfo.mMemberList[i].mMemberName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
-	fileContent += "\t}\r\n";
-	fileContent += "\tpublic static void link(SQLiteTable table)\r\n";
-	fileContent += "\t{\r\n";
+	line(file, "\t}");
+	line(file, "\tpublic static void link(SQLiteTable table)");
+	line(file, "\t{");
 	FOR_I(memberCount)
 	{
 		if (sqliteInfo.mMemberList[i].mLinkTable.length() > 0)
 		{
-			fileContent += "\t\ttable.link(" + sqliteInfo.mMemberList[i].mMemberName + ", mSQLite" + sqliteInfo.mMemberList[i].mLinkTable + ");\r\n";
+			line(file, "\t\ttable.link(" + sqliteInfo.mMemberList[i].mMemberName + ", mSQLite" + sqliteInfo.mMemberList[i].mLinkTable + ");");
 		}
 	}
-	fileContent += "\t}\r\n";
-	fileContent += "}";
+	line(file, "\t}");
+	line(file, "}", false);
 	validPath(dataFilePath);
-	fileContent = ANSIToUTF8(fileContent.c_str(), true);
-	writeFile(dataFilePath + dataClassName + ".cs", fileContent);
+	file = ANSIToUTF8(file.c_str(), true);
+	writeFile(dataFilePath + dataClassName + ".cs", file);
 
 	// SQLiteTable.cs文件
-	string tableFileContent;
-	tableFileContent += "using System;\r\n";
-	tableFileContent += "using System.Collections.Generic;\r\n";
-	tableFileContent += "\r\n";
+	string table;
+	line(table, "using System;");
+	line(table, "using System.Collections.Generic;");
+	line(table, "");
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
-	tableFileContent += "public partial class " + tableClassName + " : SQLiteTable\r\n";
-	tableFileContent += "{\r\n";
-	tableFileContent += "\tpublic " + tableClassName + "()\r\n";
-	tableFileContent += "\t\t:base(typeof(" + dataClassName + ")) {}\r\n";
-	tableFileContent += "\tpublic override void linkTable()\r\n";
-	tableFileContent += "\t{\r\n";
-	tableFileContent += "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成\r\n";
-	tableFileContent += "\t\t" + dataClassName + ".link(this);\r\n";
-	tableFileContent += "\t}\r\n";
-	tableFileContent += "}\r\n";
+	line(table, "public partial class " + tableClassName + " : SQLiteTable");
+	line(table, "{");
+	line(table, "\tpublic " + tableClassName + "()");
+	line(table, "\t\t:base(typeof(" + dataClassName + ")) {}");
+	line(table, "\tpublic override void linkTable()");
+	line(table, "\t{");
+	line(table, "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成");
+	line(table, "\t\t" + dataClassName + ".link(this);");
+	line(table, "\t}");
+	line(table, "}", false);
 	validPath(tableFilePath);
-	tableFileContent = ANSIToUTF8(tableFileContent.c_str(), true);
-	writeFile(tableFilePath + tableClassName + ".cs", tableFileContent);
+	table = ANSIToUTF8(table.c_str(), true);
+	writeFile(tableFilePath + tableClassName + ".cs", table);
 }
 
 // SQLiteRegister.cs文件
 void CodeGenerator::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string filePath)
 {
-	string fileContent;
-	fileContent += "using System;\r\n";
-	fileContent += "using System.Collections;\r\n";
-	fileContent += "using System.Collections.Generic;\r\n";
-	fileContent += "\r\n";
-	fileContent += "public class SQLiteRegister : GameBase\r\n";
-	fileContent += "{\r\n";
-	fileContent += "\tpublic static void registeAllTable()\r\n";
-	fileContent += "\t{\r\n";
+	string file;
+	line(file, "using System;");
+	line(file, "using System.Collections;");
+	line(file, "using System.Collections.Generic;");
+	line(file, "");
+	line(file, "public class SQLiteRegister : GameBase");
+	line(file, "{");
+	line(file, "\tpublic static void registeAllTable()");
+	line(file, "\t{");
 	uint count = sqliteInfo.size();
 	FOR_I(count)
 	{
 		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY)
 		{
-			fileContent += "\t\tregisteTable(ref mSQLite" + sqliteInfo[i].mSQLiteName + ", \"" + sqliteInfo[i].mSQLiteName + "\");\r\n";
+			line(file, "\t\tregisteTable(ref mSQLite" + sqliteInfo[i].mSQLiteName + ", \"" + sqliteInfo[i].mSQLiteName + "\");");
 		}
 	}
-	fileContent += "\t\tmSQLite.linkAllTable();\r\n";
-	fileContent += "\t}\r\n";
-	fileContent += "\t//-------------------------------------------------------------------------------------------------------------\r\n";
-	fileContent += "\tprotected static void registeTable<T>(ref T table, string tableName) where T : SQLiteTable, new()\r\n";
-	fileContent += "\t{\r\n";
-	fileContent += "\t\ttable = mSQLite.registeTable<T>(tableName);\r\n";
-	fileContent += "\t}\r\n";
-	fileContent += "}";
+	line(file, "\t\tmSQLite.linkAllTable();");
+	line(file, "\t}");
+	line(file, "\t//-------------------------------------------------------------------------------------------------------------");
+	line(file, "\tprotected static void registeTable<T>(ref T table, string tableName) where T : SQLiteTable, new()");
+	line(file, "\t{");
+	line(file, "\t\ttable = mSQLite.registeTable<T>(tableName);");
+	line(file, "\t}");
+	line(file, "}", false);
 	validPath(filePath);
-	fileContent = ANSIToUTF8(fileContent.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.cs", fileContent);
+	file = ANSIToUTF8(file.c_str(), true);
+	writeFile(filePath + "SQLiteRegister.cs", file);
 }
 
 // PacketDefine.cs文件
 void CodeGenerator::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath)
 {
 	string str;
-	str += "using System;";
-	str += "using System.Collections.Generic;";
-	str += "\r\n";
-	str += "public enum PACKET_TYPE : ushort\r\n";
-	str += "{\r\n";
-	str += "\tMIN,\r\n";
-	str += "\r\n";
-	str += "\tCS_MIN = 10000,\r\n";
+	line(str, "using System;");
+	line(str, "using System.Collections.Generic;");
+	line(str, "");
+	line(str, "public enum PACKET_TYPE : ushort");
+	line(str, "{");
+	line(str, "\tMIN,");
+	line(str, "");
+	line(str, "\tCS_MIN = 10000,");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			str += "\t" + packetNameToUpper(packetList[i].mPacketName) + ",\r\n";
+			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	str += "\tCS_MAX,\r\n";
-
-	str += "\r\n";
-	str += "\tSC_MIN = 20000,\r\n";
+	line(str, "\tCS_MAX,");
+	line(str, "");
+	line(str, "\tSC_MIN = 20000,");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			str += "\t" + packetNameToUpper(packetList[i].mPacketName) + ",\r\n";
+			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	str += "\tSC_MAX,\r\n";
-	str += "};";
+	line(str, "\tSC_MAX,");
+	line(str, "};", false);
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketDefine.cs", str);
@@ -1159,46 +1243,46 @@ void CodeGenerator::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 void CodeGenerator::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath)
 {
 	string str;
-	str += "using System;\r\n";
-	str += "using System.Collections;\r\n";
-	str += "using System.Collections.Generic;\r\n";
-	str += "\r\n";
-	str += "public class PacketRegister : GameBase\r\n";
-	str += "{\r\n";
-	str += "\tpublic static void registeAllPacket()\r\n";
-	str += "\t{\r\n";
-	str += "\t\tint preCount = mSocketFactory.getPacketTypeCount();\r\n";
+	line(str, "using System;");
+	line(str, "using System.Collections;");
+	line(str, "using System.Collections.Generic;");
+	line(str, "");
+	line(str, "public class PacketRegister : GameBase");
+	line(str, "{");
+	line(str, "\tpublic static void registeAllPacket()");
+	line(str, "\t{");
+	line(str, "\t\tint preCount = mSocketFactory.getPacketTypeCount();");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			str += "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");\r\n";
+			line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	str += "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.CS_MAX - PACKET_TYPE.CS_MIN - 1, preCount, \"CS\");\r\n";
-	str += "\r\n";
-	str += "\t\tpreCount = mSocketFactory.getPacketTypeCount();\r\n";
+	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.CS_MAX - PACKET_TYPE.CS_MIN - 1, preCount, \"CS\");");
+	line(str, "");
+	line(str, "\t\tpreCount = mSocketFactory.getPacketTypeCount();");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			str += "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");\r\n";
+			line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	str += "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");\r\n";
-	str += "\t}\r\n";
-	str += "\tprotected static void registePacket<T>(PACKET_TYPE type) where T : SocketPacket, new()\r\n";
-	str += "\t{\r\n";
-	str += "\t\tmSocketFactory.registePacket<T>(type);\r\n";
-	str += "\t}\r\n";
-	str += "}\r\n";
+	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");
+	line(str, "\t}");
+	line(str, "\tprotected static void registePacket<T>(PACKET_TYPE type) where T : SocketPacket, new()");
+	line(str, "\t{");
+	line(str, "\t\tmSocketFactory.registePacket<T>(type);");
+	line(str, "\t}");
+	line(str, "}", false);
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketRegister.cs", str);
 }
 
-// _Declare.cs文件
+// Packet_Declare.cs文件
 void CodeGenerator::generateCSharpFile(const PacketInfo& packetInfo, string filePath)
 {
 	const int prefixLength = 2;
@@ -1207,31 +1291,32 @@ void CodeGenerator::generateCSharpFile(const PacketInfo& packetInfo, string file
 		ERROR("包名前缀错误");
 		return;
 	}
-	string fileString = "using System;\r\n";
-	fileString += "using System.Collections;\r\n";
-	fileString += "using System.Collections.Generic;\r\n";
-	fileString += "\r\n";
-	fileString += "public partial class " + packetInfo.mPacketName + " : SocketPacket\r\n";
-	fileString += "{\r\n";
+	string file;
+	line(file, "using System;");
+	line(file, "using System.Collections;");
+	line(file, "using System.Collections.Generic;");
+	line(file, "");
+	line(file, "public partial class " + packetInfo.mPacketName + " : SocketPacket");
+	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		fileString += cSharpMemberDeclareString(packetInfo.mMemberList[i]);
+		line(file, cSharpMemberDeclareString(packetInfo.mMemberList[i]));
 	}
 	if (memberCount > 0)
 	{
-		fileString += "\tprotected override void fillParams()\r\n";
-		fileString += "\t{\r\n";
+		line(file, "\tprotected override void fillParams()");
+		line(file, "\t{");
 		FOR_I(memberCount)
 		{
-			fileString += cSharpPushParamString(packetInfo.mMemberList[i]);
+			line(file, cSharpPushParamString(packetInfo.mMemberList[i]));
 		}
-		fileString += "\t}\r\n";
+		line(file, "\t}");
 	}
-	fileString += "}";
+	line(file, "}", false);
 	validPath(filePath);
-	fileString = ANSIToUTF8(fileString.c_str(), true);
-	writeFile(filePath + packetInfo.mPacketName + "_Declare.cs", fileString);
+	file = ANSIToUTF8(file.c_str(), true);
+	writeFile(filePath + packetInfo.mPacketName + "_Declare.cs", file);
 }
 
 MySQLMember CodeGenerator::parseMySQLMemberLine(string line)
@@ -1416,12 +1501,11 @@ string CodeGenerator::cppPushParamString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + lengthMacro +
-			", " + boolToString(memberInfo.mVariableLength) + ");\\\r\n";
+		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", " + boolToString(memberInfo.mVariableLength) + ");\\";
 	}
 	else
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ");\\\r\n";
+		str = "\t\tpushParam(" + memberInfo.mMemberName + ");\\";
 	}
 	return str;
 }
@@ -1441,11 +1525,11 @@ string CodeGenerator::cppMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];\\\r\n";
+		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];\\";
 	}
 	else
 	{
-		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + ";\\\r\n";
+		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + ";\\";
 	}
 	return str;
 }
@@ -1455,11 +1539,11 @@ string CodeGenerator::cSharpPushParamString(const PacketMember& memberInfo)
 	string str;
 	if (memberInfo.mIsArray)
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");\r\n";
+		line(str, "\t\tpushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");");
 	}
 	else
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ");\r\n";
+		line(str, "\t\tpushParam(" + memberInfo.mMemberName + ");");
 	}
 	return str;
 }
@@ -1490,12 +1574,12 @@ string CodeGenerator::cSharpMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");\r\n";
+		line(str, "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");");
 	}
 	else
 	{
 		typeName = toUpper(typeName);
-		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();\r\n";
+		line(str, "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();");
 	}
 	return str;
 }

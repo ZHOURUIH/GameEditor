@@ -67,7 +67,9 @@ protected:
 	static void generateCppMySQLDataFile(const MySQLInfo& sqliteInfo, string filePath);
 	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath);
 	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
+	static void generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
 	static void generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath);
+	static void generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath);
 	static void generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath);
 	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath);
@@ -95,6 +97,14 @@ protected:
 	static string cppMemberDeclareString(const PacketMember& memberInfo);
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cSharpMemberDeclareString(const PacketMember& memberInfo);
+	static void line(string& str, const string& line, bool returnLine = true) 
+	{
+		str += line;
+		if (returnLine)
+		{
+			str += "\r\n";
+		}
+	}
 };
 
 #endif
