@@ -1539,11 +1539,11 @@ string CodeGenerator::cSharpPushParamString(const PacketMember& memberInfo)
 	string str;
 	if (memberInfo.mIsArray)
 	{
-		line(str, "\t\tpushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");");
+		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");";
 	}
 	else
 	{
-		line(str, "\t\tpushParam(" + memberInfo.mMemberName + ");");
+		str = "\t\tpushParam(" + memberInfo.mMemberName + ");";
 	}
 	return str;
 }
@@ -1574,12 +1574,12 @@ string CodeGenerator::cSharpMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		line(str, "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");");
+		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
 	}
 	else
 	{
 		typeName = toUpper(typeName);
-		line(str, "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();");
+		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 	}
 	return str;
 }
