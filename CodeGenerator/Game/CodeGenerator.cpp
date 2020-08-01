@@ -1179,7 +1179,7 @@ void CodeGenerator::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInf
 	line(file, "");
 	line(file, "public class SQLiteRegister : GameBase");
 	line(file, "{");
-	line(file, "\tpublic static void registeAllTable()");
+	line(file, "\tpublic static void registeAll()");
 	line(file, "\t{");
 	uint count = sqliteInfo.size();
 	FOR_I(count)
@@ -1249,7 +1249,7 @@ void CodeGenerator::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "");
 	line(str, "public class PacketRegister : GameBase");
 	line(str, "{");
-	line(str, "\tpublic static void registeAllPacket()");
+	line(str, "\tpublic static void registeAll()");
 	line(str, "\t{");
 	line(str, "\t\tint preCount = mSocketFactory.getPacketTypeCount();");
 	uint packetCount = packetList.size();
