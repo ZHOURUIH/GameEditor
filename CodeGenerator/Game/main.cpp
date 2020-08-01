@@ -16,11 +16,11 @@ void main()
 	cin >> input;
 	if (input == 1)
 	{
-		string cppHeaderPath = cppGamePath + "Socket/PacketHeader";
+		string cppDeclarePath = cppGamePath + "Socket/PacketDeclare";
 		string cppPacketDefinePath = cppGamePath + "Socket";
 		string csHeaderPath = csGamePath + "Socket/PacketHeader";
 		string csPacketDefinePath = csGamePath + "Socket";
-		CodeGenerator::generatePacketCode(cppHeaderPath, csHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
+		CodeGenerator::generatePacketCode(cppDeclarePath, csHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
 	}
 	else if (input == 2)
 	{

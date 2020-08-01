@@ -56,7 +56,7 @@ struct MySQLInfo
 class CodeGenerator : public SystemUtility
 {
 public:
-	static void generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath);
+	static void generatePacketCode(string cppDeclareFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath);
 	static void generateSQLiteCode(string cppDataPath, string cppTablePath, string csDataPath, string csTablePath);
 	static void generateMySQLCode(string cppDataPath, string cppStringDefinePath);
 	static void generateCmdCode(string filePath, string headerPath);
@@ -76,7 +76,7 @@ protected:
 	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
-	static void generateCppPacketHeaderFile(const PacketInfo& packetName, string filePath);
+	static void generateCppPacketDeclareFile(const PacketInfo& packetName, string filePath);
 	static void generateStringDefineCmd(const myVector<string>& cmdList, string filePath);
 	static void generateStringDefineSkill(const myVector<string>& skillList, string filePath);
 	static void generateStringDefineMySQL(const myVector<string>& mysqlList, string filePath);

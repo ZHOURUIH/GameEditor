@@ -1,6 +1,6 @@
 #include "CodeGenerator.h"
 
-void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath)
+void CodeGenerator::generatePacketCode(string cppDeclareFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath)
 {
 	// 解析模板文件
 	string fileContent;
@@ -67,7 +67,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 			tempMemberList.push_back(parseMemberLine(line));
 		}
 	}
-	deleteFolder(cppHeaderFilePath);
+	deleteFolder(cppDeclareFilePath);
 	// c#的只删除代码文件,不删除meta文件
 	myVector<string> csFileList;
 	findFiles(csFilePath, csFileList, ".cs");
@@ -80,7 +80,7 @@ void CodeGenerator::generatePacketCode(string cppHeaderFilePath, string csFilePa
 	{
 		// 生成代码文件
 		// .h代码
-		generateCppPacketHeaderFile(packetInfoList[i], cppHeaderFilePath);
+		generateCppPacketDeclareFile(packetInfoList[i], cppDeclareFilePath);
 		// .cs代码
 		generateCSharpFile(packetInfoList[i], csFilePath);
 		packetList.push_back(packetInfoList[i].mPacketName);
@@ -896,7 +896,7 @@ void CodeGenerator::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 }
 
 // Packet_Declare.h文件
-void CodeGenerator::generateCppPacketHeaderFile(const PacketInfo& packetInfo, string filePath)
+void CodeGenerator::generateCppPacketDeclareFile(const PacketInfo& packetInfo, string filePath)
 {
 	string headerMacro = "_" + packetNameToUpper(packetInfo.mPacketName) + "_DECLARE_H_";
 	string file;
