@@ -3,6 +3,7 @@
 
 #include "ServerDefine.h"
 
+class SQLiteAnimation;
 class SQLiteDataReader;
 class SQLiteSceneMap;
 class SQLiteSceneMapFile;
@@ -28,6 +29,7 @@ class SQLite
 {
 public:
 	sqlite3* mSQlite3;
+	SQLiteAnimation* mSQLiteAnimation;
 	SQLiteSceneMap* mSQLiteSceneMap;
 	SQLiteSceneMapFile* mSQLiteSceneMapFile;
 	SQLiteSceneMapTransfer* mSQLiteSceneMapTransfer;

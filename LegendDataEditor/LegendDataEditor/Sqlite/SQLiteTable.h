@@ -4,6 +4,7 @@
 #include "ServerDefine.h"
 #include "SQLiteDataReader.h"
 #include "Utility.h"
+#include "SQLite.h"
 
 class SQLite;
 class SQLiteTable
@@ -39,6 +40,22 @@ public:
 		string conditionString;
 		StringUtility::appendConditionInt(conditionString, T::COL_ID, data.mID, "");
 		return doUpdate(updateString, conditionString);
+	}
+	int getMaxID()
+	{
+		int maxID = 0;
+		string queryStr = "SELECT max(ID) FROM " + mTableName;
+		SQLiteDataReader* reader = mSQLite->executeQuery(queryStr);
+		if (reader != NULL)
+		{
+			while (reader->read())
+			{
+				maxID = StringUtility::stringToInt(reader->getString(0));
+				break;
+			}
+			mSQLite->releaseReader(reader);
+		}
+		return maxID;
 	}
 protected:
 	template<typename T>
@@ -87,6 +104,10 @@ protected:
 	template<typename T>
 	void parseReader(SQLiteDataReader* reader, txVector<T*>& dataList)
 	{
+		if (reader == NULL)
+		{
+			return;
+		}
 		while (reader->read())
 		{
 			T* data = TRACE_NEW(T, data);

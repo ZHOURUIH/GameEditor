@@ -72,6 +72,7 @@ public:
 	static void processShadowVertical(const string& filePath);
 	static void moveMapObjectTexture(const string& sourcePath);
 	static void updateMapEffect();
+	static void updateAnimationPositionInAnimation();
 };
 
 #endif

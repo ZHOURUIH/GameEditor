@@ -10,12 +10,12 @@ string ImagePositionAnimationData::COL_FRAME_COUNT = "FrameCount";
 string ImagePositionAnimationData::COL_POSX = "PosX";
 string ImagePositionAnimationData::COL_POSY = "PosY";
 
-void SQLiteImagePositionAnimation::query(const string& atlas, const string& animation, txVector<ImagePositionAnimationData*>& dataList)
+void SQLiteImagePositionAnimation::query(const string& atlas, const string& animation, ImagePositionAnimationData& data)
 {
 	string conditionString;
 	StringUtility::appendConditionString(conditionString, ImagePositionAnimationData::COL_ATLAS, atlas, " and ");
 	StringUtility::appendConditionString(conditionString, ImagePositionAnimationData::COL_ANIMATION, animation, "");
-	doSelect(dataList, conditionString);
+	doSelect(data, conditionString);
 }
 bool SQLiteImagePositionAnimation::updateData(const ImagePositionAnimationData& data)
 {

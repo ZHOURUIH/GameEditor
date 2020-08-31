@@ -23,6 +23,7 @@
 #include "SQLiteSkillEffectDirection.h"
 #include "SQLitePeaceArea.h"
 #include "SQLiteMapEffect.h"
+#include "SQLiteAnimation.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "MapData.h"
@@ -283,7 +284,7 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 				deleteImageWithPosition(fileList[j]);
 				continue;
 			}
-			string destPath = getFilePath(fileList[j]) + "/" + actionName + "/";
+			string destPath = getFilePath(fileList[j]) + "/";
 			string actionFolderName = actionName + "_dir" + intToString(direction);
 			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j], true);
 			moveImageWithPosition(fileList[j], destPath + fileName);
@@ -326,7 +327,7 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 					deleteImageWithPosition(fileList[j]);
 					continue;
 				}
-				string destPath = getFilePath(fileList[j]) + "/" + actionName + "/";
+				string destPath = getFilePath(fileList[j]) + "/";
 				string actionFolderName = actionName + "_dir" + intToString(direction);
 				string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j], true);
 				moveImageWithPosition(fileList[j], destPath + fileName);
@@ -830,6 +831,7 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 {
 	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	SQLiteImagePositionAnimation* sqliteImagePosition = sqlite->mSQLiteImagePositionAnimation;
 	txVector<string> folders;
 	findFolders("../media", folders, true);
 	int folderCount = folders.size();
@@ -873,7 +875,8 @@ void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 		{
 			ImagePositionAnimationData animationData;
 			animationData.mID = 0;
-			animationData.mAtlas = folders[i].substr(strlen("../media/"));
+			// 此处多一层目录是因为一般一个图集都会在单独的目录中,且此目录与图集同名
+			animationData.mAtlas = folders[i].substr(strlen("../media/")) + "/" + getFileName(folders[i]);
 			animationData.mAnimation = iter->first;
 			animationData.mFrameCount = iter->second.first.size();
 			txVector<int> tempList;
@@ -881,20 +884,19 @@ void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 			animationData.mPosX = tempList;
 			iter->second.second.valueList(tempList);
 			animationData.mPosY = tempList;
-			txVector<ImagePositionAnimationData*> existDataList;
-			sqlite->mSQLiteImagePositionAnimation->query(animationData.mAtlas, animationData.mAnimation, existDataList);
-			if (existDataList.size() > 0 && updateIfExist)
+			ImagePositionAnimationData existDataList;
+			sqliteImagePosition->query(animationData.mAtlas, animationData.mAnimation, existDataList);
+			if (existDataList.mID > 0)
 			{
-				sqlite->mSQLiteImagePositionAnimation->updateData(animationData);
-				int count = existDataList.size();
-				for (int i = 0; i < count; ++i)
+				if (updateIfExist)
 				{
-					TRACE_DELETE(existDataList[i]);
+					sqliteImagePosition->updateData(animationData);
 				}
 			}
 			else
 			{
-				sqlite->mSQLiteImagePositionAnimation->insert(animationData);
+				animationData.mID = sqliteImagePosition->getMaxID() + 1;
+				sqliteImagePosition->insert(animationData);
 			}
 		}
 	}
@@ -1356,6 +1358,7 @@ bool isBlack(const RGBQUAD& rgb)
 	{
 		return (rgb.rgbBlue == 8 && rgb.rgbGreen == 8 && rgb.rgbRed == 16 ||
 				rgb.rgbBlue == 0 && rgb.rgbGreen == 0 && rgb.rgbRed == 8 || 
+				rgb.rgbBlue == 16 && rgb.rgbGreen == 24 && rgb.rgbRed == 33 ||
 				rgb.rgbBlue == 24 && rgb.rgbGreen == 24 && rgb.rgbRed == 29);
 	}
 	return false;
@@ -1661,6 +1664,42 @@ void ImageUtility::updateMapEffect()
 	for (int i = 0; i < mapEffectCount; ++i)
 	{
 		sqlite->mSQLiteMapEffect->insert(*mapEffectList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::updateAnimationPositionInAnimation()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<AnimationData*> animationDataList;
+	sqlite->mSQLiteAnimation->queryAll(animationDataList);
+	int count = animationDataList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		AnimationData* animationData = animationDataList[i];
+		txVector<int> posIDList;
+		if (animationData->mDirectionCount == 1)
+		{
+			ImagePositionAnimationData dataNoDir;
+			sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationData->mAnimation, dataNoDir);
+			if (dataNoDir.mID > 0)
+			{
+				posIDList.push_back(dataNoDir.mID);
+			}
+		}
+		else
+		{
+			// 最多8个方向,需要逐一查找
+			for (int j = 0; j < DIRECTION_COUNT; ++j)
+			{
+				ImagePositionAnimationData data;
+				string animationWithDir = animationData->mAnimation + "_dir" + intToString(j);
+				sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationWithDir, data);
+				posIDList.push_back(data.mID);
+			}
+		}
+		animationData->mAnimationPosition = posIDList;
+		sqlite->mSQLiteAnimation->update(*animationData);
 	}
 	TRACE_DELETE(sqlite);
 }

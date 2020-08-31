@@ -1,5 +1,5 @@
-﻿#ifndef _SQLITE_ANIMATION_FRAME_H_
-#define _SQLITE_ANIMATION_FRAME_H_
+﻿#ifndef _SQLITE_IMAGE_POSITION_ANIMATION_H_
+#define _SQLITE_IMAGE_POSITION_ANIMATION_H_
 
 #include "SQLiteTable.h"
 #include "SQLiteTableData.h"
@@ -37,7 +37,7 @@ class SQLiteImagePositionAnimation : public SQLiteTable
 public:
 	SQLiteImagePositionAnimation(SQLite* sqlite)
 		:SQLiteTable("ImagePositionAnimation", sqlite){}
-	void query(const string& atlas, const string& animation, txVector<ImagePositionAnimationData*>& dataList);
+	void query(const string& atlas, const string& animation, ImagePositionAnimationData& data);
 	bool updateData(const ImagePositionAnimationData& data);
 };
 
