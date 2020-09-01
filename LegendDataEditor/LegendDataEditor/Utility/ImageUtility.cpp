@@ -292,6 +292,43 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 	}
 }
 
+void ImageUtility::autoGroupWingImage(const string& path)
+{
+	// 先拆分位置文件
+	splitPositionFile(path);
+	// 按照600个文件一组,放入单独的文件夹中
+	autoMoveFile(path, HUMAN_GROUP_SIZE);
+
+	txVector<string> folderList;
+	findFolders(path, folderList);
+	int folderCount = folderList.size();
+	for (int i = 0; i < folderCount; ++i)
+	{
+		// 按照动作重命名
+		txVector<string> fileList;
+		findFiles(folderList[i], fileList, ".png", false);
+		sortByFileNumber(fileList);
+		int fileCount = fileList.size();
+		for (int j = 0; j < fileCount; ++j)
+		{
+			string actionName;
+			int direction;
+			int frameIndex;
+			bool isValid = getWingActionInfo(j, actionName, direction, frameIndex);
+			// 如果是无效图片则需要删除
+			if (!isValid)
+			{
+				deleteImageWithPosition(fileList[j]);
+				continue;
+			}
+			string destPath = getFilePath(fileList[j]) + "/";
+			string actionFolderName = actionName + "_dir" + intToString(direction);
+			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j], true);
+			moveImageWithPosition(fileList[j], destPath + fileName);
+		}
+	}
+}
+
 void ImageUtility::autoGroupWeaponImage(const string& path)
 {
 	// 先拆分位置文件
@@ -609,6 +646,25 @@ bool ImageUtility::getHumanActionInfo(int index, string& actionName, int& dir, i
 	return frameIndex < HUMAN_ACTION[actionIndex].mFrameCount;
 }
 
+bool ImageUtility::getWingActionInfo(int index, string& actionName, int& dir, int& frameIndex)
+{
+	int actionIndex = 0;
+	while (true)
+	{
+		if (index - WING_ACTION[actionIndex].mMaxFrame * DIRECTION_COUNT < 0)
+		{
+			break;
+		}
+		index -= WING_ACTION[actionIndex].mMaxFrame * DIRECTION_COUNT;
+		++actionIndex;
+	}
+	// 因为一组动作资源包含了8个方向上的所有动作,所以可以根据下标计算出方向和序列帧下标,前提是保留了空图片作为填充位置
+	dir = index / WING_ACTION[actionIndex].mMaxFrame;
+	frameIndex = index % WING_ACTION[actionIndex].mMaxFrame;
+	actionName = WING_ACTION[actionIndex].mName;
+	return frameIndex < WING_ACTION[actionIndex].mFrameCount;
+}
+
 bool ImageUtility::getNPCActionInfo(int index, string& actionName, int& dir, int& frameIndex)
 {
 	int actionIndex = 0;
@@ -828,7 +884,7 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 	}
 }
 
-void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
+void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 {
 	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
 	SQLiteImagePositionAnimation* sqliteImagePosition = sqlite->mSQLiteImagePositionAnimation;
@@ -888,15 +944,16 @@ void ImageUtility::writeAnimFrameSQLite(bool updateIfExist)
 			sqliteImagePosition->query(animationData.mAtlas, animationData.mAnimation, existDataList);
 			if (existDataList.mID > 0)
 			{
-				if (updateIfExist)
-				{
-					sqliteImagePosition->updateData(animationData);
-				}
+				sqliteImagePosition->updateData(animationData);
 			}
 			else
 			{
-				animationData.mID = sqliteImagePosition->getMaxID() + 1;
-				sqliteImagePosition->insert(animationData);
+				// 如果只是更新数据,则不进行插入
+				if (!updateOnly)
+				{
+					animationData.mID = sqliteImagePosition->getMaxID() + 1;
+					sqliteImagePosition->insert(animationData);
+				}
 			}
 		}
 	}
@@ -1678,24 +1735,27 @@ void ImageUtility::updateAnimationPositionInAnimation()
 	{
 		AnimationData* animationData = animationDataList[i];
 		txVector<int> posIDList;
-		if (animationData->mDirectionCount == 1)
+		if (animationData->mDirectionCount > 0)
 		{
-			ImagePositionAnimationData dataNoDir;
-			sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationData->mAnimation, dataNoDir);
-			if (dataNoDir.mID > 0)
+			if (animationData->mDirectionCount == 1)
 			{
-				posIDList.push_back(dataNoDir.mID);
+				ImagePositionAnimationData dataNoDir;
+				sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationData->mAnimation, dataNoDir);
+				if (dataNoDir.mID > 0)
+				{
+					posIDList.push_back(dataNoDir.mID);
+				}
 			}
-		}
-		else
-		{
-			// 最多8个方向,需要逐一查找
-			for (int j = 0; j < DIRECTION_COUNT; ++j)
+			else
 			{
-				ImagePositionAnimationData data;
-				string animationWithDir = animationData->mAnimation + "_dir" + intToString(j);
-				sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationWithDir, data);
-				posIDList.push_back(data.mID);
+				// 最多8个方向,需要逐一查找
+				for (int j = 0; j < DIRECTION_COUNT; ++j)
+				{
+					ImagePositionAnimationData data;
+					string animationWithDir = animationData->mAnimation + "_dir" + intToString(j);
+					sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationWithDir, data);
+					posIDList.push_back(data.mID);
+				}
 			}
 		}
 		animationData->mAnimationPosition = posIDList;

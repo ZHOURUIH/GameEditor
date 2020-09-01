@@ -37,6 +37,7 @@ void main()
 30:更新NPC商品列表\n\
 31:更新地图中的特效信息到SQLite\n\
 32:更新Animation表格中的AnimationPosition\n\
+33:整理翅膀文件结构 \n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -306,6 +307,17 @@ void main()
 			cout << "正在更新Animation表格中的AnimationPosition..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateAnimationPositionInAnimation();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 33)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "开始整理翅膀文件结构..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::autoGroupWingImage("../media/" + fileName);
+			cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

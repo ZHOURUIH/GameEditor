@@ -28,12 +28,14 @@ public:
 	static void sortByFileNumber(txVector<string>& fileList, bool fileNameIsNumber = true);
 	static void autoMoveFile(const string& path, int groupSize);
 	static void autoGroupHumanImage(const string& path);
+	static void autoGroupWingImage(const string& path);
 	static void autoGroupWeaponImage(const string& path);
 	static void autoGroupMonsterImage0(const string& path);
 	static void autoGroupMonsterImage1(const string& path);
 	static void autoGroupEffectImage(const string& path);
 	static void autoGroupNPCImage(const string& path);
 	static bool getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex);
+	static bool getWingActionInfo(int index, string& actionName, int& dir, int& frameIndex);
 	static bool getNPCActionInfo(int index, string& actionName, int& dir, int& frameIndex);
 	static void moveImageWithPosition(const string& fullFileName, const string& destFullFileName);
 	static void renameImageWithPosition(const string& fullFileName, const string& destFullFileName);
@@ -47,7 +49,7 @@ public:
 	static void groupAtlas(const string& filePath, int countInAltas);
 	static void texturePacker(const string& texturePath);
 	static void texturePackerAll(const string& texturePath);
-	static void writeAnimFrameSQLite(bool updateIfExist);
+	static void writeAnimFrameSQLite(bool updateOnly);
 	static int tileIndexToTileX(int index, int mapHeight);
 	static int tileIndexToTileY(int index, int mapHeight);
 	static Vector2i tileIndexToTilePos(int index, int mapHeight);

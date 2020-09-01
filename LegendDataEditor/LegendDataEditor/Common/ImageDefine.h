@@ -38,7 +38,7 @@ const int ImageHeaderLength = 8;
 
 struct HumanActionInfo
 {
-	string mName;	// 动作名称
+	string mName;		// 动作名称
 	int mMaxFrame;		// 该动作最大帧数,指资源中该动作的所有帧数,可能包含无效帧
 	int mFrameCount;	// 动作的有效帧数
 };
@@ -47,11 +47,27 @@ const int DIRECTION_COUNT = 8;
 const int NPC_DIRECTION_COUNT = 3;	// NPC资源只有3个方向的动作
 const int HUMAN_ACTION_COUNT = 11;
 const int HUMAN_GROUP_SIZE = 600;
+const int WING_GROUP_SIZE = 600;
 const int WEAPON_GROUP_SIZE = 1200;
 const int EFFECT_GROUP_SIZE = 10;
 static HumanActionInfo HUMAN_ACTION[HUMAN_ACTION_COUNT] =
 {
 	{ "stand", 8, 4 },
+	{ "walk", 8, 6 },
+	{ "run", 8, 6 },
+	{ "noname0", 1, 1 },
+	{ "attack", 8, 6 },
+	{ "dig", 8, 6 },
+	{ "jumpAttack", 8, 8 },
+	{ "skill", 8, 6 },
+	{ "search", 2, 2 },
+	{ "hit", 8, 3 },
+	{ "die", 8, 4 },
+};
+
+static HumanActionInfo WING_ACTION[HUMAN_ACTION_COUNT] =
+{
+	{ "stand", 8, 8 },
 	{ "walk", 8, 6 },
 	{ "run", 8, 6 },
 	{ "noname0", 1, 1 },
