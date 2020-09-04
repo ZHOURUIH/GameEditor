@@ -1,5 +1,10 @@
 #include "Utility.h"
-#include "CodeGenerator.h"
+#include "CodeCmd.h"
+#include "CodeSkill.h"
+#include "CodeState.h"
+#include "CodeMySQL.h"
+#include "CodeSQLite.h"
+#include "CodeNetPacket.h"
 
 void main()
 {
@@ -20,7 +25,7 @@ void main()
 		string cppPacketDefinePath = cppGamePath + "Socket";
 		string csHeaderPath = csGamePath + "Socket/PacketHeader";
 		string csPacketDefinePath = csGamePath + "Socket";
-		CodeGenerator::generatePacketCode(cppDeclarePath, csHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
+		CodeNetPacket::generatePacketCode(cppDeclarePath, csHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
 	}
 	else if (input == 2)
 	{
@@ -28,27 +33,27 @@ void main()
 		string cppTablePath = cppGamePath + "DataBase/SQLite/Table";
 		string csDataPath = csGamePath + "DataBase/SQLite/Data";
 		string csTablePath = csGamePath + "DataBase/SQLite/Table";
-		CodeGenerator::generateSQLiteCode(cppDataPath, cppTablePath, csDataPath, csTablePath);
+		CodeSQLite::generateSQLiteCode(cppDataPath, cppTablePath, csDataPath, csTablePath);
 	}
 	else if (input == 3)
 	{
 		string cppDataPath = cppGamePath + "DataBase/MySQL/Data";
-		CodeGenerator::generateMySQLCode(cppDataPath, cppStringDefinePath);
+		CodeMySQL::generateMySQLCode(cppDataPath, cppStringDefinePath);
 	}
 	else if (input == 4)
 	{
 		string cppHeaderPath = cppGamePath + "CommandSystem";
-		CodeGenerator::generateCmdCode(cppStringDefinePath, cppHeaderPath);
+		CodeCmd::generateCmdCode(cppStringDefinePath, cppHeaderPath);
 	}
 	else if (input == 5)
 	{
 		string cppHeaderPath = cppGamePath + "Character/Skill";
-		CodeGenerator::generateSkillCode(cppStringDefinePath, cppHeaderPath);
+		CodeSkill::generateSkillCode(cppStringDefinePath, cppHeaderPath);
 	}
 	else if (input == 6)
 	{
 		string cppHeaderPath = cppGamePath + "StateMachine";
-		CodeGenerator::generateStateCode(cppStringDefinePath, cppHeaderPath);
+		CodeState::generateStateCode(cppStringDefinePath, cppHeaderPath);
 	}
 	system("pause");
 }

@@ -155,12 +155,18 @@
     <ClCompile Include="Frame\STL\mySTL.cpp" />
     <ClCompile Include="Frame\Thread\ThreadLock.cpp" />
     <ClCompile Include="Frame\Utility\BinaryUtility.cpp" />
+    <ClCompile Include="Frame\Utility\CodeUtility.cpp" />
     <ClCompile Include="Frame\Utility\FileUtility.cpp" />
     <ClCompile Include="Frame\Utility\MathUtility.cpp" />
     <ClCompile Include="Frame\Utility\StringUtility.cpp" />
     <ClCompile Include="Frame\Utility\SystemUtility.cpp" />
-    <ClCompile Include="Game\CodeGenerator.cpp" />
+    <ClCompile Include="Game\CodeCmd.cpp" />
     <ClCompile Include="Game\main.cpp" />
+    <ClCompile Include="Game\CodeMySQL.cpp" />
+    <ClCompile Include="Game\CodeNetPacket.cpp" />
+    <ClCompile Include="Game\CodeSkill.cpp" />
+    <ClCompile Include="Game\CodeSQLite.cpp" />
+    <ClCompile Include="Game\CodeState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frame\Common\ServerDefine.h" />
@@ -183,12 +189,19 @@
     <ClInclude Include="Frame\STL\myVector.h" />
     <ClInclude Include="Frame\Thread\ThreadLock.h" />
     <ClInclude Include="Frame\Utility\BinaryUtility.h" />
+    <ClInclude Include="Frame\Utility\CodeUtility.h" />
     <ClInclude Include="Frame\Utility\FileUtility.h" />
     <ClInclude Include="Frame\Utility\MathUtility.h" />
     <ClInclude Include="Frame\Utility\StringUtility.h" />
     <ClInclude Include="Frame\Utility\SystemUtility.h" />
     <ClInclude Include="Frame\Utility\Utility.h" />
-    <ClInclude Include="Game\CodeGenerator.h" />
+    <ClInclude Include="Game\CodeCmd.h" />
+    <ClInclude Include="Game\GameDefine.h" />
+    <ClInclude Include="Game\CodeMySQL.h" />
+    <ClInclude Include="Game\CodeNetPacket.h" />
+    <ClInclude Include="Game\CodeSkill.h" />
+    <ClInclude Include="Game\CodeSQLite.h" />
+    <ClInclude Include="Game\CodeState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
