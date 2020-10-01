@@ -100,7 +100,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid resultRowToTableData(myMap<const char*, char*>& resultRow) override;");
-	line(header, "\tvoid paramList(char* params, uint size) override;");
+	line(header, "\tvoid paramList(char* params, uint size) const override;");
 	line(header, "\tvoid resetProperty() override;");
 	line(header, "};");
 	line(header, "");
@@ -137,7 +137,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "}");
 	line(source, "");
 	// paramListº¯Êý
-	line(source, "void " + className + "::paramList(char* params, uint size)");
+	line(source, "void " + className + "::paramList(char* params, uint size) const");
 	line(source, "{");
 	FOR_I(memberCount)
 	{
