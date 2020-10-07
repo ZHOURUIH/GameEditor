@@ -359,7 +359,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(file, "using System.Collections.Generic;");
 	line(file, "using UnityEngine;");
 	line(file, "");
-	line(file, "public class " + dataClassName + " : TableData");
+	line(file, "public class " + dataClassName + " : SQLiteData");
 	line(file, "{");
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -430,8 +430,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
 	line(table, "public partial class " + tableClassName + " : SQLiteTable");
 	line(table, "{");
-	line(table, "\tpublic " + tableClassName + "()");
-	line(table, "\t\t:base(typeof(" + dataClassName + ")) {}");
 	line(table, "\tpublic override void linkTable()");
 	line(table, "\t{");
 	line(table, "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成");
@@ -460,15 +458,17 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	{
 		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY)
 		{
-			line(file, "\t\tregisteTable(ref mSQLite" + sqliteInfo[i].mSQLiteName + ", \"" + sqliteInfo[i].mSQLiteName + "\");");
+			string lineStr = "\t\tregisteTable(out mSQLite%s, Typeof<SQLite%s>(), Typeof<TD%s>(), \"%s\");";
+			replaceAll(lineStr, "%s", sqliteInfo[i].mSQLiteName);
+			line(file, lineStr);
 		}
 	}
 	line(file, "\t\tmSQLite.linkAllTable();");
 	line(file, "\t}");
 	line(file, "\t//-------------------------------------------------------------------------------------------------------------");
-	line(file, "\tprotected static void registeTable<T>(ref T table, string tableName) where T : SQLiteTable, new()");
+	line(file, "\tprotected static void registeTable<T>(out T sqliteTable, Type tableType, Type dataType, string tableName) where T : SQLiteTable");
 	line(file, "\t{");
-	line(file, "\t\ttable = mSQLite.registeTable<T>(tableName);");
+	line(file, "\t\tsqliteTable = mSQLite.registeTable(tableType, dataType, tableName) as T;");
 	line(file, "\t}");
 	line(file, "}", false);
 	validPath(filePath);

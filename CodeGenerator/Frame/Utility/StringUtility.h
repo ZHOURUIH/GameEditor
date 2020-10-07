@@ -22,6 +22,21 @@ public:
 	static int getLastNumber(const string& str);
 	// 获得去除末尾数字以后的字符串
 	static string getNotNumberSubString(string str);
+	// 将str中的[begin,end)替换为reStr
+	template<uint Length>
+	static void replace(array<char, Length>& str, int begin, int end, const char* reStr)
+	{
+		replace(str.data(), Length, begin, end, reStr);
+	}
+	static void replace(char* str, int strBufferSize, int begin, int end, const char* reStr);
+	static void replace(string& str, int begin, int end, const string& reStr);
+	template<uint Length>
+	static void replaceAll(array<char, Length>& str, const char* key, const char* newWords)
+	{
+		replaceAll(str.data(), Length, key, newWords);
+	}
+	static void replaceAll(char* str, int strBufferSize, const char* key, const char* newWords);
+	static void replaceAll(string& str, const string& key, const string& newWords);
 	static void split(const char* str, const char* key, myVector<string>& vec, bool removeEmpty = true);
 	static uint split(const char* str, const char* key, string* stringBuffer, uint bufferSize, bool removeEmpty = true);
 	template<uint Length>

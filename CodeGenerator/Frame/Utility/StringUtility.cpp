@@ -127,6 +127,61 @@ string StringUtility::getNotNumberSubString(string str)
 	return str.substr(0, getLastNotNumberPos(str) + 1);
 }
 
+void StringUtility::replace(char* str, int strBufferSize, int begin, int end, const char* reStr)
+{
+	uint curLength = strlen(str);
+	uint replaceLength = strlen(reStr);
+	int lengthAfterReplace = begin + replaceLength + curLength - end;
+	if (lengthAfterReplace >= strBufferSize)
+	{
+		ERROR("buffer is too small!");
+		return;
+	}
+	memmove(str + begin + replaceLength, str + end, curLength - end);
+	memcpy(str + begin, reStr, replaceLength);
+}
+
+void StringUtility::replace(string& str, int begin, int end, const string& reStr)
+{
+	string sub1 = str.substr(0, begin);
+	string sub2 = str.substr(end, str.length() - end);
+	str = sub1 + reStr + sub2;
+}
+
+void StringUtility::replaceAll(char* str, int strBufferSize, const char* key, const char* newWords)
+{
+	uint keyLength = strlen(key);
+	uint newWordsLength = strlen(newWords);
+	int startPos = 0;
+	while (true)
+	{
+		int pos = 0;
+		if (!findString(str, key, &pos, startPos))
+		{
+			break;
+		}
+		replace(str, strBufferSize, pos, pos + keyLength, newWords);
+		startPos = pos + newWordsLength;
+	}
+}
+
+void StringUtility::replaceAll(string& str, const string& key, const string& newWords)
+{
+	uint keyLength = key.length();
+	uint newWordsLength = newWords.length();
+	int startPos = 0;
+	while (true)
+	{
+		int pos = 0;
+		if (!findString(str.c_str(), key.c_str(), &pos, startPos))
+		{
+			break;
+		}
+		replace(str, pos, pos + keyLength, newWords);
+		startPos = pos + newWordsLength;
+	}
+}
+
 void StringUtility::split(const char* str, const char* key, myVector<string>& vec, bool removeEmpty)
 {
 	int startPos = 0;
