@@ -377,7 +377,8 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 			continue;
 		}
 		string typeName = sqliteInfo.mMemberList[i].mTypeName;
-		// 将myVector替换为List,Vector2UShort替换为Vector2Int
+		// 因为模板文件是按照C++来写的,但是有些类型在C#中是没有的,所以要转换为C#中对应的类型
+		// myVector替换为List,Vector2UShort替换为Vector2Int,char替换为sbyte
 		if (startWith(typeName, "myVector"))
 		{
 			strReplaceAll(typeName, "myVector", "List");
@@ -385,6 +386,10 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		else if (typeName == "Vector2UShort")
 		{
 			typeName = "Vector2Int";
+		}
+		else if (typeName == "char")
+		{
+			typeName = "sbyte";
 		}
 		if (findString(typeName.c_str(), "List", NULL))
 		{
