@@ -166,7 +166,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "{");
 	line(str, "\tMIN,");
 	line(str, "");
-	line(str, "\tCS_MIN = 10000,");
+	line(str, "\tCS_MIN = 3000,");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
@@ -177,7 +177,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	}
 	line(str, "\tCS_MAX,");
 	line(str, "");
-	line(str, "\tSC_MIN = 20000,");
+	line(str, "\tSC_MIN = 6000,");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
@@ -310,34 +310,34 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 	line(str, "");
 	line(str, "public class PACKET_TYPE");
 	line(str, "{");
-	line(str, "\tpublic static int MIN = 0;");
+	line(str, "\tpublic static ushort MIN = 0;");
 	line(str, "");
-	int csPacketNumber = 10000;
-	line(str, "\tpublic static int CS_MIN = " + intToString(csPacketNumber) + ";");
+	int csPacketNumber = 3000;
+	line(str, "\tpublic static ushort CS_MIN = " + intToString(csPacketNumber) + ";");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
 			++csPacketNumber;
-			line(str, "\tpublic static int " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(csPacketNumber) + ";");
+			line(str, "\tpublic static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(csPacketNumber) + ";");
 		}
 	}
 	++csPacketNumber;
-	line(str, "\tpublic static int CS_MAX = " + intToString(csPacketNumber) + ";");
+	line(str, "\tpublic static ushort CS_MAX = " + intToString(csPacketNumber) + ";");
 	line(str, "");
-	int scPacketNumber = 20000;
-	line(str, "\tpublic static int SC_MIN = " + intToString(scPacketNumber) + ";");
+	int scPacketNumber = 6000;
+	line(str, "\tpublic static ushort SC_MIN = " + intToString(scPacketNumber) + ";");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
 			++scPacketNumber;
-			line(str, "\tpublic static int " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(scPacketNumber) + ";");
+			line(str, "\tpublic static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(scPacketNumber) + ";");
 		}
 	}
 	++scPacketNumber;
-	line(str, "\tpublic static int SC_MAX = " + intToString(scPacketNumber) + ";");
+	line(str, "\tpublic static ushort SC_MAX = " + intToString(scPacketNumber) + ";");
 	line(str, "}", false);
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
@@ -377,7 +377,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	}
 	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");
 	line(str, "\t}");
-	line(str, "\tprotected static void registePacket(Type classType, int type)");
+	line(str, "\tprotected static void registePacket(Type classType, ushort type)");
 	line(str, "\t{");
 	line(str, "\t\tmSocketFactory.registePacket(classType, type);");
 	line(str, "\t}");
