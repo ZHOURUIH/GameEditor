@@ -240,7 +240,7 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 	}
 	else if (typeName == "ullong")
 	{
-		typeName = "long";
+		typeName = "ulong";
 	}
 	string str;
 	if (memberInfo.mIsArray)
