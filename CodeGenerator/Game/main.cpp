@@ -5,18 +5,22 @@
 #include "CodeMySQL.h"
 #include "CodeSQLite.h"
 #include "CodeNetPacket.h"
+#include "CodeAchivement.h"
+#include "CodeEvent.h"
 
 void main()
 {
 	string cppGamePath = "E:/Github/MicroLegend_Server/MicroLegend_Server/Game/";
 	string csGamePath = "E:/Github/MicroLegend/Assets/Scripts/Game/";
 	string cppStringDefinePath = cppGamePath + "StringDefine";
-	cout << "1.生成网络通信协议代码" << endl;
-	cout << "2.生成SQLite数据结构代码" << endl;
-	cout << "3.生成MySQL数据结构代码" << endl;
-	cout << "4.生成命令结构代码" << endl;
-	cout << "5.生成技能结构代码" << endl;
-	cout << "6.生成状态结构代码" << endl;
+	cout << "1.网络通信协议代码" << endl;
+	cout << "2.SQLite数据代码" << endl;
+	cout << "3.MySQL数据代码" << endl;
+	cout << "4.命令代码" << endl;
+	cout << "5.技能代码" << endl;
+	cout << "6.状态代码" << endl;
+	cout << "7.成就代码" << endl;
+	cout << "8.事件代码" << endl;
 	int input;
 	cin >> input;
 	if (input == 1)
@@ -54,6 +58,16 @@ void main()
 	{
 		string cppHeaderPath = cppGamePath + "StateMachine";
 		CodeState::generateStateCode(cppStringDefinePath, cppHeaderPath);
+	}
+	else if (input == 7)
+	{
+		string cppHeaderPath = cppGamePath + "Achivement";
+		CodeAchivement::generateAchivementCode(cppHeaderPath);
+	}
+	else if (input == 8)
+	{
+		string cppHeaderPath = cppGamePath + "EventSystem";
+		CodeEvent::generateEventCode(cppStringDefinePath, cppHeaderPath);
 	}
 	system("pause");
 }
