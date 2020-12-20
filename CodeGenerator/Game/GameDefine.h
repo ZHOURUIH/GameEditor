@@ -50,7 +50,8 @@ struct MySQLMember
 struct MySQLInfo
 {
 	myVector<MySQLMember> mMemberList;
-	string mMySQLName;
+	string mMySQLClassName;
+	string mMySQLTableName;
 };
 
 #endif

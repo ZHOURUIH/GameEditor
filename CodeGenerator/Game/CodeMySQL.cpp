@@ -38,7 +38,18 @@ void CodeMySQL::generateMySQLCode(string cppDataPath, string cppStringDefinePath
 		if (line == "{")
 		{
 			packetStart = true;
-			tempInfo.mMySQLName = lines[i - 1];
+			string tableTitle = lines[i - 1];
+			strReplaceAll(tableTitle, " ", "");
+			strReplaceAll(tableTitle, "\t", "");
+			myVector<string> titleVector;
+			split(tableTitle.c_str(), ":", titleVector);
+			if (titleVector.size() != 2)
+			{
+				ERROR("mysql表格的格式错误: " + lines[i - 1]);
+				return;
+			}
+			tempInfo.mMySQLClassName = titleVector[0];
+			tempInfo.mMySQLTableName = titleVector[1];
 			tempInfo.mMemberList.clear();
 			continue;
 		}
@@ -55,12 +66,10 @@ void CodeMySQL::generateMySQLCode(string cppDataPath, string cppStringDefinePath
 		}
 	}
 	deleteFolder(cppDataPath);
-	myVector<string> mysqlList;
 	FOR_VECTOR_CONST(mysqlInfoList)
 	{
 		// 生成代码文件
 		generateCppMySQLDataFile(mysqlInfoList[i], cppDataPath);
-		mysqlList.push_back(mysqlInfoList[i].mMySQLName);
 	}
 	// 上一层目录生成MySQLHeader.h
 	string totalHeaderPath = cppDataPath;
@@ -71,9 +80,9 @@ void CodeMySQL::generateMySQLCode(string cppDataPath, string cppStringDefinePath
 	totalHeaderPath = getFilePath(totalHeaderPath);
 	generateCppMySQLTotalHeaderFile(mysqlInfoList, totalHeaderPath);
 	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
-	generateStringDefineMySQL(mysqlList, cppStringDefinePath);
-	generateMySQLClassDeclare(mysqlList, totalHeaderPath);
-	generateMySQLInstanceDeclare(mysqlList, totalHeaderPath);
+	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
+	generateMySQLClassDeclare(mysqlInfoList, totalHeaderPath);
+	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -81,8 +90,8 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 {
 	// 头文件
 	string header;
-	string className = "MD" + mysqlInfo.mMySQLName;
-	string headerMacro = "_MD" + nameToUpper(mysqlInfo.mMySQLName) + "_H_";
+	string className = "MD" + mysqlInfo.mMySQLClassName;
+	string headerMacro = "_MD" + nameToUpper(mysqlInfo.mMySQLClassName) + "_H_";
 	line(header, "#ifndef " + headerMacro);
 	line(header, "#define " + headerMacro);
 	line(header, "");
@@ -205,12 +214,12 @@ void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysql
 	uint packetCount = mysqlList.size();
 	FOR_I(packetCount)
 	{
-		line(str0, "#include \"MD" + mysqlList[i].mMySQLName + ".h\"");
+		line(str0, "#include \"MD" + mysqlList[i].mMySQLClassName + ".h\"");
 	}
 	line(str0, "");
 	FOR_I(packetCount)
 	{
-		line(str0, "#include \"MySQL" + mysqlList[i].mMySQLName + ".h\"");
+		line(str0, "#include \"MySQL" + mysqlList[i].mMySQLClassName + ".h\"");
 	}
 	line(str0, "");
 	line(str0, "#endif", false);
@@ -252,7 +261,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(str1, "\tREGISTE_MYSQL(MySQL" + mysqlList[i].mMySQLName + ", \"" + mysqlList[i].mMySQLName + "\");");
+		line(str1, "\tREGISTE_MYSQL(MySQL" + mysqlList[i].mMySQLClassName + ", \"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
 	str1 = ANSIToUTF8(str1.c_str(), true);
@@ -260,14 +269,14 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 }
 
 // StringDefineMySQL.h和StringDefineMySQL.cpp
-void CodeMySQL::generateStringDefineMySQL(const myVector<string>& mysqlList, string filePath)
+void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, string filePath)
 {
 	// 头文件
 	string header;
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(header, "DECLARE_STRING(MD" + mysqlList[i] + ");");
+		line(header, "DECLARE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
 	}
 	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
@@ -280,21 +289,21 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<string>& mysqlList, str
 	line(source, "");
 	FOR_I(count)
 	{
-		line(source, "DEFINE_STRING(MD" + mysqlList[i] + ");");
+		line(source, "DEFINE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
 	}
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + "StringDefineMySQL.cpp", source);
 }
 
 // MySQLClassDeclare.h
-void CodeMySQL::generateMySQLClassDeclare(const myVector<string>& mysqlList, string filePath)
+void CodeMySQL::generateMySQLClassDeclare(const myVector<MySQLInfo>& mysqlList, string filePath)
 {
 	// 头文件
 	string header;
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(header, "class MySQL" + mysqlList[i] + ";");
+		line(header, "class MySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
@@ -302,7 +311,7 @@ void CodeMySQL::generateMySQLClassDeclare(const myVector<string>& mysqlList, str
 }
 
 // MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp
-void CodeMySQL::generateMySQLInstanceDeclare(const myVector<string>& mysqlList, string filePath)
+void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, string filePath)
 {
 	// 头文件
 	string header;
@@ -311,7 +320,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<string>& mysqlList, 
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(header, "static MySQL" + mysqlList[i] + "* mMySQL" + mysqlList[i] + ";");
+		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
@@ -324,7 +333,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<string>& mysqlList, 
 	line(cpp, "");
 	FOR_I(count)
 	{
-		line(cpp, "MySQL" + mysqlList[i] + "* GameBase::mMySQL" + mysqlList[i] + ";");
+		line(cpp, "MySQL" + mysqlList[i].mMySQLClassName + "* GameBase::mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 	cpp = ANSIToUTF8(cpp.c_str(), true);
 	writeFile(filePath + "MySQLInstanceDeclare.cpp", cpp);
