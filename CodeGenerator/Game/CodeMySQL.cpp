@@ -1,6 +1,6 @@
 #include "CodeMySQL.h"
 
-void CodeMySQL::generateMySQLCode(string cppDataPath, string cppStringDefinePath)
+void CodeMySQL::generateMySQLCode(string cppDataPath, string cppTablePath, string cppStringDefinePath)
 {
 	// 解析模板文件
 	string fileContent;
@@ -70,6 +70,7 @@ void CodeMySQL::generateMySQLCode(string cppDataPath, string cppStringDefinePath
 	{
 		// 生成代码文件
 		generateCppMySQLDataFile(mysqlInfoList[i], cppDataPath);
+		generateCppMySQLTableFile(mysqlInfoList[i], cppTablePath);
 	}
 	// 上一层目录生成MySQLHeader.h
 	string totalHeaderPath = cppDataPath;
@@ -202,6 +203,61 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + className + ".h", header);
 	writeFile(filePath + className + ".cpp", source);
+}
+
+// 生成MySQLTable.h和MySQLTable.cpp文件
+void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string filePath)
+{
+	validPath(filePath);
+	string tableClassName = "MySQL" + mysqlInfo.mMySQLClassName;
+	string dataClassName = "MD" + mysqlInfo.mMySQLClassName;
+	if (!isFileExist(filePath + tableClassName + ".h"))
+	{
+		// 头文件
+		string header;
+		string headerMacro = "_MYSQL" + nameToUpper(mysqlInfo.mMySQLClassName) + "_H_";
+		line(header, "#ifndef " + headerMacro);
+		line(header, "#define " + headerMacro);
+		line(header, "");
+		line(header, "#include \"MySQLTable.h\"");
+		line(header, "");
+		line(header, "class " + dataClassName + ";");
+		line(header, "class " + tableClassName + " : public MySQLTable");
+		line(header, "{");
+		line(header, "public:");
+		line(header, "\t" + tableClassName + "(const char* tableName)");
+		line(header, "\t\t:MySQLTable(tableName) {}");
+		line(header, "\tvoid init(MYSQL * mysql) override;");
+		line(header, "\tMySQLData* createData() override;");
+		line(header, "protected:");
+		line(header, "};");
+		line(header, "");
+		line(header, "#endif", false);
+		header = ANSIToUTF8(header.c_str(), true);
+		writeFile(filePath + tableClassName + ".h", header);
+	}
+	if (!isFileExist(filePath + tableClassName + ".cpp"))
+	{
+		// 源文件
+		string source;
+		string headerMacro = "_MYSQL" + nameToUpper(mysqlInfo.mMySQLClassName) + "_H_";
+		line(source, "#include \"" + tableClassName + ".h\"");
+		line(source, "#include \"Utility.h\"");
+		line(source, "#include \"" + dataClassName + ".h\"");
+		line(source, "#include \"MySQLDataBase.h\"");
+		line(source, "");
+		line(source, "void " + tableClassName + "::init(MYSQL * mysql)");
+		line(source, "{");
+		line(source, "\tMySQLTable::init(mysql);");
+		line(source, "\t" + dataClassName + "::fillColName(this);");
+		line(source, "}");
+		line(source, "MySQLData* " + tableClassName + "::createData()");
+		line(source, "{");
+		line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
+		line(source, "}", false);
+		source = ANSIToUTF8(source.c_str(), true);
+		writeFile(filePath + tableClassName + ".cpp", source);
+	}
 }
 
 // MySQLHeader.h文件

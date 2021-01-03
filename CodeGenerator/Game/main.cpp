@@ -42,7 +42,8 @@ void main()
 	else if (input == 3)
 	{
 		string cppDataPath = cppGamePath + "DataBase/MySQL/Data";
-		CodeMySQL::generateMySQLCode(cppDataPath, cppStringDefinePath);
+		string cppTablePath = cppGamePath + "DataBase/MySQL/Table";
+		CodeMySQL::generateMySQLCode(cppDataPath, cppTablePath, cppStringDefinePath);
 	}
 	else if (input == 4)
 	{
