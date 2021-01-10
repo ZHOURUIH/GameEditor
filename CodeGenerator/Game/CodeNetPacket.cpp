@@ -1,17 +1,29 @@
 #include "CodeNetPacket.h"
 
-void CodeNetPacket::generatePacketCode(string cppDeclareFilePath, string csFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath)
+void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath, string cppSCDeclareFilePath, string csharpCSFilePath, string csharpSCFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath)
 {
 	// 解析模板文件
-	string fileContent;
-	openTxtFile("PacketProtocal.txt", fileContent);
-	if (fileContent.length() == 0)
+	string csFileContent;
+	openTxtFile("PacketCS.txt", csFileContent);
+	if (csFileContent.length() == 0)
 	{
-		ERROR("未找到协议文件PacketProtocal.txt");
+		ERROR("未找到协议文件PacketCS.txt");
 		return;
 	}
+	string scFileContent;
+	openTxtFile("PacketSC.txt", scFileContent);
+	if (scFileContent.length() == 0)
+	{
+		ERROR("未找到协议文件PacketSC.txt");
+		return;
+	}
+	myVector<string> csLines;
+	myVector<string> scLines;
+	split(csFileContent.c_str(), "\r\n", csLines);
+	split(scFileContent.c_str(), "\r\n", scLines);
 	myVector<string> lines;
-	split(fileContent.c_str(), "\r\n", lines);
+	lines.merge(csLines);
+	lines.merge(scLines);
 	bool packetStart = false;
 	myVector<PacketInfo> packetInfoList;
 	myVector<PacketMember> tempMemberList;
@@ -67,22 +79,32 @@ void CodeNetPacket::generatePacketCode(string cppDeclareFilePath, string csFileP
 			tempMemberList.push_back(parseMemberLine(line));
 		}
 	}
-	deleteFolder(cppDeclareFilePath);
+
+	// 删除旧文件
+	deleteFolder(cppCSDeclareFilePath);
+	deleteFolder(cppSCDeclareFilePath);
 	// c#的只删除代码文件,不删除meta文件
-	myVector<string> csFileList;
-	findFiles(csFilePath, csFileList, ".cs");
-	FOR_VECTOR_CONST(csFileList)
+	myVector<string> csharpCSFileList;
+	findFiles(csharpCSFilePath, csharpCSFileList, ".cs");
+	FOR_VECTOR_CONST(csharpCSFileList)
 	{
-		deleteFile(csFileList[i]);
+		deleteFile(csharpCSFileList[i]);
 	}
+	myVector<string> csharpSCFileList;
+	findFiles(csharpSCFilePath, csharpSCFileList, ".cs");
+	FOR_VECTOR_CONST(csharpSCFileList)
+	{
+		deleteFile(csharpSCFileList[i]);
+	}
+
 	myVector<string> packetList;
 	FOR_VECTOR_CONST(packetInfoList)
 	{
 		// 生成代码文件
 		// .h代码
-		generateCppPacketDeclareFile(packetInfoList[i], cppDeclareFilePath);
+		generateCppPacketDeclareFile(packetInfoList[i], cppCSDeclareFilePath, cppSCDeclareFilePath);
 		// .cs代码
-		generateCSharpFile(packetInfoList[i], csFilePath);
+		generateCSharpFile(packetInfoList[i], csharpCSFilePath, csharpSCFilePath);
 		packetList.push_back(packetInfoList[i].mPacketName);
 	}
 	// c++
@@ -238,7 +260,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 }
 
 // Packet_Declare.h文件
-void CodeNetPacket::generateCppPacketDeclareFile(const PacketInfo& packetInfo, string filePath)
+void CodeNetPacket::generateCppPacketDeclareFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath)
 {
 	string headerMacro = "_" + packetNameToUpper(packetInfo.mPacketName) + "_DECLARE_H_";
 	string file;
@@ -273,9 +295,18 @@ void CodeNetPacket::generateCppPacketDeclareFile(const PacketInfo& packetInfo, s
 	line(file, "");
 	line(file, "#endif", false);
 
-	validPath(filePath);
-	file = ANSIToUTF8(file.c_str(), true);
-	writeFile(filePath + packetInfo.mPacketName + "_Declare.h", file);
+	if (startWith(packetInfo.mPacketName, "CS"))
+	{
+		validPath(csFilePath);
+		file = ANSIToUTF8(file.c_str(), true);
+		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.h", file);
+	}
+	else if(startWith(packetInfo.mPacketName, "SC"))
+	{
+		validPath(scFilePath);
+		file = ANSIToUTF8(file.c_str(), true);
+		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.h", file);
+	}
 }
 
 // StringDefinePacket.h和StringDefinePacket.cpp
@@ -395,7 +426,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 }
 
 // Packet_Declare.cs文件
-void CodeNetPacket::generateCSharpFile(const PacketInfo& packetInfo, string filePath)
+void CodeNetPacket::generateCSharpFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath)
 {
 	const int prefixLength = 2;
 	if (packetInfo.mPacketName.substr(0, prefixLength) != "CS" && packetInfo.mPacketName.substr(0, prefixLength) != "SC")
@@ -427,7 +458,16 @@ void CodeNetPacket::generateCSharpFile(const PacketInfo& packetInfo, string file
 	}
 	line(file, "}", false);
 
-	validPath(filePath);
-	file = ANSIToUTF8(file.c_str(), true);
-	writeFile(filePath + packetInfo.mPacketName + "_Declare.cs", file);
+	if (startWith(packetInfo.mPacketName, "CS"))
+	{
+		validPath(csFilePath);
+		file = ANSIToUTF8(file.c_str(), true);
+		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.cs", file);
+	}
+	else if (startWith(packetInfo.mPacketName, "SC"))
+	{
+		validPath(scFilePath);
+		file = ANSIToUTF8(file.c_str(), true);
+		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.cs", file);
+	}
 }

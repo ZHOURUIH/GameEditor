@@ -25,11 +25,13 @@ void main()
 	cin >> input;
 	if (input == 1)
 	{
-		string cppDeclarePath = cppGamePath + "Socket/PacketDeclare";
+		string cppCSDeclarePath = cppGamePath + "Socket/PacketDeclareCS";
+		string cppSCDeclarePath = cppGamePath + "Socket/PacketDeclareSC";
 		string cppPacketDefinePath = cppGamePath + "Socket";
-		string csHeaderPath = csGamePath + "Socket/PacketHeader";
+		string csharpCSHeaderPath = csGamePath + "Socket/PacketHeaderCS";
+		string csharpSCHeaderPath = csGamePath + "Socket/PacketHeaderSC";
 		string csPacketDefinePath = csGamePath + "Socket";
-		CodeNetPacket::generatePacketCode(cppDeclarePath, csHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
+		CodeNetPacket::generatePacketCode(cppCSDeclarePath, cppSCDeclarePath, csharpCSHeaderPath, csharpSCHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
 	}
 	else if (input == 2)
 	{
