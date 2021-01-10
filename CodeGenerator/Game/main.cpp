@@ -27,11 +27,14 @@ void main()
 	{
 		string cppCSDeclarePath = cppGamePath + "Socket/PacketDeclareCS";
 		string cppSCDeclarePath = cppGamePath + "Socket/PacketDeclareSC";
+		string cppCSPacketPath = cppGamePath + "Socket/ClientServer";
+		string cppSCPacketPath = cppGamePath + "Socket/ServerClient";
 		string cppPacketDefinePath = cppGamePath + "Socket";
 		string csharpCSHeaderPath = csGamePath + "Socket/PacketHeaderCS";
 		string csharpSCHeaderPath = csGamePath + "Socket/PacketHeaderSC";
-		string csPacketDefinePath = csGamePath + "Socket";
-		CodeNetPacket::generatePacketCode(cppCSDeclarePath, cppSCDeclarePath, csharpCSHeaderPath, csharpSCHeaderPath, cppPacketDefinePath, csPacketDefinePath, cppStringDefinePath);
+		string csharpSCPacketPath = csGamePath + "Socket/ServerClient";
+		string csharpPacketDefinePath = csGamePath + "Socket";
+		CodeNetPacket::generatePacketCode(cppCSDeclarePath, cppSCDeclarePath, csharpCSHeaderPath, csharpSCHeaderPath, cppPacketDefinePath, csharpPacketDefinePath, cppStringDefinePath, cppCSPacketPath, cppSCPacketPath, csharpSCPacketPath);
 	}
 	else if (input == 2)
 	{

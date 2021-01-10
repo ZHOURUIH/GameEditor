@@ -6,18 +6,30 @@
 class CodeNetPacket : public CodeUtility
 {
 public:
-	static void generatePacketCode(string cppCSDeclareFilePath, string cppSCDeclareFilePath, string csharpCSFilePath, string csharpSCFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath);
+	static void generatePacketCode(string cppCSDeclareFilePath, 
+									string cppSCDeclareFilePath, 
+									string csharpCSFilePath, 
+									string csharpSCFilePath, 
+									string cppPacketDefineFilePath, 
+									string csPacketDefineFilePath, 
+									string cppStringDefinePath, 
+									string cppCSPacketPath,
+									string cppSCPacketPath,
+									string csharpSCPacketPath);
 protected:
 	//c++
 	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
-	static void generateCppPacketDeclareFile(const PacketInfo& packetName, string csFilePath, string scFilePath);
+	static void generateCppPacketDeclareFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath);
 	static void generateStringDefinePacket(const myVector<string>& packetList, string filePath);
+	static void generateCppCSPacketFile(const string& packetName, string filePath);
+	static void generateCppSCPacketFile(const string& packetName, string filePath);
 	//c#
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
-	static void generateCSharpFile(const PacketInfo& packetName, string csFilePath, string scFilePath);
+	static void generateCSharpDecalreFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath);
+	static void generateCSharpSCPacketFile(const string& packetName, string filePath);
 };
 
 #endif

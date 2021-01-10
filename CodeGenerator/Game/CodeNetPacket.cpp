@@ -1,6 +1,15 @@
 #include "CodeNetPacket.h"
 
-void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath, string cppSCDeclareFilePath, string csharpCSFilePath, string csharpSCFilePath, string cppPacketDefineFilePath, string csPacketDefineFilePath, string cppStringDefinePath)
+void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath, 
+									string cppSCDeclareFilePath, 
+									string csharpCSFilePath, 
+									string csharpSCFilePath, 
+									string cppPacketDefineFilePath, 
+									string csPacketDefineFilePath, 
+									string cppStringDefinePath, 
+									string cppCSPacketPath, 
+									string cppSCPacketPath, 
+									string csharpSCPacketPath)
 {
 	// 解析模板文件
 	string csFileContent;
@@ -103,8 +112,11 @@ void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath, string cppSC
 		// 生成代码文件
 		// .h代码
 		generateCppPacketDeclareFile(packetInfoList[i], cppCSDeclareFilePath, cppSCDeclareFilePath);
+		generateCppCSPacketFile(packetInfoList[i].mPacketName, cppCSPacketPath);
+		generateCppSCPacketFile(packetInfoList[i].mPacketName, cppSCPacketPath);
 		// .cs代码
-		generateCSharpFile(packetInfoList[i], csharpCSFilePath, csharpSCFilePath);
+		generateCSharpDecalreFile(packetInfoList[i], csharpCSFilePath, csharpSCFilePath);
+		generateCSharpSCPacketFile(packetInfoList[i].mPacketName, csharpSCPacketPath);
 		packetList.push_back(packetInfoList[i].mPacketName);
 	}
 	// c++
@@ -337,6 +349,102 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	writeFile(filePath + "StringDefinePacket.cpp", source);
 }
 
+// CSPacket.h和CSPacket.cpp
+void CodeNetPacket::generateCppCSPacketFile(const string& packetName, string filePath)
+{
+	if (!startWith(packetName, "CS"))
+	{
+		return;
+	}
+	validPath(filePath);
+
+	// CSPacket.h
+	string headerFullPath = filePath + packetName + ".h";
+	if (!isFileExist(headerFullPath))
+	{
+		string header;
+		line(header, "#ifndef " + nameToUpper(packetName) + "_H_");
+		line(header, "#define " + nameToUpper(packetName) + "_H_");
+		line(header, "");
+		line(header, "#include \"Packet.h\"");
+		line(header, "");
+		line(header, "class " + packetName + " : public Packet");
+		line(header, "{");
+		line(header, "\t" + packetName + "_Declare;");
+		line(header, "public:");
+		line(header, "\tvoid execute() override;");
+		line(header, "\tvoid debugInfo(char* buffer, int size) override");
+		line(header, "\t{");
+		line(header, "\t\tPACKET_DEBUG(\"\")");
+		line(header, "\t}");
+		line(header, "};");
+		line(header, "");
+		line(header, "#endif", false);
+
+		header = ANSIToUTF8(header.c_str(), true);
+		writeFile(headerFullPath, header);
+	}
+
+	// CSPacket.cpp
+	string sourceFullPath = filePath + packetName + ".cpp";
+	if (!isFileExist(sourceFullPath))
+	{
+		string source;
+		line(source, "#include \"PacketHeader.h\"");
+		line(source, "#include \"MySQLUtility.h\"");
+		line(source, "#include \"NetServer.h\"");
+		line(source, "#include \"CharacterPlayer.h\"");
+		line(source, "");
+		line(source, "void " + packetName + "::execute()");
+		line(source, "{");
+		line(source, "\tCharacterPlayer* player = (CharacterPlayer*)getCharacter();");
+		line(source, "\tif (player == NULL)");
+		line(source, "\t{");
+		line(source, "\t\treturn;");
+		line(source, "\t}");
+		line(source, "}", false);
+
+		source = ANSIToUTF8(source.c_str(), true);
+		writeFile(sourceFullPath, source);
+	}
+}
+
+// SCPacket.h文件
+void CodeNetPacket::generateCppSCPacketFile(const string& packetName, string filePath)
+{
+	if (!startWith(packetName, "SC"))
+	{
+		return;
+	}
+	validPath(filePath);
+
+	// SCPacket.h
+	string headerFullPath = filePath + packetName + ".h";
+	if (!isFileExist(headerFullPath))
+	{
+		string header;
+		line(header, "#ifndef " + nameToUpper(packetName) + "_H_");
+		line(header, "#define " + nameToUpper(packetName) + "_H_");
+		line(header, "");
+		line(header, "#include \"Packet.h\"");
+		line(header, "");
+		line(header, "class " + packetName + " : public Packet");
+		line(header, "{");
+		line(header, "\t" + packetName + "_Declare;");
+		line(header, "public:");
+		line(header, "\tvoid debugInfo(char* buffer, int size) override");
+		line(header, "\t{");
+		line(header, "\t\tPACKET_DEBUG(\"\")");
+		line(header, "\t}");
+		line(header, "};");
+		line(header, "");
+		line(header, "#endif", false);
+
+		header = ANSIToUTF8(header.c_str(), true);
+		writeFile(headerFullPath, header);
+	}
+}
+
 // PacketDefine.cs文件
 void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath)
 {
@@ -426,7 +534,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 }
 
 // Packet_Declare.cs文件
-void CodeNetPacket::generateCSharpFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath)
+void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath)
 {
 	const int prefixLength = 2;
 	if (packetInfo.mPacketName.substr(0, prefixLength) != "CS" && packetInfo.mPacketName.substr(0, prefixLength) != "SC")
@@ -469,5 +577,32 @@ void CodeNetPacket::generateCSharpFile(const PacketInfo& packetInfo, string csFi
 		validPath(scFilePath);
 		file = ANSIToUTF8(file.c_str(), true);
 		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.cs", file);
+	}
+}
+
+void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string filePath)
+{
+	if (!startWith(packetName, "SC"))
+	{
+		return;
+	}
+	validPath(filePath);
+	string fullPath = filePath + packetName + ".cs";
+	if (!isFileExist(fullPath))
+	{
+		string file;
+		line(file, "using System;");
+		line(file, "using System.Collections;");
+		line(file, "using System.Collections.Generic;");
+		line(file, "");
+		line(file, "public partial class " + packetName + " : SocketPacket");
+		line(file, "{");
+		line(file, "\tpublic override void execute()");
+		line(file, "\t{");
+		line(file, "\t}");
+		line(file, "}", false);
+
+		file = ANSIToUTF8(file.c_str(), true);
+		writeFile(fullPath, file);
 	}
 }
