@@ -1,6 +1,6 @@
 #include "CodeEvent.h"
 
-void CodeEvent::generateEventCode(string stringDefinePath, string headerPath)
+void CodeEvent::generateEventCode(string stringDefinePath, string headerPath, string eventPath)
 {
 	string cmdFile;
 	openTxtFile("Event.txt", cmdFile);
@@ -30,6 +30,11 @@ void CodeEvent::generateEventCode(string stringDefinePath, string headerPath)
 	generateHeaderFile(eventList, headerPath);
 	// 生成EventType.h文件
 	generateEventType(eventList, headerPath);
+	FOR_VECTOR(eventList)
+	{
+		generateEventFile(eventList[i].first, eventPath);
+	}
+	END(eventList);
 }
 
 // EventHeader.h文件
@@ -46,6 +51,7 @@ void CodeEvent::generateHeaderFile(const myVector<pair<string, string>>& eventLi
 	}
 	line(str0, "");
 	line(str0, "#endif", false);
+
 	validPath(headerPath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(headerPath + "EventHeader.h", str0);
@@ -61,6 +67,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	{
 		line(header, "DECLARE_STRING(" + eventList[i].first + ");");
 	}
+
 	validPath(stringDefinePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(stringDefinePath + "StringDefineEvent.h", header);
@@ -74,6 +81,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	{
 		line(source, "DEFINE_STRING(" + eventList[i].first + ");");
 	}
+
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(stringDefinePath + "StringDefineEvent.cpp", source);
 }
@@ -108,7 +116,41 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	line(str0, "};");
 	line(str0, "");
 	line(str0, "#endif", false);
+
 	validPath(headerPath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(headerPath + "EventType.h", str0);
+}
+
+void CodeEvent::generateEventFile(const string& eventName, string eventPath)
+{
+	validPath(eventPath);
+	string headerFullPath = eventPath + eventName + ".h";
+	if (isFileExist(headerFullPath))
+	{
+		return;
+	}
+	string header;
+	string marcoName = nameToUpper(eventName) + "_H_";
+	string typeStr = nameToUpper(eventName);
+	typeStr = typeStr.substr(strlen("_EVENT_"));
+	line(header, "#ifndef " + marcoName);
+	line(header, "#define " + marcoName);
+	line(header, "");
+	line(header, "#include \"GameEvent.h\"");
+	line(header, "");
+	line(header, "class " + eventName + " : public GameEvent");
+	line(header, "{");
+	line(header, "public:");
+	line(header, "\t" + eventName + "()");
+	line(header, "\t{");
+	line(header, "\t\tmType = EVENT_TYPE::" + typeStr + ";");
+	line(header, "\t}");
+	line(header, "public:");
+	line(header, "};");
+	line(header, "");
+	line(header, "#endif", false);
+
+	header = ANSIToUTF8(header.c_str(), true);
+	writeFile(headerFullPath, header);
 }

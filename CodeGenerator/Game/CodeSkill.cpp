@@ -33,6 +33,7 @@ void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillLis
 	line(str0, "#include \"StateInterfaceHeader.h\"");
 	line(str0, "");
 	line(str0, "#endif", false);
+
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "CharacterSkillHeader.h", str0);
@@ -48,6 +49,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	{
 		line(header, "DECLARE_STRING(" + skillList[i] + ");");
 	}
+
 	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "StringDefineSkill.h", header);
@@ -61,6 +63,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	{
 		line(source, "DEFINE_STRING(" + skillList[i] + ");");
 	}
+
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + "StringDefineSkill.cpp", source);
 }

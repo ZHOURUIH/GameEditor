@@ -63,12 +63,14 @@ void main()
 	else if (input == 7)
 	{
 		string cppHeaderPath = cppGamePath + "Achivement";
-		CodeAchivement::generateAchivementCode(cppHeaderPath);
+		string cppAchivementFilePath = cppHeaderPath + "/Achivement";
+		CodeAchivement::generateAchivementCode(cppHeaderPath, cppAchivementFilePath);
 	}
 	else if (input == 8)
 	{
 		string cppHeaderPath = cppGamePath + "EventSystem";
-		CodeEvent::generateEventCode(cppStringDefinePath, cppHeaderPath);
+		string cppEventFilePath = cppHeaderPath + "/Event";
+		CodeEvent::generateEventCode(cppStringDefinePath, cppHeaderPath, cppEventFilePath);
 	}
 	system("pause");
 }

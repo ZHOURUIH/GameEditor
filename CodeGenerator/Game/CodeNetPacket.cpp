@@ -148,6 +148,7 @@ void CodeNetPacket::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>&
 	}
 	line(str1, "");
 	line(str1, "#endif", false);
+
 	validPath(filePath);
 	str1 = ANSIToUTF8(str1.c_str(), true);
 	writeFile(filePath + "PacketDeclareHeader.h", str1);
@@ -189,6 +190,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "};");
 	line(str, "");
 	line(str, "#endif", false);
+
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketDefine.h", str);
@@ -228,7 +230,8 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		}
 	}
 	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::SC_MAX - (int)PACKET_TYPE::SC_MIN - 1, \"SC\");");
-	line(str, "};");
+	line(str, "};", false);
+
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketRegister.cpp", str);
@@ -269,6 +272,7 @@ void CodeNetPacket::generateCppPacketDeclareFile(const PacketInfo& packetInfo, s
 	removeLast(file, '\\');
 	line(file, "");
 	line(file, "#endif", false);
+
 	validPath(filePath);
 	file = ANSIToUTF8(file.c_str(), true);
 	writeFile(filePath + packetInfo.mPacketName + "_Declare.h", file);
@@ -297,6 +301,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	{
 		line(source, "DEFINE_STRING(" + packetList[i] + ");");
 	}
+
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + "StringDefinePacket.cpp", source);
 }
@@ -339,6 +344,7 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 	++scPacketNumber;
 	line(str, "\tpublic static ushort SC_MAX = " + intToString(scPacketNumber) + ";");
 	line(str, "}", false);
+
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketDefine.cs", str);
@@ -382,6 +388,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\t\tmSocketFactory.registePacket(classType, type);");
 	line(str, "\t}");
 	line(str, "}", false);
+
 	validPath(filePath);
 	str = ANSIToUTF8(str.c_str(), true);
 	writeFile(filePath + "PacketRegister.cs", str);
@@ -419,6 +426,7 @@ void CodeNetPacket::generateCSharpFile(const PacketInfo& packetInfo, string file
 		line(file, "\t}");
 	}
 	line(file, "}", false);
+
 	validPath(filePath);
 	file = ANSIToUTF8(file.c_str(), true);
 	writeFile(filePath + packetInfo.mPacketName + "_Declare.cs", file);

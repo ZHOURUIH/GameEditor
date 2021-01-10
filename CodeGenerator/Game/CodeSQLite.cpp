@@ -192,6 +192,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	{
 		line(source, "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
+
 	validPath(dataFilePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	source = ANSIToUTF8(source.c_str(), true);
@@ -215,6 +216,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(table, "};");
 	line(table, "");
 	line(table, "#endif", false);
+
 	validPath(tableFilePath);
 	table = ANSIToUTF8(table.c_str(), true);
 	writeFile(tableFilePath + tableClassName + ".h", table);
@@ -239,6 +241,7 @@ void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sq
 	}
 	line(str0, "");
 	line(str0, "#endif", false);
+
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "SQLiteHeader.h", str0);
@@ -261,6 +264,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "};");
 	line(str0, "");
 	line(str0, "#endif", false);
+
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "SQLiteRegister.h", str0);
@@ -286,6 +290,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 		line(str1, "\tREGISTE_SQLITE(SQLite" + sqliteList[i].mSQLiteName + ", \"" + sqliteList[i].mSQLiteName + "\");");
 	}
 	line(str1, "}", false);
+
 	str1 = ANSIToUTF8(str1.c_str(), true);
 	writeFile(filePath + "SQLiteRegister.cpp", str1);
 }
@@ -304,6 +309,7 @@ void CodeSQLite::generateCppSQLiteClassDeclare(const myVector<SQLiteInfo>& sqlit
 		}
 		line(str1, "class SQLite" + sqliteList[i].mSQLiteName + ";");
 	}
+
 	str1 = ANSIToUTF8(str1.c_str(), true);
 	writeFile(filePath + "SQLiteClassDeclare.h", str1);
 }
@@ -340,6 +346,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		}
 		line(str1, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
+
 	str1 = ANSIToUTF8(str1.c_str(), true);
 	writeFile(filePath + "SQLiteInstanceDeclare.cpp", str1);
 }
@@ -423,6 +430,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	}
 	line(file, "\t}");
 	line(file, "}", false);
+
 	validPath(dataFilePath);
 	file = ANSIToUTF8(file.c_str(), true);
 	writeFile(dataFilePath + dataClassName + ".cs", file);
@@ -441,6 +449,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "\t\t" + dataClassName + ".link(this);");
 	line(table, "\t}");
 	line(table, "}", false);
+
 	validPath(tableFilePath);
 	table = ANSIToUTF8(table.c_str(), true);
 	writeFile(tableFilePath + tableClassName + ".cs", table);
@@ -476,6 +485,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(file, "\t\tsqliteTable = mSQLite.registeTable(tableType, dataType, tableName) as T;");
 	line(file, "\t}");
 	line(file, "}", false);
+
 	validPath(filePath);
 	file = ANSIToUTF8(file.c_str(), true);
 	writeFile(filePath + "SQLiteRegister.cs", file);

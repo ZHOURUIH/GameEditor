@@ -33,6 +33,7 @@ void CodeState::generateCppStateTotalHeaderFile(const myVector<string>& stateLis
 	line(str0, "#include \"StateInterfaceHeader.h\"");
 	line(str0, "");
 	line(str0, "#endif", false);
+
 	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "StateHeader.h", str0);
@@ -48,6 +49,7 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	{
 		line(header, "DECLARE_STRING(" + stateList[i] + ");");
 	}
+
 	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "StringDefineState.h", header);
@@ -61,6 +63,7 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	{
 		line(source, "DEFINE_STRING(" + stateList[i] + ");");
 	}
+
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + "StringDefineState.cpp", source);
 }
