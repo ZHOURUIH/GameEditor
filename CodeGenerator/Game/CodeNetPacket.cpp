@@ -363,8 +363,9 @@ void CodeNetPacket::generateCppCSPacketFile(const string& packetName, string fil
 	if (!isFileExist(headerFullPath))
 	{
 		string header;
-		line(header, "#ifndef " + nameToUpper(packetName) + "_H_");
-		line(header, "#define " + nameToUpper(packetName) + "_H_");
+		string marco = nameToUpper(packetName.substr(2));
+		line(header, "#ifndef _CS" + marco + "_H_");
+		line(header, "#define _CS" + marco + "_H_");
 		line(header, "");
 		line(header, "#include \"Packet.h\"");
 		line(header, "");
@@ -423,8 +424,9 @@ void CodeNetPacket::generateCppSCPacketFile(const string& packetName, string fil
 	if (!isFileExist(headerFullPath))
 	{
 		string header;
-		line(header, "#ifndef " + nameToUpper(packetName) + "_H_");
-		line(header, "#define " + nameToUpper(packetName) + "_H_");
+		string marco = nameToUpper(packetName.substr(2));
+		line(header, "#ifndef _SC" + marco + "_H_");
+		line(header, "#define _SC" + marco + "_H_");
 		line(header, "");
 		line(header, "#include \"Packet.h\"");
 		line(header, "");
