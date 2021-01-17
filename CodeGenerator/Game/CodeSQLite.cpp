@@ -130,7 +130,7 @@ void CodeSQLite::generateSQLiteCode(string cppDataPath, string cppTablePath, str
 	{
 		registerPath = registerPath.substr(0, registerPath.length() - 1);
 	}
-	registerPath = getFilePath(registerPath);
+	registerPath = getFilePath(registerPath) + "/";
 	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, registerPath);
 }
 

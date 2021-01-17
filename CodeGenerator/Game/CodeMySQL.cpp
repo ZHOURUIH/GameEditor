@@ -78,7 +78,7 @@ void CodeMySQL::generateMySQLCode(string cppDataPath, string cppTablePath, strin
 	{
 		totalHeaderPath = totalHeaderPath.substr(0, totalHeaderPath.length() - 1);
 	}
-	totalHeaderPath = getFilePath(totalHeaderPath);
+	totalHeaderPath = getFilePath(totalHeaderPath) + "/";
 	generateCppMySQLTotalHeaderFile(mysqlInfoList, totalHeaderPath);
 	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
 	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
