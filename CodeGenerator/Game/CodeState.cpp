@@ -30,8 +30,6 @@ void CodeState::generateCppStateTotalHeaderFile(const myVector<string>& stateLis
 		line(str0, "#include \"" + stateList[i] + ".h\"");
 	}
 	line(str0, "");
-	line(str0, "#include \"StateInterfaceHeader.h\"");
-	line(str0, "");
 	line(str0, "#endif", false);
 
 	str0 = ANSIToUTF8(str0.c_str(), true);

@@ -12,7 +12,7 @@ void main()
 {
 	string cppGamePath = "E:/Github/MicroLegend_Server/MicroLegend_Server/Game/";
 	string csGamePath = "E:/Github/MicroLegend/Assets/Scripts/Game/";
-	string cppStringDefinePath = cppGamePath + "StringDefine";
+	string cppStringDefinePath = cppGamePath + "StringDefine/";
 	cout << "1.网络通信协议代码" << endl;
 	cout << "2.SQLite数据代码" << endl;
 	cout << "3.MySQL数据代码" << endl;
