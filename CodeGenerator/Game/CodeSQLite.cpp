@@ -118,7 +118,7 @@ void CodeSQLite::generateSQLiteCode(string cppDataPath, string cppTablePath, str
 	{
 		headerPath = headerPath.substr(0, headerPath.length() - 1);
 	}
-	headerPath = getFilePath(headerPath);
+	headerPath = getFilePath(headerPath) + "/";
 	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
 	generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
 	generateCppSQLiteClassDeclare(sqliteInfoList, headerPath);
