@@ -199,7 +199,6 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	}
 	line(source, "}", false);
 
-	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + className + ".h", header);
@@ -252,7 +251,6 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 
 	header = ANSIToUTF8(header.c_str(), true);
 	source = ANSIToUTF8(source.c_str(), true);
-	validPath(filePath);
 	writeFile(filePath + tableClassName + ".h", header);
 	writeFile(filePath + tableClassName + ".cpp", source);
 }
@@ -277,7 +275,6 @@ void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysql
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "MySQLHeader.h", str0);
 }
@@ -300,7 +297,6 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "MySQLRegister.h", str0);
 
@@ -335,7 +331,6 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 		line(header, "DECLARE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
 	}
 
-	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "StringDefineMySQL.h", header);
 
@@ -364,7 +359,6 @@ void CodeMySQL::generateMySQLClassDeclare(const myVector<MySQLInfo>& mysqlList, 
 		line(header, "class MySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 
-	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "MySQLClassDeclare.h", header);
 }
@@ -382,7 +376,6 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 
-	validPath(filePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "MySQLInstanceDeclare.h", header);
 

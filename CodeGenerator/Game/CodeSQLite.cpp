@@ -193,7 +193,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(source, "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 
-	validPath(dataFilePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(dataFilePath + dataClassName + ".h", header);
@@ -217,7 +216,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(table, "");
 	line(table, "#endif", false);
 
-	validPath(tableFilePath);
 	table = ANSIToUTF8(table.c_str(), true);
 	writeFile(tableFilePath + tableClassName + ".h", table);
 }
@@ -242,7 +240,6 @@ void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sq
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "SQLiteHeader.h", str0);
 }
@@ -265,7 +262,6 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(filePath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "SQLiteRegister.h", str0);
 
@@ -298,7 +294,6 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 // SQLiteClassDeclare.h
 void CodeSQLite::generateCppSQLiteClassDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath)
 {
-	validPath(filePath);
 	string str1;
 	uint count = sqliteList.size();
 	FOR_I(count)
@@ -317,7 +312,6 @@ void CodeSQLite::generateCppSQLiteClassDeclare(const myVector<SQLiteInfo>& sqlit
 // SQLiteInstanceDeclare.hºÍSQLiteInstanceDeclare.cpp
 void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath)
 {
-	validPath(filePath);
 	string str0;
 	line(str0, "// auto generated file, so it looks might be strange");
 	line(str0, "");
@@ -431,7 +425,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(file, "\t}");
 	line(file, "}", false);
 
-	validPath(dataFilePath);
 	file = ANSIToUTF8(file.c_str(), true);
 	writeFile(dataFilePath + dataClassName + ".cs", file);
 
@@ -450,7 +443,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "\t}");
 	line(table, "}", false);
 
-	validPath(tableFilePath);
 	table = ANSIToUTF8(table.c_str(), true);
 	writeFile(tableFilePath + tableClassName + ".cs", table);
 }
@@ -486,7 +478,6 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(file, "\t}");
 	line(file, "}", false);
 
-	validPath(filePath);
 	file = ANSIToUTF8(file.c_str(), true);
 	writeFile(filePath + "SQLiteRegister.cs", file);
 }

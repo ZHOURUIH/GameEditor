@@ -52,7 +52,6 @@ void CodeEvent::generateHeaderFile(const myVector<pair<string, string>>& eventLi
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(headerPath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(headerPath + "EventHeader.h", str0);
 }
@@ -68,7 +67,6 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 		line(header, "DECLARE_STRING(" + eventList[i].first + ");");
 	}
 
-	validPath(stringDefinePath);
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(stringDefinePath + "StringDefineEvent.h", header);
 
@@ -117,14 +115,12 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(headerPath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(headerPath + "EventType.h", str0);
 }
 
 void CodeEvent::generateEventFile(const string& eventName, string eventPath)
 {
-	validPath(eventPath);
 	string headerFullPath = eventPath + eventName + ".h";
 	if (isFileExist(headerFullPath))
 	{

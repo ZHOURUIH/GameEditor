@@ -38,7 +38,6 @@ void CodeAchivement::generateHeaderFile(const myVector<string>& achivementList, 
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	validPath(headerPath);
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(headerPath + "AchivementHeader.h", str0);
 }
@@ -63,7 +62,6 @@ void CodeAchivement::generateAchivementRegister(const myVector<string>& achiveme
 	}
 	line(source, "};", false);
 
-	validPath(headerPath);
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(headerPath + "AchivementRegister.cpp", source);
 }
@@ -71,7 +69,6 @@ void CodeAchivement::generateAchivementRegister(const myVector<string>& achiveme
 // Achivement.hºÍAchivement.cpp
 void CodeAchivement::generateAchivementFile(const string& achivement, string achivementPath)
 {
-	validPath(achivementPath);
 	// Achivement.h
 	string headerFullPath = achivementPath + achivement + ".h";
 	if (!isFileExist(headerFullPath))
