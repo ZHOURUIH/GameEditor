@@ -5,14 +5,13 @@
 
 string SceneMapData::COL_ID = "ID";
 string SceneMapData::COL_LABEL = "Label";
-string SceneMapData::COL_RESOURCE = "Resource";
-string SceneMapData::COL_MINI_MAP = "MiniMap";
-string SceneMapData::COL_WIDTH = "Width";
-string SceneMapData::COL_HEIGHT = "Height";
+string SceneMapData::COL_MAP_FILE = "MapFile";
 string SceneMapData::COL_MONSTER_REGION = "MonsterRegion";
 string SceneMapData::COL_NPC = "NPC";
 string SceneMapData::COL_TRANSFER_POINT = "TransferPoint";
 string SceneMapData::COL_PEACE_AREA = "PeaceArea";
+string SceneMapData::COL_MAIN_CITY = "MainCity";
+string SceneMapData::COL_SUB_REGION = "SubRegion";
 
 void SQLiteSceneMap::query(int id, SceneMapData& data)
 {
