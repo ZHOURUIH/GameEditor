@@ -6,12 +6,15 @@
 class CodeEvent : public CodeUtility
 {
 public:
-	static void generateEventCode(string stringDefinePath, string headerPath, string eventPath);
+	static void generateEventCode();
 protected:
 	static void generateHeaderFile(const myVector<pair<string, string>>& eventList, string headerPath);
 	static void generateStringDefineEvent(const myVector<pair<string, string>>& eventList, string stringDefinePath);
 	static void generateEventType(const myVector<pair<string, string>>& eventList, string headerPath);
 	static void generateEventFile(const string& eventName, string eventPath);
+protected:
+	const static string cppHeaderPath;
+	const static string cppEventFilePath;
 };
 
 #endif

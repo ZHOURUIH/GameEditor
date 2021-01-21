@@ -1,6 +1,9 @@
 #include "CodeEvent.h"
 
-void CodeEvent::generateEventCode(string stringDefinePath, string headerPath, string eventPath)
+const string CodeEvent::cppHeaderPath = cppGamePath + "EventSystem/";
+const string CodeEvent::cppEventFilePath = cppHeaderPath + "Event/";
+
+void CodeEvent::generateEventCode()
 {
 	string cmdFile;
 	openTxtFile("Event.txt", cmdFile);
@@ -25,14 +28,14 @@ void CodeEvent::generateEventCode(string stringDefinePath, string headerPath, st
 	}
 	END(eventLineList);
 	// 生成StringDefineEvent文件
-	generateStringDefineEvent(eventList, stringDefinePath);
+	generateStringDefineEvent(eventList, cppStringDefinePath);
 	// 生成EventHeader.h文件
-	generateHeaderFile(eventList, headerPath);
+	generateHeaderFile(eventList, cppHeaderPath);
 	// 生成EventType.h文件
-	generateEventType(eventList, headerPath);
+	generateEventType(eventList, cppHeaderPath);
 	FOR_VECTOR(eventList)
 	{
-		generateEventFile(eventList[i].first, eventPath);
+		generateEventFile(eventList[i].first, cppEventFilePath);
 	}
 	END(eventList);
 }

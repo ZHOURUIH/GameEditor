@@ -6,11 +6,13 @@
 class CodeSkill : public CodeUtility
 {
 public:
-	static void generateSkillCode(string filePath, string headerPath);
+	static void generateSkillCode();
 protected:
 	//c++
 	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath);
 	static void generateStringDefineSkill(const myVector<string>& skillList, string filePath);
+protected:
+	const static string cppHeaderPath;
 };
 
 #endif

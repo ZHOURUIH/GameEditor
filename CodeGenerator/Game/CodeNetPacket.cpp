@@ -1,15 +1,16 @@
 #include "CodeNetPacket.h"
 
-void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath, 
-									string cppSCDeclareFilePath, 
-									string csharpCSFilePath, 
-									string csharpSCFilePath, 
-									string cppPacketDefineFilePath, 
-									string csPacketDefineFilePath, 
-									string cppStringDefinePath, 
-									string cppCSPacketPath, 
-									string cppSCPacketPath, 
-									string csharpSCPacketPath)
+const string CodeNetPacket::cppCSDeclarePath = cppGamePath + "Socket/PacketDeclareCS/";
+const string CodeNetPacket::cppSCDeclarePath = cppGamePath + "Socket/PacketDeclareSC/";
+const string CodeNetPacket::cppCSPacketPath = cppGamePath + "Socket/ClientServer/";
+const string CodeNetPacket::cppSCPacketPath = cppGamePath + "Socket/ServerClient/";
+const string CodeNetPacket::cppPacketDefinePath = cppGamePath + "Socket/";
+const string CodeNetPacket::csharpCSHeaderPath = csGamePath + "Socket/PacketHeaderCS/";
+const string CodeNetPacket::csharpSCHeaderPath = csGamePath + "Socket/PacketHeaderSC/";
+const string CodeNetPacket::csharpSCPacketPath = csGamePath + "Socket/ServerClient/";
+const string CodeNetPacket::csharpPacketDefinePath = csGamePath + "Socket/";
+
+void CodeNetPacket::generate()
 {
 	// 解析模板文件
 	string csFileContent;
@@ -51,10 +52,8 @@ void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath,
 		{
 			line = line.substr(0, pos);
 		}
-		// 去除所有制表符
-		strReplaceAll(line, "\t", "");
-		// 去除所有的分号
-		strReplaceAll(line, ";", "");
+		// 去除所有制表符,分号
+		removeAll(line, '\t', ';');
 		// 没有成员变量的消息包
 		if (line == "{}")
 		{
@@ -90,17 +89,17 @@ void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath,
 	}
 
 	// 删除旧文件
-	deleteFolder(cppCSDeclareFilePath);
-	deleteFolder(cppSCDeclareFilePath);
+	deleteFolder(cppCSDeclarePath);
+	deleteFolder(cppSCDeclarePath);
 	// c#的只删除代码文件,不删除meta文件
 	myVector<string> csharpCSFileList;
-	findFiles(csharpCSFilePath, csharpCSFileList, ".cs");
+	findFiles(csharpCSHeaderPath, csharpCSFileList, ".cs");
 	FOR_VECTOR_CONST(csharpCSFileList)
 	{
 		deleteFile(csharpCSFileList[i]);
 	}
 	myVector<string> csharpSCFileList;
-	findFiles(csharpSCFilePath, csharpSCFileList, ".cs");
+	findFiles(csharpSCHeaderPath, csharpSCFileList, ".cs");
 	FOR_VECTOR_CONST(csharpSCFileList)
 	{
 		deleteFile(csharpSCFileList[i]);
@@ -111,22 +110,22 @@ void CodeNetPacket::generatePacketCode(string cppCSDeclareFilePath,
 	{
 		// 生成代码文件
 		// .h代码
-		generateCppPacketDeclareFile(packetInfoList[i], cppCSDeclareFilePath, cppSCDeclareFilePath);
+		generateCppPacketDeclareFile(packetInfoList[i], cppCSDeclarePath, cppSCDeclarePath);
 		generateCppCSPacketFile(packetInfoList[i].mPacketName, cppCSPacketPath);
 		generateCppSCPacketFile(packetInfoList[i].mPacketName, cppSCPacketPath);
 		// .cs代码
-		generateCSharpDecalreFile(packetInfoList[i], csharpCSFilePath, csharpSCFilePath);
+		generateCSharpDecalreFile(packetInfoList[i], csharpCSHeaderPath, csharpSCHeaderPath);
 		generateCSharpSCPacketFile(packetInfoList[i].mPacketName, csharpSCPacketPath);
 		packetList.push_back(packetInfoList[i].mPacketName);
 	}
 	// c++
-	generateCppPacketDefineFile(packetInfoList, cppPacketDefineFilePath);
-	generateCppPacketRegisteFile(packetInfoList, cppPacketDefineFilePath);
-	generateCppPacketTotalHeaderFile(packetInfoList, cppPacketDefineFilePath);
+	generateCppPacketDefineFile(packetInfoList, cppPacketDefinePath);
+	generateCppPacketRegisteFile(packetInfoList, cppPacketDefinePath);
+	generateCppPacketTotalHeaderFile(packetInfoList, cppPacketDefinePath);
 	generateStringDefinePacket(packetList, cppStringDefinePath);
 	// c#
-	generateCSharpPacketDefineFile(packetInfoList, csPacketDefineFilePath);
-	generateCSharpPacketRegisteFile(packetInfoList, csPacketDefineFilePath);
+	generateCSharpPacketDefineFile(packetInfoList, csharpPacketDefinePath);
+	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath);
 }
 
 // PacketHeader.h和PacketDeclareHeader.h文件

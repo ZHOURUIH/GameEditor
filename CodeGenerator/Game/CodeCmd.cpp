@@ -1,6 +1,8 @@
 #include "CodeCmd.h"
 
-void CodeCmd::generateCmdCode(string filePath, string headerPath)
+const string CodeCmd::cppHeaderPath = cppGamePath + "CommandSystem/";
+
+void CodeCmd::generateCmdCode()
 {
 	string cmdFile;
 	openTxtFile("Cmd.txt", cmdFile);
@@ -12,9 +14,9 @@ void CodeCmd::generateCmdCode(string filePath, string headerPath)
 	myVector<string> cmdList;
 	split(cmdFile.c_str(), "\r\n", cmdList);
 	// 生成StringDefineCmd文件
-	generateStringDefineCmd(cmdList, filePath);
+	generateStringDefineCmd(cmdList, cppStringDefinePath);
 	// 生成CommandHeader.h文件
-	generateCppCmdTotalHeaderFile(cmdList, headerPath);
+	generateCppCmdTotalHeaderFile(cmdList, cppHeaderPath);
 }
 
 // CommandHeader.h文件

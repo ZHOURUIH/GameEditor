@@ -182,6 +182,50 @@ void StringUtility::replaceAll(string& str, const string& key, const string& new
 	}
 }
 
+void StringUtility::removeAll(string& str, char value)
+{
+	int strLength = str.length();
+	char* tempBuffer = ArrayPool::newArray<char>(MathUtility::getGreaterPower2(strLength + 1));
+	memcpy(tempBuffer, str.c_str(), strLength);
+	tempBuffer[strLength] = '\0';
+	for (int i = strLength; i >= 0; --i)
+	{
+		if (tempBuffer[i] == value)
+		{
+			// 移动数据
+			if (i != strLength - 1)
+			{
+				memmove(tempBuffer + i, tempBuffer + i + 1, strLength - i - 1);
+			}
+			--strLength;
+		}
+	}
+	tempBuffer[strLength] = '\0';
+	str.assign(tempBuffer);
+}
+
+void StringUtility::removeAll(string& str, char value0, char value1)
+{
+	int strLength = str.length();
+	char* tempBuffer = ArrayPool::newArray<char>(MathUtility::getGreaterPower2(strLength + 1));
+	memcpy(tempBuffer, str.c_str(), strLength);
+	tempBuffer[strLength] = '\0';
+	for (int i = strLength; i >= 0; --i)
+	{
+		if (tempBuffer[i] == value0 || tempBuffer[i] == value1)
+		{
+			// 移动数据
+			if (i != strLength - 1)
+			{
+				memmove(tempBuffer + i, tempBuffer + i + 1, strLength - i - 1);
+			}
+			--strLength;
+		}
+	}
+	tempBuffer[strLength] = '\0';
+	str.assign(tempBuffer);
+}
+
 void StringUtility::split(const char* str, const char* key, myVector<string>& vec, bool removeEmpty)
 {
 	int startPos = 0;

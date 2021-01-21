@@ -1,6 +1,8 @@
 #include "CodeSkill.h"
 
-void CodeSkill::generateSkillCode(string filePath, string headerPath)
+const string CodeSkill::cppHeaderPath = cppGamePath + "Character/Component/Skill/";
+
+void CodeSkill::generateSkillCode()
 {
 	string skillFile;
 	openTxtFile("Skill.txt", skillFile);
@@ -12,9 +14,9 @@ void CodeSkill::generateSkillCode(string filePath, string headerPath)
 	myVector<string> skillList;
 	split(skillFile.c_str(), "\r\n", skillList);
 	// 生成StringDefineSkill文件
-	generateStringDefineSkill(skillList, filePath);
+	generateStringDefineSkill(skillList, cppStringDefinePath);
 	// 生成CharacterSkillHeader.h文件
-	generateCppSkillTotalHeaderFile(skillList, headerPath);
+	generateCppSkillTotalHeaderFile(skillList, cppHeaderPath);
 }
 
 // CharacterSkillHeader.h

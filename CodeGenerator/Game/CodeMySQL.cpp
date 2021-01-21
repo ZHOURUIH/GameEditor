@@ -1,6 +1,9 @@
 #include "CodeMySQL.h"
 
-void CodeMySQL::generateMySQLCode(string cppDataPath, string cppTablePath, string cppStringDefinePath)
+const string CodeMySQL::cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
+const string CodeMySQL::cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
+
+void CodeMySQL::generate()
 {
 	// 解析模板文件
 	string fileContent;
@@ -30,17 +33,14 @@ void CodeMySQL::generateMySQLCode(string cppDataPath, string cppTablePath, strin
 		{
 			line = line.substr(0, pos);
 		}
-		// 去除所有制表符
-		strReplaceAll(line, "\t", "");
-		// 去除所有的分号
-		strReplaceAll(line, ";", "");
+		// 去除所有制表符,分号
+		removeAll(line, '\t', ';');
 		// 成员变量列表起始
 		if (line == "{")
 		{
 			packetStart = true;
 			string tableTitle = lines[i - 1];
-			strReplaceAll(tableTitle, " ", "");
-			strReplaceAll(tableTitle, "\t", "");
+			removeAll(tableTitle, '\t', ';');
 			myVector<string> titleVector;
 			split(tableTitle.c_str(), ":", titleVector);
 			if (titleVector.size() != 2)

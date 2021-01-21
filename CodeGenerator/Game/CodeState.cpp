@@ -1,6 +1,8 @@
 #include "CodeState.h"
 
-void CodeState::generateStateCode(string filePath, string headerPath)
+const string CodeState::cppHeaderPath = cppGamePath + "Character/Component/StateMachine/";
+
+void CodeState::generateStateCode()
 {
 	string stateFile;
 	openTxtFile("State.txt", stateFile);
@@ -12,9 +14,9 @@ void CodeState::generateStateCode(string filePath, string headerPath)
 	myVector<string> stateList;
 	split(stateFile.c_str(), "\r\n", stateList);
 	// 生成StringDefineState文件
-	generateStringDefineState(stateList, filePath);
+	generateStringDefineState(stateList, cppStringDefinePath);
 	// 生成StateHeader.h文件
-	generateCppStateTotalHeaderFile(stateList, headerPath);
+	generateCppStateTotalHeaderFile(stateList, cppHeaderPath);
 }
 
 // StateHeader.h

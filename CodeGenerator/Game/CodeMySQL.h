@@ -6,7 +6,7 @@
 class CodeMySQL : public CodeUtility
 {
 public:
-	static void generateMySQLCode(string cppDataPath, string cppTablePath, string cppStringDefinePath);
+	static void generateMySQLCode();
 protected:
 	//c++
 	static void generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string filePath);
@@ -16,6 +16,9 @@ protected:
 	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateMySQLClassDeclare(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, string filePath);
+protected:
+	const static string cppDataPath;
+	const static string cppTablePath;
 };
 
 #endif

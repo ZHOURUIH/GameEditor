@@ -1,6 +1,9 @@
 #include "CodeAchivement.h"
 
-void CodeAchivement::generateAchivementCode(string headerPath, string achivementPath)
+const string CodeAchivement::cppHeaderPath = cppGamePath + "Achivement/";
+const string CodeAchivement::cppAchivementFilePath = cppHeaderPath + "Achivement/";
+
+void CodeAchivement::generateAchivementCode()
 {
 	string achviementFile;
 	openTxtFile("Achivement.txt", achviementFile);
@@ -12,13 +15,13 @@ void CodeAchivement::generateAchivementCode(string headerPath, string achivement
 	myVector<string> achivementList;
 	split(achviementFile.c_str(), "\r\n", achivementList);
 	// 生成AchivementHeader.h文件
-	generateHeaderFile(achivementList, headerPath);
+	generateHeaderFile(achivementList, cppHeaderPath);
 	// 生成AcvehimentRegister.cpp文件
-	generateAchivementRegister(achivementList, headerPath);
+	generateAchivementRegister(achivementList, cppHeaderPath);
 
 	FOR_VECTOR(achivementList)
 	{
-		generateAchivementFile(achivementList[i], achivementPath);
+		generateAchivementFile(achivementList[i], cppAchivementFilePath);
 	}
 	END(achivementList);
 }

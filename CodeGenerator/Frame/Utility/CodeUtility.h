@@ -6,6 +6,10 @@
 
 class CodeUtility : public SystemUtility
 {
+protected:
+	const static string cppGamePath;
+	const static string csGamePath;
+	const static string cppStringDefinePath;
 public:
 	static MySQLMember parseMySQLMemberLine(string line);
 	static SQLiteMember parseSQLiteMemberLine(string line);

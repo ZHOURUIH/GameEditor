@@ -6,16 +6,7 @@
 class CodeNetPacket : public CodeUtility
 {
 public:
-	static void generatePacketCode(string cppCSDeclareFilePath, 
-									string cppSCDeclareFilePath, 
-									string csharpCSFilePath, 
-									string csharpSCFilePath, 
-									string cppPacketDefineFilePath, 
-									string csPacketDefineFilePath, 
-									string cppStringDefinePath, 
-									string cppCSPacketPath,
-									string cppSCPacketPath,
-									string csharpSCPacketPath);
+	static void generatePacketCode();
 protected:
 	//c++
 	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath);
@@ -30,6 +21,16 @@ protected:
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpDecalreFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath);
 	static void generateCSharpSCPacketFile(const string& packetName, string filePath);
+protected:
+	const static string cppCSDeclarePath;
+	const static string cppSCDeclarePath;
+	const static string cppCSPacketPath;
+	const static string cppSCPacketPath;
+	const static string cppPacketDefinePath;
+	const static string csharpCSHeaderPath;
+	const static string csharpSCHeaderPath;
+	const static string csharpSCPacketPath;
+	const static string csharpPacketDefinePath;
 };
 
 #endif

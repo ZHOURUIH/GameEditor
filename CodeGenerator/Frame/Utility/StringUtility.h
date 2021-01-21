@@ -37,6 +37,8 @@ public:
 	}
 	static void replaceAll(char* str, int strBufferSize, const char* key, const char* newWords);
 	static void replaceAll(string& str, const string& key, const string& newWords);
+	static void removeAll(string& str, char value);
+	static void removeAll(string& str, char value0, char value1);
 	static void split(const char* str, const char* key, myVector<string>& vec, bool removeEmpty = true);
 	static uint split(const char* str, const char* key, string* stringBuffer, uint bufferSize, bool removeEmpty = true);
 	template<uint Length>
