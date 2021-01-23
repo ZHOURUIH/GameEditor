@@ -6,7 +6,7 @@
 class CodeSkill : public CodeUtility
 {
 public:
-	static void generateSkillCode();
+	static void generate();
 protected:
 	//c++
 	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath);

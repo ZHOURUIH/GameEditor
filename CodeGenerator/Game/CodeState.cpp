@@ -2,7 +2,7 @@
 
 const string CodeState::cppHeaderPath = cppGamePath + "Character/Component/StateMachine/";
 
-void CodeState::generateStateCode()
+void CodeState::generate()
 {
 	string stateFile;
 	openTxtFile("State.txt", stateFile);
@@ -48,6 +48,11 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	{
 		line(header, "DECLARE_STRING(" + stateList[i] + ");");
 	}
+	line(header, "");
+	FOR_I(cmdCount)
+	{
+		line(header, "DECLARE_STRING(" + stateList[i] + "Param);");
+	}
 
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "StringDefineState.h", header);
@@ -60,6 +65,11 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	FOR_I(cmdCount)
 	{
 		line(source, "DEFINE_STRING(" + stateList[i] + ");");
+	}
+	line(source, "");
+	FOR_I(cmdCount)
+	{
+		line(source, "DEFINE_STRING(" + stateList[i] + "Param);");
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);

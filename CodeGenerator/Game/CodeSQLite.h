@@ -6,7 +6,7 @@
 class CodeSQLite : public CodeUtility
 {
 public:
-	static void generateSQLiteCode();
+	static void generate();
 protected:
 	//c++
 	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath);

@@ -6,7 +6,7 @@
 class CodeState : public CodeUtility
 {
 public:
-	static void generateStateCode();
+	static void generate();
 protected:
 	//c++
 	static void generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath);

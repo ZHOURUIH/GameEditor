@@ -2,7 +2,7 @@
 
 const string CodeCmd::cppHeaderPath = cppGamePath + "CommandSystem/";
 
-void CodeCmd::generateCmdCode()
+void CodeCmd::generate()
 {
 	string cmdFile;
 	openTxtFile("Cmd.txt", cmdFile);

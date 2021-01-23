@@ -7,6 +7,7 @@
 #include "CodeNetPacket.h"
 #include "CodeAchivement.h"
 #include "CodeEvent.h"
+#include "CodeDTNode.h"
 
 void main()
 {
@@ -64,6 +65,10 @@ void main()
 	else if (input == 8)
 	{
 		CodeEvent::generate();
+	}
+	else if (input == 9)
+	{
+		CodeDTNode::generate();
 	}
 	system("pause");
 }

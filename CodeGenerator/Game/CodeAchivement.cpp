@@ -3,7 +3,7 @@
 const string CodeAchivement::cppHeaderPath = cppGamePath + "Achivement/";
 const string CodeAchivement::cppAchivementFilePath = cppHeaderPath + "Achivement/";
 
-void CodeAchivement::generateAchivementCode()
+void CodeAchivement::generate()
 {
 	string achviementFile;
 	openTxtFile("Achivement.txt", achviementFile);

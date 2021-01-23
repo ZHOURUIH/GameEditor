@@ -6,7 +6,7 @@
 class CodeAchivement : public CodeUtility
 {
 public:
-	static void generateAchivementCode();
+	static void generate();
 protected:
 	static void generateHeaderFile(const myVector<string>& achivementList, string headerPath);
 	static void generateAchivementRegister(const myVector<string>& achivementList, string headerPath);

@@ -2,7 +2,7 @@
 
 const string CodeSkill::cppHeaderPath = cppGamePath + "Character/Component/Skill/";
 
-void CodeSkill::generateSkillCode()
+void CodeSkill::generate()
 {
 	string skillFile;
 	openTxtFile("Skill.txt", skillFile);

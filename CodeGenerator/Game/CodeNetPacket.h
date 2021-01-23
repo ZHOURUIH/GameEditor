@@ -6,7 +6,7 @@
 class CodeNetPacket : public CodeUtility
 {
 public:
-	static void generatePacketCode();
+	static void generate();
 protected:
 	//c++
 	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath);

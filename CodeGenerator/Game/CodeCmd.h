@@ -6,7 +6,7 @@
 class CodeCmd : public CodeUtility
 {
 public:
-	static void generateCmdCode();
+	static void generate();
 protected:
 	//c++
 	static void generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath);

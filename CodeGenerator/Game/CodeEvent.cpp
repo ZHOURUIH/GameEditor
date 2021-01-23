@@ -3,7 +3,7 @@
 const string CodeEvent::cppHeaderPath = cppGamePath + "EventSystem/";
 const string CodeEvent::cppEventFilePath = cppHeaderPath + "Event/";
 
-void CodeEvent::generateEventCode()
+void CodeEvent::generate()
 {
 	string cmdFile;
 	openTxtFile("Event.txt", cmdFile);

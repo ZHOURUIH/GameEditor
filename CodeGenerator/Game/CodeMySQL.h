@@ -6,7 +6,7 @@
 class CodeMySQL : public CodeUtility
 {
 public:
-	static void generateMySQLCode();
+	static void generate();
 protected:
 	//c++
 	static void generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string filePath);

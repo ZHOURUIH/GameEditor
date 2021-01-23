@@ -5,7 +5,7 @@ const string CodeSQLite::cppTablePath = cppGamePath + "DataBase/SQLite/Table/";
 const string CodeSQLite::csDataPath = csGamePath + "DataBase/SQLite/Data/";
 const string CodeSQLite::csTablePath = csGamePath + "DataBase/SQLite/Table/";
 
-void CodeSQLite::generateSQLiteCode()
+void CodeSQLite::generate()
 {
 	// 解析模板文件
 	string fileContent;
