@@ -32,8 +32,6 @@ void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillLis
 		line(str0, "#include \"" + skillList[i] + ".h\"");
 	}
 	line(str0, "");
-	line(str0, "#include \"StateInterfaceHeader.h\"");
-	line(str0, "");
 	line(str0, "#endif", false);
 
 	str0 = ANSIToUTF8(str0.c_str(), true);
