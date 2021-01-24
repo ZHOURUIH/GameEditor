@@ -33,6 +33,7 @@ void main()
 		CodeState::generate();
 		CodeAchivement::generate();
 		CodeEvent::generate();
+		CodeDTNode::generate();
 	}
 	else if (input == 1)
 	{

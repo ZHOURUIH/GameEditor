@@ -69,6 +69,7 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 	writeFile(stringDefinePath + "StringDefineDTNode.cpp", source);
 }
 
+// DTNodeRegister.hºÍDTNodeRegister.cpp
 void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, string headerPath)
 {
 	string source;
