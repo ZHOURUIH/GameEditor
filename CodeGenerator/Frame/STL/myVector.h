@@ -13,6 +13,10 @@ public:
 	typedef typename vector<T>::const_iterator const_iterator;
 public:
 	myVector(){}
+	myVector(initializer_list<T> _Ilist)
+	{
+		mVector.insert(mVector.begin(), _Ilist);
+	}
 	virtual ~myVector(){ clear(); }
 	T* data() const { return (T*)mVector.data(); }
 	uint size() const { return mVector.size(); }
@@ -164,7 +168,7 @@ public:
 			}
 		}
 	}
-	void remove(T& value, bool check = true)
+	void remove(const T& value, bool check = true)
 	{
 #if _DEBUG
 		if (check)

@@ -217,7 +217,7 @@ void FileUtility::findFiles(const string& path, myVector<string>& files, const s
 		{
 			if (recursive)
 			{
-				findFiles(fullname.c_str(), files, patterns, recursive);
+				findFiles(fullname.c_str(), files, patterns, patternCount, recursive);
 			}
 		}
 		else

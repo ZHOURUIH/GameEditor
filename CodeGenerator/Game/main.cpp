@@ -8,6 +8,7 @@
 #include "CodeAchivement.h"
 #include "CodeEvent.h"
 #include "CodeDTNode.h"
+#include "CodeUnityBuild.h"
 
 void main()
 {
@@ -21,6 +22,7 @@ void main()
 	cout << "7.成就代码" << endl;
 	cout << "8.事件代码" << endl;
 	cout << "9.行为树节点代码" << endl;
+	cout << "10.生成UnityBuild文件" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -34,6 +36,7 @@ void main()
 		CodeAchivement::generate();
 		CodeEvent::generate();
 		CodeDTNode::generate();
+		CodeUnityBuild::generate();
 	}
 	else if (input == 1)
 	{
@@ -70,6 +73,10 @@ void main()
 	else if (input == 9)
 	{
 		CodeDTNode::generate();
+	}
+	else if (input == 10)
+	{
+		CodeUnityBuild::generate();
 	}
 	system("pause");
 }
