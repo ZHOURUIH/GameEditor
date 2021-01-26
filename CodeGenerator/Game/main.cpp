@@ -9,6 +9,7 @@
 #include "CodeEvent.h"
 #include "CodeDTNode.h"
 #include "CodeUnityBuild.h"
+#include "CodeFrameSystem.h"
 
 void main()
 {
@@ -23,6 +24,7 @@ void main()
 	cout << "8.事件代码" << endl;
 	cout << "9.行为树节点代码" << endl;
 	cout << "10.生成UnityBuild文件" << endl;
+	cout << "11.生成FrameSystem文件" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -37,6 +39,7 @@ void main()
 		CodeEvent::generate();
 		CodeDTNode::generate();
 		CodeUnityBuild::generate();
+		CodeFrameSystem::generate();
 	}
 	else if (input == 1)
 	{
@@ -77,6 +80,10 @@ void main()
 	else if (input == 10)
 	{
 		CodeUnityBuild::generate();
+	}
+	else if (input == 11)
+	{
+		CodeFrameSystem::generate();
 	}
 	system("pause");
 }

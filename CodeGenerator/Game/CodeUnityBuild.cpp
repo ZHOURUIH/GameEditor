@@ -31,16 +31,11 @@ void CodeUnityBuild::generate()
 void CodeUnityBuild::generateCppUnityBuild(const myVector<string>& fileList, string filePath)
 {
 	string str0;
-	line(str0, "#ifndef _UNITY_BUILD_H_");
-	line(str0, "#define _UNITY_BUILD_H_");
-	line(str0, "");
 	uint count = fileList.size();
 	FOR_I(count)
 	{
 		line(str0, "#include \"" + fileList[i] + "\"");
 	}
-	line(str0, "");
-	line(str0, "#endif", false);
 
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "UnityBuild.cpp", str0);
