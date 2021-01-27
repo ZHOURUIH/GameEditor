@@ -77,7 +77,7 @@ void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, string h
 	line(source, "#include \"DTNodeHeader.h\"");
 	line(source, "#include \"DTNodeFactoryManager.h\"");
 	line(source, "");
-	line(source, "#define REGISTE_NODE(type) mDTNodeFactoryManager->addFactory<type>(STR(type));");
+	line(source, "#define REGISTE_NODE(type) mDTNodeFactoryManager->addFactory<type>(NAME(type));");
 	line(source, "");
 	line(source, "void DTNodeRegister::registeAll()");
 	line(source, "{");
