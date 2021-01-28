@@ -33,13 +33,20 @@ void CodeClassDeclare::generate()
 		{
 			continue;
 		}
+		string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
 		if (isFrameOrGame)
 		{
-			frameHeaderList.push_back(fileName);
+			if (fileNameNoSuffix != "FrameHeader")
+			{
+				frameHeaderList.push_back(fileNameNoSuffix);
+			}
 		}
 		else
 		{
-			gameHeaderList.push_back(fileName);
+			if (fileNameNoSuffix != "GameHeader")
+			{
+				gameHeaderList.push_back(fileNameNoSuffix);
+			}
 		}
 		string fileContent;
 		openTxtFile(fileName, fileContent);
@@ -68,9 +75,11 @@ void CodeClassDeclare::generate()
 		}
 	}
 	END(fileList);
-	// 生成UnityBuild.cpp文件
+
 	generateCppFrameClassDeclare(frameClassList, cppFrameDeclarePath);
 	generateCppGameClassDeclare(gameClassList, cppGameDeclarePath);
+	generateCppFrameHeader(frameHeaderList, cppFrameDeclarePath);
+	generateCppGameHeader(gameHeaderList, cppGameDeclarePath);
 }
 
 // FrameClassDeclare.cpp
@@ -109,4 +118,43 @@ void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& class
 
 	str0 = ANSIToUTF8(str0.c_str(), true);
 	writeFile(filePath + "GameClassDeclare.h", str0);
+}
+
+// FrameHeader.h
+void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList, string filePath)
+{
+	string str0;
+	line(str0, "#ifndef _FRAME_HEADER_H_");
+	line(str0, "#define _FRAME_HEADER_H_");
+	line(str0, "");
+	uint count = headerList.size();
+	FOR_I(count)
+	{
+		line(str0, "#include \"" + headerList[i] + ".h\"");
+	}
+	line(str0, "");
+	line(str0, "#endif");
+
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "FrameHeader.h", str0);
+}
+
+// GameHeader.h
+void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList, string filePath)
+{
+	string str0;
+	line(str0, "#ifndef _GAME_HEADER_H_");
+	line(str0, "#define _GAME_HEADER_H_");
+	line(str0, "");
+	line(str0, "#include \"FrameHeader.h\"");
+	uint count = headerList.size();
+	FOR_I(count)
+	{
+		line(str0, "#include \"" + headerList[i] + ".h\"");
+	}
+	line(str0, "");
+	line(str0, "#endif");
+
+	str0 = ANSIToUTF8(str0.c_str(), true);
+	writeFile(filePath + "GameHeader.h", str0);
 }
