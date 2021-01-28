@@ -114,22 +114,6 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	removeLast(str0, '\\');
 
 	line(str0, "");
-	line(str0, "#define DECLARE_ALL_SYSTEM_CLASS \\");
-	FOR_I(frameSystemListCount)
-	{
-		line(str0, "class " + frameSystemList[i] + ";\\");
-	}
-	FOR_I(factoryManagerListCount)
-	{
-		line(str0, "class " + factoryManagerList[i] + ";\\");
-	}
-	FOR_I(classPoolListCount)
-	{
-		line(str0, "class " + classPoolList[i] + ";\\");
-	}
-	removeLast(str0, '\\');
-
-	line(str0, "");
 	line(str0, "#define DECLARE_ALL_SYSTEM \\");
 	FOR_I(frameSystemListCount)
 	{

@@ -3,6 +3,7 @@
 
 const string CodeUtility::cppProjectPath = "E:/Github/MicroLegend_Server/MicroLegend_Server/";
 const string CodeUtility::cppGamePath = cppProjectPath + "Game/";
+const string CodeUtility::cppFramePath = cppProjectPath + "Frame/";
 const string CodeUtility::cppStringDefinePath = cppGamePath + "StringDefine/";
 const string CodeUtility::csGamePath = "E:/Github/MicroLegend/Assets/Scripts/Game/";
 

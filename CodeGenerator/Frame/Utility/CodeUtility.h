@@ -9,6 +9,7 @@ class CodeUtility : public SystemUtility
 protected:
 	const static string cppProjectPath;
 	const static string cppGamePath;
+	const static string cppFramePath;
 	const static string cppStringDefinePath;
 	const static string csGamePath;
 public:

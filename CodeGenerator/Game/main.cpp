@@ -10,6 +10,7 @@
 #include "CodeDTNode.h"
 #include "CodeUnityBuild.h"
 #include "CodeFrameSystem.h"
+#include "CodeClassDeclare.h"
 
 void main()
 {
@@ -25,6 +26,7 @@ void main()
 	cout << "9.行为树节点代码" << endl;
 	cout << "10.生成UnityBuild文件" << endl;
 	cout << "11.生成FrameSystem文件" << endl;
+	cout << "12.生成类声明文件" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -40,6 +42,7 @@ void main()
 		CodeDTNode::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
+		CodeClassDeclare::generate();
 	}
 	else if (input == 1)
 	{
@@ -84,6 +87,10 @@ void main()
 	else if (input == 11)
 	{
 		CodeFrameSystem::generate();
+	}
+	else if (input == 12)
+	{
+		CodeClassDeclare::generate();
 	}
 	system("pause");
 }
