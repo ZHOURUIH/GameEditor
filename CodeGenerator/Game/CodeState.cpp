@@ -59,8 +59,7 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 
 	// т╢нд╪Ч
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"StateHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{

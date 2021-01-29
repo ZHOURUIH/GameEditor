@@ -82,7 +82,6 @@ void CodeMySQL::generate()
 	generateCppMySQLTotalHeaderFile(mysqlInfoList, totalHeaderPath);
 	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
 	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
-	generateMySQLClassDeclare(mysqlInfoList, totalHeaderPath);
 	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
 }
 
@@ -119,9 +118,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 
 	// 源文件
 	string source;
-	line(source, "#include \"" + className + ".h\"");
-	line(source, "#include \"Utility.h\"");
-	line(source, "#include \"MySQLTable.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	// 字段静态变量定义
 	FOR_I(memberCount)
@@ -236,10 +233,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 
 	// 源文件
 	string source;
-	line(source, "#include \"" + tableClassName + ".h\"");
-	line(source, "#include \"Utility.h\"");
-	line(source, "#include \"" + dataClassName + ".h\"");
-	line(source, "#include \"MySQLDataBase.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	line(source, "void " + tableClassName + "::init(MYSQL * mysql)");
 	line(source, "{");
@@ -303,9 +297,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	writeFile(filePath + "MySQLRegister.h", str0);
 
 	string str1;
-	line(str1, "#include \"MySQLRegister.h\"");
-	line(str1, "#include \"MySQLDataBase.h\"");
-	line(str1, "#include \"MySQLHeader.h\"");
+	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
 	line(str1, "#define REGISTE_MYSQL(classType, tableName) m##classType = mMySQLDataBase->registeTable<classType>(tableName);");
 	line(str1, "");
@@ -338,8 +330,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 
 	// 源文件
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"MySQLHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(count)
 	{
@@ -348,21 +339,6 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(filePath + "StringDefineMySQL.cpp", source);
-}
-
-// MySQLClassDeclare.h
-void CodeMySQL::generateMySQLClassDeclare(const myVector<MySQLInfo>& mysqlList, string filePath)
-{
-	// 头文件
-	string header;
-	uint count = mysqlList.size();
-	FOR_I(count)
-	{
-		line(header, "class MySQL" + mysqlList[i].mMySQLClassName + ";");
-	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "MySQLClassDeclare.h", header);
 }
 
 // MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp

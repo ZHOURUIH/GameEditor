@@ -325,8 +325,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 
 	// Ô´ÎÄ¼þ
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"PacketHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{
@@ -378,10 +377,7 @@ void CodeNetPacket::generateCppCSPacketFile(const string& packetName, string fil
 	if (!isFileExist(sourceFullPath))
 	{
 		string source;
-		line(source, "#include \"PacketHeader.h\"");
-		line(source, "#include \"MySQLUtility.h\"");
-		line(source, "#include \"NetServer.h\"");
-		line(source, "#include \"CharacterPlayer.h\"");
+		line(source, "#include \"GameHeader.h\"");
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");

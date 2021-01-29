@@ -95,7 +95,7 @@ void CodeAchivement::generateAchivementFile(const string& achivement, string ach
 		line(header, "\tbool isFinish()const override;");
 		line(header, "\tvoid resetProperty() override");
 		line(header, "\t{");
-		line(header, "\t\tClassPooledObject::resetProperty();");
+		line(header, "\t\tbase::resetProperty();");
 		line(header, "\t\tmTargetValue = 0;");
 		line(header, "\t}");
 		line(header, "protected:");

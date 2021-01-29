@@ -126,7 +126,6 @@ void CodeSQLite::generate()
 	headerPath = getFilePath(headerPath) + "/";
 	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
 	generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
-	generateCppSQLiteClassDeclare(sqliteInfoList, headerPath);
 	generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
 
 	// 在上一层目录生成SQLiteRegister.cs文件
@@ -191,7 +190,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 
 	// TDSQLite.cpp
 	string source;
-	line(source, "#include \"" + dataClassName + ".h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(memberCount)
 	{
@@ -271,10 +270,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	writeFile(filePath + "SQLiteRegister.h", str0);
 
 	string str1;
-	line(str1, "#include \"SQLiteRegister.h\"");
-	line(str1, "#include \"SQLiteManager.h\"");
-	line(str1, "#include \"GameDefine.h\"");
-	line(str1, "#include \"SQLiteHeader.h\"");
+	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
 	line(str1, "#define REGISTE_SQLITE(classType, tableName) m##classType = NEW(classType, m##classType, tableName, sqlite);sqlite->addTable(m##classType);");
 	line(str1, "");
@@ -294,24 +290,6 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 
 	str1 = ANSIToUTF8(str1.c_str(), true);
 	writeFile(filePath + "SQLiteRegister.cpp", str1);
-}
-
-// SQLiteClassDeclare.h
-void CodeSQLite::generateCppSQLiteClassDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath)
-{
-	string str1;
-	uint count = sqliteList.size();
-	FOR_I(count)
-	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
-		{
-			continue;
-		}
-		line(str1, "class SQLite" + sqliteList[i].mSQLiteName + ";");
-	}
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "SQLiteClassDeclare.h", str1);
 }
 
 // SQLiteInstanceDeclare.h和SQLiteInstanceDeclare.cpp
