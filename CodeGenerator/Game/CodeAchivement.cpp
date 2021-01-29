@@ -50,11 +50,10 @@ void CodeAchivement::generateAchivementRegister(const myVector<string>& achiveme
 {
 	// Ô´ÎÄ¼þ
 	string source;
-	line(source, "#include \"AchivementRegister.h\"");
-	line(source, "#include \"AchivementHeader.h\"");
-	line(source, "#include \"AchivementFactoryManager.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	line(source, "#define ACHIVEMENT_FACTORY(classType, type) mAchivementFactoryManager->addFactory<classType>(ACHIVEMENT_TYPE::type);\n");
+	line(source, "#define ACHIVEMENT_FACTORY(classType, type) mAchivementFactoryManager->addFactory<classType>(ACHIVEMENT_TYPE::type);");
+	line(source, "");
 	line(source, "void AchivementRegister::registeAll()");
 	line(source, "{");
 	FOR_VECTOR_CONST(achivementList)

@@ -73,9 +73,7 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, string headerPath)
 {
 	string source;
-	line(source, "#include \"DTNodeRegister.h\"");
-	line(source, "#include \"DTNodeHeader.h\"");
-	line(source, "#include \"DTNodeFactoryManager.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	line(source, "#define REGISTE_NODE(type) mDTNodeFactoryManager->addFactory<type>(NAME(type));");
 	line(source, "");

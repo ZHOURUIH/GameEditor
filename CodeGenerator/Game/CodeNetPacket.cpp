@@ -230,11 +230,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath)
 {
 	string str;
-	line(str, "#include \"PacketHeader.h\"");
-	line(str, "#include \"GameLog.h\"");
-	line(str, "#include \"NetServer.h\"");
-	line(str, "#include \"PacketFactoryManager.h\"");
-	line(str, "#include \"PacketRegister.h\"");
+	line(str, "#include \"GameHeader.h\"");
 	line(str, "");
 	line(str, "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(PACKET_TYPE::type, NAME(packet));");
 	line(str, "");

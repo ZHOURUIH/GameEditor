@@ -101,6 +101,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "class MySQLTable;");
 	line(header, "class " + className + " : public MySQLData");
 	line(header, "{");
+	line(header, "\tBASE_CLASS(MySQLData);");
 	line(header, "public:");
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -181,7 +182,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// resetPropertyº¯Êý
 	line(source, "void " + className + "::resetProperty()");
 	line(source, "{");
-	line(source, "\tMySQLData::resetProperty();");
+	line(source, "\tbase::resetProperty();");
 	FOR_I(memberCount)
 	{
 		if (mysqlInfo.mMemberList[i].mTypeName == "string")
@@ -222,6 +223,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "class " + dataClassName + ";");
 	line(header, "class " + tableClassName + " : public MySQLTable");
 	line(header, "{");
+	line(header, "\tBASE_CLASS(MySQLTable);");
 	line(header, "public:");
 	line(header, "\t" + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
