@@ -25,6 +25,7 @@ class SQLiteSkillEffectDirection;
 class SQLitePeaceArea;
 class SQLiteGoods;
 class SQLiteMapEffect;
+class SQLiteSubRegion;
 class SQLite
 {
 public:
@@ -48,6 +49,7 @@ public:
 	SQLiteItemSkillBook* mSQLiteItemSkillBook;
 	SQLiteSkillEffectDirection* mSQLiteSkillEffectDirection;
 	SQLitePeaceArea* mSQLitePeaceArea;
+	SQLiteSubRegion* mSQLiteSubRegion;
 	SQLiteGoods* mSQLiteGoods;
 	SQLiteMapEffect* mSQLiteMapEffect;
 public:

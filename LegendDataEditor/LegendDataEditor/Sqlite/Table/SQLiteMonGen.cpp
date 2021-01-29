@@ -5,13 +5,12 @@
 
 string MonGenData::COL_ID = "ID";
 string MonGenData::COL_MAP_ID = "MapID";
-string MonGenData::COL_POSX = "PosX";
-string MonGenData::COL_POSY = "PosY";
+string MonGenData::COL_POS = "Pos";
 string MonGenData::COL_MONSTER_ID = "MonsterID";
 string MonGenData::COL_MONSTER_LABEL = "MonsterLabel";
 string MonGenData::COL_RADIUS = "Radius";
 string MonGenData::COL_COUNT = "Count";
-string MonGenData::COL_MINUTE_INTERVAL = "MinuteInterval";
+string MonGenData::COL_REFRESH_INTERVAL = "RefreshInterval";
 
 bool SQLiteMonGen::update(const MonGenData& data)
 {

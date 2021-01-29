@@ -28,16 +28,13 @@ void main()
 20:将media中全部序列帧数据写入SQLite \n\
 22:生成地图阻挡文件 \n\
 23:生成所有地图阻挡文件 \n\
-24:更新场景传送点列表 \n\
-25:更新场景NPC列表 \n\
-26:更新场景刷怪区域列表 \n\
-27:更新场景安全区列表 \n\
-28:处理图片阴影\n\
-29:移动并覆盖地图图片\n\
-30:更新NPC商品列表\n\
-31:更新地图中的特效信息到SQLite\n\
-32:更新Animation表格中的AnimationPosition\n\
-33:整理翅膀文件结构 \n\
+24:更新场景配置表格 \n\
+25:处理图片阴影\n\
+26:移动并覆盖地图图片\n\
+27:更新NPC商品列表\n\
+28:更新地图中的特效信息到SQLite\n\
+29:更新Animation表格中的AnimationPosition\n\
+30:整理翅膀文件结构 \n\
 0:退出" << endl;
 		int input;
 		cin >> input;
@@ -246,39 +243,38 @@ void main()
 		else if (input == 24)
 		{
 			cout << "正在更新场景传送点列表..." << endl;
-			long startTime = timeGetTime();
+			long startTime0 = timeGetTime();
 			ImageUtility::updateSceneMapTransferSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+			cout << "耗时 : " << (timeGetTime() - startTime0) / 1000.0f << "秒" << endl;
+
+			cout << "正在更新场景NPC列表..." << endl;
+			long startTime1 = timeGetTime();
+			ImageUtility::updateSceneMapNPCSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime1) / 1000.0f << "秒" << endl;
+
+			cout << "正在更新场景刷怪区域列表..." << endl;
+			long startTime2 = timeGetTime();
+			ImageUtility::updateSceneMapMonsterRegionSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime2) / 1000.0f << "秒" << endl;
+
+			cout << "正在更新场景安全区列表..." << endl;
+			long startTime3 = timeGetTime();
+			ImageUtility::updateSceneMapPeaceAreaSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime3) / 1000.0f << "秒" << endl;
+
+			cout << "正在更新场景子区域列表..." << endl;
+			long startTime4 = timeGetTime();
+			ImageUtility::updateSceneMapSubRegionSQLite();
+			cout << "耗时 : " << (timeGetTime() - startTime4) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 25)
-		{
-			cout << "正在更新场景NPC列表..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::updateSceneMapNPCSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 26)
-		{
-			cout << "正在更新场景刷怪区域列表..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::updateSceneMapMonsterRegionSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 27)
-		{
-			cout << "正在更新场景安全区列表..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::updateSceneMapPeaceAreaSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 28)
 		{
 			cout << "正在处理图片阴影..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::processAllShadow("../media/");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 29)
+		else if (input == 26)
 		{
 			cout << "输入路径:";
 			string fileName;
@@ -288,28 +284,28 @@ void main()
 			ImageUtility::moveMapObjectTexture(fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 30)
+		else if (input == 27)
 		{
 			cout << "正在更新NPC商品列表..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateNPCGoodsSQLite();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 31)
+		else if (input == 28)
 		{
 			cout << "正在更新地图中的特效信息到SQLite..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateMapEffect();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 32)
+		else if (input == 29)
 		{
 			cout << "正在更新Animation表格中的AnimationPosition..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateAnimationPositionInAnimation();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 33)
+		else if (input == 30)
 		{
 			cout << "输入文件夹名:";
 			string fileName;

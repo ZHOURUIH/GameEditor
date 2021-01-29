@@ -22,6 +22,7 @@
 #include "SQLitePeaceArea.h"
 #include "SQLiteMapEffect.h"
 #include "SQLiteAnimation.h"
+#include "SQLiteSubRegion.h"
 
 #define NEW_TABLE(type) m##type = TRACE_NEW(type, m##type, this)
 #define DELETE_TABLE(type) TRACE_DELETE(m##type)
@@ -56,6 +57,7 @@ SQLite::SQLite(const string& dbFileName)
 	NEW_TABLE(SQLiteGoods);
 	NEW_TABLE(SQLiteMapEffect);
 	NEW_TABLE(SQLiteAnimation);
+	NEW_TABLE(SQLiteSubRegion);
 }
 void SQLite::destroy()
 {
@@ -80,6 +82,7 @@ void SQLite::destroy()
 	DELETE_TABLE(SQLiteGoods);
 	DELETE_TABLE(SQLiteMapEffect);
 	DELETE_TABLE(SQLiteAnimation);
+	DELETE_TABLE(SQLiteSubRegion);
 	sqlite3_close(mSQlite3);
 }
 bool SQLite::executeNonQuery(const string& queryString)

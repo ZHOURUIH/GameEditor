@@ -68,6 +68,7 @@ public:
 	static void updateSceneMapNPCSQLite();
 	static void updateSceneMapMonsterRegionSQLite();
 	static void updateSceneMapPeaceAreaSQLite();
+	static void updateSceneMapSubRegionSQLite();
 	static void updateNPCGoodsSQLite();
 	static void processAllShadow(const string& path);
 	static void processShadowHorizontal(const string& filePath);

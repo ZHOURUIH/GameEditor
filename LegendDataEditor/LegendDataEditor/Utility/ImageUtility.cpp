@@ -24,6 +24,7 @@
 #include "SQLitePeaceArea.h"
 #include "SQLiteMapEffect.h"
 #include "SQLiteAnimation.h"
+#include "SQLiteSubRegion.h"
 #include "HumanAction.h"
 #include "WeaponAction.h"
 #include "MapData.h"
@@ -1302,6 +1303,40 @@ void ImageUtility::updateSceneMapPeaceAreaSQLite()
 		else
 		{
 			sceneMapDataList[i]->mPeaceArea.clear();
+		}
+		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
+	}
+	TRACE_DELETE(sqlite);
+}
+
+void ImageUtility::updateSceneMapSubRegionSQLite()
+{
+	SQLite* sqlite = TRACE_NEW(SQLite, sqlite, "../media/DataBase.db");
+	txVector<SubRegionData*> subRegionList;
+	sqlite->mSQLiteSubRegion->queryAll(subRegionList);
+	txMap<int, txVector<int>> sceneSubRegionList;
+	int count = subRegionList.size();
+	for (int i = 0; i < count; ++i)
+	{
+		if (sceneSubRegionList.contains(subRegionList[i]->mMapID))
+		{
+			sceneSubRegionList.insert(subRegionList[i]->mMapID, txVector<int>());
+		}
+		sceneSubRegionList[subRegionList[i]->mMapID].push_back(subRegionList[i]->mID);
+	}
+	txVector<SceneMapData*> sceneMapDataList;
+	sqlite->mSQLiteSceneMap->queryAll(sceneMapDataList);
+	int sceneCount = sceneMapDataList.size();
+	for (int i = 0; i < sceneCount; ++i)
+	{
+		int sceneID = sceneMapDataList[i]->mID;
+		if (sceneSubRegionList.contains(sceneID))
+		{
+			sceneMapDataList[i]->mSubRegion = sceneSubRegionList[sceneID];
+		}
+		else
+		{
+			sceneMapDataList[i]->mSubRegion.clear();
 		}
 		sqlite->mSQLiteSceneMap->update(*sceneMapDataList[i]);
 	}
