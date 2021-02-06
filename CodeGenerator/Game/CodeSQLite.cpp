@@ -93,7 +93,6 @@ void CodeSQLite::generate()
 	}
 	// 删除C++的代码文件
 	deleteFolder(cppDataPath);
-	deleteFolder(cppTablePath);
 	// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
 	myVector<string> csDataFileList;
 	findFiles(csDataPath, csDataFileList, ".cs");
@@ -203,25 +202,29 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	writeFile(dataFilePath + dataClassName + ".cpp", source);
 
 	// SQLiteTable.h
-	string table;
-	string tableHeaderMarco = "_SQLITE" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
-	line(table, "#ifndef " + tableHeaderMarco);
-	line(table, "#define " + tableHeaderMarco);
-	line(table, "");
-	line(table, "#include \"" + dataClassName + ".h\"");
-	line(table, "");
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
-	line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
-	line(table, "{");
-	line(table, "public:");
-	line(table, "\t" + tableClassName + "(const char* tableName, ISQLite* sqlite)");
-	line(table, "\t\t:SQLiteTable(tableName, sqlite) {}");
-	line(table, "};");
-	line(table, "");
-	line(table, "#endif", false);
+	string tableFileName = tableFilePath + tableClassName + ".h";
+	if (!isFileExist(tableFileName))
+	{
+		string table;
+		string tableHeaderMarco = "_SQLITE" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
+		line(table, "#ifndef " + tableHeaderMarco);
+		line(table, "#define " + tableHeaderMarco);
+		line(table, "");
+		line(table, "#include \"" + dataClassName + ".h\"");
+		line(table, "");
+		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
+		line(table, "{");
+		line(table, "public:");
+		line(table, "\t" + tableClassName + "(const char* tableName, ISQLite* sqlite)");
+		line(table, "\t\t:SQLiteTable(tableName, sqlite) {}");
+		line(table, "};");
+		line(table, "");
+		line(table, "#endif", false);
 
-	table = ANSIToUTF8(table.c_str(), true);
-	writeFile(tableFilePath + tableClassName + ".h", table);
+		table = ANSIToUTF8(table.c_str(), true);
+		writeFile(tableFileName, table);
+	}
 }
 
 // SQLiteHeader.h文件
