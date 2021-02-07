@@ -508,6 +508,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\tprotected static void registePacket(Type classType, ushort type)");
 	line(str, "\t{");
 	line(str, "\t\tmSocketFactory.registePacket(classType, type);");
+	line(str, "\t\tmSocketFactoryThread.registePacket(classType, type);");
 	line(str, "\t}");
 	line(str, "}", false);
 
