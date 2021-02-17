@@ -12,7 +12,6 @@ protected:
 	static void generateStringDefine(const myVector<string>& nodeList, string stringDefinePath);
 	static void generateRegisterFile(const myVector<string>& nodeList, string headerPath);
 protected:
-	const static string cppHeaderPath;
 };
 
 #endif

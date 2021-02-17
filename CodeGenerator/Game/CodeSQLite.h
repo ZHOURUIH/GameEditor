@@ -17,10 +17,6 @@ protected:
 	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath);
 	static void generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string filePath);
 protected:
-	const static string cppDataPath;
-	const static string cppTablePath;
-	const static string csDataPath;
-	const static string csTablePath;
 };
 
 #endif

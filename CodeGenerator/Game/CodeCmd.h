@@ -12,7 +12,6 @@ protected:
 	static void generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath);
 	static void generateStringDefineCmd(const myVector<string>& cmdList, string filePath);
 protected:
-	const static string cppHeaderPath;
 };
 
 #endif

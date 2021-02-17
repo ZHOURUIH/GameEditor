@@ -12,8 +12,6 @@ protected:
 	static void generateAchivementRegister(const myVector<string>& achivementList, string headerPath);
 	static void generateAchivementFile(const string& achivement, string achivementPath);
 protected:
-	const static string cppHeaderPath;
-	const static string cppAchivementFilePath;
 };
 
 #endif

@@ -1,9 +1,9 @@
 #include "CodeState.h"
 
-const string CodeState::cppHeaderPath = cppGamePath + "Character/Component/StateMachine/";
-
 void CodeState::generate()
 {
+	string cppHeaderPath = cppGamePath + "Character/Component/StateMachine/";
+
 	string stateFile;
 	openTxtFile("State.txt", stateFile);
 	if (stateFile.length() == 0)

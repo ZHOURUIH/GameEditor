@@ -1,10 +1,10 @@
 #include "CodeEvent.h"
 
-const string CodeEvent::cppHeaderPath = cppGamePath + "EventSystem/";
-const string CodeEvent::cppEventFilePath = cppHeaderPath + "Event/";
-
 void CodeEvent::generate()
 {
+	string cppHeaderPath = cppGamePath + "EventSystem/";
+	string cppEventFilePath = cppHeaderPath + "Event/";
+
 	string cmdFile;
 	openTxtFile("Event.txt", cmdFile);
 	if (cmdFile.length() == 0)

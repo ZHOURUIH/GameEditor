@@ -1,9 +1,9 @@
 #include "CodeFrameSystem.h"
 
-const string CodeFrameSystem::cppHeaderPath = cppGamePath + "Common/";
-
 void CodeFrameSystem::generate()
 {
+	string cppHeaderPath = cppGamePath + "Common/";
+
 	string frameSystemFile;
 	openTxtFile("FrameSystem.txt", frameSystemFile);
 	if (frameSystemFile.length() == 0)

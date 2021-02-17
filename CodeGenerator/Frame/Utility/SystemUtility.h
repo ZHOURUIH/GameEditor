@@ -187,6 +187,7 @@ public:
 		}
 		return true;
 	}
+	static string getEnvironmentValue(const string& name);
 	static bool isMainThread() { return getThreadID() == mMainThread; }
 	static void setMainThread(uint id) { mMainThread = id; }
 protected:

@@ -1,9 +1,9 @@
 #include "CodeSkill.h"
 
-const string CodeSkill::cppHeaderPath = cppGamePath + "Character/Component/Skill/";
-
 void CodeSkill::generate()
 {
+	string cppHeaderPath = cppGamePath + "Character/Component/Skill/";
+
 	string skillFile;
 	openTxtFile("Skill.txt", skillFile);
 	if (skillFile.length() == 0)

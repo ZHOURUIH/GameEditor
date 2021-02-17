@@ -1,9 +1,9 @@
 #include "CodeCmd.h"
 
-const string CodeCmd::cppHeaderPath = cppGamePath + "CommandSystem/";
-
 void CodeCmd::generate()
 {
+	string cppHeaderPath = cppGamePath + "CommandSystem/";
+
 	string cmdFile;
 	openTxtFile("Cmd.txt", cmdFile);
 	if (cmdFile.length() == 0)

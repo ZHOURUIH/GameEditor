@@ -1,9 +1,9 @@
 #include "CodeDTNode.h"
 
-const string CodeDTNode::cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
-
 void CodeDTNode::generate()
 {
+	string cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
+
 	string file;
 	openTxtFile("DTNode.txt", file);
 	if (file.length() == 0)

@@ -22,15 +22,6 @@ protected:
 	static void generateCSharpDecalreFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath);
 	static void generateCSharpSCPacketFile(const string& packetName, string filePath);
 protected:
-	const static string cppCSDeclarePath;
-	const static string cppSCDeclarePath;
-	const static string cppCSPacketPath;
-	const static string cppSCPacketPath;
-	const static string cppPacketDefinePath;
-	const static string csharpCSHeaderPath;
-	const static string csharpSCHeaderPath;
-	const static string csharpSCPacketPath;
-	const static string csharpPacketDefinePath;
 };
 
 #endif

@@ -161,3 +161,8 @@ bool SystemUtility::isExeRunning(const string& fileName)
 	return isRunning;
 }
 #endif
+
+string SystemUtility::getEnvironmentValue(const string& name)
+{
+	return getenv(name.c_str());
+}

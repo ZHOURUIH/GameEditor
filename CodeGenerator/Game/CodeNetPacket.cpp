@@ -1,17 +1,17 @@
 #include "CodeNetPacket.h"
 
-const string CodeNetPacket::cppCSDeclarePath = cppGamePath + "Socket/PacketDeclareCS/";
-const string CodeNetPacket::cppSCDeclarePath = cppGamePath + "Socket/PacketDeclareSC/";
-const string CodeNetPacket::cppCSPacketPath = cppGamePath + "Socket/ClientServer/";
-const string CodeNetPacket::cppSCPacketPath = cppGamePath + "Socket/ServerClient/";
-const string CodeNetPacket::cppPacketDefinePath = cppGamePath + "Socket/";
-const string CodeNetPacket::csharpCSHeaderPath = csGamePath + "Socket/PacketHeaderCS/";
-const string CodeNetPacket::csharpSCHeaderPath = csGamePath + "Socket/PacketHeaderSC/";
-const string CodeNetPacket::csharpSCPacketPath = csGamePath + "Socket/ServerClient/";
-const string CodeNetPacket::csharpPacketDefinePath = csGamePath + "Socket/";
-
 void CodeNetPacket::generate()
 {
+	string cppCSDeclarePath = cppGamePath + "Socket/PacketDeclareCS/";
+	string cppSCDeclarePath = cppGamePath + "Socket/PacketDeclareSC/";
+	string cppCSPacketPath = cppGamePath + "Socket/ClientServer/";
+	string cppSCPacketPath = cppGamePath + "Socket/ServerClient/";
+	string cppPacketDefinePath = cppGamePath + "Socket/";
+	string csharpCSHeaderPath = csGamePath + "Socket/PacketHeaderCS/";
+	string csharpSCHeaderPath = csGamePath + "Socket/PacketHeaderSC/";
+	string csharpSCPacketPath = csGamePath + "Socket/ServerClient/";
+	string csharpPacketDefinePath = csGamePath + "Socket/";
+
 	// 解析模板文件
 	string csFileContent;
 	openTxtFile("PacketCS.txt", csFileContent);

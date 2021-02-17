@@ -14,8 +14,6 @@ protected:
 	static void generateCppFrameHeader(const myVector<string>& headerList, string filePath);
 	static void generateCppGameHeader(const myVector<string>& headerList, string filePath);
 protected:
-	const static string cppFrameDeclarePath;
-	const static string cppGameDeclarePath;
 };
 
 #endif

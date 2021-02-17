@@ -7,12 +7,15 @@
 class CodeUtility : public SystemUtility
 {
 protected:
-	const static string cppProjectPath;
-	const static string cppGamePath;
-	const static string cppFramePath;
-	const static string cppStringDefinePath;
-	const static string csGamePath;
+	static string ServerProjectPath;
+	static string GameProjectPath;
+	static string cppProjectPath;
+	static string cppGamePath;
+	static string cppFramePath;
+	static string cppStringDefinePath;
+	static string csGamePath;
 public:
+	static void initPath();
 	static MySQLMember parseMySQLMemberLine(string line);
 	static SQLiteMember parseSQLiteMemberLine(string line);
 	static PacketMember parseMemberLine(const string& line);

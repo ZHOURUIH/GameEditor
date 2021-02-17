@@ -14,6 +14,8 @@
 
 void main()
 {
+	CodeUtility::initPath();
+
 	cout << "0.全部生成" << endl;
 	cout << "1.网络通信协议代码" << endl;
 	cout << "2.SQLite数据代码" << endl;

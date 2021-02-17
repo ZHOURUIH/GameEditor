@@ -1,11 +1,24 @@
 ﻿#include "CodeUtility.h"
 #include "Utility.h"
 
-const string CodeUtility::cppProjectPath = "E:/Github/MicroLegend_Server/MicroLegend_Server/";
-const string CodeUtility::cppGamePath = cppProjectPath + "Game/";
-const string CodeUtility::cppFramePath = cppProjectPath + "Frame/";
-const string CodeUtility::cppStringDefinePath = cppGamePath + "StringDefine/";
-const string CodeUtility::csGamePath = "E:/Github/MicroLegend/Assets/Scripts/Game/";
+string CodeUtility::ServerProjectPath;
+string CodeUtility::GameProjectPath;
+string CodeUtility::cppProjectPath;
+string CodeUtility::cppGamePath;
+string CodeUtility::cppFramePath;
+string CodeUtility::cppStringDefinePath;
+string CodeUtility::csGamePath;
+
+void CodeUtility::initPath()
+{
+	ServerProjectPath = getEnvironmentValue("SERVER_PROJECT_PATH");
+	GameProjectPath = getEnvironmentValue("GAME_PROJECT_PATH");
+	cppProjectPath = ServerProjectPath + "MicroLegend_Server/";
+	cppGamePath = cppProjectPath + "Game/";
+	cppFramePath = cppProjectPath + "Frame/";
+	cppStringDefinePath = cppGamePath + "StringDefine/";
+	csGamePath = GameProjectPath + "Assets/Scripts/Game/";
+}
 
 MySQLMember CodeUtility::parseMySQLMemberLine(string line)
 {

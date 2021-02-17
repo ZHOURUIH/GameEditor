@@ -12,7 +12,6 @@ protected:
 	static void generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath);
 	static void generateStringDefineState(const myVector<string>& stateList, string filePath);
 protected:
-	const static string cppHeaderPath;
 };
 
 #endif

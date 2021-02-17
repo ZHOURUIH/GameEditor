@@ -16,8 +16,6 @@ protected:
 	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, string filePath);
 protected:
-	const static string cppDataPath;
-	const static string cppTablePath;
 };
 
 #endif

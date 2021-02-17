@@ -18,7 +18,6 @@ protected:
 										const myVector<string>& classPoolList,
 										string filePath);
 protected:
-	const static string cppHeaderPath;
 };
 
 #endif

@@ -1,10 +1,10 @@
 #include "CodeClassDeclare.h"
 
-const string CodeClassDeclare::cppFrameDeclarePath = cppFramePath + "Common/";
-const string CodeClassDeclare::cppGameDeclarePath = cppGamePath + "Common/";
-
 void CodeClassDeclare::generate()
 {
+	string cppFrameDeclarePath = cppFramePath + "Common/";
+	string cppGameDeclarePath = cppGamePath + "Common/";
+
 	myVector<string> frameClassList;
 	myVector<string> gameClassList;
 	myVector<string> frameHeaderList;

@@ -1,10 +1,10 @@
 #include "CodeAchivement.h"
 
-const string CodeAchivement::cppHeaderPath = cppGamePath + "Achivement/";
-const string CodeAchivement::cppAchivementFilePath = cppHeaderPath + "Achivement/";
-
 void CodeAchivement::generate()
 {
+	string cppHeaderPath = cppGamePath + "Achivement/";
+	string cppAchivementFilePath = cppHeaderPath + "Achivement/";
+
 	string achviementFile;
 	openTxtFile("Achivement.txt", achviementFile);
 	if (achviementFile.length() == 0)

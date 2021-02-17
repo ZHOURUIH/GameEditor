@@ -1,12 +1,12 @@
 #include "CodeSQLite.h"
 
-const string CodeSQLite::cppDataPath = cppGamePath + "DataBase/SQLite/Data/";
-const string CodeSQLite::cppTablePath = cppGamePath + "DataBase/SQLite/Table/";
-const string CodeSQLite::csDataPath = csGamePath + "DataBase/SQLite/Data/";
-const string CodeSQLite::csTablePath = csGamePath + "DataBase/SQLite/Table/";
-
 void CodeSQLite::generate()
 {
+	string cppDataPath = cppGamePath + "DataBase/SQLite/Data/";
+	string cppTablePath = cppGamePath + "DataBase/SQLite/Table/";
+	string csDataPath = csGamePath + "DataBase/SQLite/Data/";
+	string csTablePath = csGamePath + "DataBase/SQLite/Table/";
+
 	// 解析模板文件
 	string fileContent;
 	openTxtFile("SQLite.txt", fileContent);

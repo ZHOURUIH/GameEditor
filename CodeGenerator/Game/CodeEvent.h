@@ -13,8 +13,6 @@ protected:
 	static void generateEventType(const myVector<pair<string, string>>& eventList, string headerPath);
 	static void generateEventFile(const string& eventName, string eventPath);
 protected:
-	const static string cppHeaderPath;
-	const static string cppEventFilePath;
 };
 
 #endif

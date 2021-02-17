@@ -1,10 +1,10 @@
 #include "CodeMySQL.h"
 
-const string CodeMySQL::cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
-const string CodeMySQL::cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
-
 void CodeMySQL::generate()
 {
+	string cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
+	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
+
 	// 解析模板文件
 	string fileContent;
 	openTxtFile("MySQL.txt", fileContent);

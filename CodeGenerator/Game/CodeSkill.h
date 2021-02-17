@@ -12,7 +12,6 @@ protected:
 	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath);
 	static void generateStringDefineSkill(const myVector<string>& skillList, string filePath);
 protected:
-	const static string cppHeaderPath;
 };
 
 #endif
