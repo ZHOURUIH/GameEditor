@@ -75,8 +75,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 
 	// т╢нд╪Ч
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"EventHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{

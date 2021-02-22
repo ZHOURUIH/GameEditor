@@ -196,7 +196,7 @@ string CodeUtility::cppPushParamString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GameDefine::" + memberInfo.mArrayLengthMacro[i];
+			lengthMacro += "GD::" + memberInfo.mArrayLengthMacro[i];
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";
@@ -220,7 +220,7 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GameDefine::" + memberInfo.mArrayLengthMacro[i];
+			lengthMacro += "GD::" + memberInfo.mArrayLengthMacro[i];
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";

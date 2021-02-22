@@ -279,7 +279,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str1, "");
 	line(str1, "void SQLiteRegister::registeAll()");
 	line(str1, "{");
-	line(str1, "\tSQLite* sqlite = mSQLiteManager->createSQLite(GameDefine::SQLITE_DATA_BASE);");
+	line(str1, "\tSQLite* sqlite = mSQLiteManager->createSQLite(GD::SQLITE_DATA_BASE);");
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{

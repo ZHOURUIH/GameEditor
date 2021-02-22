@@ -57,8 +57,7 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 
 	// т╢нд╪Ч
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"DTNodeHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(count)
 	{

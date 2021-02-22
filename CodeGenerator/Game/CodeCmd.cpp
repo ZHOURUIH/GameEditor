@@ -58,8 +58,7 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 
 	// т╢нд╪Ч
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"CommandHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{

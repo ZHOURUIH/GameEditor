@@ -54,7 +54,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 
 	// т╢нд╪Ч
 	string source;
-	line(source, "#include \"GameDefine.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{
