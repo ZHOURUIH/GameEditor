@@ -9,15 +9,20 @@ string CodeUtility::cppFramePath;
 string CodeUtility::cppStringDefinePath;
 string CodeUtility::csGamePath;
 
-void CodeUtility::initPath()
+bool CodeUtility::initPath()
 {
 	ServerProjectPath = getEnvironmentValue("SERVER_PROJECT_PATH");
 	GameProjectPath = getEnvironmentValue("GAME_PROJECT_PATH");
+	if (ServerProjectPath == "" || GameProjectPath == "")
+	{
+		return false;
+	}
 	cppProjectPath = ServerProjectPath + "MicroLegend_Server/";
 	cppGamePath = cppProjectPath + "Game/";
 	cppFramePath = cppProjectPath + "Frame/";
 	cppStringDefinePath = cppGamePath + "StringDefine/";
 	csGamePath = GameProjectPath + "Assets/Scripts/Game/";
+	return true;
 }
 
 MySQLMember CodeUtility::parseMySQLMemberLine(string line)

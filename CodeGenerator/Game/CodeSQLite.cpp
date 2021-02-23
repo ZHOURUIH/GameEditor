@@ -159,13 +159,14 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		line(header, "\tstatic const char* " + sqliteInfo.mMemberList[i].mMemberName + ";");
+	}
+	line(header, "public:");
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
 		{
-			line(header, "\tCOL_EMPTY(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
-		}
-		else
-		{
-			line(header, "\tCOL(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
+			line(header, "\t" + sqliteInfo.mMemberList[i].mTypeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";");
 		}
 	}
 	line(header, "public:");
@@ -173,13 +174,15 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(header, "\t{");
 	FOR_I(memberCount)
 	{
+		const string& name = sqliteInfo.mMemberList[i].mMemberName;
 		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
 		{
-			line(header, "\t\tREGISTE_PARAM_EMPTY(" + sqliteInfo.mMemberList[i].mMemberName + ");");
+			
+			line(header, "\t\tregisteParamEmpty(" + name + ");");
 		}
 		else
 		{
-			line(header, "\t\tREGISTE_PARAM(" + sqliteInfo.mMemberList[i].mMemberName + ");");
+			line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
 		}
 	}
 	line(header, "\t}");
@@ -193,7 +196,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(source, "");
 	FOR_I(memberCount)
 	{
-		line(source, "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
+		line(source, "const char* " + dataClassName + "::" + sqliteInfo.mMemberList[i].mMemberName + " = STR(" + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);

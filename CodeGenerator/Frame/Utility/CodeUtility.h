@@ -15,7 +15,7 @@ protected:
 	static string cppStringDefinePath;
 	static string csGamePath;
 public:
-	static void initPath();
+	static bool initPath();
 	static MySQLMember parseMySQLMemberLine(string line);
 	static SQLiteMember parseSQLiteMemberLine(string line);
 	static PacketMember parseMemberLine(const string& line);

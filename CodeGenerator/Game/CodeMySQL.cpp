@@ -105,7 +105,12 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tCOL(" + mysqlInfo.mMemberList[i].mTypeName + ", " + mysqlInfo.mMemberList[i].mMemberName + ");");
+		line(header, "\tstatic const char* " + mysqlInfo.mMemberList[i].mMemberName + ";");
+	}
+	line(header, "public:");
+	FOR_I(memberCount)
+	{
+		line(header, "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + ";");
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
@@ -123,7 +128,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// 字段静态变量定义
 	FOR_I(memberCount)
 	{
-		line(source, "COL_DEFINE(" + className + ", " + mysqlInfo.mMemberList[i].mMemberName + ");");
+		line(source, "const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + " = STR(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
 	// fillColName函数
 	line(source, "");
@@ -140,38 +145,92 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "{");
 	FOR_I(memberCount)
 	{
-		line(source, "\tPARSE(" + mysqlInfo.mMemberList[i].mMemberName + ");");
+		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
+		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
+		if (typeName == "int")
+		{
+			line(source, "\tparseInt(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "uint")
+		{
+			line(source, "\tparseUInt(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "byte")
+		{
+			line(source, "\tparseByte(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "char")
+		{
+			line(source, "\tparseChar(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "short")
+		{
+			line(source, "\tparseShort(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "ushort")
+		{
+			line(source, "\tparseUShort(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "float")
+		{
+			line(source, "\tparseFloat(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "ullong")
+		{
+			line(source, "\tparseULLong(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
+		else if (typeName == "string")
+		{
+			line(source, "\tparseString(&m" + memberName + ", resultRow, " + memberName + ");");
+		}
 	}
 	line(source, "}");
 	line(source, "");
+
 	// paramList函数
 	line(source, "void " + className + "::paramList(char* params, uint size) const");
 	line(source, "{");
 	FOR_I(memberCount)
 	{
-		if (i != memberCount - 1)
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		string addComma = i != memberCount - 1 ? "true" : "false";
+		if (typeName == "string")
 		{
-			if (mysqlInfo.mMemberList[i].mTypeName == "string")
-			{
-				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
-				line(source, "\tAPPEND_STRING(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");");
-			}
-			else
-			{
-				line(source, "\tAPPEND_VALUE(" + mysqlInfo.mMemberList[i].mMemberName + ");");
-			}
+			line(source, "\tappendValueString(params, size, m" + memberName + ".c_str(), " + (memberInfo.mUTF8 ? "true" : "false") + ", " + addComma + ");");
 		}
-		else
+		else if (typeName == "int")
 		{
-			if (mysqlInfo.mMemberList[i].mTypeName == "string")
-			{
-				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
-				line(source, "\tAPPEND_STRING_END(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");");
-			}
-			else
-			{
-				line(source, "\tAPPEND_VALUE_END(" + mysqlInfo.mMemberList[i].mMemberName + ");");
-			}
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "uint")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "byte")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "char")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "short")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "ushort")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "float")
+		{
+			line(source, "\tappendValueFloat(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "ullong")
+		{
+			line(source, "\tappendValueULLong(params, size, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
@@ -182,17 +241,20 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "\tbase::resetProperty();");
 	FOR_I(memberCount)
 	{
-		if (mysqlInfo.mMemberList[i].mTypeName == "string")
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "string")
 		{
-			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + ".clear();");
+			line(source, "\tm" + memberName + ".clear();");
 		}
-		else if (mysqlInfo.mMemberList[i].mTypeName == "float")
+		else if (typeName == "float")
 		{
-			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0.0f;");
+			line(source, "\tm" + memberName + " = 0.0f;");
 		}
 		else
 		{
-			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0;");
+			line(source, "\tm" + memberName + " = 0;");
 		}
 	}
 	line(source, "}", false);
