@@ -50,7 +50,7 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 	uint cmdCount = cmdList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + cmdList[i] + ");");
+		line(header, stringDeclare(cmdList[i]));
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);
@@ -62,7 +62,7 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + cmdList[i] + ");");
+		line(source, stringDefine(cmdList[i]));
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);

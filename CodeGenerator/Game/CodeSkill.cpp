@@ -46,7 +46,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	uint cmdCount = skillList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + skillList[i] + ");");
+		line(header, stringDeclare(skillList[i]));
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);
@@ -58,7 +58,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + skillList[i] + ");");
+		line(source, stringDefine(skillList[i]));
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);

@@ -49,7 +49,7 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 	uint count = nodeList.size();
 	FOR_I(count)
 	{
-		line(header, "DECLARE_STRING(" + nodeList[i] + ");");
+		line(header, stringDeclare(nodeList[i]));
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);
@@ -61,9 +61,8 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 	line(source, "");
 	FOR_I(count)
 	{
-		line(source, "DEFINE_STRING(" + nodeList[i] + ");");
+		line(source, stringDefine(nodeList[i]));
 	}
-
 	source = ANSIToUTF8(source.c_str(), true);
 	writeFile(stringDefinePath + "StringDefineDTNode.cpp", source);
 }

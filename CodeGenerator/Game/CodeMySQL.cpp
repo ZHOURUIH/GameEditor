@@ -384,7 +384,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(header, "DECLARE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
+		line(header, stringDeclare("MD" + mysqlList[i].mMySQLClassName));
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);
@@ -396,7 +396,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	line(source, "");
 	FOR_I(count)
 	{
-		line(source, "DEFINE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
+		line(source, stringDefine("MD" + mysqlList[i].mMySQLClassName));
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);

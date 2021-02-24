@@ -46,12 +46,12 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	uint cmdCount = stateList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + stateList[i] + ");");
+		line(header, stringDeclare(stateList[i]));
 	}
 	line(header, "");
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + stateList[i] + "Param);");
+		line(header, stringDeclare(stateList[i] + "Param"));
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);
@@ -63,12 +63,12 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + stateList[i] + ");");
+		line(source, stringDefine(stateList[i]));
 	}
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + stateList[i] + "Param);");
+		line(source, stringDefine(stateList[i] + "Param"));
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);

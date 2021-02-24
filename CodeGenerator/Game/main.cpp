@@ -11,6 +11,9 @@
 #include "CodeUnityBuild.h"
 #include "CodeFrameSystem.h"
 #include "CodeClassDeclare.h"
+#include "CodeObjectItem.h"
+#include "CodeStateGroup.h"
+#include "CodeComponent.h"
 
 void main()
 {
@@ -50,6 +53,9 @@ void main()
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
 		CodeClassDeclare::generate();
+		CodeObjectItem::generate();
+		CodeStateGroup::generate();
+		CodeComponent::generate();
 	}
 	else if (input == 1)
 	{

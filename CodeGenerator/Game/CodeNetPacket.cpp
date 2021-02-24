@@ -318,7 +318,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	uint cmdCount = packetList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + packetList[i] + ");");
+		line(header, stringDeclare(packetList[i]));
 	}
 	header = ANSIToUTF8(header.c_str(), true);
 	writeFile(filePath + "StringDefinePacket.h", header);
@@ -329,7 +329,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + packetList[i] + ");");
+		line(source, stringDefine(packetList[i]));
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);

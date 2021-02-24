@@ -67,7 +67,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	uint cmdCount = eventList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + eventList[i].first + ");");
+		line(header, stringDeclare(eventList[i].first));
 	}
 
 	header = ANSIToUTF8(header.c_str(), true);
@@ -79,7 +79,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + eventList[i].first + ");");
+		line(source, stringDefine(eventList[i].first));
 	}
 
 	source = ANSIToUTF8(source.c_str(), true);
