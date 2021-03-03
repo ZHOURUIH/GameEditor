@@ -426,7 +426,6 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 {
 	string file;
 	line(file, "using System;");
-	line(file, "using System.Collections;");
 	line(file, "using System.Collections.Generic;");
 	line(file, "");
 	line(file, "public class SQLiteRegister : GameBase");

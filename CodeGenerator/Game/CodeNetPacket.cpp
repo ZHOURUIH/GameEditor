@@ -605,7 +605,6 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 {
 	string str;
 	line(str, "using System;");
-	line(str, "using System.Collections;");
 	line(str, "using System.Collections.Generic;");
 	line(str, "");
 	line(str, "public class PacketRegister : GameBase");
@@ -654,7 +653,6 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 	}
 	string file;
 	line(file, "using System;");
-	line(file, "using System.Collections;");
 	line(file, "using System.Collections.Generic;");
 	line(file, "");
 	line(file, "public partial class " + packetInfo.mPacketName + " : SocketPacket");
@@ -678,7 +676,6 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 
 	if (startWith(packetInfo.mPacketName, "CS"))
 	{
-
 		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
 	}
 	else if (startWith(packetInfo.mPacketName, "SC"))
@@ -698,7 +695,6 @@ void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string 
 	{
 		string file;
 		line(file, "using System;");
-		line(file, "using System.Collections;");
 		line(file, "using System.Collections.Generic;");
 		line(file, "");
 		line(file, "public partial class " + packetName + " : SocketPacket");
