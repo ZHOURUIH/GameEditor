@@ -199,10 +199,8 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(source, "const char* " + dataClassName + "::" + sqliteInfo.mMemberList[i].mMemberName + " = STR(" + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 
-	header = ANSIToUTF8(header.c_str(), true);
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(dataFilePath + dataClassName + ".h", header);
-	writeFile(dataFilePath + dataClassName + ".cpp", source);
+	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
+	writeFile(dataFilePath + dataClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
 
 	// SQLiteTable.h
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
@@ -225,8 +223,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(table, "");
 		line(table, "#endif", false);
 
-		table = ANSIToUTF8(table.c_str(), true);
-		writeFile(tableFileName, table);
+		writeFile(tableFileName, ANSIToUTF8(table.c_str(), true));
 	}
 }
 
@@ -250,8 +247,7 @@ void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sq
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "SQLiteHeader.h", str0);
+	writeFile(filePath + "SQLiteHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // SQLiteRegister.h和SQLiteRegister.cpp文件
@@ -271,9 +267,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "};");
 	line(str0, "");
 	line(str0, "#endif", false);
-
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.h", str0);
+	writeFile(filePath + "SQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
@@ -293,9 +287,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 		line(str1, "\tREGISTE_SQLITE(SQLite" + sqliteList[i].mSQLiteName + ", \"" + sqliteList[i].mSQLiteName + "\");");
 	}
 	line(str1, "}", false);
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.cpp", str1);
+	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 // SQLiteInstanceDeclare.h和SQLiteInstanceDeclare.cpp
@@ -313,8 +305,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		}
 		line(str0, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "SQLiteInstanceDeclare.h", str0);
+	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "// auto generated file, so it looks might be strange");
@@ -329,9 +320,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		}
 		line(str1, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "SQLiteInstanceDeclare.cpp", str1);
+	writeFile(filePath + "SQLiteInstanceDeclare.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 // TDSQLite.cs和SQLiteTable.cs文件
@@ -413,9 +402,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	}
 	line(file, "\t}");
 	line(file, "}", false);
-
-	file = ANSIToUTF8(file.c_str(), true);
-	writeFile(dataFilePath + dataClassName + ".cs", file);
+	writeFile(dataFilePath + dataClassName + ".cs", ANSIToUTF8(file.c_str(), true));
 
 	// SQLiteTable.cs文件
 	string table;
@@ -431,9 +418,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "\t\t" + dataClassName + ".link(this);");
 	line(table, "\t}");
 	line(table, "}", false);
-
-	table = ANSIToUTF8(table.c_str(), true);
-	writeFile(tableFilePath + tableClassName + ".cs", table);
+	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
 }
 
 // SQLiteRegister.cs文件
@@ -467,6 +452,5 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(file, "\t}");
 	line(file, "}", false);
 
-	file = ANSIToUTF8(file.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.cs", file);
+	writeFile(filePath + "SQLiteRegister.cs", ANSIToUTF8(file.c_str(), true));
 }

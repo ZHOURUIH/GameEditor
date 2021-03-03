@@ -37,6 +37,5 @@ void CodeUnityBuild::generateCppUnityBuild(const myVector<string>& fileList, str
 		line(str0, "#include \"" + fileList[i] + "\"");
 	}
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "UnityBuild.cpp", str0);
+	writeFile(filePath + "UnityBuild.cpp", ANSIToUTF8(str0.c_str(), true));
 }

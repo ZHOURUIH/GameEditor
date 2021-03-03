@@ -25,9 +25,7 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 	{
 		line(header, stringDeclare(stateList[i]));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineStateGroup.h", header);
+	writeFile(filePath + "StringDefineStateGroup.h", ANSIToUTF8(header.c_str(), true));
 
 	// Ô´ÎÄ¼þ
 	string source;
@@ -37,7 +35,5 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 	{
 		line(source, stringDefine(stateList[i]));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineStateGroup.cpp", source);
+	writeFile(filePath + "StringDefineStateGroup.cpp", ANSIToUTF8(source.c_str(), true));
 }

@@ -25,9 +25,7 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& stat
 	{
 		line(header, stringDeclare(stateList[i]));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineObjectItem.h", header);
+	writeFile(filePath + "StringDefineObjectItem.h", ANSIToUTF8(header.c_str(), true));
 
 	// Ô´ÎÄ¼þ
 	string source;
@@ -37,7 +35,5 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& stat
 	{
 		line(source, stringDefine(stateList[i]));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineObjectItem.cpp", source);
+	writeFile(filePath + "StringDefineObjectItem.cpp", ANSIToUTF8(source.c_str(), true));
 }

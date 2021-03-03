@@ -259,10 +259,8 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	}
 	line(source, "}", false);
 
-	header = ANSIToUTF8(header.c_str(), true);
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + className + ".h", header);
-	writeFile(filePath + className + ".cpp", source);
+	writeFile(filePath + className + ".h", ANSIToUTF8(header.c_str(), true));
+	writeFile(filePath + className + ".cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // 生成MySQLTable.h和MySQLTable.cpp文件
@@ -307,10 +305,8 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
 	line(source, "}", false);
 
-	header = ANSIToUTF8(header.c_str(), true);
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + tableClassName + ".h", header);
-	writeFile(filePath + tableClassName + ".cpp", source);
+	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
+	writeFile(filePath + tableClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // MySQLHeader.h文件
@@ -333,8 +329,7 @@ void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysql
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "MySQLHeader.h", str0);
+	writeFile(filePath + "MySQLHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // MySQLRegiste.h和MySQLRegiste.cpp文件
@@ -354,9 +349,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	line(str0, "};");
 	line(str0, "");
 	line(str0, "#endif", false);
-
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "MySQLRegister.h", str0);
+	writeFile(filePath + "MySQLRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
@@ -371,9 +364,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 		line(str1, "\tREGISTE_MYSQL(MySQL" + mysqlList[i].mMySQLClassName + ", \"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "MySQLRegister.cpp", str1);
+	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 // StringDefineMySQL.h和StringDefineMySQL.cpp
@@ -386,9 +377,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	{
 		line(header, stringDeclare("MD" + mysqlList[i].mMySQLClassName));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineMySQL.h", header);
+	writeFile(filePath + "StringDefineMySQL.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
 	string source;
@@ -398,9 +387,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	{
 		line(source, stringDefine("MD" + mysqlList[i].mMySQLClassName));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineMySQL.cpp", source);
+	writeFile(filePath + "StringDefineMySQL.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp
@@ -415,9 +402,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	{
 		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "MySQLInstanceDeclare.h", header);
+	writeFile(filePath + "MySQLInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string cpp;
 	line(cpp, "// auto generated file, so it looks might be strange");
@@ -428,7 +413,5 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	{
 		line(cpp, "MySQL" + mysqlList[i].mMySQLClassName + "* GameBase::mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
-
-	cpp = ANSIToUTF8(cpp.c_str(), true);
-	writeFile(filePath + "MySQLInstanceDeclare.cpp", cpp);
+	writeFile(filePath + "MySQLInstanceDeclare.cpp", ANSIToUTF8(cpp.c_str(), true));
 }

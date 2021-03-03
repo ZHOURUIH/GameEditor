@@ -207,11 +207,11 @@ string CodeUtility::cppPushParamString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", " + boolToString(memberInfo.mVariableLength) + ");\\";
+		str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", " + boolToString(memberInfo.mVariableLength) + ");";
 	}
 	else
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ");\\";
+		str = "pushParam(" + memberInfo.mMemberName + ");";
 	}
 	return str;
 }
@@ -231,11 +231,11 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];\\";
+		str = memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];";
 	}
 	else
 	{
-		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + ";\\";
+		str = memberInfo.mTypeName + " " + memberInfo.mMemberName + ";";
 	}
 	return str;
 }
@@ -245,11 +245,11 @@ string CodeUtility::cSharpPushParamString(const PacketMember& memberInfo)
 	string str;
 	if (memberInfo.mIsArray)
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");";
+		str = "pushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");";
 	}
 	else
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ");";
+		str = "pushParam(" + memberInfo.mMemberName + ");";
 	}
 	return str;
 }
@@ -280,12 +280,12 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
+		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
 	}
 	else
 	{
 		typeName = toUpper(typeName);
-		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 	}
 	return str;
 }

@@ -259,7 +259,7 @@ void StringUtility::split(const char* str, const char* key, myVector<string>& ve
 			curString[sourceLen - startPos] = '\0';
 		}
 		// 放入列表
-		if (curString[0] != '\0')
+		if (curString[0] != '\0' || !removeEmpty)
 		{
 			vec.push_back(curString);
 		}
@@ -305,7 +305,7 @@ uint StringUtility::split(const char* str, const char* key, string* stringBuffer
 			curString[sourceLen - startPos] = '\0';
 		}
 		// 放入列表
-		if (curString[0] != '\0')
+		if (curString[0] != '\0' || !removeEmpty)
 		{
 			if (curCount >= bufferSize)
 			{
@@ -1684,7 +1684,7 @@ string StringUtility::UTF8ToANSI(const char* str, bool eraseBOM)
 
 void StringUtility::removeBOM(string& str)
 {
-	if (str.length() >= 3 && (byte)str[0] == BOM[0] && (byte)str[1] == BOM[1] && (byte)str[2] == BOM[2])
+	if (str.length() >= 3 && str[0] == BOM[0] && str[1] == BOM[1] && str[2] == BOM[2])
 	{
 		str = str.erase(0, 3);
 	}

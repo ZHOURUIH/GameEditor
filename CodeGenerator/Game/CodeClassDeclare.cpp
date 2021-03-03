@@ -97,8 +97,7 @@ void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& clas
 	line(str0, "");
 	line(str0, "#endif");
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "FrameClassDeclare.h", str0);
+	writeFile(filePath + "FrameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // GameClassDeclare.cpp
@@ -116,8 +115,7 @@ void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& class
 	line(str0, "");
 	line(str0, "#endif");
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "GameClassDeclare.h", str0);
+	writeFile(filePath + "GameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // FrameHeader.h
@@ -135,8 +133,7 @@ void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList
 	line(str0, "");
 	line(str0, "#endif");
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "FrameHeader.h", str0);
+	writeFile(filePath + "FrameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // GameHeader.h
@@ -155,6 +152,5 @@ void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList,
 	line(str0, "");
 	line(str0, "#endif");
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "GameHeader.h", str0);
+	writeFile(filePath + "GameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }

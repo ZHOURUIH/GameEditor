@@ -38,8 +38,7 @@ void CodeCmd::generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, str
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "CommandHeader.h", str0);
+	writeFile(filePath + "CommandHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineCmd.h和StringDefineCmd.cpp
@@ -53,8 +52,7 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 		line(header, stringDeclare(cmdList[i]));
 	}
 
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineCmd.h", header);
+	writeFile(filePath + "StringDefineCmd.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
 	string source;
@@ -65,6 +63,5 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 		line(source, stringDefine(cmdList[i]));
 	}
 
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineCmd.cpp", source);
+	writeFile(filePath + "StringDefineCmd.cpp", ANSIToUTF8(source.c_str(), true));
 }

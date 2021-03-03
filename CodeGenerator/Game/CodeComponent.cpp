@@ -26,8 +26,7 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& stateL
 		line(header, stringDeclare(stateList[i]));
 	}
 
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineComponent.h", header);
+	writeFile(filePath + "StringDefineComponent.h", ANSIToUTF8(header.c_str(), true));
 
 	// Ô´ÎÄ¼þ
 	string source;
@@ -38,6 +37,5 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& stateL
 		line(source, stringDefine(stateList[i]));
 	}
 
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineComponent.cpp", source);
+	writeFile(filePath + "StringDefineComponent.cpp", ANSIToUTF8(source.c_str(), true));
 }
