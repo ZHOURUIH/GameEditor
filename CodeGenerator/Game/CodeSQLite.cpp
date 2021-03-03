@@ -417,6 +417,14 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成");
 	line(table, "\t\t" + dataClassName + ".link(this);");
 	line(table, "\t}");
+	line(table, "\tpublic " + dataClassName + " query(int id)");
+	line(table, "\t{");
+	line(table, "\t\treturn query(Typeof<" + dataClassName + ">(), id) as " + dataClassName + ";");
+	line(table, "\t}");
+	line(table, "\tpublic void queryAll(List<" + dataClassName + "> list)");
+	line(table, "\t{");
+	line(table, "\t\tqueryAll(Typeof<" + dataClassName + ">(), list);");
+	line(table, "\t}");
 	line(table, "}", false);
 	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
 }
