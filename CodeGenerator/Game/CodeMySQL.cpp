@@ -97,7 +97,6 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "");
 	line(header, "#include \"MySQLData.h\"");
 	line(header, "");
-	line(header, "class MySQLTable;");
 	line(header, "class " + className + " : public MySQLData");
 	line(header, "{");
 	line(header, "\tBASE_CLASS(MySQLData);");
@@ -114,7 +113,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
-	line(header, "\tvoid resultRowToTableData(myMap<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid parseResult(myMap<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(char* params, uint size) const override;");
 	line(header, "\tvoid resetProperty() override;");
 	line(header, "};");
@@ -141,7 +140,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "}");
 	line(source, "");
 	// resultRowToTableDataº¯Êý
-	line(source, "void " + className + "::resultRowToTableData(myMap<const char*, char*>& resultRow)");
+	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
 	line(source, "{");
 	FOR_I(memberCount)
 	{
@@ -149,39 +148,39 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
 		if (typeName == "int")
 		{
-			line(source, "\tparseInt(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tparseUInt(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseUInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tparseByte(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseByte(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tparseChar(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseChar(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tparseShort(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseShort(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tparseUShort(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseUShort(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tparseFloat(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseFloat(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "ullong")
 		{
-			line(source, "\tparseULLong(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseULLong(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "string")
 		{
-			line(source, "\tparseString(&m" + memberName + ", resultRow, " + memberName + ");");
+			line(source, "\tparseString(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 	}
 	line(source, "}");
@@ -277,7 +276,6 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "");
 	line(header, "#include \"MySQLTable.h\"");
 	line(header, "");
-	line(header, "class " + dataClassName + ";");
 	line(header, "class " + tableClassName + " : public MySQLTable");
 	line(header, "{");
 	line(header, "\tBASE_CLASS(MySQLTable);");
@@ -285,6 +283,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "\t" + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
 	line(header, "\tvoid init(MYSQL * mysql) override;");
+	line(header, "protected:");
 	line(header, "\tMySQLData* createData() override;");
 	line(header, "protected:");
 	line(header, "};");
@@ -300,6 +299,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(source, "\tMySQLTable::init(mysql);");
 	line(source, "\t" + dataClassName + "::fillColName(this);");
 	line(source, "}");
+	line(source, "");
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
 	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
