@@ -133,6 +133,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
 	line(source, "{");
+	line(source, "\ttable->addColName(ID);");
 	FOR_I(memberCount)
 	{
 		line(source, "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ");");
@@ -142,6 +143,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// resultRowToTableDataº¯Êý
 	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
 	line(source, "{");
+	line(source, "\tparseULLong(&mID, resultRow.get(ID, NULL));");
 	FOR_I(memberCount)
 	{
 		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
@@ -189,6 +191,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// paramListº¯Êý
 	line(source, "void " + className + "::paramList(char* params, uint size) const");
 	line(source, "{");
+	line(source, "\tappendValueULLong(params, size, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
