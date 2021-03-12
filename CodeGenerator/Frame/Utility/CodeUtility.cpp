@@ -207,7 +207,14 @@ string CodeUtility::cppPushParamString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", " + boolToString(memberInfo.mVariableLength) + ");";
+		if (!memberInfo.mVariableLength)
+		{
+			str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", false);";
+		}
+		else
+		{
+			str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ");";
+		}
 	}
 	else
 	{
