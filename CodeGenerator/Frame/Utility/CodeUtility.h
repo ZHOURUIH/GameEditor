@@ -15,12 +15,14 @@ protected:
 	static string cppStringDefinePath;
 	static string csGamePath;
 public:
-	static void initPath();
+	static bool initPath();
 	static MySQLMember parseMySQLMemberLine(string line);
 	static SQLiteMember parseSQLiteMemberLine(string line);
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName);
+	static string stringDeclare(const string& name) { return "static const char* NAME(" + name + ");"; }
+	static string stringDefine(const string& name) { return "const char* StringDefine::NAME(" + name + ") = STR(" + name + ");"; }
 	static string cppPushParamString(const PacketMember& memberInfo);
 	static string cppMemberDeclareString(const PacketMember& memberInfo);
 	static string cSharpPushParamString(const PacketMember& memberInfo);

@@ -110,9 +110,9 @@ void CodeNetPacket::generate()
 	{
 		// 生成代码文件
 		// .h代码
-		generateCppPacketDeclareFile(packetInfoList[i], cppCSDeclarePath, cppSCDeclarePath);
-		generateCppCSPacketFile(packetInfoList[i].mPacketName, cppCSPacketPath);
-		generateCppSCPacketFile(packetInfoList[i].mPacketName, cppSCPacketPath);
+		generateCppCSPacketFileHeader(packetInfoList[i], cppCSPacketPath);
+		generateCppCSPacketFileSource(packetInfoList[i], cppCSPacketPath);
+		generateCppSCPacketFile(packetInfoList[i], cppSCPacketPath);
 		// .cs代码
 		generateCSharpDecalreFile(packetInfoList[i], csharpCSHeaderPath, csharpSCHeaderPath);
 		generateCSharpSCPacketFile(packetInfoList[i].mPacketName, csharpSCPacketPath);
@@ -155,34 +155,7 @@ void CodeNetPacket::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>&
 	line(str0, "#include \"StringDefine.h\"");
 	line(str0, "");
 	line(str0, "#endif", false);
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "PacketHeader.h", str0);
-
-	// PacketDeclareHeader.h
-	string str1;
-	line(str1, "#ifndef _PACKET_DECLARE_HEADER_H_");
-	line(str1, "#define _PACKET_DECLARE_HEADER_H_");
-	line(str1, "");
-	FOR_I(packetCount)
-	{
-		if (startWith(packetList[i].mPacketName, "CS"))
-		{
-			line(str1, "#include \"" + packetList[i].mPacketName + "_Declare.h\"");
-		}
-	}
-	line(str1, "");
-	FOR_I(packetCount)
-	{
-		if (startWith(packetList[i].mPacketName, "SC"))
-		{
-			line(str1, "#include \"" + packetList[i].mPacketName + "_Declare.h\"");
-		}
-	}
-	line(str1, "");
-	line(str1, "#endif", false);
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "PacketDeclareHeader.h", str1);
+	writeFile(filePath + "PacketHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // PacketDefine.h文件
@@ -222,8 +195,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "");
 	line(str, "#endif", false);
 
-	str = ANSIToUTF8(str.c_str(), true);
-	writeFile(filePath + "PacketDefine.h", str);
+	writeFile(filePath + "PacketDefine.h", ANSIToUTF8(str.c_str(), true));
 }
 
 // PacketRegister.cpp文件
@@ -258,56 +230,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::SC_MAX - (int)PACKET_TYPE::SC_MIN - 1, \"SC\");");
 	line(str, "};", false);
 
-	str = ANSIToUTF8(str.c_str(), true);
-	writeFile(filePath + "PacketRegister.cpp", str);
-}
-
-// Packet_Declare.h文件
-void CodeNetPacket::generateCppPacketDeclareFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath)
-{
-	string headerMacro = "_" + packetNameToUpper(packetInfo.mPacketName) + "_DECLARE_H_";
-	string file;
-	line(file, "#ifndef " + headerMacro);
-	line(file, "#define " + headerMacro);
-	line(file, "");
-	line(file, "#define " + packetInfo.mPacketName + "_Declare \\");
-	line(file, "public:\\");
-	// 注册成员变量
-	uint memberCount = packetInfo.mMemberList.size();
-	if (memberCount != 0)
-	{
-		line(file, "\tvoid fillParams() override\\");
-		line(file, "\t{\\");
-		FOR_I(memberCount)
-		{
-			line(file, cppPushParamString(packetInfo.mMemberList[i]));
-		}
-		line(file, "\t}\\");
-	}
-	else
-	{
-		line(file, "\tvoid fillParams() override{}\\");
-	}
-	// 成员变量的声明
-	line(file, "public:\\");
-	FOR_I(memberCount)
-	{
-		line(file, cppMemberDeclareString(packetInfo.mMemberList[i]));
-	}
-	removeLast(file, '\\');
-	line(file, "");
-	line(file, "#endif", false);
-
-	if (startWith(packetInfo.mPacketName, "CS"))
-	{
-		file = ANSIToUTF8(file.c_str(), true);
-		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.h", file);
-	}
-	else if(startWith(packetInfo.mPacketName, "SC"))
-	{
-		file = ANSIToUTF8(file.c_str(), true);
-		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.h", file);
-	}
+	writeFile(filePath + "PacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
 }
 
 // StringDefinePacket.h和StringDefinePacket.cpp
@@ -318,10 +241,9 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	uint cmdCount = packetList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + packetList[i] + ");");
+		line(header, stringDeclare(packetList[i]));
 	}
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefinePacket.h", header);
+	writeFile(filePath + "StringDefinePacket.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
 	string source;
@@ -329,16 +251,15 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + packetList[i] + ");");
+		line(source, stringDefine(packetList[i]));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefinePacket.cpp", source);
+	writeFile(filePath + "StringDefinePacket.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // CSPacket.h和CSPacket.cpp
-void CodeNetPacket::generateCppCSPacketFile(const string& packetName, string filePath)
+void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, string filePath)
 {
+	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "CS"))
 	{
 		return;
@@ -357,19 +278,205 @@ void CodeNetPacket::generateCppCSPacketFile(const string& packetName, string fil
 		line(header, "");
 		line(header, "class " + packetName + " : public Packet");
 		line(header, "{");
-		line(header, "\t" + packetName + "_Declare;");
 		line(header, "public:");
+		const auto& memberList = packetInfo.mMemberList;
+		FOR_VECTOR_CONST(memberList)
+		{
+			line(header, "\t" + cppMemberDeclareString(memberList[i]));
+		}
+		line(header, "public:");
+		if (memberListCount == 0)
+		{
+			line(header, "\tvoid fillParams() override{}");
+		}
+		else
+		{
+			line(header, "\tvoid fillParams() override");
+			line(header, "\t{");
+			FOR_I(memberListCount)
+			{
+				line(header, "\t\t" + cppPushParamString(memberList[i]));
+			}
+			line(header, "\t}");
+		}
 		line(header, "\tvoid execute() override;");
 		line(header, "\tvoid debugInfo(char* buffer, int size) override");
 		line(header, "\t{");
-		line(header, "\t\tPACKET_DEBUG(\"\")");
+		line(header, "\t\tPACKET_DEBUG(\"\");");
 		line(header, "\t}");
 		line(header, "};");
 		line(header, "");
 		line(header, "#endif", false);
 
-		header = ANSIToUTF8(header.c_str(), true);
-		writeFile(headerFullPath, header);
+		writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
+	}
+	else
+	{
+		updateOldFormatPackteFile(packetInfo, headerFullPath);
+	}
+}
+
+void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, string fullPath)
+{
+	const string& packetName = packetInfo.mPacketName;
+	// 打开文件,并解析文件
+	string headerFile;
+	openTxtFile(fullPath, headerFile);
+	headerFile = UTF8ToANSI(headerFile.c_str(), true);
+	myVector<string> headerLines;
+	split(headerFile.c_str(), "\r\n", headerLines, false);
+	// 找到第一个{
+	int bracketIndex = headerLines.find("{");
+	if (bracketIndex < 0)
+	{
+		ERROR("网络消息包文件解析错误,找不到{");
+		return;
+	}
+	if (bracketIndex + 1 >= (int)headerLines.size())
+	{
+		ERROR("网络消息包文件解析错误,{出现在最后一行");
+		return;
+	}
+	const auto& memberList = packetInfo.mMemberList;
+	// 如果下一行是宏,则说明是旧格式的文件,需要被替换
+	if (findSubstr(headerLines[bracketIndex + 1], packetName + "_Declare;"))
+	{
+		myVector<string> newLines;
+		newLines.push_back("public:");
+		FOR_VECTOR_CONST(memberList)
+		{
+			newLines.push_back("\t" + cppMemberDeclareString(memberList[i]));
+		}
+		// 宏的下一行应该是public:,否则是无法识别的格式
+		if (headerLines[bracketIndex + 2] != "public:")
+		{
+			ERROR("网络消息包文件解析错误,宏的下一行应该是public:");
+			return;
+		}
+		newLines.push_back("public:");
+		if (memberListCount == 0)
+		{
+			newLines.push_back("\tvoid fillParams() override{}");
+		}
+		else
+		{
+			newLines.push_back("\tvoid fillParams() override");
+			newLines.push_back("\t{");
+			FOR_I(memberListCount)
+			{
+				newLines.push_back("\t\t" + cppPushParamString(memberList[i]));
+			}
+			newLines.push_back("\t}");
+		}
+		headerLines.erase(bracketIndex + 2);
+		headerLines.erase(bracketIndex + 1);
+		// 将新加的行插入到原本的文件中
+		FOR_VECTOR(newLines)
+		{
+			headerLines.insert(headerLines.begin() + bracketIndex + 1 + i, newLines[i]);
+		}
+		END(newLines);
+	}
+	// 新格式的文件,也就是没有其他的宏,替换变量声明和注册
+	else
+	{
+		// 找到第一个public:
+		int firstPublicIndex = headerLines.find("public:");
+		int secondPublicIndex = headerLines.find("public:", firstPublicIndex + 1);
+		if (firstPublicIndex < 0 || secondPublicIndex < 0)
+		{
+			ERROR("网络消息包文件解析错误,public:的数量小于2个");
+			return;
+		}
+		// 移除两个public:之间旧的变量声明
+		uint oldVariableCount = secondPublicIndex - firstPublicIndex - 1;
+		FOR_I(oldVariableCount)
+		{
+			headerLines.erase(secondPublicIndex - 1 - i);
+		}
+		FOR_VECTOR_CONST(memberList)
+		{
+			headerLines.insert(firstPublicIndex + 1 + i, "\t" + cppMemberDeclareString(memberList[i]));
+		}
+		secondPublicIndex += memberList.size() - oldVariableCount;
+		// 找到fillParams()
+		int fillParamIndex = -1;
+		FOR_VECTOR(headerLines)
+		{
+			if (findSubstr(headerLines[i], "void fillParams()"))
+			{
+				fillParamIndex = i;
+				break;
+			}
+		}
+		END(headerLines);
+		if (fillParamIndex < 0)
+		{
+			ERROR("网络消息包文件解析错误,找不到fillParams函数");
+			return;
+		}
+		// 函数体有变量注册
+		if (headerLines[fillParamIndex + 1] == "\t{")
+		{
+			int endBracketIndex = headerLines.find("\t}", fillParamIndex + 2);
+			// 移除所有已注册的变量
+			FOR_I(oldVariableCount)
+			{
+				headerLines.erase(fillParamIndex + 2 + oldVariableCount - 1 - i);
+			}
+			// 如果没有新的变量,则移除大括号,将大括号合并到函数名所在行
+			if (memberListCount == 0)
+			{
+				headerLines.erase(fillParamIndex + 2);
+				headerLines.erase(fillParamIndex + 1);
+				headerLines[fillParamIndex] = "\t\tvoid fillParams() override{}";
+			}
+			else
+			{
+				// 添加新的变量
+				FOR_I(memberListCount)
+				{
+					headerLines.insert(fillParamIndex + 2 + i, "\t\t" + cppPushParamString(memberList[i]));
+				}
+			}
+		}
+		// 函数体没有变量注册
+		else
+		{
+			// 如果新的变量数量也为0,则不做处理,大于0时才处理
+			if (memberListCount > 0)
+			{
+				headerLines[fillParamIndex] += "\t\tvoid fillParams() override";
+				headerLines.insert(fillParamIndex + 1, "\t{");
+				// 添加新的变量
+				FOR_I(memberListCount)
+				{
+					headerLines.insert(fillParamIndex + 2 + i, "\t\t" + cppPushParamString(memberList[i]));
+				}
+				headerLines.insert(fillParamIndex + 2 + memberListCount, "\t}");
+			}
+		}
+	}
+	// 生成新的文件
+	string newFile;
+	FOR_VECTOR(headerLines)
+	{
+		newFile += headerLines[i];
+		if (i != headerLinesCount - 1)
+		{
+			newFile += "\r\n";
+		}
+	}
+	END(headerLines);
+	writeFile(fullPath, ANSIToUTF8(newFile.c_str(), true));
+}
+
+void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, string filePath)
+{
+	const string& packetName = packetInfo.mPacketName;
+	if (!startWith(packetName, "CS"))
+	{
+		return;
 	}
 
 	// CSPacket.cpp
@@ -388,14 +495,14 @@ void CodeNetPacket::generateCppCSPacketFile(const string& packetName, string fil
 		line(source, "\t}");
 		line(source, "}", false);
 
-		source = ANSIToUTF8(source.c_str(), true);
-		writeFile(sourceFullPath, source);
+		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
 	}
 }
 
 // SCPacket.h文件
-void CodeNetPacket::generateCppSCPacketFile(const string& packetName, string filePath)
+void CodeNetPacket::generateCppSCPacketFile(const PacketInfo& packetInfo, string filePath)
 {
+	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "SC"))
 	{
 		return;
@@ -414,8 +521,27 @@ void CodeNetPacket::generateCppSCPacketFile(const string& packetName, string fil
 		line(header, "");
 		line(header, "class " + packetName + " : public Packet");
 		line(header, "{");
-		line(header, "\t" + packetName + "_Declare;");
 		line(header, "public:");
+		const auto& memberList = packetInfo.mMemberList;
+		FOR_VECTOR_CONST(memberList)
+		{
+			line(header, "\t" + cppMemberDeclareString(memberList[i]));
+		}
+		line(header, "public:");
+		if (memberListCount == 0)
+		{
+			line(header, "\tvoid fillParams() override{}");
+		}
+		else
+		{
+			line(header, "\tvoid fillParams() override");
+			line(header, "\t{");
+			FOR_I(memberListCount)
+			{
+				line(header, "\t\t" + cppPushParamString(memberList[i]));
+			}
+			line(header, "\t}");
+		}
 		line(header, "\tvoid debugInfo(char* buffer, int size) override");
 		line(header, "\t{");
 		line(header, "\t\tPACKET_DEBUG(\"\")");
@@ -424,8 +550,11 @@ void CodeNetPacket::generateCppSCPacketFile(const string& packetName, string fil
 		line(header, "");
 		line(header, "#endif", false);
 
-		header = ANSIToUTF8(header.c_str(), true);
-		writeFile(headerFullPath, header);
+		writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
+	}
+	else
+	{
+		updateOldFormatPackteFile(packetInfo, headerFullPath);
 	}
 }
 
@@ -434,7 +563,6 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 {
 	string str;
 	line(str, "using System;");
-	line(str, "using System.Collections.Generic;");
 	line(str, "");
 	line(str, "public class PACKET_TYPE");
 	line(str, "{");
@@ -468,8 +596,7 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 	line(str, "\tpublic static ushort SC_MAX = " + intToString(scPacketNumber) + ";");
 	line(str, "}", false);
 
-	str = ANSIToUTF8(str.c_str(), true);
-	writeFile(filePath + "PacketDefine.cs", str);
+	writeFile(filePath + "PacketDefine.cs", ANSIToUTF8(str.c_str(), true));
 }
 
 // PacketRegister.cs文件
@@ -477,8 +604,6 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 {
 	string str;
 	line(str, "using System;");
-	line(str, "using System.Collections;");
-	line(str, "using System.Collections.Generic;");
 	line(str, "");
 	line(str, "public class PacketRegister : GameBase");
 	line(str, "{");
@@ -512,8 +637,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\t}");
 	line(str, "}", false);
 
-	str = ANSIToUTF8(str.c_str(), true);
-	writeFile(filePath + "PacketRegister.cs", str);
+	writeFile(filePath + "PacketRegister.cs", ANSIToUTF8(str.c_str(), true));
 }
 
 // Packet_Declare.cs文件
@@ -527,15 +651,13 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 	}
 	string file;
 	line(file, "using System;");
-	line(file, "using System.Collections;");
-	line(file, "using System.Collections.Generic;");
 	line(file, "");
 	line(file, "public partial class " + packetInfo.mPacketName + " : SocketPacket");
 	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(file, cSharpMemberDeclareString(packetInfo.mMemberList[i]));
+		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i]));
 	}
 	if (memberCount > 0)
 	{
@@ -543,7 +665,7 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 		line(file, "\t{");
 		FOR_I(memberCount)
 		{
-			line(file, cSharpPushParamString(packetInfo.mMemberList[i]));
+			line(file, "\t\t" + cSharpPushParamString(packetInfo.mMemberList[i]));
 		}
 		line(file, "\t}");
 	}
@@ -551,13 +673,11 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 
 	if (startWith(packetInfo.mPacketName, "CS"))
 	{
-		file = ANSIToUTF8(file.c_str(), true);
-		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.cs", file);
+		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
 	}
 	else if (startWith(packetInfo.mPacketName, "SC"))
 	{
-		file = ANSIToUTF8(file.c_str(), true);
-		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.cs", file);
+		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
 	}
 }
 
@@ -572,8 +692,6 @@ void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string 
 	{
 		string file;
 		line(file, "using System;");
-		line(file, "using System.Collections;");
-		line(file, "using System.Collections.Generic;");
 		line(file, "");
 		line(file, "public partial class " + packetName + " : SocketPacket");
 		line(file, "{");
@@ -582,7 +700,6 @@ void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string 
 		line(file, "\t}");
 		line(file, "}", false);
 
-		file = ANSIToUTF8(file.c_str(), true);
-		writeFile(fullPath, file);
+		writeFile(fullPath, ANSIToUTF8(file.c_str(), true));
 	}
 }

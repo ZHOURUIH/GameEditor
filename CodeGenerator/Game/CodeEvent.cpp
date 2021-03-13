@@ -67,24 +67,19 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	uint cmdCount = eventList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + eventList[i].first + ");");
+		line(header, stringDeclare(eventList[i].first));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(stringDefinePath + "StringDefineEvent.h", header);
+	writeFile(stringDefinePath + "StringDefineEvent.h", ANSIToUTF8(header.c_str(), true));
 
 	// Ô´ÎÄ¼þ
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"EventHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + eventList[i].first + ");");
+		line(source, stringDefine(eventList[i].first));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(stringDefinePath + "StringDefineEvent.cpp", source);
+	writeFile(stringDefinePath + "StringDefineEvent.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // EventType.h
@@ -118,8 +113,7 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(headerPath + "EventType.h", str0);
+	writeFile(headerPath + "EventType.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 void CodeEvent::generateEventFile(const string& eventName, string eventPath)
@@ -150,6 +144,5 @@ void CodeEvent::generateEventFile(const string& eventName, string eventPath)
 	line(header, "");
 	line(header, "#endif", false);
 
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(headerFullPath, header);
+	writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 }

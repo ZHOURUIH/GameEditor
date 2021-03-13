@@ -1,0 +1,16 @@
+#ifndef _CODE_COMPONENT_H_
+#define _CODE_COMPONENT_H_
+
+#include "CodeUtility.h"
+
+class CodeComponent : public CodeUtility
+{
+public:
+	static void generate();
+protected:
+	//c++
+	static void generateStringDefineComponent(const myVector<string>& stateList, string filePath);
+protected:
+};
+
+#endif

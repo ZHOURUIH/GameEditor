@@ -11,10 +11,18 @@
 #include "CodeUnityBuild.h"
 #include "CodeFrameSystem.h"
 #include "CodeClassDeclare.h"
+#include "CodeObjectItem.h"
+#include "CodeStateGroup.h"
+#include "CodeComponent.h"
 
 void main()
 {
-	CodeUtility::initPath();
+	if (!CodeUtility::initPath())
+	{
+		cout << "未找到环境变量SERVER_PROJECT_PATH或GAME_PROJECT_PATH" << endl;
+		system("pause");
+		return;
+	}
 
 	cout << "0.全部生成" << endl;
 	cout << "1.网络通信协议代码" << endl;
@@ -45,6 +53,9 @@ void main()
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
 		CodeClassDeclare::generate();
+		CodeObjectItem::generate();
+		CodeStateGroup::generate();
+		CodeComponent::generate();
 	}
 	else if (input == 1)
 	{

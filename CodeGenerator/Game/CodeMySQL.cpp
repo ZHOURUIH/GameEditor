@@ -97,7 +97,6 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "");
 	line(header, "#include \"MySQLData.h\"");
 	line(header, "");
-	line(header, "class MySQLTable;");
 	line(header, "class " + className + " : public MySQLData");
 	line(header, "{");
 	line(header, "\tBASE_CLASS(MySQLData);");
@@ -105,11 +104,16 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tCOL(" + mysqlInfo.mMemberList[i].mTypeName + ", " + mysqlInfo.mMemberList[i].mMemberName + ");");
+		line(header, "\tstatic const char* " + mysqlInfo.mMemberList[i].mMemberName + ";");
+	}
+	line(header, "public:");
+	FOR_I(memberCount)
+	{
+		line(header, "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + ";");
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
-	line(header, "\tvoid resultRowToTableData(myMap<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid parseResult(myMap<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(char* params, uint size) const override;");
 	line(header, "\tvoid resetProperty() override;");
 	line(header, "};");
@@ -123,12 +127,13 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// 字段静态变量定义
 	FOR_I(memberCount)
 	{
-		line(source, "COL_DEFINE(" + className + ", " + mysqlInfo.mMemberList[i].mMemberName + ");");
+		line(source, "const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + " = STR(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
 	// fillColName函数
 	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
 	line(source, "{");
+	line(source, "\ttable->addColName(ID);");
 	FOR_I(memberCount)
 	{
 		line(source, "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ");");
@@ -136,42 +141,98 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "}");
 	line(source, "");
 	// resultRowToTableData函数
-	line(source, "void " + className + "::resultRowToTableData(myMap<const char*, char*>& resultRow)");
+	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
 	line(source, "{");
+	line(source, "\tparseULLong(&mID, resultRow.get(ID, NULL));");
 	FOR_I(memberCount)
 	{
-		line(source, "\tPARSE(" + mysqlInfo.mMemberList[i].mMemberName + ");");
+		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
+		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
+		if (typeName == "int")
+		{
+			line(source, "\tparseInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "uint")
+		{
+			line(source, "\tparseUInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "byte")
+		{
+			line(source, "\tparseByte(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "char")
+		{
+			line(source, "\tparseChar(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "short")
+		{
+			line(source, "\tparseShort(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "ushort")
+		{
+			line(source, "\tparseUShort(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "float")
+		{
+			line(source, "\tparseFloat(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "ullong")
+		{
+			line(source, "\tparseULLong(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "string")
+		{
+			line(source, "\tparseString(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
 	}
 	line(source, "}");
 	line(source, "");
+
 	// paramList函数
 	line(source, "void " + className + "::paramList(char* params, uint size) const");
 	line(source, "{");
+	line(source, "\tappendValueULLong(params, size, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
-		if (i != memberCount - 1)
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		string addComma = i != memberCount - 1 ? "true" : "false";
+		if (typeName == "string")
 		{
-			if (mysqlInfo.mMemberList[i].mTypeName == "string")
-			{
-				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
-				line(source, "\tAPPEND_STRING(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");");
-			}
-			else
-			{
-				line(source, "\tAPPEND_VALUE(" + mysqlInfo.mMemberList[i].mMemberName + ");");
-			}
+			line(source, "\tappendValueString(params, size, m" + memberName + ".c_str(), " + (memberInfo.mUTF8 ? "true" : "false") + ", " + addComma + ");");
 		}
-		else
+		else if (typeName == "int")
 		{
-			if (mysqlInfo.mMemberList[i].mTypeName == "string")
-			{
-				string isUTF8Str = mysqlInfo.mMemberList[i].mUTF8 ? "true" : "false";
-				line(source, "\tAPPEND_STRING_END(" + mysqlInfo.mMemberList[i].mMemberName + ", " + isUTF8Str + ");");
-			}
-			else
-			{
-				line(source, "\tAPPEND_VALUE_END(" + mysqlInfo.mMemberList[i].mMemberName + ");");
-			}
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "uint")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "byte")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "char")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "short")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "ushort")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "float")
+		{
+			line(source, "\tappendValueFloat(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "ullong")
+		{
+			line(source, "\tappendValueULLong(params, size, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
@@ -182,25 +243,26 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "\tbase::resetProperty();");
 	FOR_I(memberCount)
 	{
-		if (mysqlInfo.mMemberList[i].mTypeName == "string")
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "string")
 		{
-			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + ".clear();");
+			line(source, "\tm" + memberName + ".clear();");
 		}
-		else if (mysqlInfo.mMemberList[i].mTypeName == "float")
+		else if (typeName == "float")
 		{
-			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0.0f;");
+			line(source, "\tm" + memberName + " = 0.0f;");
 		}
 		else
 		{
-			line(source, "\tm" + mysqlInfo.mMemberList[i].mMemberName + " = 0;");
+			line(source, "\tm" + memberName + " = 0;");
 		}
 	}
 	line(source, "}", false);
 
-	header = ANSIToUTF8(header.c_str(), true);
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + className + ".h", header);
-	writeFile(filePath + className + ".cpp", source);
+	writeFile(filePath + className + ".h", ANSIToUTF8(header.c_str(), true));
+	writeFile(filePath + className + ".cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // 生成MySQLTable.h和MySQLTable.cpp文件
@@ -217,7 +279,6 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "");
 	line(header, "#include \"MySQLTable.h\"");
 	line(header, "");
-	line(header, "class " + dataClassName + ";");
 	line(header, "class " + tableClassName + " : public MySQLTable");
 	line(header, "{");
 	line(header, "\tBASE_CLASS(MySQLTable);");
@@ -225,6 +286,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "\t" + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
 	line(header, "\tvoid init(MYSQL * mysql) override;");
+	line(header, "protected:");
 	line(header, "\tMySQLData* createData() override;");
 	line(header, "protected:");
 	line(header, "};");
@@ -240,15 +302,14 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(source, "\tMySQLTable::init(mysql);");
 	line(source, "\t" + dataClassName + "::fillColName(this);");
 	line(source, "}");
+	line(source, "");
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
 	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
 	line(source, "}", false);
 
-	header = ANSIToUTF8(header.c_str(), true);
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + tableClassName + ".h", header);
-	writeFile(filePath + tableClassName + ".cpp", source);
+	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
+	writeFile(filePath + tableClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // MySQLHeader.h文件
@@ -271,8 +332,7 @@ void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysql
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "MySQLHeader.h", str0);
+	writeFile(filePath + "MySQLHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // MySQLRegiste.h和MySQLRegiste.cpp文件
@@ -292,9 +352,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	line(str0, "};");
 	line(str0, "");
 	line(str0, "#endif", false);
-
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "MySQLRegister.h", str0);
+	writeFile(filePath + "MySQLRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
@@ -309,9 +367,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 		line(str1, "\tREGISTE_MYSQL(MySQL" + mysqlList[i].mMySQLClassName + ", \"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "MySQLRegister.cpp", str1);
+	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 // StringDefineMySQL.h和StringDefineMySQL.cpp
@@ -322,11 +378,9 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(header, "DECLARE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
+		line(header, stringDeclare("MD" + mysqlList[i].mMySQLClassName));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineMySQL.h", header);
+	writeFile(filePath + "StringDefineMySQL.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
 	string source;
@@ -334,11 +388,9 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	line(source, "");
 	FOR_I(count)
 	{
-		line(source, "DEFINE_STRING(MD" + mysqlList[i].mMySQLClassName + ");");
+		line(source, stringDefine("MD" + mysqlList[i].mMySQLClassName));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineMySQL.cpp", source);
+	writeFile(filePath + "StringDefineMySQL.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp
@@ -353,9 +405,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	{
 		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "MySQLInstanceDeclare.h", header);
+	writeFile(filePath + "MySQLInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string cpp;
 	line(cpp, "// auto generated file, so it looks might be strange");
@@ -366,7 +416,5 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	{
 		line(cpp, "MySQL" + mysqlList[i].mMySQLClassName + "* GameBase::mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
-
-	cpp = ANSIToUTF8(cpp.c_str(), true);
-	writeFile(filePath + "MySQLInstanceDeclare.cpp", cpp);
+	writeFile(filePath + "MySQLInstanceDeclare.cpp", ANSIToUTF8(cpp.c_str(), true));
 }

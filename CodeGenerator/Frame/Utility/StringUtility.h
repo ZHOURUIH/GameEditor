@@ -76,7 +76,7 @@ public:
 				curString[sourceLen - startPos] = '\0';
 			}
 			// 放入列表
-			if (curString[0] != '\0')
+			if (curString[0] != '\0' || !removeEmpty)
 			{
 				if (curCount >= Length)
 				{

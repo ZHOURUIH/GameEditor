@@ -88,6 +88,16 @@ public:
 #endif
 		mVector.insert(iter, elem);
 	}
+	void insert(uint index, const T& elem, bool check = true)
+	{
+#if _DEBUG
+		if (check)
+		{
+			checkLock();
+		}
+#endif
+		mVector.insert(mVector.begin() + index, elem);
+	}
 	const T& operator[](uint i) const
 	{
 		if (i < 0 || i >= mVector.size())
@@ -123,10 +133,10 @@ public:
 	{
 		return std::find(mVector.begin(), mVector.end(), value) != mVector.end();
 	}
-	int find(const T& value)
+	int find(const T& value, int startIndex = 0)
 	{
 		uint count = mVector.size();
-		FOR_I(count)
+		for(uint i = startIndex; i < count; ++i)
 		{
 			if (mVector[i] == value)
 			{

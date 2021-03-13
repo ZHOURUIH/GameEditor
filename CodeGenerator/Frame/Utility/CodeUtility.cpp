@@ -9,15 +9,20 @@ string CodeUtility::cppFramePath;
 string CodeUtility::cppStringDefinePath;
 string CodeUtility::csGamePath;
 
-void CodeUtility::initPath()
+bool CodeUtility::initPath()
 {
 	ServerProjectPath = getEnvironmentValue("SERVER_PROJECT_PATH");
 	GameProjectPath = getEnvironmentValue("GAME_PROJECT_PATH");
+	if (ServerProjectPath == "" || GameProjectPath == "")
+	{
+		return false;
+	}
 	cppProjectPath = ServerProjectPath + "MicroLegend_Server/";
 	cppGamePath = cppProjectPath + "Game/";
 	cppFramePath = cppProjectPath + "Frame/";
 	cppStringDefinePath = cppGamePath + "StringDefine/";
 	csGamePath = GameProjectPath + "Assets/Scripts/Game/";
+	return true;
 }
 
 MySQLMember CodeUtility::parseMySQLMemberLine(string line)
@@ -196,17 +201,24 @@ string CodeUtility::cppPushParamString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GameDefine::" + memberInfo.mArrayLengthMacro[i];
+			lengthMacro += "GD::" + memberInfo.mArrayLengthMacro[i];
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";
 			}
 		}
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", " + boolToString(memberInfo.mVariableLength) + ");\\";
+		if (!memberInfo.mVariableLength)
+		{
+			str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", false);";
+		}
+		else
+		{
+			str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ");";
+		}
 	}
 	else
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ");\\";
+		str = "pushParam(" + memberInfo.mMemberName + ");";
 	}
 	return str;
 }
@@ -220,17 +232,17 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GameDefine::" + memberInfo.mArrayLengthMacro[i];
+			lengthMacro += "GD::" + memberInfo.mArrayLengthMacro[i];
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";
 			}
 		}
-		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];\\";
+		str = memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];";
 	}
 	else
 	{
-		str = "\t" + memberInfo.mTypeName + " " + memberInfo.mMemberName + ";\\";
+		str = memberInfo.mTypeName + " " + memberInfo.mMemberName + ";";
 	}
 	return str;
 }
@@ -240,11 +252,11 @@ string CodeUtility::cSharpPushParamString(const PacketMember& memberInfo)
 	string str;
 	if (memberInfo.mIsArray)
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");";
+		str = "pushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");";
 	}
 	else
 	{
-		str = "\t\tpushParam(" + memberInfo.mMemberName + ");";
+		str = "pushParam(" + memberInfo.mMemberName + ");";
 	}
 	return str;
 }
@@ -275,12 +287,12 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
+		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
 	}
 	else
 	{
 		typeName = toUpper(typeName);
-		str = "\tpublic " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 	}
 	return str;
 }

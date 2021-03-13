@@ -87,8 +87,7 @@ void CodeFrameSystem::generateHeaderFile(const myVector<string>& frameSystemList
 	}
 	line(str0, "");
 	line(str0, "#endif");
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "FrameSystemHeader.h", str0);
+	writeFile(filePath + "FrameSystemHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // FrameSystemDefine.h
@@ -161,6 +160,5 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	}
 	removeLast(str0, '\\');
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "FrameSystemDefine.h", str0);
+	writeFile(filePath + "FrameSystemDefine.h", ANSIToUTF8(str0.c_str(), true));
 }

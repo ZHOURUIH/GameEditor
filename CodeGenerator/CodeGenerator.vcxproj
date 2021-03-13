@@ -86,7 +86,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>./Frame;./Frame/Common;./Frame/Math;./Frame/Serialize;./Frame/Utility;./Game;./Frame/STL;./Frame/Thread;./Frame/Memory;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -163,9 +163,12 @@
     <ClCompile Include="Game\CodeAchivement.cpp" />
     <ClCompile Include="Game\CodeClassDeclare.cpp" />
     <ClCompile Include="Game\CodeCmd.cpp" />
+    <ClCompile Include="Game\CodeComponent.cpp" />
     <ClCompile Include="Game\CodeDTNode.cpp" />
     <ClCompile Include="Game\CodeEvent.cpp" />
     <ClCompile Include="Game\CodeFrameSystem.cpp" />
+    <ClCompile Include="Game\CodeObjectItem.cpp" />
+    <ClCompile Include="Game\CodeStateGroup.cpp" />
     <ClCompile Include="Game\CodeUnityBuild.cpp" />
     <ClCompile Include="Game\main.cpp" />
     <ClCompile Include="Game\CodeMySQL.cpp" />
@@ -204,9 +207,12 @@
     <ClInclude Include="Game\CodeAchivement.h" />
     <ClInclude Include="Game\CodeClassDeclare.h" />
     <ClInclude Include="Game\CodeCmd.h" />
+    <ClInclude Include="Game\CodeComponent.h" />
     <ClInclude Include="Game\CodeDTNode.h" />
     <ClInclude Include="Game\CodeEvent.h" />
     <ClInclude Include="Game\CodeFrameSystem.h" />
+    <ClInclude Include="Game\CodeObjectItem.h" />
+    <ClInclude Include="Game\CodeStateGroup.h" />
     <ClInclude Include="Game\CodeUnityBuild.h" />
     <ClInclude Include="Game\GameDefine.h" />
     <ClInclude Include="Game\CodeMySQL.h" />

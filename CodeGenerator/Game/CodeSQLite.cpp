@@ -159,13 +159,14 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		line(header, "\tstatic const char* " + sqliteInfo.mMemberList[i].mMemberName + ";");
+	}
+	line(header, "public:");
+	FOR_I(memberCount)
+	{
+		if (sqliteInfo.mMemberList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
 		{
-			line(header, "\tCOL_EMPTY(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
-		}
-		else
-		{
-			line(header, "\tCOL(" + sqliteInfo.mMemberList[i].mTypeName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
+			line(header, "\t" + sqliteInfo.mMemberList[i].mTypeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";");
 		}
 	}
 	line(header, "public:");
@@ -173,13 +174,15 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(header, "\t{");
 	FOR_I(memberCount)
 	{
+		const string& name = sqliteInfo.mMemberList[i].mMemberName;
 		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
 		{
-			line(header, "\t\tREGISTE_PARAM_EMPTY(" + sqliteInfo.mMemberList[i].mMemberName + ");");
+			
+			line(header, "\t\tregisteParamEmpty(" + name + ");");
 		}
 		else
 		{
-			line(header, "\t\tREGISTE_PARAM(" + sqliteInfo.mMemberList[i].mMemberName + ");");
+			line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
 		}
 	}
 	line(header, "\t}");
@@ -193,13 +196,11 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(source, "");
 	FOR_I(memberCount)
 	{
-		line(source, "COL_DEFINE(" + dataClassName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
+		line(source, "const char* " + dataClassName + "::" + sqliteInfo.mMemberList[i].mMemberName + " = STR(" + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 
-	header = ANSIToUTF8(header.c_str(), true);
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(dataFilePath + dataClassName + ".h", header);
-	writeFile(dataFilePath + dataClassName + ".cpp", source);
+	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
+	writeFile(dataFilePath + dataClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
 
 	// SQLiteTable.h
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
@@ -222,8 +223,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(table, "");
 		line(table, "#endif", false);
 
-		table = ANSIToUTF8(table.c_str(), true);
-		writeFile(tableFileName, table);
+		writeFile(tableFileName, ANSIToUTF8(table.c_str(), true));
 	}
 }
 
@@ -247,8 +247,7 @@ void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sq
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "SQLiteHeader.h", str0);
+	writeFile(filePath + "SQLiteHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // SQLiteRegister.h和SQLiteRegister.cpp文件
@@ -268,9 +267,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "};");
 	line(str0, "");
 	line(str0, "#endif", false);
-
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.h", str0);
+	writeFile(filePath + "SQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
@@ -279,7 +276,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str1, "");
 	line(str1, "void SQLiteRegister::registeAll()");
 	line(str1, "{");
-	line(str1, "\tSQLite* sqlite = mSQLiteManager->createSQLite(GameDefine::SQLITE_DATA_BASE);");
+	line(str1, "\tSQLite* sqlite = mSQLiteManager->createSQLite(GD::SQLITE_DATA_BASE);");
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
@@ -290,9 +287,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 		line(str1, "\tREGISTE_SQLITE(SQLite" + sqliteList[i].mSQLiteName + ", \"" + sqliteList[i].mSQLiteName + "\");");
 	}
 	line(str1, "}", false);
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.cpp", str1);
+	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 // SQLiteInstanceDeclare.h和SQLiteInstanceDeclare.cpp
@@ -310,8 +305,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		}
 		line(str0, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "SQLiteInstanceDeclare.h", str0);
+	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "// auto generated file, so it looks might be strange");
@@ -326,9 +320,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		}
 		line(str1, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
-
-	str1 = ANSIToUTF8(str1.c_str(), true);
-	writeFile(filePath + "SQLiteInstanceDeclare.cpp", str1);
+	writeFile(filePath + "SQLiteInstanceDeclare.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 // TDSQLite.cs和SQLiteTable.cs文件
@@ -410,9 +402,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	}
 	line(file, "\t}");
 	line(file, "}", false);
-
-	file = ANSIToUTF8(file.c_str(), true);
-	writeFile(dataFilePath + dataClassName + ".cs", file);
+	writeFile(dataFilePath + dataClassName + ".cs", ANSIToUTF8(file.c_str(), true));
 
 	// SQLiteTable.cs文件
 	string table;
@@ -427,10 +417,16 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成");
 	line(table, "\t\t" + dataClassName + ".link(this);");
 	line(table, "\t}");
+	line(table, "\tpublic " + dataClassName + " query(int id)");
+	line(table, "\t{");
+	line(table, "\t\treturn query(Typeof<" + dataClassName + ">(), id) as " + dataClassName + ";");
+	line(table, "\t}");
+	line(table, "\tpublic void queryAll(List<" + dataClassName + "> list)");
+	line(table, "\t{");
+	line(table, "\t\tqueryAll(Typeof<" + dataClassName + ">(), list);");
+	line(table, "\t}");
 	line(table, "}", false);
-
-	table = ANSIToUTF8(table.c_str(), true);
-	writeFile(tableFilePath + tableClassName + ".cs", table);
+	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
 }
 
 // SQLiteRegister.cs文件
@@ -438,7 +434,6 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 {
 	string file;
 	line(file, "using System;");
-	line(file, "using System.Collections;");
 	line(file, "using System.Collections.Generic;");
 	line(file, "");
 	line(file, "public class SQLiteRegister : GameBase");
@@ -464,6 +459,5 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(file, "\t}");
 	line(file, "}", false);
 
-	file = ANSIToUTF8(file.c_str(), true);
-	writeFile(filePath + "SQLiteRegister.cs", file);
+	writeFile(filePath + "SQLiteRegister.cs", ANSIToUTF8(file.c_str(), true));
 }

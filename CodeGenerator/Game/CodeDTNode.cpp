@@ -37,8 +37,7 @@ void CodeDTNode::generateHeaderFile(const myVector<string>& nodeList, string hea
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(headerPath + "DTNodeHeader.h", str0);
+	writeFile(headerPath + "DTNodeHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineDTNode.h和StringDefineDTNode.cpp
@@ -49,24 +48,19 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 	uint count = nodeList.size();
 	FOR_I(count)
 	{
-		line(header, "DECLARE_STRING(" + nodeList[i] + ");");
+		line(header, stringDeclare(nodeList[i]));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(stringDefinePath + "StringDefineDTNode.h", header);
+	writeFile(stringDefinePath + "StringDefineDTNode.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
 	string source;
-	line(source, "#include \"StringDefine.h\"");
-	line(source, "#include \"DTNodeHeader.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(count)
 	{
-		line(source, "DEFINE_STRING(" + nodeList[i] + ");");
+		line(source, stringDefine(nodeList[i]));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(stringDefinePath + "StringDefineDTNode.cpp", source);
+	writeFile(stringDefinePath + "StringDefineDTNode.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // DTNodeRegister.h和DTNodeRegister.cpp
@@ -86,6 +80,5 @@ void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, string h
 	}
 	line(source, "}", false);
 
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(headerPath + "DTNodeRegister.cpp", source);
+	writeFile(headerPath + "DTNodeRegister.cpp", ANSIToUTF8(source.c_str(), true));
 }

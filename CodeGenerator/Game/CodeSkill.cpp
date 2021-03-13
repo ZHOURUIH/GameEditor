@@ -34,8 +34,7 @@ void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillLis
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(filePath + "CharacterSkillHeader.h", str0);
+	writeFile(filePath + "CharacterSkillHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineSkill.h和StringDefineSkill.cpp
@@ -46,21 +45,17 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	uint cmdCount = skillList.size();
 	FOR_I(cmdCount)
 	{
-		line(header, "DECLARE_STRING(" + skillList[i] + ");");
+		line(header, stringDeclare(skillList[i]));
 	}
-
-	header = ANSIToUTF8(header.c_str(), true);
-	writeFile(filePath + "StringDefineSkill.h", header);
+	writeFile(filePath + "StringDefineSkill.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
 	string source;
-	line(source, "#include \"GameDefine.h\"");
+	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	FOR_I(cmdCount)
 	{
-		line(source, "DEFINE_STRING(" + skillList[i] + ");");
+		line(source, stringDefine(skillList[i]));
 	}
-
-	source = ANSIToUTF8(source.c_str(), true);
-	writeFile(filePath + "StringDefineSkill.cpp", source);
+	writeFile(filePath + "StringDefineSkill.cpp", ANSIToUTF8(source.c_str(), true));
 }
