@@ -401,6 +401,44 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		}
 	}
 	line(file, "\t}");
+	line(file, "\tpublic override bool checkData()");
+	line(file, "\t{");
+	// 需要检测空格的字段
+	myVector<string> checkValueTypeList{"bool", "byte", "short", "ushort", "int", "uint""float", "Vector2", "Vector2Int", "Vector2UShort", 
+										"myVector<byte>", "myVector<short>", "myVector<ushort>", "myVector<int>", "myVector<uint>", "myVector<float>" };
+	myVector<string> checkMemberList;
+	FOR_I(memberCount)
+	{
+		const SQLiteMember& info = sqliteInfo.mMemberList[i];
+		if (checkValueTypeList.contains(info.mTypeName))
+		{
+			checkMemberList.push_back(info.mMemberName);
+		}
+	}
+	if (checkMemberList.size() == 1)
+	{
+		line(file, "\t\treturn !mValues[" + checkMemberList[0] + "].Contains(\" \");");
+	}
+	else
+	{
+		FOR_VECTOR(checkMemberList)
+		{
+			if (i == 0)
+			{
+				line(file, "\t\treturn !mValues[" + checkMemberList[i] + "].Contains(\" \") && ");
+			}
+			else if (i == checkMemberListCount - 1)
+			{
+				line(file, "\t\t\t\t!mValues[" + checkMemberList[i] + "].Contains(\" \");");
+			}
+			else
+			{
+				line(file, "\t\t\t\t!mValues[" + checkMemberList[i] + "].Contains(\" \") && ");
+			}
+		}
+		END(colList);
+	}
+	line(file, "\t}");
 	line(file, "}", false);
 	writeFile(dataFilePath + dataClassName + ".cs", ANSIToUTF8(file.c_str(), true));
 
