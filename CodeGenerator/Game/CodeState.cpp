@@ -42,13 +42,13 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 {
 	// Í·ÎÄ¼þ
 	string header;
-	uint cmdCount = stateList.size();
-	FOR_I(cmdCount)
+	uint count = stateList.size();
+	FOR_I(count)
 	{
 		line(header, stringDeclare(stateList[i]));
 	}
 	line(header, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(header, stringDeclare(stateList[i] + "Param"));
 	}
@@ -58,12 +58,12 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(source, stringDefine(stateList[i]));
 	}
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(source, stringDefine(stateList[i] + "Param"));
 	}

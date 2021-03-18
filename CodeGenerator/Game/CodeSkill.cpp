@@ -42,8 +42,8 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 {
 	// Í·ÎÄ¼þ
 	string header;
-	uint cmdCount = skillList.size();
-	FOR_I(cmdCount)
+	uint count = skillList.size();
+	FOR_I(count)
 	{
 		line(header, stringDeclare(skillList[i]));
 	}
@@ -53,7 +53,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(source, stringDefine(skillList[i]));
 	}

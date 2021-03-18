@@ -16,14 +16,14 @@ void CodeObjectItem::generate()
 }
 
 // StringDefineObjectItem.h和StringDefineObjectItem.cpp
-void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& stateList, string filePath)
+void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, string filePath)
 {
 	// 头文件
 	string header;
-	uint cmdCount = stateList.size();
-	FOR_I(cmdCount)
+	uint count = objectItemList.size();
+	FOR_I(count)
 	{
-		line(header, stringDeclare(stateList[i]));
+		line(header, stringDeclare(objectItemList[i]));
 	}
 	writeFile(filePath + "StringDefineObjectItem.h", ANSIToUTF8(header.c_str(), true));
 
@@ -31,9 +31,9 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& stat
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
-		line(source, stringDefine(stateList[i]));
+		line(source, stringDefine(objectItemList[i]));
 	}
 	writeFile(filePath + "StringDefineObjectItem.cpp", ANSIToUTF8(source.c_str(), true));
 }

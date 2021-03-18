@@ -20,8 +20,8 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 {
 	// Í·ÎÄ¼þ
 	string header;
-	uint cmdCount = stateList.size();
-	FOR_I(cmdCount)
+	uint count = stateList.size();
+	FOR_I(count)
 	{
 		line(header, stringDeclare(stateList[i]));
 	}
@@ -31,7 +31,7 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(source, stringDefine(stateList[i]));
 	}

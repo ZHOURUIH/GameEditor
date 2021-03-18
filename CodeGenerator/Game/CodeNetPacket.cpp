@@ -238,8 +238,8 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 {
 	// Í·ÎÄ¼þ
 	string header;
-	uint cmdCount = packetList.size();
-	FOR_I(cmdCount)
+	uint count = packetList.size();
+	FOR_I(count)
 	{
 		line(header, stringDeclare(packetList[i]));
 	}
@@ -249,7 +249,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(source, stringDefine(packetList[i]));
 	}

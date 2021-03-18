@@ -46,8 +46,8 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 {
 	// Í·ÎÄ¼þ
 	string header;
-	uint cmdCount = cmdList.size();
-	FOR_I(cmdCount)
+	uint count = cmdList.size();
+	FOR_I(count)
 	{
 		line(header, stringDeclare(cmdList[i]));
 	}
@@ -58,7 +58,7 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
 		line(source, stringDefine(cmdList[i]));
 	}

@@ -16,14 +16,14 @@ void CodeComponent::generate()
 }
 
 // StringDefineComponent.h和StringDefineComponent.cpp
-void CodeComponent::generateStringDefineComponent(const myVector<string>& stateList, string filePath)
+void CodeComponent::generateStringDefineComponent(const myVector<string>& componentList, string filePath)
 {
 	// 头文件
 	string header;
-	uint cmdCount = stateList.size();
-	FOR_I(cmdCount)
+	uint count = componentList.size();
+	FOR_I(count)
 	{
-		line(header, stringDeclare(stateList[i]));
+		line(header, stringDeclare(componentList[i]));
 	}
 
 	writeFile(filePath + "StringDefineComponent.h", ANSIToUTF8(header.c_str(), true));
@@ -32,9 +32,9 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& stateL
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	FOR_I(cmdCount)
+	FOR_I(count)
 	{
-		line(source, stringDefine(stateList[i]));
+		line(source, stringDefine(componentList[i]));
 	}
 
 	writeFile(filePath + "StringDefineComponent.cpp", ANSIToUTF8(source.c_str(), true));

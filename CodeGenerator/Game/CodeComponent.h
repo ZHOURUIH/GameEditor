@@ -9,7 +9,7 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateStringDefineComponent(const myVector<string>& stateList, string filePath);
+	static void generateStringDefineComponent(const myVector<string>& componentList, string filePath);
 protected:
 };
 
