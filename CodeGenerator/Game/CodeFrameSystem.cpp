@@ -90,75 +90,78 @@ void CodeFrameSystem::generateHeaderFile(const myVector<string>& frameSystemList
 	writeFile(filePath + "FrameSystemHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
-// FrameSystemDefine.h
+// FrameSystemRegiste.h, FrameSystemDeclare.h, FrameSystemDefine.cpp, FrameSystemGet.h
 void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSystemList,
 												const myVector<string>& factoryManagerList,
 												const myVector<string>& classPoolList,
 												string filePath)
 {
-	string str0;
-	line(str0, "#define REGISTE_ALL_SYSTEM \\");
+	// FrameSystemRegiste.h
+	string registeAllSystem;
+	line(registeAllSystem, "// 特殊头文件,只能在Game.cpp中的指定位置被包含");
 	FOR_VECTOR_CONST(frameSystemList)
 	{
-		line(str0, "REGISTE_SYSTEM(" + frameSystemList[i] + ");\\");
+		line(registeAllSystem, "REGISTE_SYSTEM(" + frameSystemList[i] + ");");
 	}
 	FOR_VECTOR_CONST(factoryManagerList)
 	{
-		line(str0, "REGISTE_SYSTEM(" + factoryManagerList[i] + ");\\");
+		line(registeAllSystem, "REGISTE_SYSTEM(" + factoryManagerList[i] + ");");
 	}
 	FOR_VECTOR_CONST(classPoolList)
 	{
-		line(str0, "REGISTE_SYSTEM(" + classPoolList[i] + ");\\");
+		line(registeAllSystem, "REGISTE_SYSTEM(" + classPoolList[i] + ");");
 	}
-	removeLast(str0, '\\');
+	writeFile(filePath + "FrameSystemRegiste.h", ANSIToUTF8(registeAllSystem.c_str(), true));
 
-	line(str0, "");
-	line(str0, "#define DECLARE_ALL_SYSTEM \\");
+	// FrameSystemDeclare.h
+	string declareAllSystem;
+	line(declareAllSystem, "// 特殊头文件,只能在GameBase.h中被包含");
 	FOR_I(frameSystemListCount)
 	{
-		line(str0, "DECALRE_SYSTEM(" + frameSystemList[i] + ");\\");
+		line(declareAllSystem, "DECALRE_SYSTEM(" + frameSystemList[i] + ");");
 	}
 	FOR_I(factoryManagerListCount)
 	{
-		line(str0, "DECALRE_SYSTEM(" + factoryManagerList[i] + ");\\");
+		line(declareAllSystem, "DECALRE_SYSTEM(" + factoryManagerList[i] + ");");
 	}
 	FOR_I(classPoolListCount)
 	{
-		line(str0, "DECALRE_SYSTEM(" + classPoolList[i] + ");\\");
+		line(declareAllSystem, "DECALRE_SYSTEM(" + classPoolList[i] + ");");
 	}
-	removeLast(str0, '\\');
+	writeFile(filePath + "FrameSystemDeclare.h", ANSIToUTF8(declareAllSystem.c_str(), true));
 
-	line(str0, "");
-	line(str0, "#define DEFINE_ALL_GAME_SYSTEM \\");
+	// FrameSystemDefine.cpp
+	string defineAllSystem;
+	line(defineAllSystem, "#include \"GameHeader.h\"");
+	line(defineAllSystem, "");
 	FOR_I(frameSystemListCount)
 	{
-		line(str0, "DEFINE_SYSTEM_GAME(" + frameSystemList[i] + ");\\");
+		line(defineAllSystem, "DEFINE_SYSTEM_GAME(" + frameSystemList[i] + ");");
 	}
 	FOR_I(factoryManagerListCount)
 	{
-		line(str0, "DEFINE_SYSTEM_GAME(" + factoryManagerList[i] + ");\\");
+		line(defineAllSystem, "DEFINE_SYSTEM_GAME(" + factoryManagerList[i] + ");");
 	}
 	FOR_I(classPoolListCount)
 	{
-		line(str0, "DEFINE_SYSTEM_GAME(" + classPoolList[i] + ");\\");
+		line(defineAllSystem, "DEFINE_SYSTEM_GAME(" + classPoolList[i] + ");");
 	}
-	removeLast(str0, '\\');
+	writeFile(filePath + "FrameSystemDefine.cpp", ANSIToUTF8(defineAllSystem.c_str(), true));
 
-	line(str0, "");
-	line(str0, "#define GET_ALL_SYSTEM \\");
+	// FrameSystemGet.h
+	string getAllSystem;
+	line(getAllSystem, "// 特殊头文件,只能在GameBase.cpp中被包含");
 	FOR_I(frameSystemListCount)
 	{
-		line(str0, "GET_SYSTEM(" + frameSystemList[i] + ");\\");
+		line(getAllSystem, "GET_SYSTEM(" + frameSystemList[i] + ");");
 	}
 	FOR_I(factoryManagerListCount)
 	{
-		line(str0, "GET_SYSTEM(" + factoryManagerList[i] + ");\\");
+		line(getAllSystem, "GET_SYSTEM(" + factoryManagerList[i] + ");");
 	}
 	FOR_I(classPoolListCount)
 	{
-		line(str0, "GET_SYSTEM(" + classPoolList[i] + ");\\");
+		line(getAllSystem, "GET_SYSTEM(" + classPoolList[i] + ");");
 	}
-	removeLast(str0, '\\');
-
-	writeFile(filePath + "FrameSystemDefine.h", ANSIToUTF8(str0.c_str(), true));
+	writeFile(filePath + "FrameSystemGet.h", ANSIToUTF8(getAllSystem.c_str(), true));
 }
