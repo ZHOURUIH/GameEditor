@@ -45,12 +45,18 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 {
 	// 头文件
 	string header;
-	line(header, "// 该头文件只能在StringDefine.h中被包含");
+	line(header, "#ifdef _STRING_DEFINE_DTNODE_H_");
+	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
+	line(header, "#else");
+	line(header, "#define _STRING_DEFINE_DTNODE_H_");
+	line(header, "");
 	uint count = nodeList.size();
 	FOR_I(count)
 	{
 		line(header, stringDeclare(nodeList[i]));
 	}
+	line(header, "");
+	line(header, "#endif");
 	writeFile(stringDefinePath + "StringDefineDTNode.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件

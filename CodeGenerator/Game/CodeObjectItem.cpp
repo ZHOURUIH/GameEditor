@@ -20,12 +20,18 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& obje
 {
 	// 头文件
 	string header;
-	line(header, "// 该头文件只能在StringDefine.h中被包含");
+	line(header, "#ifdef _STRING_DEFINE_OBJECT_ITEM_H_");
+	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
+	line(header, "#else");
+	line(header, "#define _STRING_DEFINE_OBJECT_ITEM_H_");
+	line(header, "");
 	uint count = objectItemList.size();
 	FOR_I(count)
 	{
 		line(header, stringDeclare(objectItemList[i]));
 	}
+	line(header, "");
+	line(header, "#endif");
 	writeFile(filePath + "StringDefineObjectItem.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件

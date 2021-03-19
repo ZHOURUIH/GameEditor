@@ -375,12 +375,18 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 {
 	// 头文件
 	string header;
-	line(header, "// 该头文件只能在StringDefine.h中被包含");
+	line(header, "#ifdef _STRING_DEFINE_MYSQL_H_");
+	line(header, "#error \"特殊头文件,只能在StringDefine.h中被包含\"");
+	line(header, "#else");
+	line(header, "#define _STRING_DEFINE_MYSQL_H_");
+	line(header, "");
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
 		line(header, stringDeclare("MD" + mysqlList[i].mMySQLClassName));
 	}
+	line(header, "");
+	line(header, "#endif");
 	writeFile(filePath + "StringDefineMySQL.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
@@ -399,14 +405,18 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 {
 	// 头文件
 	string header;
-	line(header, "// 自动生成的文件,所以与一般的头文件不同");
-	line(header, "// 该头文件只能被GameBase所包含,不能在其他文件中被包含");
+	line(header, "#ifdef _MYSQL_INSTANCE_DECLARE_H_");
+	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
+	line(header, "#else");
+	line(header, "#define _MYSQL_INSTANCE_DECLARE_H_");
 	line(header, "");
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
 		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
+	line(header, "");
+	line(header, "#endif");
 	writeFile(filePath + "MySQLInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string cpp;

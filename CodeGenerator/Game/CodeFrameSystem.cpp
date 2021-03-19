@@ -98,7 +98,11 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 {
 	// FrameSystemRegiste.h
 	string registeAllSystem;
-	line(registeAllSystem, "// 特殊头文件,只能在Game.cpp中的指定位置被包含");
+	line(registeAllSystem, "#ifdef _FRAME_SYSTEM_REGISTE_H_");
+	line(registeAllSystem, "#error \"特殊头文件,只能在Game.cpp中的指定位置被包含\"");
+	line(registeAllSystem, "#else");
+	line(registeAllSystem, "#define _FRAME_SYSTEM_REGISTE_H_");
+	line(registeAllSystem, "");
 	FOR_VECTOR_CONST(frameSystemList)
 	{
 		line(registeAllSystem, "REGISTE_SYSTEM(" + frameSystemList[i] + ");");
@@ -111,11 +115,17 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	{
 		line(registeAllSystem, "REGISTE_SYSTEM(" + classPoolList[i] + ");");
 	}
+	line(registeAllSystem, "");
+	line(registeAllSystem, "#endif");
 	writeFile(filePath + "FrameSystemRegiste.h", ANSIToUTF8(registeAllSystem.c_str(), true));
 
 	// FrameSystemDeclare.h
 	string declareAllSystem;
-	line(declareAllSystem, "// 特殊头文件,只能在GameBase.h中被包含");
+	line(declareAllSystem, "#ifdef _FRAME_SYSTEM_DECLARE_H_");
+	line(declareAllSystem, "#error \"特殊头文件,只能在GameBase.h中被包含\"");
+	line(declareAllSystem, "#else");
+	line(declareAllSystem, "#define _FRAME_SYSTEM_DECLARE_H_");
+	line(declareAllSystem, "");
 	FOR_I(frameSystemListCount)
 	{
 		line(declareAllSystem, "DECALRE_SYSTEM(" + frameSystemList[i] + ");");
@@ -128,6 +138,8 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	{
 		line(declareAllSystem, "DECALRE_SYSTEM(" + classPoolList[i] + ");");
 	}
+	line(declareAllSystem, "");
+	line(declareAllSystem, "#endif");
 	writeFile(filePath + "FrameSystemDeclare.h", ANSIToUTF8(declareAllSystem.c_str(), true));
 
 	// FrameSystemDefine.cpp
@@ -150,7 +162,11 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 
 	// FrameSystemGet.h
 	string getAllSystem;
-	line(getAllSystem, "// 特殊头文件,只能在GameBase.cpp中被包含");
+	line(getAllSystem, "#ifdef _FRAME_SYSTEM_GET_H_");
+	line(getAllSystem, "#error \"特殊头文件,只能在GameBase.cpp中被包含\"");
+	line(getAllSystem, "#else");
+	line(getAllSystem, "#define _FRAME_SYSTEM_GET_H_");
+	line(getAllSystem, "");
 	FOR_I(frameSystemListCount)
 	{
 		line(getAllSystem, "GET_SYSTEM(" + frameSystemList[i] + ");");
@@ -163,5 +179,7 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	{
 		line(getAllSystem, "GET_SYSTEM(" + classPoolList[i] + ");");
 	}
+	line(getAllSystem, "");
+	line(getAllSystem, "#endif");
 	writeFile(filePath + "FrameSystemGet.h", ANSIToUTF8(getAllSystem.c_str(), true));
 }

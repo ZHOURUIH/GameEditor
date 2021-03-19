@@ -20,13 +20,18 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& compon
 {
 	// 头文件
 	string header;
-	line(header, "// 该头文件只能在StringDefine.h中被包含");
+	line(header, "#ifdef _STRING_DEFINE_COMPONENT_H_");
+	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
+	line(header, "#else");
+	line(header, "#define _STRING_DEFINE_COMPONENT_H_");
+	line(header, "");
 	uint count = componentList.size();
 	FOR_I(count)
 	{
 		line(header, stringDeclare(componentList[i]));
 	}
-
+	line(header, "");
+	line(header, "#endif");
 	writeFile(filePath + "StringDefineComponent.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件
@@ -37,6 +42,5 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& compon
 	{
 		line(source, stringDefine(componentList[i]));
 	}
-
 	writeFile(filePath + "StringDefineComponent.cpp", ANSIToUTF8(source.c_str(), true));
 }

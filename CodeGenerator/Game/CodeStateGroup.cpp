@@ -20,12 +20,18 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 {
 	// 头文件
 	string header;
-	line(header, "// 该头文件只能在StringDefine.h中被包含");
+	line(header, "#ifdef _STRING_DEFINE_STATE_GROUP_H_");
+	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
+	line(header, "#else");
+	line(header, "#define _STRING_DEFINE_STATE_GROUP_H_");
+	line(header, "");
 	uint count = stateList.size();
 	FOR_I(count)
 	{
 		line(header, stringDeclare(stateList[i]));
 	}
+	line(header, "");
+	line(header, "#endif");
 	writeFile(filePath + "StringDefineStateGroup.h", ANSIToUTF8(header.c_str(), true));
 
 	// 源文件

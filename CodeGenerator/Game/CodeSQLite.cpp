@@ -294,8 +294,10 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath)
 {
 	string header;
-	line(header, "// 自动生成的文件,所以与一般的头文件不同");
-	line(header, "// 该头文件只能被GameBase所包含,不能在其他文件中被包含");
+	line(header, "#ifdef _SQLITE_INSTANCE_DECLARE_H_");
+	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
+	line(header, "#else");
+	line(header, "#define _SQLITE_INSTANCE_DECLARE_H_");
 	line(header, "");
 	uint count = sqliteList.size();
 	FOR_I(count)
@@ -306,6 +308,8 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		}
 		line(header, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
+	line(header, "");
+	line(header, "#endif");
 	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string source;
