@@ -20,6 +20,7 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint count = stateList.size();
 	FOR_I(count)
 	{

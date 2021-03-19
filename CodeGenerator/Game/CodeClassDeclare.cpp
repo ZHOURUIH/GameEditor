@@ -43,7 +43,11 @@ void CodeClassDeclare::generate()
 		}
 		else
 		{
-			if (fileNameNoSuffix != "GameHeader")
+			// StringDefine的各个头文件是仅在StringDefine.h中包含的,所以不能在其他地方再次包含,否则linux下编译会报大量警告,相当于所有的源文件都定义了大量的未使用变量
+			if (fileNameNoSuffix != "GameHeader" && 
+				(!startWith(fileNameNoSuffix, "StringDefine") || fileNameNoSuffix == "StringDefine") && 
+				fileNameNoSuffix != "MySQLInstanceDeclare" && 
+				fileNameNoSuffix != "SQLiteInstanceDeclare")
 			{
 				gameHeaderList.push_back(fileNameNoSuffix);
 			}

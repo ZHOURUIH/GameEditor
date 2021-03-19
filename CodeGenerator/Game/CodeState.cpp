@@ -42,6 +42,7 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint count = stateList.size();
 	FOR_I(count)
 	{

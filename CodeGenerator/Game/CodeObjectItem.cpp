@@ -20,6 +20,7 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& obje
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint count = objectItemList.size();
 	FOR_I(count)
 	{

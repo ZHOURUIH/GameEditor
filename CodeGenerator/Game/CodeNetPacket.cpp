@@ -238,6 +238,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint count = packetList.size();
 	FOR_I(count)
 	{

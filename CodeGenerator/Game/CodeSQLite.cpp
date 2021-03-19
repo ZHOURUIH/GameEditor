@@ -293,9 +293,10 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 // SQLiteInstanceDeclare.h和SQLiteInstanceDeclare.cpp
 void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath)
 {
-	string str0;
-	line(str0, "// auto generated file, so it looks might be strange");
-	line(str0, "");
+	string header;
+	line(header, "// 自动生成的文件,所以与一般的头文件不同");
+	line(header, "// 该头文件只能被GameBase所包含,不能在其他文件中被包含");
+	line(header, "");
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
@@ -303,24 +304,23 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		{
 			continue;
 		}
-		line(str0, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
+		line(header, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
-	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(str0.c_str(), true));
+	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
-	string str1;
-	line(str1, "// auto generated file, so it looks might be strange");
-	line(str1, "");
-	line(str1, "#include \"GameBase.h\"");
-	line(str1, "");
+	string source;
+	line(source, "");
+	line(source, "#include \"GameBase.h\"");
+	line(source, "");
 	FOR_I(count)
 	{
 		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
 		{
 			continue;
 		}
-		line(str1, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
+		line(source, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
-	writeFile(filePath + "SQLiteInstanceDeclare.cpp", ANSIToUTF8(str1.c_str(), true));
+	writeFile(filePath + "SQLiteInstanceDeclare.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // TDSQLite.cs和SQLiteTable.cs文件

@@ -64,6 +64,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint cmdCount = eventList.size();
 	FOR_I(cmdCount)
 	{

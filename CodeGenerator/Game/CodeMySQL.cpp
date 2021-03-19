@@ -375,6 +375,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
@@ -398,7 +399,8 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 {
 	// 头文件
 	string header;
-	line(header, "// auto generated file, so it looks might be strange");
+	line(header, "// 自动生成的文件,所以与一般的头文件不同");
+	line(header, "// 该头文件只能被GameBase所包含,不能在其他文件中被包含");
 	line(header, "");
 	uint count = mysqlList.size();
 	FOR_I(count)
@@ -408,7 +410,6 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	writeFile(filePath + "MySQLInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string cpp;
-	line(cpp, "// auto generated file, so it looks might be strange");
 	line(cpp, "");
 	line(cpp, "#include \"GameBase.h\"");
 	line(cpp, "");

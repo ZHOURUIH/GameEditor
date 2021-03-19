@@ -45,6 +45,7 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 {
 	// 头文件
 	string header;
+	line(header, "// 该头文件只能在StringDefine.h中被包含");
 	uint count = nodeList.size();
 	FOR_I(count)
 	{
