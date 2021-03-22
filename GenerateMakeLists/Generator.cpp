@@ -31,15 +31,6 @@ myVector<string> Generator::generateDirectory(const string& path, const myVector
 	return pathList;
 }
 
-myVector<string> Generator::generateSourceFile(const string& path, const myVector<string>& exceptDirList, const myVector<string>& exceptFileList)
-{
-	myVector<string> fileList;
-	myVector<string> patterns{ ".cpp" , ".c" };
-	findFiles(path, fileList, patterns.data(), patterns.size());
-	removeIgnoreFile(fileList, exceptFileList);
-	return fileList;
-}
-
 void Generator::removeIgnorePath(myVector<string>& pathList, const myVector<string>& ignoreList)
 {
 	uint ignoreCount = ignoreList.size();
@@ -53,18 +44,6 @@ void Generator::removeIgnorePath(myVector<string>& pathList, const myVector<stri
 				--i;
 				break;
 			}
-		}
-	}
-}
-
-void Generator::removeIgnoreFile(myVector<string>& fileList, const myVector<string>& ignoreList)
-{
-	for (uint i = 0; i < fileList.size(); ++i)
-	{
-		if (ignoreList.contains(getFileName(fileList[i])))
-		{
-			fileList.erase(i, 1);
-			--i;
 		}
 	}
 }
