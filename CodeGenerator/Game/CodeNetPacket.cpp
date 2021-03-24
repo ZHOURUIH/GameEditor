@@ -453,7 +453,7 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 			// 如果新的变量数量也为0,则不做处理,大于0时才处理
 			if (memberListCount > 0)
 			{
-				headerLines[fillParamIndex] += "\t\tvoid fillParams() override";
+				headerLines[fillParamIndex] = "\t\tvoid fillParams() override";
 				headerLines.insert(fillParamIndex + 1, "\t{");
 				// 添加新的变量
 				FOR_I(memberListCount)
@@ -495,7 +495,7 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
-		line(source, "\tCharacterPlayer* player = (CharacterPlayer*)getCharacter();");
+		line(source, "\tCharacterPlayer* player = getCharacter();");
 		line(source, "\tif (player == NULL)");
 		line(source, "\t{");
 		line(source, "\t\treturn;");
