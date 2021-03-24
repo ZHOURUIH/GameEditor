@@ -489,12 +489,12 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 			line(file, lineStr);
 		}
 	}
-	line(file, "\t\tmSQLite.linkAllTable();");
+	line(file, "\t\tmSQLiteManager.linkAllTable();");
 	line(file, "\t}");
 	line(file, "\t//-------------------------------------------------------------------------------------------------------------");
 	line(file, "\tprotected static void registeTable<T>(out T sqliteTable, Type tableType, Type dataType, string tableName) where T : SQLiteTable");
 	line(file, "\t{");
-	line(file, "\t\tsqliteTable = mSQLite.registeTable(tableType, dataType, tableName) as T;");
+	line(file, "\t\tsqliteTable = mSQLiteManager.registeTable(tableType, dataType, tableName) as T;");
 	line(file, "\t}");
 	line(file, "}", false);
 
