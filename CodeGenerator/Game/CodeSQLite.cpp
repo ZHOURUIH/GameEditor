@@ -217,8 +217,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
 		line(table, "{");
 		line(table, "public:");
-		line(table, "\t" + tableClassName + "(const char* tableName, ISQLite* sqlite)");
-		line(table, "\t\t:SQLiteTable(tableName, sqlite) {}");
+		line(table, "\t" + tableClassName + "()");
 		line(table, "};");
 		line(table, "");
 		line(table, "#endif", false);
@@ -234,7 +233,6 @@ void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sq
 	line(str0, "#ifndef _SQLITE_HEADER_H_");
 	line(str0, "#define _SQLITE_HEADER_H_");
 	line(str0, "");
-	line(str0, "#include \"SQLite.h\"");
 	uint packetCount = sqliteList.size();
 	FOR_I(packetCount)
 	{
@@ -272,11 +270,10 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
-	line(str1, "#define REGISTE_SQLITE(classType, tableName) m##classType = NEW(classType, m##classType, tableName, sqlite);sqlite->addTable(m##classType);");
+	line(str1, "#define REGISTE_SQLITE(classType, tableName) m##classType = NEW(classType, m##classType);mSQLiteManager->addSQLiteTable(m##classType, tableName)");
 	line(str1, "");
 	line(str1, "void SQLiteRegister::registeAll()");
 	line(str1, "{");
-	line(str1, "\tSQLite* sqlite = mSQLiteManager->createSQLite(GD::SQLITE_DATA_BASE);");
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
