@@ -217,7 +217,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
 		line(table, "{");
 		line(table, "public:");
-		line(table, "\t" + tableClassName + "()");
 		line(table, "};");
 		line(table, "");
 		line(table, "#endif", false);
