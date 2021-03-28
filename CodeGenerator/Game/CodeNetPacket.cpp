@@ -88,6 +88,9 @@ void CodeNetPacket::generate()
 		}
 	}
 
+	// 打开服务器的消息注册文件,找到当前的消息版本号,然后版本号自增
+	int packetVersion = findPacketVersion(cppPacketDefinePath + "PacketRegister.cpp") + 1;
+
 	// 删除旧文件
 	deleteFolder(cppCSDeclarePath);
 	deleteFolder(cppSCDeclarePath);
@@ -120,12 +123,12 @@ void CodeNetPacket::generate()
 	}
 	// c++
 	generateCppPacketDefineFile(packetInfoList, cppPacketDefinePath);
-	generateCppPacketRegisteFile(packetInfoList, cppPacketDefinePath);
+	generateCppPacketRegisteFile(packetInfoList, cppPacketDefinePath, packetVersion);
 	generateCppPacketTotalHeaderFile(packetInfoList, cppPacketDefinePath);
 	generateStringDefinePacket(packetList, cppStringDefinePath);
 	// c#
 	generateCSharpPacketDefineFile(packetInfoList, csharpPacketDefinePath);
-	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath);
+	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
 }
 
 // PacketHeader.h和PacketDeclareHeader.h文件
@@ -199,13 +202,14 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 }
 
 // PacketRegister.cpp文件
-void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath)
+void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath, int packetVersion)
 {
 	string str;
 	line(str, "#include \"GameHeader.h\"");
 	line(str, "");
 	line(str, "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(PACKET_TYPE::type, NAME(packet));");
 	line(str, "");
+	line(str, "int PacketRegister::PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "void PacketRegister::registeAll()");
 	line(str, "{");
 	line(str, "\tuint preCount = mPacketFactoryManager->getFactoryCount();");
@@ -478,6 +482,29 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 	writeFile(fullPath, ANSIToUTF8(newFile.c_str(), true));
 }
 
+int CodeNetPacket::findPacketVersion(const string& filePath)
+{
+	int packetVersion = 0;
+	string fileContent;
+	openTxtFile(filePath, fileContent);
+	myVector<string> lines;
+	split(fileContent.c_str(), "\r\n", lines);
+	FOR_VECTOR(lines)
+	{
+		int index = 0;
+		if (findString(lines[i].c_str(), "PACKET_VERSION = ", &index))
+		{
+			int pos0 = lines[i].find_first_of('=', index);
+			int pos1 = lines[i].find_first_of(';', index);
+			string versionStr = lines[i].substr(pos0 + 1, pos1 - pos0 - 1);
+			packetVersion = stringToInt(versionStr);
+			break;
+		}
+	}
+	END(lines);
+	return packetVersion;
+}
+
 void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, string filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
@@ -607,13 +634,14 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 }
 
 // PacketRegister.cs文件
-void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath)
+void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath, int packetVersion)
 {
 	string str;
 	line(str, "using System;");
 	line(str, "");
 	line(str, "public class PacketRegister : GameBase");
 	line(str, "{");
+	line(str, "\tpublic static int PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "\tpublic static void registeAll()");
 	line(str, "\t{");
 	line(str, "\t\tint preCount = mSocketFactory.getPacketTypeCount();");

@@ -437,7 +437,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 				line(file, "\t\t\t\t!mValues[" + checkMemberList[i] + "].Contains(\" \") && ");
 			}
 		}
-		END(colList);
+		END(checkMemberList);
 	}
 	line(file, "\t}");
 	line(file, "}", false);
