@@ -1,9 +1,9 @@
-#ifndef _CODE_SCENE_TRIGGER_H_
-#define _CODE_SCENE_TRIGGER_H_
+#ifndef _CODE_FUNCTION_PARAM_H_
+#define _CODE_FUNCTION_PARAM_H_
 
 #include "CodeUtility.h"
 
-class CodeSceneTrigger : public CodeUtility
+class CodeFunctionParam : public CodeUtility
 {
 public:
 	static void generate();

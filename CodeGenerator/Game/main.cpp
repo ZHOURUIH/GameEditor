@@ -15,6 +15,7 @@
 #include "CodeStateGroup.h"
 #include "CodeComponent.h"
 #include "CodeSceneTrigger.h"
+#include "CodeFunctionParam.h"
 
 void main()
 {
@@ -39,6 +40,7 @@ void main()
 	cout << "11.FrameSystem文件" << endl;
 	cout << "12.类声明文件" << endl;
 	cout << "13.场景触发器代码" << endl;
+	cout << "14.函数参数代码" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -59,6 +61,7 @@ void main()
 		CodeStateGroup::generate();
 		CodeComponent::generate();
 		CodeSceneTrigger::generate();
+		CodeFunctionParam::generate();
 	}
 	else if (input == 1)
 	{
@@ -111,6 +114,10 @@ void main()
 	else if (input == 13)
 	{
 		CodeSceneTrigger::generate();
+	}
+	else if (input == 14)
+	{
+		CodeFunctionParam::generate();
 	}
 	system("pause");
 }

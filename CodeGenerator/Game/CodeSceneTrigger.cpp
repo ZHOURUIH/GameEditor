@@ -4,33 +4,35 @@ void CodeSceneTrigger::generate()
 {
 	string cppHeaderPath = cppGamePath + "SceneTriggerManager/";
 
-	string triggerFile;
-	openTxtFile("SceneTrigger.txt", triggerFile);
-	if (triggerFile.length() == 0)
+	string file;
+	openTxtFile("SceneTrigger.txt", file);
+	if (file.length() == 0)
 	{
 		ERROR("未找文件SceneTrigger.txt");
 		return;
 	}
-	myVector<string> triggerList;
-	split(triggerFile.c_str(), "\r\n", triggerList);
+	myVector<string> list;
+	split(file.c_str(), "\r\n", list);
 	// 生成StringDefineSceneTrigger文件
-	generateStringDefineTrigger(triggerList, cppStringDefinePath);
+	generateStringDefine(list, cppStringDefinePath);
 	// 生成SceneTriggerHeader.h文件
-	generateCppTriggerTotalHeaderFile(triggerList, cppHeaderPath);
+	generateCppTotalHeaderFile(list, cppHeaderPath);
+	// 生成SceneTriggerRegister文件
+	generateCppRegister(list, cppHeaderPath);
 }
 
 // SceneTriggerHeader.h
-void CodeSceneTrigger::generateCppTriggerTotalHeaderFile(const myVector<string>& triggerList, string filePath)
+void CodeSceneTrigger::generateCppTotalHeaderFile(const myVector<string>& list, string filePath)
 {
 	string str0;
 	line(str0, "#ifndef _SCENE_TRIGGER_HEADER_H_");
 	line(str0, "#define _SCENE_TRIGGER_HEADER_H_");
 	line(str0, "");
 	line(str0, "#include \"SceneTrigger.h\"");
-	uint count = triggerList.size();
+	uint count = list.size();
 	FOR_I(count)
 	{
-		line(str0, "#include \"" + triggerList[i] + ".h\"");
+		line(str0, "#include \"" + list[i] + ".h\"");
 	}
 	line(str0, "");
 	line(str0, "#endif", false);
@@ -39,7 +41,7 @@ void CodeSceneTrigger::generateCppTriggerTotalHeaderFile(const myVector<string>&
 }
 
 // SceneTriggerRegister文件
-void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, string filePath)
+void CodeSceneTrigger::generateCppRegister(const myVector<string>& list, string filePath)
 {
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
@@ -48,11 +50,12 @@ void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, 
 	line(str0, "");
 	line(str0, "void SceneTriggerRegister::registeAll()");
 	line(str0, "{");
-	uint count = triggerList.size();
+	uint count = list.size();
 	FOR_I(count)
 	{
-		string enumName = nameToUpper(triggerList[i].substr(strlen("SceneTrigger")));
-		line(str0, "ADD_TRIGGER(" + triggerList[i] + ", SCENE_TRIGGER::" + enumName + ");");
+		string enumName = nameToUpper(list[i].substr(strlen("SceneTrigger")));
+		enumName.erase(0, 1);
+		line(str0, "\tADD_TRIGGER(" + list[i] + ", SCENE_TRIGGER::" + enumName + ");");
 	}
 	line(str0, "}");
 
@@ -60,7 +63,7 @@ void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, 
 }
 
 // StringDefineSceneTrigger.h和StringDefineSceneTrigger.cpp
-void CodeSceneTrigger::generateStringDefineTrigger(const myVector<string>& triggerList, string filePath)
+void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, string filePath)
 {
 	// 头文件
 	string header;
@@ -69,10 +72,10 @@ void CodeSceneTrigger::generateStringDefineTrigger(const myVector<string>& trigg
 	line(header, "#else");
 	line(header, "#define _STRING_DEFINE_SCENE_TRIGGER_H_");
 	line(header, "");
-	uint count = triggerList.size();
+	uint count = list.size();
 	FOR_I(count)
 	{
-		line(header, stringDeclare(triggerList[i]));
+		line(header, stringDeclare(list[i]));
 	}
 	line(header, "");
 	line(header, "#endif");
@@ -84,7 +87,7 @@ void CodeSceneTrigger::generateStringDefineTrigger(const myVector<string>& trigg
 	line(source, "");
 	FOR_I(count)
 	{
-		line(source, stringDefine(triggerList[i]));
+		line(source, stringDefine(list[i]));
 	}
 	writeFile(filePath + "StringDefineSceneTrigger.cpp", ANSIToUTF8(source.c_str(), true));
 }
