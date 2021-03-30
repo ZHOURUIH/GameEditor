@@ -176,7 +176,7 @@ string CodeUtility::nameToUpper(const string& sqliteName)
 	// 从1开始,因为第0个始终都是大写,会截取出空字符串
 	for (int i = 1; i < length; ++i)
 	{
-		// 已大写字母为分隔符
+		// 以大写字母为分隔符
 		if (sqliteName[i] >= 'A' && sqliteName[i] <= 'Z')
 		{
 			macroList.push_back(sqliteName.substr(lastIndex, i - lastIndex));

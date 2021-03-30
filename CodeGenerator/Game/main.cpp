@@ -14,6 +14,7 @@
 #include "CodeObjectItem.h"
 #include "CodeStateGroup.h"
 #include "CodeComponent.h"
+#include "CodeSceneTrigger.h"
 
 void main()
 {
@@ -34,9 +35,10 @@ void main()
 	cout << "7.成就代码" << endl;
 	cout << "8.事件代码" << endl;
 	cout << "9.行为树节点代码" << endl;
-	cout << "10.生成UnityBuild文件" << endl;
-	cout << "11.生成FrameSystem文件" << endl;
-	cout << "12.生成类声明文件" << endl;
+	cout << "10.UnityBuild文件" << endl;
+	cout << "11.FrameSystem文件" << endl;
+	cout << "12.类声明文件" << endl;
+	cout << "13.场景触发器代码" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -56,6 +58,7 @@ void main()
 		CodeObjectItem::generate();
 		CodeStateGroup::generate();
 		CodeComponent::generate();
+		CodeSceneTrigger::generate();
 	}
 	else if (input == 1)
 	{
@@ -104,6 +107,10 @@ void main()
 	else if (input == 12)
 	{
 		CodeClassDeclare::generate();
+	}
+	else if (input == 13)
+	{
+		CodeSceneTrigger::generate();
 	}
 	system("pause");
 }
