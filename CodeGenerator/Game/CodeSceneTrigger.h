@@ -10,7 +10,7 @@ public:
 protected:
 	//c++
 	static void generateCppTotalHeaderFile(const myVector<string>& list, string filePath);
-	static void generateCppRegister(const myVector<string>& list, string filePath);
+	static void generateCppRegister(const myVector<string>& triggerList, const myVector<string>& modifierList, string filePath);
 	static void generateStringDefine(const myVector<string>& list, string filePath);
 protected:
 };
