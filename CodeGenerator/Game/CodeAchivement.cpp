@@ -5,38 +5,37 @@ void CodeAchivement::generate()
 	string cppHeaderPath = cppGamePath + "Achivement/";
 	string cppAchivementFilePath = cppHeaderPath + "Achivement/";
 
-	string achviementFile;
-	openTxtFile("Achivement.txt", achviementFile);
-	if (achviementFile.length() == 0)
+	string file;
+	openTxtFile("Achivement.txt", file);
+	if (file.length() == 0)
 	{
 		ERROR("未找文件Achivement.txt");
 		return;
 	}
-	myVector<string> achivementList;
-	split(achviementFile.c_str(), "\r\n", achivementList);
+	myVector<string> lineList;
+	split(file.c_str(), "\r\n", lineList);
 	// 生成AchivementHeader.h文件
-	generateHeaderFile(achivementList, cppHeaderPath);
+	generateHeaderFile(lineList, cppHeaderPath);
 	// 生成AcvehimentRegister.cpp文件
-	generateAchivementRegister(achivementList, cppHeaderPath);
+	generateRegister(lineList, cppHeaderPath);
 
-	FOR_VECTOR(achivementList)
+	FOR_VECTOR(lineList)
 	{
-		generateAchivementFile(achivementList[i], cppAchivementFilePath);
+		generateAchivementFile(lineList[i], cppAchivementFilePath);
 	}
-	END(achivementList);
+	END(lineList);
 }
 
 // AchivementHeader.h文件
-void CodeAchivement::generateHeaderFile(const myVector<string>& achivementList, string headerPath)
+void CodeAchivement::generateHeaderFile(const myVector<string>& list, string headerPath)
 {
 	string str0;
 	line(str0, "#ifndef _ACHIVEMENT_HEADER_H_");
 	line(str0, "#define _ACHIVEMENT_HEADER_H_");
 	line(str0, "");
-	uint count = achivementList.size();
-	FOR_I(count)
+	FOR_VECTOR_CONST(list)
 	{
-		line(str0, "#include \"" + achivementList[i] + ".h\"");
+		line(str0, "#include \"" + list[i] + ".h\"");
 	}
 	line(str0, "");
 	line(str0, "#endif", false);
@@ -45,23 +44,23 @@ void CodeAchivement::generateHeaderFile(const myVector<string>& achivementList, 
 }
 
 // AcvehimentRegister.cpp
-void CodeAchivement::generateAchivementRegister(const myVector<string>& achivementList, string headerPath)
+void CodeAchivement::generateRegister(const myVector<string>& list, string headerPath)
 {
 	// 源文件
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	line(source, "#define ACHIVEMENT_FACTORY(classType, type) mAchivementFactoryManager->addFactory<classType>(ACHIVEMENT_TYPE::type);");
+	line(source, "#define ACHIVEMENT_FACTORY(classType, type) mAchivementFactoryManager->addFactory<classType>(type)");
 	line(source, "");
 	line(source, "void AchivementRegister::registeAll()");
 	line(source, "{");
-	FOR_VECTOR_CONST(achivementList)
+	FOR_VECTOR_CONST(list)
 	{
-		string type = nameToUpper(achivementList[i]);
+		string type = nameToUpper(list[i]);
 		type = type.substr(strlen("_ACHIVEMENT_"));
-		line(source, "\tACHIVEMENT_FACTORY(" + achivementList[i] + ", " + type + ");");
+		line(source, "\tACHIVEMENT_FACTORY(" + list[i] + ", ACHIVEMENT_TYPE::" + type + ");");
 	}
-	line(source, "};", false);
+	line(source, "}", false);
 
 	writeFile(headerPath + "AchivementRegister.cpp", ANSIToUTF8(source.c_str(), true));
 }
