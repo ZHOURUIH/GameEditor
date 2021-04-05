@@ -483,7 +483,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	{
 		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY)
 		{
-			string lineStr = "\t\tregisteTable(out mSQLite%s, Typeof<SQLite%s>(), Typeof<TD%s>(), \"%s\");";
+			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(SQLite%s), typeof(TD%s), \"%s\");";
 			replaceAll(lineStr, "%s", sqliteInfo[i].mSQLiteName);
 			line(file, lineStr);
 		}
