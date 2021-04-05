@@ -457,11 +457,11 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "\t}");
 	line(table, "\tpublic " + dataClassName + " query(int id)");
 	line(table, "\t{");
-	line(table, "\t\treturn query(Typeof<" + dataClassName + ">(), id) as " + dataClassName + ";");
+	line(table, "\t\treturn query(typeof(" + dataClassName + "), id) as " + dataClassName + ";");
 	line(table, "\t}");
 	line(table, "\tpublic void queryAll(List<" + dataClassName + "> list)");
 	line(table, "\t{");
-	line(table, "\t\tqueryAll(Typeof<" + dataClassName + ">(), list);");
+	line(table, "\t\tqueryAll(typeof(" + dataClassName + "), list);");
 	line(table, "\t}");
 	line(table, "}", false);
 	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
