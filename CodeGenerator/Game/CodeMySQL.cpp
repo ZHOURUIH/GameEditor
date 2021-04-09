@@ -311,7 +311,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	line(source, "void " + tableClassName + "::init(MYSQL * mysql)");
+	line(source, "void " + tableClassName + "::init(MYSQL* mysql)");
 	line(source, "{");
 	line(source, "\tMySQLTable::init(mysql);");
 	line(source, "\t" + dataClassName + "::fillColName(this);");
