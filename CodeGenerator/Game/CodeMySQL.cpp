@@ -115,6 +115,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid parseResult(myMap<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(char* params, uint size) const override;");
+	line(header, "\tvoid clone(MySQLData* target) const override;");
 	line(header, "\tvoid resetProperty() override;");
 	line(header, "};");
 	line(header, "");
@@ -237,6 +238,20 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	}
 	line(source, "}");
 	line(source, "");
+
+	// cloneº¯Êý
+	line(source, "void " + className + "::clone(MySQLData* target) const");
+	line(source, "{");
+	line(source, "\tbase::clone(target);");
+	line(source, "\tauto targetData = CAST<" + className + "*>(target);");
+	FOR_I(memberCount)
+	{
+		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
+		line(source, "\ttargetData->m" + memberName + " = m" + memberName + ";");
+	}
+	line(source, "}");
+	line(source, "");
+
 	// resetPropertyº¯Êý
 	line(source, "void " + className + "::resetProperty()");
 	line(source, "{");
