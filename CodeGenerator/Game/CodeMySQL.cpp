@@ -243,11 +243,14 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "void " + className + "::clone(MySQLData* target) const");
 	line(source, "{");
 	line(source, "\tbase::clone(target);");
-	line(source, "\tauto targetData = CAST<" + className + "*>(target);");
-	FOR_I(memberCount)
+	if (memberCount > 0)
 	{
-		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
-		line(source, "\ttargetData->m" + memberName + " = m" + memberName + ";");
+		line(source, "\tauto targetData = CAST<" + className + "*>(target);");
+		FOR_I(memberCount)
+		{
+			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
+			line(source, "\ttargetData->m" + memberName + " = m" + memberName + ";");
+		}
 	}
 	line(source, "}");
 	line(source, "");
