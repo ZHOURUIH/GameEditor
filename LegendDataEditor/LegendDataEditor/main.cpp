@@ -28,7 +28,6 @@ void main()
 20:将media中全部序列帧数据写入SQLite \n\
 22:生成地图阻挡文件 \n\
 23:生成所有地图阻挡文件 \n\
-24:更新场景配置表格 \n\
 25:处理图片阴影\n\
 26:移动并覆盖地图图片\n\
 27:更新NPC商品列表\n\
@@ -239,33 +238,6 @@ void main()
 			long startTime = timeGetTime();
 			ImageUtility::generateAllUnreachFile("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 24)
-		{
-			cout << "正在更新场景传送点列表..." << endl;
-			long startTime0 = timeGetTime();
-			ImageUtility::updateSceneMapTransferSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime0) / 1000.0f << "秒" << endl;
-
-			cout << "正在更新场景NPC列表..." << endl;
-			long startTime1 = timeGetTime();
-			ImageUtility::updateSceneMapNPCSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime1) / 1000.0f << "秒" << endl;
-
-			cout << "正在更新场景刷怪区域列表..." << endl;
-			long startTime2 = timeGetTime();
-			ImageUtility::updateSceneMapMonsterRegionSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime2) / 1000.0f << "秒" << endl;
-
-			cout << "正在更新场景安全区列表..." << endl;
-			long startTime3 = timeGetTime();
-			ImageUtility::updateSceneMapPeaceAreaSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime3) / 1000.0f << "秒" << endl;
-
-			cout << "正在更新场景子区域列表..." << endl;
-			long startTime4 = timeGetTime();
-			ImageUtility::updateSceneMapSubRegionSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime4) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 25)
 		{
