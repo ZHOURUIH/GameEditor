@@ -143,6 +143,7 @@ void CodeSQLite::generate()
 	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
 	generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
 	generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
+	generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
 
 	// 在上一层目录生成SQLiteRegister.cs文件
 	string registerPath = csDataPath;
@@ -338,6 +339,29 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		line(source, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
 	writeFile(filePath + "SQLiteInstanceDeclare.cpp", ANSIToUTF8(source.c_str(), true));
+}
+
+// SQLiteSTLPoolRegister.h
+void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, string filePath)
+{
+	string header;
+	line(header, "#ifdef _SQLITE_STL_POOL_REGISTER_H_");
+	line(header, "#error \"特殊头文件,只能被GameSTLPoolRegister.cpp所包含\"");
+	line(header, "#else");
+	line(header, "#define _SQLITE_STL_POOL_REGISTER_H_");
+	line(header, "");
+	uint count = sqliteList.size();
+	FOR_I(count)
+	{
+		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		{
+			continue;
+		}
+		line(header, "REGISTE_VECTOR_POOL(TD" + sqliteList[i].mSQLiteName + "*);");
+	}
+	line(header, "");
+	line(header, "#endif");
+	writeFile(filePath + "SQLiteSTLPoolRegister.h", ANSIToUTF8(header.c_str(), true));
 }
 
 // TDSQLite.cs和SQLiteTable.cs文件

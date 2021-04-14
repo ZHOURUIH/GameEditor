@@ -49,6 +49,7 @@ void CodeClassDeclare::generate()
 				fileNameNoSuffix != "MySQLInstanceDeclare" && 
 				fileNameNoSuffix != "SQLiteInstanceDeclare" && 
 				fileNameNoSuffix != "FrameSystemDeclare" &&
+				fileNameNoSuffix != "SQLiteSTLPoolRegister" &&
 				fileNameNoSuffix != "FrameSystemGet" &&
 				fileNameNoSuffix != "FrameSystemRegiste")
 			{
