@@ -1,5 +1,5 @@
 ﻿#include "txSerializedData.h"
-#include "Utility.h"
+#include "SystemUtility.h"
 
 string txSerializedData::mIntType = typeid(int).name();
 string txSerializedData::mShortType = typeid(short).name();
@@ -9,19 +9,19 @@ string txSerializedData::mIntArrayType = typeid(int*).name();
 
 bool txSerializedData::read(char* pBuffer, int bufferSize)
 {
-	int bufferOffset = 0;
+	uint bufferOffset = 0;
 	bool ret = true;
 	int parameterCount = mDataParameterList.size();
 	for (int i = 0; i < parameterCount; ++i)
 	{
-		ret = ret && BinaryUtility::readBuffer(pBuffer, bufferSize, bufferOffset, mDataParameterList[i].mDataPtr, mDataParameterList[i].mDataSize);
+		ret = ret && BinaryUtility::readBuffer(pBuffer, bufferSize, bufferOffset, mDataParameterList[i].mDataPtr, mDataParameterList[i].mDataSize, mDataParameterList[i].mDataSize);
 	}
 	return ret;
 }
 
 bool txSerializedData::write(char* pBuffer, int bufferSize)
 {
-	int curWriteSize = 0;
+	uint curWriteSize = 0;
 	bool ret = true;
 	int parameterCount = mDataParameterList.size();
 	for (int i = 0; i < parameterCount; ++i)
@@ -59,8 +59,8 @@ bool txSerializedData::writeData(const string& dataString, int paramIndex)
 	}
 	else if (paramType == mIntArrayType)
 	{
-		txVector<string> valueList;
-		StringUtility::split(dataString, ";", valueList);
+		myVector<string> valueList;
+		StringUtility::split(dataString.c_str(), ";", valueList);
 		int valueCount = valueList.size();
 		for (int i = 0; i < valueCount; ++i)
 		{
@@ -98,7 +98,7 @@ string txSerializedData::getValueString(int paramIndex)
 	}
 	else if (dataParam.mDataType == mFloatType)
 	{
-		dataString = StringUtility::floatToString(*((float*)dataParam.mDataPtr), 2);
+		dataString = StringUtility::floatToStringExtra(*((float*)dataParam.mDataPtr), 2);
 	}
 	else if (dataParam.mDataType == mCharArrayType)
 	{
@@ -162,8 +162,8 @@ bool txSerializedData::readStringList(const std::vector<string>& dataList)
 		}
 		else if (paramter.mDataType == mIntArrayType)
 		{
-			txVector<string> breakVec;
-			StringUtility::split(dataList[curIndex], ";", breakVec);
+			myVector<string> breakVec;
+			StringUtility::split(dataList[curIndex].c_str(), ";", breakVec);
 			int size = breakVec.size();
 			for (int j = 0; j < size; ++j)
 			{

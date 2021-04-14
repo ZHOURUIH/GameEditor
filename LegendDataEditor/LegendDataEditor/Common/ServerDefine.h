@@ -65,21 +65,14 @@
 #include <atomic>
 #include <array>
 
-#include "ServerEnum.h"
-#include "ServerCallback.h"
 #include "sqlite3.h"
-#include "Vector2.h"
-#include "Vector2i.h"
-#include "Vector3.h"
-#include "Vector4.h"
 
 using namespace std;
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // 宏定义
 #if RUN_PLATFORM == PLATFORM_WINDOWS
-#define _USE_SAFE_API
-#define TX_THREAD HANDLE
-#define TX_SOCKET SOCKET
+#define MY_THREAD HANDLE
+#define MY_SOCKET SOCKET
 #define NULL_THREAD NULL
 #define THREAD_CALLBACK_DECLEAR(func) static DWORD WINAPI func(LPVOID args)
 #define THREAD_CALLBACK(class, func) DWORD WINAPI class##::##func(LPVOID args)
@@ -92,9 +85,16 @@ if (thread != NULL_THREAD)		\
 	thread = NULL_THREAD;		\
 }
 #define CLOSE_SOCKET(socket) closesocket(socket);
+#define CLASS_NAME(T) string(typeid(T).name()).substr(strlen("class "))
+#define SPRINTF(buffer, bufferSize, ...) sprintf_s(buffer, bufferSize, __VA_ARGS__)
+#define MEMCPY(dest, bufferSize, src, count) memcpy_s((void*)(dest), bufferSize, (void*)(src), count)
+// 获取不同平台下的字面常量字符串的UTF8编码字符串,只能处理字面常量,也就是在代码中写死的字符串
+// windows下需要由GB2312转换为UTF8,而linux则直接就是UTF8的
+// 而且不能将返回结果存储为变量,因为只是一个临时的返回结果
+#define UNIFIED_UTF8(constantString) StringUtility::ANSIToUTF8(constantString).c_str()
 #elif RUN_PLATFORM == PLATFORM_LINUX
-#define TX_THREAD pthread_t
-#define TX_SOCKET unsigned int
+#define MY_THREAD pthread_t
+#define MY_SOCKET unsigned int
 #define NULL_THREAD 0
 #define SOCKADDR_IN sockaddr_in
 #define THREAD_CALLBACK_DECLEAR(func) static void* func(void* args)
@@ -115,12 +115,11 @@ if (thread != NULL_THREAD)		\
 #define LC_NAME_zh_CN_GBK       LC_NAME_zh_CN "." CSET_GBK
 #define LC_NAME_zh_CN_UTF8      LC_NAME_zh_CN "." CSET_UTF8
 #define LC_NAME_zh_CN_DEFAULT   LC_NAME_zh_CN_GBK
-#endif
-
-#ifdef _USE_SAFE_API
-#define SPRINTF(buffer, bufferSize, ...) sprintf_s(buffer, bufferSize, __VA_ARGS__)
-#else
+#define CLASS_NAME(T) removePreNumber(typeid(T).name())
 #define SPRINTF(buffer, bufferSize, ...) sprintf(buffer, __VA_ARGS__)
+// 因为bufferSize在windows下是需要的,linux下不需要,所以为了避免警告,仍然使用此参数参与,但是不产生任何影响
+#define MEMCPY(dest, bufferSize, src, count) memcpy((void*)((char*)dest + (bufferSize) - (bufferSize)), (void*)(src), count)
+#define UNIFIED_UTF8(constantString) constantString
 #endif
 
 #ifndef INVALID_SOCKET
@@ -134,13 +133,54 @@ if (thread != NULL_THREAD)		\
 #define NULL 0
 #endif
 
+#define NOT_FIND static_cast<size_t>(-1)
+
+// 将类的基类重命名为base,方便使用
+#define BASE_CLASS(baseClass) typedef baseClass base
+
 // 再次封装后的容器的遍历宏
-#define FOR(stl, expression) stl.lock(SL_WRITE, __FILE__, __LINE__);for (expression)
-#define FOR_R(stl, expression) stl.lock(SL_READ, __FILE__, __LINE__);for (expression)
-#define END(stl) stl.unlock(SL_WRITE);
-#define END_R(stl) stl.unlock(SL_READ);
-#define TOSTRING(t) #t
-#define LINE_STR(v) TOSTRING(v)
+#ifdef _DEBUG
+// 需要在循环结束后添加END
+#define FOR(stl, expression) stl.lock(STL_LOCK::WRITE, __FILE__, __LINE__);for (expression)
+#define END(stl) stl.unlock(STL_LOCK::WRITE);
+#else
+#define FOR(stl, expression)for (expression)
+#define END(stl)
+#endif
+
+// 使用迭代器遍历列表,要在循环结束后添加END
+#define FOREACH(iter, stl)\
+auto iter = stl.begin();\
+auto iter##End = stl.end();\
+FOR(stl, ; iter != iter##End; ++iter)
+
+// 使用迭代器遍历列表,不需要在循环结束后添加END
+#define FOREACH_CONST(iter, stl)\
+auto iter = stl.cbegin();\
+auto iter##End = stl.cend();\
+for(; iter != iter##End; ++iter)
+
+// 使用下标遍历列表,需要在循环结束后添加END
+#define FOR_VECTOR(stl) uint stl##Count = stl.size(); FOR(stl, uint i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR_J(stl) uint stl##Count = stl.size(); FOR(stl, uint j = 0; j < stl##Count; ++j)
+#define FOR_VECTOR_K(stl) uint stl##Count = stl.size(); FOR(stl, uint k = 0; k < stl##Count; ++k)
+#define FOR_VECTOR_INVERSE(stl) uint stl##Count = stl.size(); FOR(stl, int i = stl##Count - 1; i >= 0; --i)
+// 使用下标遍历常量列表,不需要在循环结束后添加END
+#define FOR_VECTOR_CONST(stl) uint stl##Count = stl.size(); for(uint i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR_CONST_J(stl) uint stl##Count = stl.size(); for(uint j = 0; j < stl##Count; ++j)
+#define FOR_VECTOR_CONST_K(stl) uint stl##Count = stl.size(); for(uint k = 0; k < stl##Count; ++k)
+#define FOR_VECTOR_CONST_INVERSE(stl) uint stl##Count = stl.size(); for(stl, int i = stl##Count - 1; i >= 0; --i)
+// 简单的for循环
+#define FOR_I(count) for (uint i = 0; i < count; ++i)
+#define FOR_J(count) for (uint j = 0; j < count; ++j)
+#define FOR_K(count) for (uint k = 0; k < count; ++k)
+#define FOR_INVERSE_I(count) for (int i = count - 1; i >= 0; --i)
+#define FOR_INVERSE_J(count) for (int j = count - 1; j >= 0; --j)
+#define FOR_INVERSE_K(count) for (int k = count - 1; k >= 0; --k)
+#define FOR_ONCE for(byte tempI = 0; tempI < 1; ++tempI)
+
+#define STR(t) #t
+#define LINE_STR(v) STR(v)
 // 设置value的指定位置pos的字节的值为byte,并且不影响其他字节
 #define SET_BYTE(value, byte, pos) value = (value & ~(0x000000ff << (8 * pos))) | (byte << (8 * pos))
 // 获得value的指定位置pos的字节的值
@@ -152,10 +192,216 @@ if (thread != NULL_THREAD)		\
 #define _FILE_LINE_ "File : " + string(__FILE__) + ", Line : " + LINE_STR(__LINE__)
 #define NEW_PACKET(packet, type) NetServer::createPacket(packet, type);
 
-// 角色唯一ID
-typedef unsigned int CHAR_GUID;
-// 每个客户端的唯一ID
-typedef unsigned int CLIENT_GUID;
+// 基础数据类型转字符串
+// 以_STR结尾的是构造一个char[]类型的字符串
+#define INT_STR(strBuffer, value) \
+char strBuffer[16];\
+StringUtility::intToString(strBuffer, 16, value);
+
+#define FLOAT_STR(strBuffer, value) \
+char strBuffer[16];\
+StringUtility::floatToString(strBuffer, 16, value);
+
+#define ULLONG_STR(strBuffer, value)\
+ char strBuffer[32];\
+StringUtility::ullongToString(strBuffer, 32, value);
+
+#define INTS_STR(strBuffer, valueArray, bufferCount, count) \
+char strBuffer[16 * bufferCount];\
+StringUtility::intsToString(strBuffer, 16 * bufferCount, valueArray, count);
+
+#define FLOATS_STR(strBuffer, valueArray, bufferCount, count) \
+char strBuffer[16 * bufferCount];\
+StringUtility::floatsToString(strBuffer, 16 * bufferCount, valueArray, count);
+
+#define ULLONGS_STR(strBuffer, valueArray, bufferCount, count) \
+char strBuffer[20 * bufferCount];\
+StringUtility::ullongsToString(strBuffer, 20 * bufferCount, valueArray, count);
+
+// 以_CHARS结尾的构造出array<char, SIZE>类型的字符串
+#define INT_CHARS(strBuffer, value) \
+array<char, 16> strBuffer{0};\
+StringUtility::intToString(strBuffer, value);
+
+#define FLOAT_CHARS(strBuffer, value) \
+array<char, 16> strBuffer{0};\
+StringUtility::floatToString(strBuffer, value);
+
+#define ULLONG_CHARS(strBuffer, value) \
+array<char, 32> strBuffer{0};\
+StringUtility::ullongToString(strBuffer, value);
+
+#define INTS_CHARS(strBuffer, valueArray, bufferCount, count) \
+array<char, 16 * bufferCount> strBuffer{0};\
+StringUtility::intsToString(strBuffer, valueArray, count);
+
+#define FLOATS_CHARS(strBuffer, valueArray, bufferCount, count) \
+array<char, 16 * bufferCount> strBuffer{0};\
+StringUtility::floatsToString(strBuffer, valueArray, count);
+
+#define ULLONGS_CHARS(strBuffer, valueArray, bufferCount, count) \
+array<char, 32 * bufferCount> strBuffer{0};\
+StringUtility::ullongsToString(strBuffer, valueArray, count);
+
+// 字符串拼接,将str0,str1等字符串拼接后放入charArray中,会覆盖charArray中的内容
+// charArray为array<char, int>类型
+#define STRCAT2(charArray, str0, str1)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1};\
+StringUtility::strcat_s(charArray, sourceArray, 2);
+
+#define STRCAT3(charArray, str0, str1, str2)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2};\
+StringUtility::strcat_s(charArray, sourceArray, 3);
+
+#define STRCAT4(charArray, str0, str1, str2, str3)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3};\
+StringUtility::strcat_s(charArray, sourceArray, 4);
+
+#define STRCAT5(charArray, str0, str1, str2, str3, str4)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4};\
+StringUtility::strcat_s(charArray, sourceArray, 5);
+
+#define STRCAT6(charArray, str0, str1, str2, str3, str4, str5)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5};\
+StringUtility::strcat_s(charArray, sourceArray, 6);
+
+#define STRCAT7(charArray, str0, str1, str2, str3, str4, str5, str6)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6};\
+StringUtility::strcat_s(charArray, sourceArray, 7);
+
+#define STRCAT8(charArray, str0, str1, str2, str3, str4, str5, str6, str7)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7};\
+StringUtility::strcat_s(charArray, sourceArray, 8);
+
+#define STRCAT9(charArray, str0, str1, str2, str3, str4, str5, str6, str7, str8)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7, str8};\
+StringUtility::strcat_s(charArray, sourceArray, 9);
+
+// 字符串拼接,将str0,str1等字符串拼接后放入charArray中,会覆盖charArray中的内容
+// charArray为char[]类型,_N表示普通数组
+#define STRCAT2_N(charArray, size, str0, str1)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1};\
+StringUtility::strcat_s(charArray, size, sourceArray, 2);
+
+#define STRCAT3_N(charArray, size, str0, str1, str2)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2};\
+StringUtility::strcat_s(charArray, size, sourceArray, 3);
+
+#define STRCAT4_N(charArray, size, str0, str1, str2, str3)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3};\
+StringUtility::strcat_s(charArray, size, sourceArray, 4);
+
+#define STRCAT5_N(charArray, size, str0, str1, str2, str3, str4)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4};\
+StringUtility::strcat_s(charArray, size, sourceArray, 5);
+
+#define STRCAT6_N(charArray, size, str0, str1, str2, str3, str4, str5)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5};\
+StringUtility::strcat_s(charArray, size, sourceArray, 6);
+
+#define STRCAT7_N(charArray, size, str0, str1, str2, str3, str4, str5, str6)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6};\
+StringUtility::strcat_s(charArray, size, sourceArray, 7);
+
+#define STRCAT8_N(charArray, size, str0, str1, str2, str3, str4, str5, str6, str7)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7};\
+StringUtility::strcat_s(charArray, size, sourceArray, 8);
+
+#define STRCAT9_N(charArray, size, str0, str1, str2, str3, str4, str5, str6, str7, str8)\
+charArray[0] = '\0';\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7, str8};\
+StringUtility::strcat_s(charArray, size, sourceArray, 9);
+
+// 字符串拼接,将str0,str1等字符串拼接在charArray中的字符串后面,不会覆盖charArray的内容
+// charArray为array<char, int>类型
+#define STR_APPEND1(charArray, str0)\
+const char* sourceArray[]{str0};\
+StringUtility::strcat_s(charArray, sourceArray, 1);
+
+#define STR_APPEND2(charArray, str0, str1)\
+const char* sourceArray[]{str0, str1};\
+StringUtility::strcat_s(charArray, sourceArray, 2);
+
+#define STR_APPEND3(charArray, str0, str1, str2)\
+const char* sourceArray[]{str0, str1, str2};\
+StringUtility::strcat_s(charArray, sourceArray, 3);
+
+#define STR_APPEND4(charArray, str0, str1, str2, str3)\
+const char* sourceArray[]{str0, str1, str2, str3};\
+StringUtility::strcat_s(charArray, sourceArray, 4);
+
+#define STR_APPEND5(charArray, str0, str1, str2, str3, str4)\
+const char* sourceArray[]{str0, str1, str2, str3, str4};\
+StringUtility::strcat_s(charArray, sourceArray, 5);
+
+#define STR_APPEND6(charArray, str0, str1, str2, str3, str4, str5)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5};\
+StringUtility::strcat_s(charArray, sourceArray, 6);
+
+#define STR_APPEND7(charArray, str0, str1, str2, str3, str4, str5, str6)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6};\
+StringUtility::strcat_s(charArray, sourceArray, 7);
+
+#define STR_APPEND8(charArray, str0, str1, str2, str3, str4, str5, str6, str7)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7};\
+StringUtility::strcat_s(charArray, sourceArray, 8);
+
+#define STR_APPEND9(charArray, str0, str1, str2, str3, str4, str5, str6, str7, str8)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7, str8};\
+StringUtility::strcat_s(charArray, sourceArray, 9);
+
+// 字符串拼接,将str0,str1等字符串拼接在charArray中的字符串后面,不会覆盖charArray的内容
+// charArray为char[]类型,_N表示普通数组
+#define STR_APPEND1_N(charArray, size, str0)\
+const char* sourceArray[]{str0};\
+StringUtility::strcat_s(charArray, size, sourceArray, 1);
+
+#define STR_APPEND2_N(charArray, size, str0, str1)\
+const char* sourceArray[]{str0, str1};\
+StringUtility::strcat_s(charArray, size, sourceArray, 2);
+
+#define STR_APPEND3_N(charArray, size, str0, str1, str2)\
+const char* sourceArray[]{str0, str1, str2};\
+StringUtility::strcat_s(charArray, size, sourceArray, 3);
+
+#define STR_APPEND4_N(charArray, size, str0, str1, str2, str3)\
+const char* sourceArray[]{str0, str1, str2, str3};\
+StringUtility::strcat_s(charArray, size, sourceArray, 4);
+
+#define STR_APPEND5_N(charArray, size, str0, str1, str2, str3, str4)\
+const char* sourceArray[]{str0, str1, str2, str3, str4};\
+StringUtility::strcat_s(charArray, size, sourceArray, 5);
+
+#define STR_APPEND6_N(charArray, size, str0, str1, str2, str3, str4, str5)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5};\
+StringUtility::strcat_s(charArray, size, sourceArray, 6);
+
+#define STR_APPEND7_N(charArray, size, str0, str1, str2, str3, str4, str5, str6)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6};\
+StringUtility::strcat_s(charArray, size, sourceArray, 7);
+
+#define STR_APPEND8_N(charArray, size, str0, str1, str2, str3, str4, str5, str6, str7)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7};\
+StringUtility::strcat_s(charArray, size, sourceArray, 8);
+
+#define STR_APPEND9_N(charArray, size, str0, str1, str2, str3, str4, str5, str6, str7, str8)\
+const char* sourceArray[]{str0, str1, str2, str3, str4, str5, str6, str7, str8};\
+StringUtility::strcat_s(charArray, size, sourceArray, 9);
 
 // 最大并发连接数为64
 #ifdef FD_SETSIZE
@@ -172,9 +418,161 @@ try\
 }catch(...){}\
 l.unlock()
 
-#include "txVector.h"
-#include "txMap.h"
-#include "txSet.h"
+//内存相关宏定义
+//---------------------------------------------------------------------------------------------------------------------
+#ifdef CHECK_MEMORY
+// 带内存合法检测的常规内存申请和释放
+#define NORMAL_NEW(className, ptr, ...)	\
+NULL;									\
+ptr = new className(__VA_ARGS__);		\
+if(ptr != NULL)							\
+{										\
+	MemoryCheck::usePtr(ptr);			\
+}										\
+else									\
+{										\
+	/*ERROR(string("can not alloc memory! className :") + STR(className));*/\
+}
+
+#define NORMAL_NEW_ARRAY(className, count, ptr)		\
+NULL;												\
+if(count <= 0)										\
+{													\
+	/*ERROR("无法申请大小为0的数组");*/					\
+}													\
+ptr = new className[count];							\
+if (ptr != NULL)									\
+{													\
+	MemoryCheck::usePtr(ptr);						\
+}													\
+else												\
+{													\
+	/*ERROR(string("can not alloc memory array! className : ") + STR(className) + ", count : " + StringUtility::intToString(count));*/\
+}
+
+#define NORMAL_DELETE(ptr)			\
+if (ptr != NULL)					\
+{									\
+	MemoryCheck::unusePtr(ptr);	\
+	delete ptr;						\
+	ptr = NULL;						\
+}
+
+#define NORMAL_DELETE_ARRAY(ptr)	\
+if (ptr != NULL)					\
+{									\
+	MemoryCheck::unusePtr(ptr);	\
+	delete[] ptr;					\
+	ptr = NULL;						\
+}
+#else
+// 不带内存合法检测的常规内存申请和释放
+#define NORMAL_NEW(className, ptr, ...)			\
+NULL;											\
+ptr = new className(__VA_ARGS__);				\
+if(ptr == NULL)									\
+{												\
+	/*ERROR(string("can not alloc memory! className : ") + STR(className));*/\
+}
+
+#define NORMAL_NEW_ARRAY(className, count, ptr)		\
+NULL;												\
+if(count <= 0)										\
+{													\
+	/*ERROR("无法申请大小为0的数组");*/					\
+}													\
+ptr = new className[count];							\
+if(ptr == NULL)										\
+{													\
+	/*ERROR(string("can not alloc memory array! className : ") + STR(className) + ", count : " + StringUtility::intToString(count));*/\
+}
+
+#define NORMAL_DELETE(ptr)	\
+if (ptr != NULL)			\
+{							\
+	delete ptr;				\
+	ptr = NULL;				\
+}
+
+#define NORMAL_DELETE_ARRAY(ptr)\
+if (ptr != NULL)				\
+{								\
+	delete[] ptr;				\
+	ptr = NULL;					\
+}
+#endif
+
+#ifdef NEW
+#undef NEW
+#endif
+
+#ifdef DELETE
+#undef DELETE
+#endif
+
+#ifdef NEW_ARRAY
+#undef NEW_ARRAY
+#endif
+
+#ifdef DELETE_ARRAY
+#undef DELETE_ARRAY
+#endif
+
+#ifdef TRACE_MEMORY
+// 申请无参或者带参构造类的内存
+#define NEW(className, ptr, ...)			\
+NORMAL_NEW(className, ptr, __VA_ARGS__)		\
+if(ptr != NULL)								\
+{											\
+	MemoryTrace::insertPtr(ptr, MemoryInfo(sizeof(className), __FILE__, __LINE__, typeid(className).name())); \
+}
+
+// 申请无参构造的类或者基础数据类型数组内存
+#define NEW_ARRAY(className, count, ptr)		\
+NORMAL_NEW_ARRAY(className, count, ptr)			\
+if(ptr != NULL)									\
+{												\
+	txMemoryTrace::insertPtr(ptr, MemoryInfo(sizeof(className)* count, __FILE__, __LINE__, typeid(className).name())); \
+}
+
+// 释放TRACE_NEW申请的内存
+#define DELETE(ptr)					\
+MemoryTrace::erasePtr((void*)ptr);\
+NORMAL_DELETE(ptr)
+
+// 释放TRACE_NEW_ARRAY申请的内存
+#define DELETE_ARRAY(ptr)			\
+MemoryTrace::erasePtr((void*)ptr);\
+NORMAL_DELETE_ARRAY(ptr)
+#else
+#define NEW(className, ptr, ...)			NORMAL_NEW(className, ptr, __VA_ARGS__)
+#define NEW_ARRAY(className, count, ptr)	NORMAL_NEW_ARRAY(className, count, ptr)
+#define DELETE(ptr)							NORMAL_DELETE(ptr)
+#define DELETE_ARRAY(ptr)					NORMAL_DELETE_ARRAY(ptr)
+#endif
+
+// 基础数据类型简化定义
+typedef unsigned char byte;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+typedef unsigned long long ullong;
+
+#include "myVector.h"
+#include "myMap.h"
+#include "mySet.h"
+#include "myStack.h"
+#include "myQueue.h"
+#include "mySafeVector.h"
+#include "mySafeMap.h"
+#include "mySafeSet.h"
+#include "Vector2.h"
+#include "Vector2Int.h"
+#include "Vector2UShort.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "ServerCallback.h"
+#include "ServerEnum.h"
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 // 结构体定义

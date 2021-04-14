@@ -1,10 +1,10 @@
 #ifndef _MONSTER_IMAGE_H_
 #define _MONSTER_IMAGE_H_
 
-#include "ServerDefine.h"
+#include "ServerBase.h"
 #include "ImageDefine.h"
 
-class MonsterImage
+class MonsterImage : public ServerBase
 {
 public:
 	int mPosX;

@@ -1,5 +1,4 @@
 ﻿#include "CustomThread.h"
-#include "Utility.h"
 #include "txMemoryTrace.h"
 #include "TimeLock.h"
 
@@ -33,7 +32,7 @@ void CustomThread::start(CustomThreadCallback callback, void* args, int frameTim
 		//LOG_ERROR("线程已经启动 : %s", mName.c_str());
 		return;
 	}
-	mTimeLock = TRACE_NEW(TimeLock, mTimeLock, frameTimeMS);
+	mTimeLock = NEW(TimeLock, mTimeLock, frameTimeMS);
 	mRunning = true;
 	mCallback = callback;
 	mArgs = args;
@@ -49,7 +48,7 @@ void CustomThread::stop()
 	while (!mIsBackground && !mFinish) {}
 	CLOSE_THREAD(mThread);
 	mCallback = NULL;
-	TRACE_DELETE(mTimeLock);
+	DELETE(mTimeLock);
 	//LOG_INFO("线程退出完成! 线程名 : %s", mName.c_str());
 }
 

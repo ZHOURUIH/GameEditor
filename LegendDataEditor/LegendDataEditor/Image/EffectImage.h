@@ -1,11 +1,11 @@
 ﻿#ifndef _EFFECT_IMAGE_H_
 #define _EFFECT_IMAGE_H_
 
-#include "ServerDefine.h"
+#include "ServerBase.h"
 #include "ImageDefine.h"
 
 // 一个特效的一帧
-class EffectImage
+class EffectImage : public ServerBase
 {
 public:
 	string mLabel;

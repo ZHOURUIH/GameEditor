@@ -9,7 +9,7 @@
 class EffectAnim
 {
 public:
-	txVector<EffectImage> mImageFrame;
+	myVector<EffectImage> mImageFrame;
 public:
 	void addFrame(const EffectImage& frame)
 	{
@@ -21,7 +21,7 @@ public:
 class EffectSet
 {
 public:
-	txMap<int, EffectAnim> mDirectionAction;
+	myMap<int, EffectAnim> mDirectionAction;
 public:
 	void addFrame(const EffectImage& frame)
 	{
@@ -37,7 +37,7 @@ public:
 class EffectImageGroup
 {
 public:
-	txMap<string, EffectSet> mAllEffect;
+	myMap<string, EffectSet> mAllEffect;
 public:
 	void addImage(const EffectImage& image)
 	{

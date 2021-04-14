@@ -1,6 +1,4 @@
 ﻿#include "txSerializer.h"
-#include "Utility.h"
-#include "txMemoryTrace.h"
 
 txSerializer::txSerializer(bool traceMemery)
 :
@@ -26,7 +24,7 @@ txSerializer::~txSerializer()
 	{
 		if (mTraceMemery)
 		{
-			TRACE_DELETE_ARRAY(mBuffer);
+			DELETE_ARRAY(mBuffer);
 		}
 		else
 		{
@@ -50,7 +48,7 @@ void txSerializer::readBuffer(char* buffer, int readLen)
 	{
 		return;
 	}
-	BinaryUtility::readBuffer(mBuffer, mBufferSize, mIndex, buffer, readLen);
+	BinaryUtility::readBuffer(mBuffer, mBufferSize, mIndex, buffer, readLen, readLen);
 	//// 如果存放数据的空间大小不足以放入当前要读取的数据,则只拷贝能容纳的长度,但是下标应该正常跳转
 	//if (bufferSize <= readLen)
 	//{
@@ -85,7 +83,7 @@ void txSerializer::readString(char* str)
 	{
 		return;
 	}
-	BinaryUtility::readBuffer(mBuffer, mBufferSize, mIndex, str, readLen);
+	BinaryUtility::readBuffer(mBuffer, mBufferSize, mIndex, str, readLen, readLen);
 	str[readLen] = 0;
 }
 
@@ -105,7 +103,7 @@ void txSerializer::resizeBuffer(int maxSize)
 	char* newBuffer = NULL;
 	if (mTraceMemery)
 	{
-		newBuffer = TRACE_NEW_ARRAY(char, newSize, newBuffer);
+		newBuffer = NEW_ARRAY(char, newSize, newBuffer);
 	}
 	else
 	{
@@ -114,7 +112,7 @@ void txSerializer::resizeBuffer(int maxSize)
 	memcpy(newBuffer, mBuffer, mBufferSize);
 	if (mTraceMemery)
 	{
-		TRACE_DELETE_ARRAY(mBuffer);
+		DELETE_ARRAY(mBuffer);
 	}
 	else
 	{
@@ -131,7 +129,7 @@ void txSerializer::createBuffer(int bufferSize)
 		mBufferSize = bufferSize;
 		if (mTraceMemery)
 		{
-			mBuffer = TRACE_NEW_ARRAY(char, mBufferSize, mBuffer);
+			mBuffer = NEW_ARRAY(char, mBufferSize, mBuffer);
 		}
 		else
 		{

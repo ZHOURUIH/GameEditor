@@ -2,7 +2,7 @@
 #define _TX_SERIALIZER_H_
 
 #include "ServerDefine.h"
-#include "Utility.h"
+#include "SystemUtility.h"
 
 // 用于生成二进制文件的
 class txSerializer
@@ -57,7 +57,7 @@ protected:
 			//LOG_ERROR("buffer is NULL! can not read");
 			return false;
 		}
-		if (mIndex + readLen > mBufferSize)
+		if ((int)mIndex + readLen > mBufferSize)
 		{
 			//LOG_ERROR("read buffer out of range! cur index : %d, buffer size : %d, read length : %d", mIndex, mBufferSize, readLen);
 			return false;
@@ -78,7 +78,7 @@ protected:
 			createBuffer(writeLen);
 		}
 		// 如果缓冲区已经不够用了,则重新扩展缓冲区
-		else if (writeLen + mIndex > mBufferSize)
+		else if (writeLen + (int)mIndex > mBufferSize)
 		{
 			resizeBuffer(writeLen + mIndex);
 		}
@@ -86,7 +86,7 @@ protected:
 	}
 protected:
 	char* mBuffer;
-	int mIndex;
+	uint mIndex;
 	int mBufferSize;
 	bool mWriteFlag;	// 如果为真,则表示是只写的,为假则表示是只读的
 	bool mTraceMemery;	// 为真则表示所有的内存申请释放操作都会被记录下来,为假则不会被记录,在记录内存跟踪信息时会用到

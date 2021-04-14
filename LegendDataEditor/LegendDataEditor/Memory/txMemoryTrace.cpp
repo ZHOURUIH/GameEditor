@@ -4,17 +4,17 @@
 #include "TimeLock.h"
 #include "CustomThread.h"
 
-txMap<void*, MemoryInfo> txMemoryTrace::mMemoryInfo;
-txMap<string, MemoryType> txMemoryTrace::mMemoryType;
-txSet<string> txMemoryTrace::mIgnoreClass;
-txSet<string> txMemoryTrace::mIgnoreClassKeyword;
-txSet<string> txMemoryTrace::mShowOnlyDetailClass;
-txSet<string> txMemoryTrace::mShowOnlyStatisticsClass;
+myMap<void*, MemoryInfo> txMemoryTrace::mMemoryInfo;
+myMap<string, MemoryType> txMemoryTrace::mMemoryType;
+mySet<string> txMemoryTrace::mIgnoreClass;
+mySet<string> txMemoryTrace::mIgnoreClassKeyword;
+mySet<string> txMemoryTrace::mShowOnlyDetailClass;
+mySet<string> txMemoryTrace::mShowOnlyStatisticsClass;
 bool txMemoryTrace::mShowDetail = true;
 bool txMemoryTrace::mShowStatistics = true;
 bool txMemoryTrace::mShowTotalCount = true;
 bool txMemoryTrace::mShowAll = true;
-txMap<string, int> txMemoryTrace::mMemoryTypeIndex;
+myMap<string, int> txMemoryTrace::mMemoryTypeIndex;
 MemoryType txMemoryTrace::mMemoryList[MAX_COUNT];
 int txMemoryTrace::mMemoryCount = 0;
 txShareMemoryServer* txMemoryTrace::mShareMemoryServer = NULL;

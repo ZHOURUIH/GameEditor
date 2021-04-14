@@ -9,7 +9,7 @@
 class HumanActionAnim
 {
 public:
-	txVector<HumanImage> mImageFrame;
+	myVector<HumanImage> mImageFrame;
 public:
 	void addFrame(const HumanImage& frame)
 	{
@@ -37,7 +37,7 @@ public:
 class HumanImageGroup
 {
 public:
-	txMap<string, HumanActionSet> mAllAction;
+	myMap<string, HumanActionSet> mAllAction;
 public:
 	void addImage(const HumanImage& image)
 	{

@@ -1,11 +1,11 @@
-#include <iostream>
-#include "Utility.h"
-#include "SQLite.h"
-
-using namespace std;
+#include "ImageUtility.h"
 
 void main()
 {
+	// 各个工具函数的初始化需要优先调用
+	MathUtility::initMathUtility();
+	StringUtility::initStringUtility();
+
 	while (true)
 	{
 		cout << "选择功能\n\

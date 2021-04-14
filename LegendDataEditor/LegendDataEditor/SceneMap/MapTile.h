@@ -23,7 +23,7 @@ public:
 	bool mHasDoor;// 是否有门
 	bool mDoorOpen;// 门是否开启
 	bool mHasAni;// 是否有动画
-	txVector<int> mObjectContainsUnreachableIndexList;   // 如果该坐标包含对象物体,则表示该对象物体所覆盖的所有不可行走的坐标
+	myVector<int> mObjectContainsUnreachableIndexList;   // 如果该坐标包含对象物体,则表示该对象物体所覆盖的所有不可行走的坐标
 	int mUnreachGroupID;
 	int mIndex;
 	bool mAroundChecked;

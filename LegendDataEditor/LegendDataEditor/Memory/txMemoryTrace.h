@@ -5,7 +5,6 @@
 #include "ThreadLock.h"
 #include "MemoryInfo.h"
 #include "CustomThread.h"
-#include "MemoryDefine.h"
 #ifdef TRACE_MEMORY
 #include "txShareMemoryServer.h"
 // 注意事项!!!
@@ -27,26 +26,26 @@ public:
 	static bool writeMemoryTrace(void* args);
 	static void insertPtr(void* ptr, MemoryInfo& info);
 	static void erasePtr(void* ptr);
-	static void setIgnoreClass(txSet<string>& classList){mIgnoreClass = classList;}
-	static void setIgnoreClassKeyword(txSet<string>& classList){mIgnoreClassKeyword = classList;}
-	static void setShowOnlyDetailClass(txSet<string>& classList){mShowOnlyDetailClass = classList;}
-	static void setShowOnlyStatisticsClass(txSet<string>& classList){mShowOnlyStatisticsClass = classList;}
+	static void setIgnoreClass(mySet<string>& classList){mIgnoreClass = classList;}
+	static void setIgnoreClassKeyword(mySet<string>& classList){mIgnoreClassKeyword = classList;}
+	static void setShowOnlyDetailClass(mySet<string>& classList){mShowOnlyDetailClass = classList;}
+	static void setShowOnlyStatisticsClass(mySet<string>& classList){mShowOnlyStatisticsClass = classList;}
 	static void setShowDetail(bool show){ mShowDetail = show; }
 	static void setShowStatistics(bool show){ mShowStatistics = show; }
 	static void setShowAll(bool show){ mShowAll = show; }
 protected:
 	// 内存申请总信息表
-	static txMap<void*, MemoryInfo> mMemoryInfo;
+	static myMap<void*, MemoryInfo> mMemoryInfo;
 	// 内存统计信息表, first是类型名,second的first是该类型名的内存个数,second是该类型占得总内存大小,单位是字节
-	static txMap<string, MemoryType> mMemoryType;
+	static myMap<string, MemoryType> mMemoryType;
 	// 不显示该列表中类型的内存详细信息以及统计信息
-	static txSet<string> mIgnoreClass;
+	static mySet<string> mIgnoreClass;
 	// 如果详细信息以及统计信息中的类型包含该列表中的关键字,则不显示
-	static txSet<string> mIgnoreClassKeyword;
+	static mySet<string> mIgnoreClassKeyword;
 	// 只显示该列表中类型的内存详细信息,如果该列表为空,则全部显示
-	static txSet<string> mShowOnlyDetailClass;
+	static mySet<string> mShowOnlyDetailClass;
 	// 只显示该列表中类型的内存统计信息,如果该列表为空,则全部显示
-	static txSet<string> mShowOnlyStatisticsClass;
+	static mySet<string> mShowOnlyStatisticsClass;
 	// 是否显示总信息表的详细内容
 	static bool mShowDetail;
 	// 是否显示内存统计信息
@@ -58,7 +57,7 @@ protected:
 	static ThreadLock mInfoLock;
 	static CustomThread* mThread;
 	static txShareMemoryServer* mShareMemoryServer;
-	static txMap<string, int> mMemoryTypeIndex;
+	static myMap<string, int> mMemoryTypeIndex;
 	static MemoryType mMemoryList[MAX_COUNT];
 	static int mMemoryCount;
 };

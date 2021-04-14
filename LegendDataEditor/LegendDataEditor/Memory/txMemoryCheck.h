@@ -10,7 +10,7 @@ public:
 	static void unusePtr(void* ptr);
 	static bool canAccess(void* ptr);
 protected:
-	static txSet<void*> mUsedPtrs;
+	static mySet<void*> mUsedPtrs;
 	static ThreadLock mLock;
 };
 

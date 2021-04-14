@@ -26,7 +26,7 @@ protected:
 	volatile std::atomic<bool> mRunning;
 	volatile std::atomic<bool> mFinish;
 	volatile std::atomic<bool> mPause;
-	TX_THREAD mThread;					// 为了兼容windows和linux,句柄不写为原子类型
+	MY_THREAD mThread;					// 为了兼容windows和linux,句柄不写为原子类型
 	CustomThreadCallback mCallback;
 	TimeLock* mTimeLock;
 	string mName;

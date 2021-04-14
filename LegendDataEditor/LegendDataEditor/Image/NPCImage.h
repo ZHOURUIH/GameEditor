@@ -1,10 +1,10 @@
 #ifndef _NPC_IMAGE_H_
 #define _NPC_IMAGE_H_
 
-#include "ServerDefine.h"
+#include "ServerBase.h"
 #include "ImageDefine.h"
 
-class NPCImage
+class NPCImage : public ServerBase
 {
 public:
 	int mPosX;

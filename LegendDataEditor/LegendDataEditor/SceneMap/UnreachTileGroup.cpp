@@ -4,7 +4,7 @@
 #include "MapTile.h"
 #include "ImageUtility.h"
 
-txVector<int> UnreachTileGroup::mTempAddTriangles;
+myVector<int> UnreachTileGroup::mTempAddTriangles;
 
 UnreachTileGroup::UnreachTileGroup(int id, MapData* mapData)
 {
@@ -22,7 +22,7 @@ void UnreachTileGroup::addTile(MapTile* tile)
 	mTileList.insert(tile->mIndex, tile);
 	if (!mTriangleList.contains(tile->mIndex))
 	{
-		mTriangleList.insert(tile->mIndex, txVector<int>());
+		mTriangleList.insert(tile->mIndex, myVector<int>());
 	}
 	// 一个地砖中右8个三角形,左上角0,右上角1,右下角2,左下角3,中心左上角4,中心右上角5,中心右下角6,中心左下角7
 	for (int i = 0; i < (int)TILE_TRIANGLE::MAX; ++i)
@@ -174,11 +174,11 @@ bool UnreachTileGroup::generateAddTriangle(int x, int y)
 		}
 		if (!mTriangleList.contains(tileIndex))
 		{
-			mTriangleList.insert(tileIndex, txVector<int>());
+			mTriangleList.insert(tileIndex, myVector<int>());
 		}
 		// 设置组ID,将三角形加入到不可行走区域中
 		mMapData->mTileList[tileIndex].mUnreachGroupID = mGroupID;
-		for (int i = 0; i < mTempAddTriangles.size(); ++i)
+		FOR_I(mTempAddTriangles.size())
 		{
 			if (!mTriangleList[tileIndex].contains(mTempAddTriangles[i]))
 			{

@@ -1,5 +1,5 @@
 ﻿#include "ThreadLock.h"
-#include "Utility.h"
+#include "SystemUtility.h"
 
 void ThreadLock::waitForUnlock(const char* file, int line)
 {

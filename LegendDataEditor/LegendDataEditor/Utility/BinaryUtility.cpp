@@ -1,15 +1,7 @@
-#include "BinaryUtility.h"
+ï»¿#include "BinaryUtility.h"
 
-unsigned short BinaryUtility::crc16_table[256];
-
-void BinaryUtility::initCRCTable()
+const ushort BinaryUtility::crc16_table[256]
 {
-	if (crc16_table[1] == 0xC0C1)
-	{
-		return;
-	}
-	unsigned short temp[256] =
-	{
 		0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
 		0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
 		0xCC01, 0x0CC0, 0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
@@ -42,18 +34,45 @@ void BinaryUtility::initCRCTable()
 		0x4E00, 0x8EC1, 0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
 		0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641,
 		0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
-	};
-	for (int i = 0; i < 256; ++i)
-	{
-		crc16_table[i] = temp[i];
-	}
-}
-// ¼ÆËã 16½øÖÆµÄcÖÐ1µÄ¸öÊý
-int BinaryUtility::crc_check(char c)
+};
+
+const uint BinaryUtility::mStringType = (uint)typeid(string).hash_code();
+const uint BinaryUtility::mBoolType = (uint)typeid(bool).hash_code();
+const uint BinaryUtility::mCharType = (uint)typeid(char).hash_code();
+const uint BinaryUtility::mByteType = (uint)typeid(unsigned char).hash_code();
+const uint BinaryUtility::mShortType = (uint)typeid(short).hash_code();
+const uint BinaryUtility::mUShortType = (uint)typeid(ushort).hash_code();
+const uint BinaryUtility::mIntType = (uint)typeid(int).hash_code();
+const uint BinaryUtility::mUIntType = (uint)typeid(uint).hash_code();
+const uint BinaryUtility::mFloatType = (uint)typeid(float).hash_code();
+const uint BinaryUtility::mULLongType = (uint)typeid(ullong).hash_code();
+const uint BinaryUtility::mBoolsType = (uint)typeid(bool*).hash_code();
+const uint BinaryUtility::mCharsType = (uint)typeid(char*).hash_code();
+const uint BinaryUtility::mBytesType = (uint)typeid(byte*).hash_code();
+const uint BinaryUtility::mShortsType = (uint)typeid(short*).hash_code();
+const uint BinaryUtility::mUShortsType = (uint)typeid(ushort*).hash_code();
+const uint BinaryUtility::mIntsType = (uint)typeid(int*).hash_code();
+const uint BinaryUtility::mUIntsType = (uint)typeid(uint*).hash_code();
+const uint BinaryUtility::mFloatsType = (uint)typeid(float*).hash_code();
+const uint BinaryUtility::mULLongsType = (uint)typeid(ullong*).hash_code();
+const uint BinaryUtility::mBoolListType = (uint)typeid(myVector<bool>).hash_code();
+const uint BinaryUtility::mCharListType = (uint)typeid(myVector<char>).hash_code();
+const uint BinaryUtility::mByteListType = (uint)typeid(myVector<byte>).hash_code();
+const uint BinaryUtility::mShortListType = (uint)typeid(myVector<short>).hash_code();
+const uint BinaryUtility::mUShortListType = (uint)typeid(myVector<ushort>).hash_code();
+const uint BinaryUtility::mIntListType = (uint)typeid(myVector<int>).hash_code();
+const uint BinaryUtility::mUIntListType = (uint)typeid(myVector<uint>).hash_code();
+const uint BinaryUtility::mFloatListType = (uint)typeid(myVector<float>).hash_code();
+const uint BinaryUtility::mULLongListType = (uint)typeid(myVector<ullong>).hash_code();
+const uint BinaryUtility::mVector2IntType = (uint)typeid(Vector2Int).hash_code();
+const uint BinaryUtility::mVector2UShortType = (uint)typeid(Vector2UShort).hash_code();
+
+// è®¡ç®— 16è¿›åˆ¶çš„cä¸­1çš„ä¸ªæ•°
+uint BinaryUtility::crc_check(char c)
 {
-	int count = 0;
-	int bitCount = sizeof(char) * 8;
-	for (int i = 0; i < bitCount; ++i)
+	uint count = 0;
+	uint bitCount = sizeof(char) * 8;
+	FOR_I(bitCount)
 	{
 		if ((c & (0x01 << i)) > 0)
 		{
@@ -62,36 +81,86 @@ int BinaryUtility::crc_check(char c)
 	}
 	return count;
 }
-unsigned short BinaryUtility::crc16(unsigned short crc, char* buffer, int len, int bufferOffset)
+ushort BinaryUtility::crc16(ushort crc, char* buffer, uint len, uint bufferOffset)
 {
-	for (int i = 0; i < len; ++i)
+	FOR_I(len)
 	{
 		crc = crc16_byte(crc, buffer[bufferOffset + i]);
 	}
 	return crc;
 }
-unsigned short BinaryUtility::crc16_byte(unsigned short crc, unsigned char data)
+ushort BinaryUtility::crc16_byte(ushort crc, byte data)
 {
-	initCRCTable();
-	return (unsigned short)((crc >> 8) ^ crc16_table[(crc ^ data) & 0xFF]);
+	return (ushort)((crc >> 8) ^ crc16_table[(crc ^ data) & 0xFF]);
 }
-bool BinaryUtility::readBuffer(char* buffer, int bufferSize, int& index, char* dest, int readSize)
+bool BinaryUtility::readBuffer(char* buffer, uint bufferSize, uint& index, char* dest, uint destSize, uint readSize)
 {
 	if (bufferSize < index + readSize)
 	{
 		return false;
 	}
-	memcpy(dest, buffer + index, readSize);
-	index += readSize;
+	if (readSize > 0)
+	{
+		MEMCPY(dest, destSize, buffer + index, readSize);
+		index += readSize;
+	}
 	return true;
 }
-bool BinaryUtility::writeBuffer(char* buffer, int bufferSize, int& destOffset, char* source, int writeSize)
+bool BinaryUtility::writeBuffer(char* buffer, uint bufferSize, uint& destOffset, char* source, uint writeSize)
 {
 	if (bufferSize < destOffset + writeSize)
 	{
 		return false;
 	}
-	memcpy(buffer + destOffset, source, writeSize);
-	destOffset += writeSize;
+	if (writeSize > 0)
+	{
+		MEMCPY(buffer + destOffset, bufferSize - destOffset, source, writeSize);
+		destOffset += writeSize;
+	}
 	return true;
+}
+
+bool BinaryUtility::writeVector2(char* buffer, uint bufferSize, uint& index, Vector2& value, bool inverse)
+{
+	bool ret = write(buffer, bufferSize, index, value.x, inverse);
+	ret = write(buffer, bufferSize, index, value.y, inverse) && ret;
+	return ret;
+}
+
+bool BinaryUtility::writeVector3(char* buffer, uint bufferSize, uint& index, Vector3& value, bool inverse)
+{
+	bool ret = write(buffer, bufferSize, index, value.x, inverse);
+	ret = write(buffer, bufferSize, index, value.y, inverse) && ret;
+	ret = write(buffer, bufferSize, index, value.z, inverse) && ret;
+	return ret;
+}
+
+bool BinaryUtility::writeVector4(char* buffer, uint bufferSize, uint& index, Vector4& value, bool inverse)
+{
+	bool ret = write(buffer, bufferSize, index, value.x, inverse);
+	ret = write(buffer, bufferSize, index, value.y, inverse) && ret;
+	ret = write(buffer, bufferSize, index, value.z, inverse) && ret;
+	ret = write(buffer, bufferSize, index, value.w, inverse) && ret;
+	return ret;
+}
+
+void BinaryUtility::readVector2(char* buffer, uint bufferSize, uint& index, Vector2& value, bool inverse)
+{
+	value.x = read<float>(buffer, bufferSize, index, inverse);
+	value.y = read<float>(buffer, bufferSize, index, inverse);
+}
+
+void BinaryUtility::readVector3(char* buffer, uint bufferSize, uint& index, Vector3& value, bool inverse)
+{
+	value.x = read<float>(buffer, bufferSize, index, inverse);
+	value.y = read<float>(buffer, bufferSize, index, inverse);
+	value.z = read<float>(buffer, bufferSize, index, inverse);
+}
+
+void BinaryUtility::readVector4(char* buffer, uint bufferSize, uint& index, Vector4& value, bool inverse)
+{
+	value.x = read<float>(buffer, bufferSize, index, inverse);
+	value.y = read<float>(buffer, bufferSize, index, inverse);
+	value.z = read<float>(buffer, bufferSize, index, inverse);
+	value.w = read<float>(buffer, bufferSize, index, inverse);
 }

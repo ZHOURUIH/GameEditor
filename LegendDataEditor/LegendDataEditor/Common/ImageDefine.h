@@ -9,7 +9,7 @@ struct WIXFileImageInfo
 {
 	char    mStrHeader[44];     // 库文件标题 'WEMADE Entertainment inc.' WIL文件头
 	int     mIndexCount;   // 图片数量
-	txVector<int>    mPositionList;    // 起始位置数组,长度等于nIndexCount
+	myVector<int>    mPositionList;    // 起始位置数组,长度等于nIndexCount
 };
 
 struct WILFileHeader
@@ -21,7 +21,7 @@ struct WILFileHeader
 	unsigned char* mColor;
 	~WILFileHeader()
 	{
-		TRACE_DELETE_ARRAY(mColor);
+		DELETE_ARRAY(mColor);
 	}
 };
 const int ColorPadIndex = 44 + 12;

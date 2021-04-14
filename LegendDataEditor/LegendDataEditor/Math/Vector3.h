@@ -1,4 +1,4 @@
-#ifndef _VECTOR3_H_
+﻿#ifndef _VECTOR3_H_
 #define _VECTOR3_H_
 
 struct Vector3
@@ -22,34 +22,46 @@ public:
 		y = 0.0f;
 		z = 0.0f;
 	}
+	Vector3(float xx, float yy)
+	{
+		x = xx;
+		y = yy;
+		z = 0.0f;
+	}
 	Vector3(float xx, float yy, float zz)
 	{
 		x = xx;
 		y = yy;
 		z = zz;
 	}
-	Vector3 operator+(const Vector3& that)
+	void clear()
+	{
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
+	}
+	Vector3 operator+(const Vector3& that) const
 	{
 		return Vector3(x + that.x, y + that.y, z + that.z);
 	}
-	Vector3 operator-(const Vector3& that)
+	Vector3 operator-(const Vector3& that) const
 	{
 		return Vector3(x - that.x, y - that.y, z - that.z);
 	}
-	Vector3 operator*(float that)
+	Vector3 operator*(float that) const
 	{
 		return Vector3(x * that, y * that, z * that);
 	}
-	Vector3 operator/(float that)
+	Vector3 operator/(float that) const
 	{
 		float value = 1.0f / that;
 		return Vector3(x * value, y * value, z * value);
 	}
 	Vector3& operator+=(const Vector3& that)
 	{
-		x -= that.x;
-		y -= that.y;
-		z -= that.z;
+		x += that.x;
+		y += that.y;
+		z += that.z;
 		return *this;
 	}
 	Vector3& operator-=(const Vector3& that)
@@ -58,6 +70,10 @@ public:
 		y -= that.y;
 		z -= that.z;
 		return *this;
+	}
+	Vector3 operator-() const
+	{
+		return Vector3(-x, -y, -z);
 	}
 };
 

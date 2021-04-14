@@ -1,9 +1,9 @@
 ﻿#ifndef _SERVER_BASE_H_
 #define _SERVER_BASE_H_
 
-#include "ServerDefine.h"
+#include "SystemUtility.h"
 
-class ServerBase
+class ServerBase : public SystemUtility
 {
 public:
 	static void notifyConstructDone();

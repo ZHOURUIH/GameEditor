@@ -9,7 +9,7 @@
 class NPCActionAnim
 {
 public:
-	txVector<NPCImage> mImageFrame;
+	myVector<NPCImage> mImageFrame;
 public:
 	void addFrame(const NPCImage& frame)
 	{
@@ -37,7 +37,7 @@ public:
 class NPCImageGroup
 {
 public:
-	txMap<string, NPCActionSet> mAllAction;
+	myMap<string, NPCActionSet> mAllAction;
 public:
 	void addImage(const NPCImage& image)
 	{

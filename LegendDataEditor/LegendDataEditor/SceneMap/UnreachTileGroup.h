@@ -18,11 +18,11 @@ protected:
 public:
 	MapData* mMapData;
 	int mGroupID;
-	txMap<int, MapTile*> mTileList;
-	txMap<int, txVector<int>> mTriangleList;    // key是地砖下标,value是该地砖中的三角形下标
+	myMap<int, MapTile*> mTileList;
+	myMap<int, myVector<int>> mTriangleList;    // key是地砖下标,value是该地砖中的三角形下标
 	int mMapHeight;
 	int mMapWidth;
-	static txVector<int> mTempAddTriangles;
+	static myVector<int> mTempAddTriangles;
 };
 
 #endif

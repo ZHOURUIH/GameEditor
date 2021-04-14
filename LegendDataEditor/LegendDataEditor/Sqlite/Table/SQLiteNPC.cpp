@@ -1,27 +1,23 @@
 ﻿#include "SQLiteNPC.h"
-#include "Utility.h"
-#include "SQLiteDataReader.h"
-#include "SQLite.h"
 
-string NPCData::COL_ID = "ID";
-string NPCData::COL_MAP_ID = "MapID";
-string NPCData::COL_MAP_NAME = "MapName";
-string NPCData::COL_POS = "Pos";
-string NPCData::COL_NAME = "Name";
-string NPCData::COL_APPERANCE = "Apperance";
-string NPCData::COL_STAND_ANIMATION_0 = "StandAnimation0";
-string NPCData::COL_STAND_ANIMATION_1 = "StandAnimation1";
-string NPCData::COL_GOODS = "Goods";
-string NPCData::COL_MAIN_TEXT = "MainText";
+myVector<TDNPC*> SQLiteNPC::mEmptyList;
 
-void SQLiteNPC::query(txVector<NPCData*>& dataList)
+const myVector<TDNPC*>& SQLiteNPC::querySceneNPC(int sceneID)
 {
-	doSelect(dataList);
-}
-bool SQLiteNPC::insert(const NPCData& data)
-{
-	string valueString;
-	data.insert(valueString);
-	StringUtility::removeLastComma(valueString);
-	return doInsert(valueString);
+	auto curDataList = mSceneNPCList.get(sceneID);
+	if (curDataList != NULL)
+	{
+		return *curDataList;
+	}
+	myVector<TDNPC*> dataList;
+	auto& allData = queryAll();
+	FOREACH_CONST(iter, allData)
+	{
+		if (iter->second->mMapID != sceneID)
+		{
+			continue;
+		}
+		dataList.push_back(iter->second);
+	}
+	return mSceneNPCList.tryInsert(sceneID, dataList);
 }

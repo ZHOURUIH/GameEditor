@@ -9,7 +9,7 @@
 class WeaponActionAnim
 {
 public:
-	txVector<WeaponImage> mImageFrame;
+	myVector<WeaponImage> mImageFrame;
 public:
 	void addFrame(const WeaponImage& frame)
 	{
@@ -37,7 +37,7 @@ public:
 class WeaponImageGroup
 {
 public:
-	txMap<string, WeaponActionSet> mAllAction;
+	myMap<string, WeaponActionSet> mAllAction;
 public:
 	void addImage(const WeaponImage& image)
 	{

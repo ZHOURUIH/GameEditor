@@ -1,5 +1,5 @@
 ﻿#include "TimeLock.h"
-#include "Utility.h"
+#include "SystemUtility.h"
 
 TimeLock::TimeLock(long frameTimeMS, long forceSleep)
 {

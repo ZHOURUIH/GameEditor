@@ -1,13 +1,12 @@
 ﻿#include "txMemoryCheck.h"
-#include "Utility.h"
 
-txSet<void*> txMemoryCheck::mUsedPtrs;
+mySet<void*> txMemoryCheck::mUsedPtrs;
 ThreadLock txMemoryCheck::mLock;
 
 void txMemoryCheck::usePtr(void* ptr)
 {
 	LOCK(mLock);
-	if (!mUsedPtrs.insert(ptr).second)
+	if (!mUsedPtrs.insert(ptr))
 	{
 		//LOG_ERROR("ptr is in use!");
 	}
@@ -17,7 +16,7 @@ void txMemoryCheck::usePtr(void* ptr)
 void txMemoryCheck::unusePtr(void* ptr)
 {
 	LOCK(mLock);
-	if (!mUsedPtrs.tryErase(ptr))
+	if (!mUsedPtrs.erase(ptr))
 	{
 		//LOG_ERROR("not find ptr! can not unuse it!");
 	}

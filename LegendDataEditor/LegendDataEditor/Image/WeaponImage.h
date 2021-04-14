@@ -1,10 +1,10 @@
 #ifndef _WEAPON_IMAGE_H_
 #define _WEAPON_IMAGE_H_
 
-#include "ServerDefine.h"
+#include "ServerBase.h"
 #include "ImageDefine.h"
 
-class WeaponImage
+class WeaponImage : public ServerBase
 {
 public:
 	string mLabel;

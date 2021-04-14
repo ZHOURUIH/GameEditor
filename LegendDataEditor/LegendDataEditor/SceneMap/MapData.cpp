@@ -3,41 +3,40 @@
 #include "txSerializer.h"
 #include "MapHeader.h"
 #include "UnreachTileGroup.h"
+#include "ImageUtility.h"
 
 MapData::MapData()
 {
-	TRACE_NEW(MapHeader, mHeader);
+	NEW(MapHeader, mHeader);
 	mTileList = NULL;
 	mIDSeed = 0;
 }
 
 void MapData::destroy()
 {
-	auto iter = mUnreachTileGroupList.begin();
-	auto iterEnd = mUnreachTileGroupList.end();
-	for (; iter != iterEnd; ++iter)
+	FOREACH(iter, mUnreachTileGroupList)
 	{
-		TRACE_DELETE(iter->second);
+		DELETE(iter->second);
 	}
-	TRACE_DELETE_ARRAY(mTileList);
-	TRACE_DELETE(mHeader);
+	END(mUnreachTileGroupList);
+	DELETE_ARRAY(mTileList);
+	DELETE(mHeader);
 }
 
 void MapData::readFile(const string& fileName)
 {
 	mFileName = fileName;
-	int fileSize = 0;
-	char* fileBuffer = FileUtility::openBinaryFile(fileName, &fileSize);
+	FileContent file;
+	FileUtility::openBinaryFile(fileName, file);
 	int offset = 0;
-	mHeader->parseHeader(fileBuffer, fileSize, offset);
+	mHeader->parseHeader(file.mBuffer, file.mFileSize, offset);
 	int tileCount = mHeader->mWidth * mHeader->mHeight;
-	TRACE_NEW_ARRAY(MapTile, tileCount, mTileList);
+	NEW_ARRAY(MapTile, tileCount, mTileList);
 	for (int i = 0; i < tileCount; ++i)
 	{
 		mTileList[i].mIndex = i;
-		mTileList[i].parseTile(fileBuffer, fileSize, offset);
+		mTileList[i].parseTile(file.mBuffer, file.mFileSize, offset);
 	}
-	TRACE_DELETE_ARRAY(fileBuffer);
 	// 计算所有的不可行走区域组
 	findAllUnreachGroupNoRecursive();
 }
@@ -66,7 +65,7 @@ void MapData::writeUnreachFile()
 			// 每个地砖最多有8个三角形,所以可以使用一个字节的8位表示是否有指定的三角形
 			byte triangleFlag = 0;
 			auto& triangleList = iterTile->second;
-			for (int i = 0; i < triangleList.size(); ++i)
+			FOR_I(triangleList.size())
 			{
 				triangleFlag |= 1 << triangleList[i];
 			}
@@ -145,7 +144,7 @@ int MapData::getTileUnreachIndex(int x, int y)
 void MapData::findAllUnreachGroupNoRecursive()
 {
 	// 找出所有的不可行走的地砖
-	txSet<int> tileNearList;
+	mySet<int> tileNearList;
 	int tileCount = mHeader->mWidth * mHeader->mHeight;
 	for (int i = 0; i < tileCount; ++i)
 	{
@@ -162,9 +161,9 @@ void MapData::findAllUnreachGroupNoRecursive()
 			break;
 		}
 		int id = ++mIDSeed;
-		UnreachTileGroup* group = TRACE_NEW(UnreachTileGroup, group, id, this);
+		UnreachTileGroup* group = NEW(UnreachTileGroup, group, id, this);
 		mUnreachTileGroupList.insert(id, group);
-		txVector<int> waitForList;
+		myVector<int> waitForList;
 		waitForList.push_back(*tileNearList.begin());
 		while (true) 
 		{
@@ -173,12 +172,12 @@ void MapData::findAllUnreachGroupNoRecursive()
 				break;
 			}
 			// 设置地砖组ID,并且将该地砖周围的地砖加入到待检查列表中
-			txVector<int> nextWaitForList;
+			myVector<int> nextWaitForList;
 			int waitForCount = waitForList.size();
 			for (int i = 0; i < waitForCount; ++i)
 			{
 				assignGroupID(&(mTileList[waitForList[i]]), group, nextWaitForList);
-				tileNearList.tryErase(waitForList[i]);
+				tileNearList.erase(waitForList[i]);
 			}
 			waitForList = nextWaitForList;
 		}
@@ -192,7 +191,7 @@ void MapData::findAllUnreachGroupNoRecursive()
 	}
 }
 
-void MapData::assignGroupID(MapTile* tile, UnreachTileGroup* group, txVector<int>& waitForList)
+void MapData::assignGroupID(MapTile* tile, UnreachTileGroup* group, myVector<int>& waitForList)
 {
 	tile->mUnreachGroupID = group->mGroupID;
 	group->addTile(tile);

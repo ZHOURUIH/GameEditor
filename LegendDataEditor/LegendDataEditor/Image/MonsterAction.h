@@ -9,7 +9,7 @@
 class MonsterActionAnim
 {
 public:
-	txVector<MonsterImage> mImageFrame;
+	myVector<MonsterImage> mImageFrame;
 public:
 	void addFrame(const MonsterImage& frame)
 	{
@@ -37,7 +37,7 @@ public:
 class MonsterImageGroup
 {
 public:
-	txMap<string, MonsterActionSet> mAllAction;
+	myMap<string, MonsterActionSet> mAllAction;
 public:
 	void addImage(const MonsterImage& image)
 	{

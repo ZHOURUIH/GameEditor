@@ -1,10 +1,10 @@
 #ifndef _HUMAN_IMAGE_H_
 #define _HUMAN_IMAGE_H_
 
-#include "ServerDefine.h"
+#include "ServerBase.h"
 #include "ImageDefine.h"
 
-class HumanImage
+class HumanImage : public ServerBase
 {
 public:
 	string mLabel;

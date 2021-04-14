@@ -12,7 +12,7 @@ public:
 	string mFileName;
 	MapHeader* mHeader;
 	MapTile* mTileList;
-	txMap<int, UnreachTileGroup*> mUnreachTileGroupList;    // key是组ID,value是该组中所有的地砖
+	myMap<int, UnreachTileGroup*> mUnreachTileGroupList;    // key是组ID,value是该组中所有的地砖
 	int mIDSeed;
 public:
 	MapData();
@@ -26,7 +26,7 @@ protected:
 	//void findGroup(int x, int y, int id);
 	// 非递归方式查找不可行走区域组
 	void findAllUnreachGroupNoRecursive();
-	void assignGroupID(MapTile* tile, UnreachTileGroup* group, txVector<int>& waitForList);
+	void assignGroupID(MapTile* tile, UnreachTileGroup* group, myVector<int>& waitForList);
 	int getTileUnreachIndex(int x, int y);
 };
 

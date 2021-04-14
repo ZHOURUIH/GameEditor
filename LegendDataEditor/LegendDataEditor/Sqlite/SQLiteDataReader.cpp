@@ -1,9 +1,7 @@
 ﻿#include "SQLiteDataReader.h"
-#include "Utility.h"
 
-SQLiteDataReader::SQLiteDataReader(sqlite3_stmt* pStmt)
-	:m_pStmt(pStmt)
-{}
+SQLiteDataReader::SQLiteDataReader(sqlite3_stmt* stmt)
+	:mStmt(stmt){}
 
 SQLiteDataReader::~SQLiteDataReader()
 {
@@ -12,11 +10,11 @@ SQLiteDataReader::~SQLiteDataReader()
 
 bool SQLiteDataReader::read()
 {
-	if (m_pStmt == NULL)
+	if (mStmt == NULL)
 	{
 		return false;
 	}
-	if (sqlite3_step(m_pStmt) != SQLITE_ROW)
+	if (sqlite3_step(mStmt) != SQLITE_ROW)
 	{
 		return false;
 	}
@@ -25,51 +23,63 @@ bool SQLiteDataReader::read()
 
 void SQLiteDataReader::close()
 {
-	if (m_pStmt != NULL)
+	if (mStmt != NULL)
 	{
-		sqlite3_finalize(m_pStmt);
-		m_pStmt = NULL;
+		sqlite3_finalize(mStmt);
+		mStmt = NULL;
 	}
 }
 int SQLiteDataReader::getColumnCount()
 {
-	return sqlite3_column_count(m_pStmt);
+	return sqlite3_column_count(mStmt);
 }
 
-string SQLiteDataReader::getColumnName(int col)
+const char* SQLiteDataReader::getColumnName(int col)
 {
-	return string(sqlite3_column_name(m_pStmt, col));
+	return sqlite3_column_name(mStmt, col);
 }
 
 SQLITE_DATATYPE SQLiteDataReader::getDataType(int col)
 {
-	return (SQLITE_DATATYPE)sqlite3_column_type(m_pStmt, col);
+	return (SQLITE_DATATYPE)sqlite3_column_type(mStmt, col);
+}
+
+void SQLiteDataReader::getString(int col, string& str, bool toANSI)
+{
+	if (toANSI)
+	{
+		str = UTF8ToANSI((char*)sqlite3_column_text(mStmt, col));
+	}
+	else
+	{
+		str = (char*)sqlite3_column_text(mStmt, col);
+	}
 }
 
 string SQLiteDataReader::getString(int col, bool toANSI)
 {
 	if (toANSI)
 	{
-		return StringUtility::UTF8ToANSI((char*)sqlite3_column_text(m_pStmt, col));
+		return UTF8ToANSI((char*)sqlite3_column_text(mStmt, col));
 	}
 	else
 	{
-		return string((char*)sqlite3_column_text(m_pStmt, col));
+		return (char*)sqlite3_column_text(mStmt, col);
 	}
 }
 
 int SQLiteDataReader::getInt(int col)
 {
-	return sqlite3_column_int(m_pStmt, col);
+	return sqlite3_column_int(mStmt, col);
 }
 
 float SQLiteDataReader::getFloat(int col)
 {
-	return (float)sqlite3_column_double(m_pStmt, col);
+	return (float)sqlite3_column_double(mStmt, col);
 }
 
 const char* SQLiteDataReader::getBlob(int col, int& length)
 {
-	length = sqlite3_column_bytes(m_pStmt, col);
-	return (const char*)sqlite3_column_blob(m_pStmt, col);
+	length = sqlite3_column_bytes(mStmt, col);
+	return (const char*)sqlite3_column_blob(mStmt, col);
 }

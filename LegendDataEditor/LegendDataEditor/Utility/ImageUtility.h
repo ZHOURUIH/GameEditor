@@ -8,10 +8,10 @@
 #include "MonsterAction.h"
 #include "EffectFrame.h"
 #include "NPCAction.h"
-#include "SystemUtility.h"
+#include "FrameUtility.h"
 
 class SQLite;
-class ImageUtility : public SystemUtility
+class ImageUtility : public FrameUtility
 {
 public:
 	static void encodePNG(const string& path, unsigned char* color, int width, int height, FREE_IMAGE_FORMAT format);
@@ -25,7 +25,7 @@ public:
 	static void renameImageToAnim(const string& path);
 	static void splitPositionFile(const string& path, bool pathWithFileName = false);
 	static void renameByDirection(const string& path, int directionCount, bool autoGroup = true);
-	static void sortByFileNumber(txVector<string>& fileList, bool fileNameIsNumber = true);
+	static void sortByFileNumber(myVector<string>& fileList, bool fileNameIsNumber = true);
 	static void autoMoveFile(const string& path, int groupSize);
 	static void autoGroupHumanImage(const string& path);
 	static void autoGroupWingImage(const string& path);
@@ -52,12 +52,12 @@ public:
 	static void writeAnimFrameSQLite(bool updateOnly);
 	static int tileIndexToTileX(int index, int mapHeight);
 	static int tileIndexToTileY(int index, int mapHeight);
-	static Vector2i tileIndexToTilePos(int index, int mapHeight);
+	static Vector2Int tileIndexToTilePos(int index, int mapHeight);
 	static int tilePosToTileIndex(int x, int y, int mapHeight);
 	static int pixelPosToTileX(Vector2 pixelPos, int mapHeight, int mapWidth);
 	static int pixelPosToTileY(Vector2 pixelPos, int mapHeight);
 	static int pixelPosToTileIndex(Vector2 pixelPos, int mapHeight, int mapWidth);
-	static Vector2i pixelPosToTilePos(Vector2 pixelPos, int mapHeight);
+	static Vector2Int pixelPosToTilePos(Vector2 pixelPos, int mapHeight);
 	static Vector2 tilePosToPixelPos(int x, int y, int mapHeight);
 	static Vector2 tileIndexToPixelPos(int index, int mapHeight);
 	static TILE_TRIANGLE pixelPosToTriangleIndex(Vector2 pos);
