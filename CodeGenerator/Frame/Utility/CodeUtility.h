@@ -17,7 +17,8 @@ protected:
 public:
 	static bool initPath();
 	static MySQLMember parseMySQLMemberLine(string line);
-	static SQLiteMember parseSQLiteMemberLine(string line);
+	// ignoreClientServer表示是否忽略客户端服务器标签,true则表示会忽略,将全部字段定义都导出
+	static SQLiteMember parseSQLiteMemberLine(string line, bool ignoreClientServer);
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName);

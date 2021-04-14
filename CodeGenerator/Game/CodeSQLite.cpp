@@ -18,6 +18,16 @@ void CodeSQLite::generate()
 	fileContent = UTF8ToANSI(fileContent.c_str(), true);
 	myVector<string> lines;
 	split(fileContent.c_str(), "\r\n", lines);
+	if (lines.size() == 0)
+	{
+		return;
+	}
+	bool ignoreClientServer = false;
+	if (lines[0] == "IgnoreClientServer")
+	{
+		lines.erase(0);
+		ignoreClientServer = true;
+	}
 	bool packetStart = false;
 	myVector<SQLiteInfo> sqliteInfoList;
 	SQLiteInfo tempInfo;
@@ -52,17 +62,24 @@ void CodeSQLite::generate()
 			{
 				tempInfo.mSQLiteName = lastLine.substr(0, startIndex);
 				string owner = lastLine.substr(startIndex, endIndex - startIndex + 1);
-				if (owner == "[Client]")
+				if (ignoreClientServer)
 				{
-					tempInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
-				}
-				else if (owner == "[Server]")
-				{
-					tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
+					tempInfo.mOwner = SQLITE_OWNER::BOTH;
 				}
 				else
 				{
-					tempInfo.mOwner = SQLITE_OWNER::BOTH;
+					if (owner == "[Client]")
+					{
+						tempInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+					}
+					else if (owner == "[Server]")
+					{
+						tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
+					}
+					else
+					{
+						tempInfo.mOwner = SQLITE_OWNER::BOTH;
+					}
 				}
 			}
 			else
@@ -88,7 +105,7 @@ void CodeSQLite::generate()
 		}
 		if (packetStart)
 		{
-			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line));
+			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line, ignoreClientServer));
 		}
 	}
 	// 删除C++的代码文件
@@ -192,7 +209,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 
 	// TDSQLite.cpp
 	string source;
-	line(source, "#include \"GameHeader.h\"");
+	line(source, "#include \"" + dataClassName + ".h\"");
 	line(source, "");
 	FOR_I(memberCount)
 	{

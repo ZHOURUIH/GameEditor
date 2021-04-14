@@ -45,7 +45,7 @@ MySQLMember CodeUtility::parseMySQLMemberLine(string line)
 	return memberInfo;
 }
 
-SQLiteMember CodeUtility::parseSQLiteMemberLine(string line)
+SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientServer)
 {
 	SQLiteMember memberInfo;
 	// 该字段属于客户端还是服务器
@@ -54,17 +54,24 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line)
 	if (rectStartIndex >= 0 && rectEndIndex >= 0)
 	{
 		string owner = line.substr(rectStartIndex, rectEndIndex - rectStartIndex + 1);
-		if (owner == "[Client]")
+		if (ignoreClientServer)
 		{
-			memberInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
-		}
-		else if (owner == "[Server]")
-		{
-			memberInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
+			memberInfo.mOwner = SQLITE_OWNER::BOTH;
 		}
 		else
 		{
-			memberInfo.mOwner = SQLITE_OWNER::BOTH;
+			if (owner == "[Client]")
+			{
+				memberInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+			}
+			else if (owner == "[Server]")
+			{
+				memberInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
+			}
+			else
+			{
+				memberInfo.mOwner = SQLITE_OWNER::BOTH;
+			}
 		}
 		line.erase(rectStartIndex, rectEndIndex - rectStartIndex + 1);
 	}
