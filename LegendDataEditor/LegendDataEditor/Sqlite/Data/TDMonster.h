@@ -52,6 +52,7 @@ public:
 public:
 	int mID;
 	string mName;
+	string mDescription;
 	ushort mTemplateID;
 	byte mStrengthType;
 	byte mBehaviourTree;
@@ -97,7 +98,7 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mName, Name);
-		registeParamEmpty(Description);
+		registeParam(mDescription, Description);
 		registeParam(mTemplateID, TemplateID);
 		registeParam(mStrengthType, StrengthType);
 		registeParam(mBehaviourTree, BehaviourTree);

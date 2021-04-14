@@ -23,9 +23,12 @@ public:
 public:
 	int mID;
 	string mName;
+	string mDescription;
 	byte mItemType;
 	byte mQuality;
 	ushort mLevel;
+	ushort mShape;
+	string mIcon;
 	uint mPrice;
 	float mCD;
 	short mCDGroup;
@@ -37,12 +40,12 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mName, Name);
-		registeParamEmpty(Description);
+		registeParam(mDescription, Description);
 		registeParam(mItemType, ItemType);
 		registeParam(mQuality, Quality);
 		registeParam(mLevel, Level);
-		registeParamEmpty(Shape);
-		registeParamEmpty(Icon);
+		registeParam(mShape, Shape);
+		registeParam(mIcon, Icon);
 		registeParam(mPrice, Price);
 		registeParam(mCD, CD);
 		registeParam(mCDGroup, CDGroup);

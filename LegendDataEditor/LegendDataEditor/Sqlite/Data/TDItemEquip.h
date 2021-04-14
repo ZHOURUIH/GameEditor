@@ -48,9 +48,12 @@ public:
 	static const char* SkillAttackIncrease;
 public:
 	int mID;
+	string mName;
+	string mDisplayFormat;
 	byte mEquipType;
 	byte mJob;
 	byte mSex;
+	byte mAniCount;
 	ushort mDuraMax;
 	ushort mMinPhysicsDefence;
 	ushort mMaxPhysicsDefence;
@@ -88,12 +91,12 @@ public:
 	TDItemEquip()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(DisplayFormat);
+		registeParam(mName, Name);
+		registeParam(mDisplayFormat, DisplayFormat);
 		registeParam(mEquipType, EquipType);
 		registeParam(mJob, Job);
 		registeParam(mSex, Sex);
-		registeParamEmpty(AniCount);
+		registeParam(mAniCount, AniCount);
 		registeParam(mDuraMax, DuraMax);
 		registeParam(mMinPhysicsDefence, MinPhysicsDefence);
 		registeParam(mMaxPhysicsDefence, MaxPhysicsDefence);

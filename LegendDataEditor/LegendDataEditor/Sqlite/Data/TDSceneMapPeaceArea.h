@@ -14,6 +14,7 @@ public:
 public:
 	int mID;
 	ushort mMapID;
+	string mMapName;
 	Vector2UShort mPosition;
 	Vector2UShort mSize;
 public:
@@ -21,7 +22,7 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mMapID, MapID);
-		registeParamEmpty(MapName);
+		registeParam(mMapName, MapName);
 		registeParam(mPosition, Position);
 		registeParam(mSize, Size);
 	}

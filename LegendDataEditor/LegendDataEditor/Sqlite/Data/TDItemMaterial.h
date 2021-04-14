@@ -11,12 +11,14 @@ public:
 	static const char* StdMode;
 public:
 	int mID;
+	string mName;
+	byte mStdMode;
 public:
 	TDItemMaterial()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(StdMode);
+		registeParam(mName, Name);
+		registeParam(mStdMode, StdMode);
 	}
 };
 

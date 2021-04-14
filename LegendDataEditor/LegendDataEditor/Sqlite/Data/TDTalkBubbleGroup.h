@@ -17,6 +17,8 @@ public:
 public:
 	int mID;
 	byte mType;
+	string mOwnerName;
+	string mDescription;
 	myVector<ushort> mTalkBubble;
 	myVector<ushort> mWeight;
 	float mTalkCD;
@@ -26,8 +28,8 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mType, Type);
-		registeParamEmpty(OwnerName);
-		registeParamEmpty(Description);
+		registeParam(mOwnerName, OwnerName);
+		registeParam(mDescription, Description);
 		registeParam(mTalkBubble, TalkBubble);
 		registeParam(mWeight, Weight);
 		registeParam(mTalkCD, TalkCD);

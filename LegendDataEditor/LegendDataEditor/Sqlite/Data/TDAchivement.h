@@ -16,6 +16,9 @@ public:
 	static const char* Reward;
 public:
 	int mID;
+	string mName;
+	string mDescription;
+	string mDetailDescription;
 	byte mCategory;
 	ushort mType;
 	int mTargetValue;
@@ -24,9 +27,9 @@ public:
 	TDAchivement()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(Description);
-		registeParamEmpty(DetailDescription);
+		registeParam(mName, Name);
+		registeParam(mDescription, Description);
+		registeParam(mDetailDescription, DetailDescription);
 		registeParam(mCategory, Category);
 		registeParam(mType, Type);
 		registeParam(mTargetValue, TargetValue);

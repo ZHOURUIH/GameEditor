@@ -12,13 +12,16 @@ public:
 	static const char* VolumeScale;
 public:
 	int mID;
+	string mFileName;
+	string mDesc;
+	float mVolumeScale;
 public:
 	TDSound()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(FileName);
-		registeParamEmpty(Desc);
-		registeParamEmpty(VolumeScale);
+		registeParam(mFileName, FileName);
+		registeParam(mDesc, Desc);
+		registeParam(mVolumeScale, VolumeScale);
 	}
 };
 

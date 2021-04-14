@@ -28,11 +28,15 @@ public:
 	static const char* FinishTalk;
 public:
 	int mID;
+	string mName;
 	byte mType;
 	ushort mLevel;
 	ushort mPreMission;
 	myVector<ushort> mAcceptCondition;
 	byte mAcceptType;
+	string mMainText;
+	string mFinishText;
+	string mSurpriseFinishText;
 	myVector<ushort> mFinishCondition;
 	myVector<byte> mSaveFinishCondition;
 	myVector<ushort> mSurpriseCondition;
@@ -47,15 +51,15 @@ public:
 	TDMission()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
+		registeParam(mName, Name);
 		registeParam(mType, Type);
 		registeParam(mLevel, Level);
 		registeParam(mPreMission, PreMission);
 		registeParam(mAcceptCondition, AcceptCondition);
 		registeParam(mAcceptType, AcceptType);
-		registeParamEmpty(MainText);
-		registeParamEmpty(FinishText);
-		registeParamEmpty(SurpriseFinishText);
+		registeParam(mMainText, MainText);
+		registeParam(mFinishText, FinishText);
+		registeParam(mSurpriseFinishText, SurpriseFinishText);
 		registeParam(mFinishCondition, FinishCondition);
 		registeParam(mSaveFinishCondition, SaveFinishCondition);
 		registeParam(mSurpriseCondition, SurpriseCondition);

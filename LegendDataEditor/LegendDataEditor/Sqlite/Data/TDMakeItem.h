@@ -14,16 +14,18 @@ public:
 	static const char* CountList;
 public:
 	int mID;
+	string mItemName;
 	ushort mItem;
+	string mMaterialNameList;
 	myVector<ushort> mMaterialList;
 	myVector<byte> mCountList;
 public:
 	TDMakeItem()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(ItemName);
+		registeParam(mItemName, ItemName);
 		registeParam(mItem, Item);
-		registeParamEmpty(MaterialNameList);
+		registeParam(mMaterialNameList, MaterialNameList);
 		registeParam(mMaterialList, MaterialList);
 		registeParam(mCountList, CountList);
 	}

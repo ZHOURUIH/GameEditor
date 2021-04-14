@@ -17,20 +17,26 @@ public:
 	static const char* AnimationPosition;
 public:
 	int mID;
+	string mDescription;
+	string mAtlas;
+	string mAnimation;
 	byte mFrameCount;
+	bool mLoop;
 	float mAnimationSpeed;
+	byte mDirectionCount;
+	myVector<ushort> mAnimationPosition;
 public:
 	TDAnimation()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Description);
-		registeParamEmpty(Atlas);
-		registeParamEmpty(Animation);
+		registeParam(mDescription, Description);
+		registeParam(mAtlas, Atlas);
+		registeParam(mAnimation, Animation);
 		registeParam(mFrameCount, FrameCount);
-		registeParamEmpty(Loop);
+		registeParam(mLoop, Loop);
 		registeParam(mAnimationSpeed, AnimationSpeed);
-		registeParamEmpty(DirectionCount);
-		registeParamEmpty(AnimationPosition);
+		registeParam(mDirectionCount, DirectionCount);
+		registeParam(mAnimationPosition, AnimationPosition);
 	}
 };
 

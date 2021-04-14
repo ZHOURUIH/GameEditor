@@ -1,7 +1,5 @@
 ﻿#include "SQLiteSceneMapPeaceArea.h"
 
-myVector<TDSceneMapPeaceArea*> SQLiteSceneMapPeaceArea::mEmptyList;
-
 const myVector<TDSceneMapPeaceArea*>& SQLiteSceneMapPeaceArea::queryScenePeachArea(int sceneID)
 {
 	auto curDataList = mScenePeaceAreaList.get(sceneID);

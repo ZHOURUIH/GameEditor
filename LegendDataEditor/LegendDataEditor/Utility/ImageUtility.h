@@ -10,6 +10,11 @@
 #include "NPCAction.h"
 #include "FrameUtility.h"
 
+#define NEW_SQLITE(classType, tableVar, tableName)\
+classType tableVar;	\
+tableVar.setTableName(tableName);\
+tableVar.init(string("../media/DataBase/") + tableName + ".db");\
+
 class SQLite;
 class ImageUtility : public FrameUtility
 {

@@ -10,11 +10,12 @@ public:
 	static const char* Name;
 public:
 	int mID;
+	string mName;
 public:
 	TDCondition()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
+		registeParam(mName, Name);
 	}
 };
 

@@ -16,6 +16,7 @@ public:
 	int mID;
 	byte mShopType;
 	ushort mParam;
+	string mName;
 	ushort mItem;
 	uint mPriceGold;
 public:
@@ -24,7 +25,7 @@ public:
 		registeParam(mID, ID);
 		registeParam(mShopType, ShopType);
 		registeParam(mParam, Param);
-		registeParamEmpty(Name);
+		registeParam(mName, Name);
 		registeParam(mItem, Item);
 		registeParam(mPriceGold, PriceGold);
 	}

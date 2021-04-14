@@ -24,9 +24,14 @@ public:
 	static const char* Priority;
 public:
 	int mID;
+	string mName;
+	string mDescription;
 	bool mActiveAbility;
+	string mIcon;
+	ushort mAnimation;
 	myVector<ushort> mSkillDetail;
 	byte mMaxLevel;
+	bool mFaceTarget;
 	bool mIsDamage;
 	byte mEffectiveCamp;
 	short mJob;
@@ -38,14 +43,14 @@ public:
 	TDPlayerSkill()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(Description);
+		registeParam(mName, Name);
+		registeParam(mDescription, Description);
 		registeParam(mActiveAbility, ActiveAbility);
-		registeParamEmpty(Icon);
-		registeParamEmpty(Animation);
+		registeParam(mIcon, Icon);
+		registeParam(mAnimation, Animation);
 		registeParam(mSkillDetail, SkillDetail);
 		registeParam(mMaxLevel, MaxLevel);
-		registeParamEmpty(FaceTarget);
+		registeParam(mFaceTarget, FaceTarget);
 		registeParam(mIsDamage, IsDamage);
 		registeParam(mEffectiveCamp, EffectiveCamp);
 		registeParam(mJob, Job);

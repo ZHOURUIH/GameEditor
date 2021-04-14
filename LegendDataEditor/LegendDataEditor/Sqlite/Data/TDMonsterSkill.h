@@ -25,8 +25,15 @@ public:
 	static const char* DamageType;
 public:
 	int mID;
+	string mName;
+	string mDescription;
 	bool mActiveAbility;
 	ushort mAnimation;
+	ushort mFireEffect;
+	ushort mAdditiveEffect;
+	float mAdditiveEffectTime;
+	ushort mFireSound;
+	bool mFaceTarget;
 	bool mIsDamage;
 	byte mEffectiveCamp;
 	float mRange;
@@ -38,15 +45,15 @@ public:
 	TDMonsterSkill()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(Description);
+		registeParam(mName, Name);
+		registeParam(mDescription, Description);
 		registeParam(mActiveAbility, ActiveAbility);
 		registeParam(mAnimation, Animation);
-		registeParamEmpty(FireEffect);
-		registeParamEmpty(AdditiveEffect);
-		registeParamEmpty(AdditiveEffectTime);
-		registeParamEmpty(FireSound);
-		registeParamEmpty(FaceTarget);
+		registeParam(mFireEffect, FireEffect);
+		registeParam(mAdditiveEffect, AdditiveEffect);
+		registeParam(mAdditiveEffectTime, AdditiveEffectTime);
+		registeParam(mFireSound, FireSound);
+		registeParam(mFaceTarget, FaceTarget);
 		registeParam(mIsDamage, IsDamage);
 		registeParam(mEffectiveCamp, EffectiveCamp);
 		registeParam(mRange, Range);

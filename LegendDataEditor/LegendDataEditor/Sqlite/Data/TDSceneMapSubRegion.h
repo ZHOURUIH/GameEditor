@@ -13,6 +13,7 @@ public:
 	static const char* Size;
 public:
 	int mID;
+	string mName;
 	ushort mMapID;
 	Vector2UShort mPosition;
 	Vector2UShort mSize;
@@ -20,7 +21,7 @@ public:
 	TDSceneMapSubRegion()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
+		registeParam(mName, Name);
 		registeParam(mMapID, MapID);
 		registeParam(mPosition, Position);
 		registeParam(mSize, Size);

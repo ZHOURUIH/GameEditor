@@ -13,14 +13,16 @@ public:
 	static const char* NotifyOthers;
 public:
 	int mID;
+	string mName;
+	string mDescription;
 	bool mNotifyPlayer;
 	bool mNotifyOthers;
 public:
 	TDBuff()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(Description);
+		registeParam(mName, Name);
+		registeParam(mDescription, Description);
 		registeParam(mNotifyPlayer, NotifyPlayer);
 		registeParam(mNotifyOthers, NotifyOthers);
 	}

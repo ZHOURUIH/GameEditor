@@ -15,18 +15,22 @@ public:
 	static const char* AniCount;
 public:
 	int mID;
+	string mName;
+	string mDisplayFormat;
+	byte mStdMode;
 	myVector<ushort> mBuffList;
 	ushort mMaxUseCount;
+	byte mAniCount;
 public:
 	TDItemConsumable()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(DisplayFormat);
-		registeParamEmpty(StdMode);
+		registeParam(mName, Name);
+		registeParam(mDisplayFormat, DisplayFormat);
+		registeParam(mStdMode, StdMode);
 		registeParam(mBuffList, BuffList);
 		registeParam(mMaxUseCount, MaxUseCount);
-		registeParamEmpty(AniCount);
+		registeParam(mAniCount, AniCount);
 	}
 };
 

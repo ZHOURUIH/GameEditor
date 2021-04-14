@@ -21,6 +21,7 @@ public:
 	Vector2UShort mPos;
 	byte mDirection;
 	ushort mMonsterID;
+	string mMonsterLabel;
 	ushort mRadius;
 	ushort mCount;
 	ushort mRefreshInterval;
@@ -32,7 +33,7 @@ public:
 		registeParam(mPos, Pos);
 		registeParam(mDirection, Direction);
 		registeParam(mMonsterID, MonsterID);
-		registeParamEmpty(MonsterLabel);
+		registeParam(mMonsterLabel, MonsterLabel);
 		registeParam(mRadius, Radius);
 		registeParam(mCount, Count);
 		registeParam(mRefreshInterval, RefreshInterval);

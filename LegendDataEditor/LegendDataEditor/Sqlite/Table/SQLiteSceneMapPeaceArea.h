@@ -9,8 +9,6 @@ public:
 	const myVector<TDSceneMapPeaceArea*>& queryScenePeachArea(int sceneID);
 protected:
 	myMap<int, myVector<TDSceneMapPeaceArea*>> mScenePeaceAreaList;
-private:
-	static myVector<TDSceneMapPeaceArea*> mEmptyList;
 };
 
 #endif

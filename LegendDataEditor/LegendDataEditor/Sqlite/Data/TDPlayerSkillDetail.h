@@ -32,15 +32,22 @@ public:
 	static const char* Param3;
 public:
 	int mID;
+	string mName;
+	string mDescription;
 	ushort mSkillID;
 	myVector<ushort> mBullet;
 	myVector<byte> mFireTime;
+	ushort mFireEffect;
+	ushort mAdditiveEffect;
+	float mAdditiveEffectTime;
 	myVector<ushort> mFireBuff;
+	ushort mFireSound;
 	ushort mRange;
 	ushort mUseMP;
 	ushort mPlayerLevel;
 	ushort mLevelExp;
 	myVector<ushort> mLevelUpCost;
+	myVector<string> mLevelUpCostName;
 	myVector<ushort> mLevelUpCostCount;
 	ushort mFireCostObject;
 	byte mFireCostCount;
@@ -52,22 +59,22 @@ public:
 	TDPlayerSkillDetail()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
-		registeParamEmpty(Description);
+		registeParam(mName, Name);
+		registeParam(mDescription, Description);
 		registeParam(mSkillID, SkillID);
 		registeParam(mBullet, Bullet);
 		registeParam(mFireTime, FireTime);
-		registeParamEmpty(FireEffect);
-		registeParamEmpty(AdditiveEffect);
-		registeParamEmpty(AdditiveEffectTime);
+		registeParam(mFireEffect, FireEffect);
+		registeParam(mAdditiveEffect, AdditiveEffect);
+		registeParam(mAdditiveEffectTime, AdditiveEffectTime);
 		registeParam(mFireBuff, FireBuff);
-		registeParamEmpty(FireSound);
+		registeParam(mFireSound, FireSound);
 		registeParam(mRange, Range);
 		registeParam(mUseMP, UseMP);
 		registeParam(mPlayerLevel, PlayerLevel);
 		registeParam(mLevelExp, LevelExp);
 		registeParam(mLevelUpCost, LevelUpCost);
-		registeParamEmpty(LevelUpCostName);
+		registeParam(mLevelUpCostName, LevelUpCostName);
 		registeParam(mLevelUpCostCount, LevelUpCostCount);
 		registeParam(mFireCostObject, FireCostObject);
 		registeParam(mFireCostCount, FireCostCount);

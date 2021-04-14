@@ -14,14 +14,17 @@ public:
 public:
 	int mID;
 	string mFileName;
+	short mMiniMap;
+	ushort mWidth;
+	ushort mHeight;
 public:
 	TDSceneMapFile()
 	{
 		registeParam(mID, ID);
 		registeParam(mFileName, FileName);
-		registeParamEmpty(MiniMap);
-		registeParamEmpty(Width);
-		registeParamEmpty(Height);
+		registeParam(mMiniMap, MiniMap);
+		registeParam(mWidth, Width);
+		registeParam(mHeight, Height);
 	}
 };
 

@@ -12,13 +12,14 @@ public:
 	static const char* MainCity;
 public:
 	int mID;
+	string mLabel;
 	ushort mMapFile;
 	ushort mMainCity;
 public:
 	TDSceneMap()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Label);
+		registeParam(mLabel, Label);
 		registeParam(mMapFile, MapFile);
 		registeParam(mMainCity, MainCity);
 	}

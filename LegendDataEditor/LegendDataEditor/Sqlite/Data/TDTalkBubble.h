@@ -14,14 +14,16 @@ public:
 public:
 	int mID;
 	ushort mGroup;
+	string mOwnerName;
+	string mContent;
 	float mShowTime;
 public:
 	TDTalkBubble()
 	{
 		registeParam(mID, ID);
 		registeParam(mGroup, Group);
-		registeParamEmpty(OwnerName);
-		registeParamEmpty(Content);
+		registeParam(mOwnerName, OwnerName);
+		registeParam(mContent, Content);
 		registeParam(mShowTime, ShowTime);
 	}
 };

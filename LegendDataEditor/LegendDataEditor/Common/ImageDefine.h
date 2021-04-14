@@ -138,4 +138,11 @@ enum class TILE_TRIANGLE : byte
 const int TILE_WIDTH = 48;				// 地砖的像素宽度
 const int TILE_HEIGHT = 32;				// 地砖的像素高度
 
+// 商品所属的商店类型
+enum class GOODS_SHOP_TYPE : byte
+{
+	NPC,			// NPC商店
+	GUILD,			// 行会商店
+};
+
 #endif

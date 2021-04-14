@@ -19,6 +19,10 @@ public:
 		END(mDataList);
 		mDataList.clear();
 	}
+	void deleteAll()
+	{
+		doDelete("");
+	}
 	T* query(uint id, bool showError = true)
 	{
 		LOCK(mThreadLock);
@@ -69,19 +73,34 @@ public:
 	}
 	bool insert(T& data)
 	{
-		string valueString;
-		data.insert(valueString);
-		removeLastComma(valueString);
-		return doInsert(valueString.c_str());
+		array<char, 512> valueString{ 0 };
+		data.insert(valueString.data(), valueString.size());
+		return doInsert(valueString.data());
 	}
 	bool update(const T& data) 
 	{
-		string updateString;
-		data.update(updateString);
-		removeLastComma(updateString);
+		array<char, 512> updateString{ 0 };
+		data.update(updateString.data(), updateString.size());
 		array<char, 128> conditionStr{ 0 };
-		appendConditionInt(conditionStr, ServerDefine::SQLITE_ID_COL, data.mID);
-		return doUpdate(updateString.c_str(), conditionStr.data());
+		appendConditionInt(conditionStr, "ID", data.mID);
+		return doUpdate(updateString.data(), conditionStr.data());
+	}
+	int getMaxID()
+	{
+		int maxID = 0;
+		array<char, 128> queryStr{ 0 };
+		STRCAT2(queryStr, "SELECT max(ID) FROM ", mTableName);
+		SQLiteDataReader* reader = executeQuery(queryStr.data());
+		if (reader != NULL)
+		{
+			while (reader->read())
+			{
+				maxID = stringToInt(reader->getString(0));
+				break;
+			}
+			releaseReader(reader);
+		}
+		return maxID;
 	}
 protected:
 	void queryAllData(myVector<T*>& dataList)
@@ -91,7 +110,7 @@ protected:
 	bool queryData(uint id, T& data)
 	{
 		array<char, 128> conditionString{ 0 };
-		appendConditionInt(conditionString, ServerDefine::SQLITE_ID_COL, id);
+		appendConditionInt(conditionString, "ID", id);
 		return doSelect(data, conditionString.data());
 	}
 	int doQueryCount()
@@ -127,6 +146,19 @@ protected:
 			STRCAT2(queryStr, "SELECT * FROM ", mTableName);
 		}
 		return parseReader(executeQuery(queryStr.data()), data);
+	}
+	bool doDelete(const char* conditionString = NULL)
+	{
+		array<char, 256> queryStr{ 0 };
+		if (conditionString != NULL)
+		{
+			STRCAT4(queryStr, "DELETE FROM ", mTableName, " WHERE ", conditionString);
+		}
+		else
+		{
+			STRCAT2(queryStr, "DELETE FROM ", mTableName);
+		}
+		return executeNonQuery(queryStr.data());
 	}
 };
 

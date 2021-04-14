@@ -14,6 +14,7 @@ public:
 public:
 	int mID;
 	int mMapID;
+	string mMapName;
 	Vector2UShort mTilePosition;
 	byte mEvent;
 public:
@@ -21,7 +22,7 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mMapID, MapID);
-		registeParamEmpty(MapName);
+		registeParam(mMapName, MapName);
 		registeParam(mTilePosition, TilePosition);
 		registeParam(mEvent, Event);
 	}

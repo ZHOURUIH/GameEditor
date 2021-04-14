@@ -36,9 +36,20 @@ public:
 	static const char* SceneContinuously;
 public:
 	int mID;
+	string mDescription;
+	ushort mBulletEffect;
+	byte mBulletEffectPoint;
+	ushort mAdditiveEffect;
+	ushort mExplosionEffect;
+	ushort mHitEffect;
 	myVector<float> mAdditiveProperty;
 	ushort mAttack;
 	float mAttackPercent;
+	float mBulletSpeed;
+	Vector2UShort mBulletSize;
+	Vector2UShort mBulletCenter;
+	bool mRotateBullet;
+	ushort mBulletSound;
 	float mExistTime;
 	float mDestroyTime;
 	myVector<ushort> mHitTargetBuff;
@@ -46,25 +57,30 @@ public:
 	myVector<ushort> mWillHitTargetBuff;
 	byte mSingleTarget;
 	byte mTrackTarget;
+	byte mFaceDirection;
 	byte mTargetPointType;
+	byte mHitPoint;
+	byte mBulletPath;
+	bool mFaceForward;
+	bool mSceneContinuously;
 public:
 	TDSkillBullet()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Description);
-		registeParamEmpty(BulletEffect);
-		registeParamEmpty(BulletEffectPoint);
-		registeParamEmpty(AdditiveEffect);
-		registeParamEmpty(ExplosionEffect);
-		registeParamEmpty(HitEffect);
+		registeParam(mDescription, Description);
+		registeParam(mBulletEffect, BulletEffect);
+		registeParam(mBulletEffectPoint, BulletEffectPoint);
+		registeParam(mAdditiveEffect, AdditiveEffect);
+		registeParam(mExplosionEffect, ExplosionEffect);
+		registeParam(mHitEffect, HitEffect);
 		registeParam(mAdditiveProperty, AdditiveProperty);
 		registeParam(mAttack, Attack);
 		registeParam(mAttackPercent, AttackPercent);
-		registeParamEmpty(BulletSpeed);
-		registeParamEmpty(BulletSize);
-		registeParamEmpty(BulletCenter);
-		registeParamEmpty(RotateBullet);
-		registeParamEmpty(BulletSound);
+		registeParam(mBulletSpeed, BulletSpeed);
+		registeParam(mBulletSize, BulletSize);
+		registeParam(mBulletCenter, BulletCenter);
+		registeParam(mRotateBullet, RotateBullet);
+		registeParam(mBulletSound, BulletSound);
 		registeParam(mExistTime, ExistTime);
 		registeParam(mDestroyTime, DestroyTime);
 		registeParam(mHitTargetBuff, HitTargetBuff);
@@ -72,12 +88,12 @@ public:
 		registeParam(mWillHitTargetBuff, WillHitTargetBuff);
 		registeParam(mSingleTarget, SingleTarget);
 		registeParam(mTrackTarget, TrackTarget);
-		registeParamEmpty(FaceDirection);
+		registeParam(mFaceDirection, FaceDirection);
 		registeParam(mTargetPointType, TargetPointType);
-		registeParamEmpty(HitPoint);
-		registeParamEmpty(BulletPath);
-		registeParamEmpty(FaceForward);
-		registeParamEmpty(SceneContinuously);
+		registeParam(mHitPoint, HitPoint);
+		registeParam(mBulletPath, BulletPath);
+		registeParam(mFaceForward, FaceForward);
+		registeParam(mSceneContinuously, SceneContinuously);
 	}
 };
 

@@ -23,18 +23,24 @@ public:
 		return false;
 	}
 	template<typename Key, typename Value>
-	static void keyToList(const myMap<Key, Value>& map, myVector<Key>& keys)
+	static void keyToList(const myMap<Key, Value>& map, myVector<Key>& keys, bool clear)
 	{
-		keys.clear();
+		if (clear)
+		{
+			keys.clear();
+		}
 		FOREACH_CONST(iter, map)
 		{
 			keys.push_back(iter->first);
 		}
 	}
 	template<typename Key, typename Value>
-	static void valueToList(const myMap<Key, Value>& map, myVector<Key>& values)
+	static void valueToList(const myMap<Key, Value>& map, myVector<Value>& values, bool clear = true)
 	{
-		values.clear();
+		if (clear)
+		{
+			values.clear();
+		}
 		FOREACH_CONST(iter, map)
 		{
 			values.push_back(iter->second);

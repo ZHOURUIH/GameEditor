@@ -51,10 +51,6 @@ public:
 	{
 		mParameters.push_back(TableParam(&param, col, (uint)typeid(param).hash_code(), typeid(param).name()));
 	}
-	void registeParamEmpty(const char* col)
-	{
-		mParameters.push_back(TableParam(NULL, col, 0, ""));
-	}
 protected:
 	// parse
 	static void parseInt(void* ptr, SQLiteDataReader* reader, int index) { *((int*)ptr) = reader->getInt(index); }

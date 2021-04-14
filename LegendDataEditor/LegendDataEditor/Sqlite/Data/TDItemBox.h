@@ -13,16 +13,18 @@ public:
 	static const char* AniCount;
 public:
 	int mID;
+	string mName;
 	myVector<ushort> mObject;
 	myVector<ushort> mCount;
+	byte mAniCount;
 public:
 	TDItemBox()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
+		registeParam(mName, Name);
 		registeParam(mObject, Object);
 		registeParam(mCount, Count);
-		registeParamEmpty(AniCount);
+		registeParam(mAniCount, AniCount);
 	}
 };
 

@@ -25,10 +25,17 @@ public:
 public:
 	int mID;
 	ushort mMapID;
+	string mMapName;
 	Vector2UShort mPos;
 	string mName;
+	ushort mApperance;
+	ushort mStandAnimation0;
+	ushort mStandAnimation1;
 	myVector<ushort> mGoods;
+	string mMainText;
 	myVector<byte> mRepairEquip;
+	string mNoEquipTip;
+	string mNoNeedRepairTip;
 	myVector<ushort> mMission;
 	myVector<ushort> mTalkBubbleGroup;
 	myVector<ushort> mTelentBuff;
@@ -37,17 +44,17 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mMapID, MapID);
-		registeParamEmpty(MapName);
+		registeParam(mMapName, MapName);
 		registeParam(mPos, Pos);
 		registeParam(mName, Name);
-		registeParamEmpty(Apperance);
-		registeParamEmpty(StandAnimation0);
-		registeParamEmpty(StandAnimation1);
+		registeParam(mApperance, Apperance);
+		registeParam(mStandAnimation0, StandAnimation0);
+		registeParam(mStandAnimation1, StandAnimation1);
 		registeParam(mGoods, Goods);
-		registeParamEmpty(MainText);
+		registeParam(mMainText, MainText);
 		registeParam(mRepairEquip, RepairEquip);
-		registeParamEmpty(NoEquipTip);
-		registeParamEmpty(NoNeedRepairTip);
+		registeParam(mNoEquipTip, NoEquipTip);
+		registeParam(mNoNeedRepairTip, NoNeedRepairTip);
 		registeParam(mMission, Mission);
 		registeParam(mTalkBubbleGroup, TalkBubbleGroup);
 		registeParam(mTelentBuff, TelentBuff);

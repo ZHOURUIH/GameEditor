@@ -28,6 +28,11 @@ public:
 public:
 	int mID;
 	string mName;
+	byte mRace;
+	byte mRaceImage;
+	string mModel;
+	ushort mApperance;
+	byte mMonsterRadius;
 	byte mMonsterRace;
 	bool mCoolEye;
 	ushort mDieAnimation;
@@ -37,17 +42,19 @@ public:
 	ushort mBornAnimation;
 	ushort mDestroyAnimation;
 	ushort mRebornAnimation;
+	ushort mDestroyEffect;
+	ushort mBornEffect;
 	float mDestroyTime;
 public:
 	TDMonsterTemplate()
 	{
 		registeParam(mID, ID);
 		registeParam(mName, Name);
-		registeParamEmpty(Race);
-		registeParamEmpty(RaceImage);
-		registeParamEmpty(Model);
-		registeParamEmpty(Apperance);
-		registeParamEmpty(MonsterRadius);
+		registeParam(mRace, Race);
+		registeParam(mRaceImage, RaceImage);
+		registeParam(mModel, Model);
+		registeParam(mApperance, Apperance);
+		registeParam(mMonsterRadius, MonsterRadius);
 		registeParam(mMonsterRace, MonsterRace);
 		registeParam(mCoolEye, CoolEye);
 		registeParam(mDieAnimation, DieAnimation);
@@ -57,8 +64,8 @@ public:
 		registeParam(mBornAnimation, BornAnimation);
 		registeParam(mDestroyAnimation, DestroyAnimation);
 		registeParam(mRebornAnimation, RebornAnimation);
-		registeParamEmpty(DestroyEffect);
-		registeParamEmpty(BornEffect);
+		registeParam(mDestroyEffect, DestroyEffect);
+		registeParam(mBornEffect, BornEffect);
 		registeParam(mDestroyTime, DestroyTime);
 	}
 };

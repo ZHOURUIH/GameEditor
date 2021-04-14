@@ -28,34 +28,42 @@ public:
 	int mID;
 	int mType;
 	float mParam0;
+	string mParamDesc0;
 	float mParam1;
+	string mParamDesc1;
 	float mParam2;
+	string mParamDesc2;
 	float mParam3;
+	string mParamDesc3;
 	float mParam4;
+	string mParamDesc4;
 	float mParam5;
+	string mParamDesc5;
 	float mParam6;
+	string mParamDesc6;
 	float mParam7;
+	string mParamDesc7;
 public:
 	TDTimeTask()
 	{
 		registeParam(mID, ID);
 		registeParam(mType, Type);
 		registeParam(mParam0, Param0);
-		registeParamEmpty(ParamDesc0);
+		registeParam(mParamDesc0, ParamDesc0);
 		registeParam(mParam1, Param1);
-		registeParamEmpty(ParamDesc1);
+		registeParam(mParamDesc1, ParamDesc1);
 		registeParam(mParam2, Param2);
-		registeParamEmpty(ParamDesc2);
+		registeParam(mParamDesc2, ParamDesc2);
 		registeParam(mParam3, Param3);
-		registeParamEmpty(ParamDesc3);
+		registeParam(mParamDesc3, ParamDesc3);
 		registeParam(mParam4, Param4);
-		registeParamEmpty(ParamDesc4);
+		registeParam(mParamDesc4, ParamDesc4);
 		registeParam(mParam5, Param5);
-		registeParamEmpty(ParamDesc5);
+		registeParam(mParamDesc5, ParamDesc5);
 		registeParam(mParam6, Param6);
-		registeParamEmpty(ParamDesc6);
+		registeParam(mParamDesc6, ParamDesc6);
 		registeParam(mParam7, Param7);
-		registeParamEmpty(ParamDesc7);
+		registeParam(mParamDesc7, ParamDesc7);
 	}
 };
 

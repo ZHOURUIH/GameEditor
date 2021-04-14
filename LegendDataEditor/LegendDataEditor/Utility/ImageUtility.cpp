@@ -34,7 +34,7 @@ bool ImageUtility::readWixFile(const string& filePath, WIXFileImageInfo& info)
 	txSerializer serializer(file.mBuffer, file.mFileSize);
 	serializer.readBuffer(info.mStrHeader, 44);
 	serializer.read(info.mIndexCount);
-	for (int i = 0; i < info.mIndexCount; ++i)
+	FOR_I((uint)info.mIndexCount)
 	{
 		int curStartPos = 0;
 		if (serializer.read(curStartPos))
@@ -134,9 +134,9 @@ void ImageUtility::wixWilToPNG(const string& wixFileName, const string& wilFileN
 		}
 		// 固定转换为32位png图片
 		NEW_ARRAY(unsigned char, pixelCount * 4, curInfo.mColor);
-		for (int y = 0; y < curInfo.mHeight; ++y)
+		FOR_Y((uint)curInfo.mHeight)
 		{
-			for (int x = 0; x < curInfo.mWidth; ++x)
+			FOR_X((uint)curInfo.mWidth)
 			{
 				int pos = y * lineLength + x;
 				int pngPos = y * curInfo.mWidth + x;
@@ -180,19 +180,20 @@ void ImageUtility::allWixWilToPNG(const string& sourcePath)
 	patterns.push_back(".wil");
 	findFiles(sourcePath, fileList, patterns.data(), patterns.size());
 	int fileCount = fileList.size();
-	for (int i = 0; i < fileCount; ++i)
+	FOR_VECTOR(fileList)
 	{
 		string wixFile = getFileNameNoSuffix(fileList[i], false) + ".wix";
 		string filePath = getFilePath(fileList[i]);
 		string folderName = getFileNameNoSuffix(fileList[i], true);
 		wixWilToPNG(wixFile, fileList[i], filePath + "/" + folderName + "/");
 	}
+	END(fileList);
 }
 
 void ImageUtility::writePositionFile(const string& positionFile, POINT* posList, int posCount)
 {
 	string posStr;
-	for (int i = 0; i < posCount; ++i)
+	FOR_I((uint)posCount)
 	{
 		posStr += intToString(posList[i].x);
 		posStr += ",";
@@ -213,7 +214,7 @@ POINT* ImageUtility::readPositionFile(const string& positionFile, int& posCount)
 	split(posStr.c_str(), "\n", posStrList);
 	posCount = posStrList.size();
 	POINT* posList = NEW_ARRAY(POINT, posCount, posList);
-	for (int i = 0; i < posCount; ++i)
+	FOR_VECTOR(posStrList)
 	{
 		myVector<string> pointList;
 		split(posStrList[i].c_str(), ",", pointList);
@@ -224,6 +225,7 @@ POINT* ImageUtility::readPositionFile(const string& positionFile, int& posCount)
 		posList[i].x = stringToInt(pointList[0]);
 		posList[i].y = stringToInt(pointList[1]);
 	}
+	END(posStrList);
 	return posList;
 }
 
@@ -236,15 +238,13 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 
 	myVector<string> folderList;
 	findFolders(path, folderList);
-	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		// 按照动作重命名
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
-		int fileCount = fileList.size();
-		for (int j = 0; j < fileCount; ++j)
+		FOR_VECTOR_J(fileList)
 		{
 			string actionName;
 			int direction;
@@ -261,7 +261,9 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j]);
 			moveImageWithPosition(fileList[j], destPath + fileName);
 		}
+		END(fileList);
 	}
+	END(folderList);
 }
 
 void ImageUtility::autoGroupWingImage(const string& path)
@@ -273,15 +275,13 @@ void ImageUtility::autoGroupWingImage(const string& path)
 
 	myVector<string> folderList;
 	findFolders(path, folderList);
-	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		// 按照动作重命名
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
-		int fileCount = fileList.size();
-		for (int j = 0; j < fileCount; ++j)
+		FOR_VECTOR_J(fileList)
 		{
 			string actionName;
 			int direction;
@@ -298,7 +298,9 @@ void ImageUtility::autoGroupWingImage(const string& path)
 			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j]);
 			moveImageWithPosition(fileList[j], destPath + fileName);
 		}
+		END(fileList);
 	}
+	END(folderList);
 }
 
 void ImageUtility::autoGroupWeaponImage(const string& path)
@@ -310,15 +312,13 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 	// 因为武器文件是角色文件的2倍,可能是左右手的区别,所以暂时只解析前一半的文件,后面的删除
 	myVector<string> folderList;
 	findFolders(path, folderList);
-	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		// 按照动作重命名
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
-		int fileCount = fileList.size();
-		for (int j = 0; j < fileCount; ++j)
+		FOR_VECTOR_J(fileList)
 		{
 			if (WEAPON_GROUP_SIZE == 1200 && j >= WEAPON_GROUP_SIZE / 2)
 			{
@@ -329,9 +329,8 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 				string actionName;
 				int direction;
 				int frameIndex;
-				bool isValid = getHumanActionInfo(j, actionName, direction, frameIndex);
 				// 如果是无效图片则需要删除
-				if (!isValid)
+				if (!getHumanActionInfo(j, actionName, direction, frameIndex))
 				{
 					deleteImageWithPosition(fileList[j]);
 					continue;
@@ -342,7 +341,9 @@ void ImageUtility::autoGroupWeaponImage(const string& path)
 				moveImageWithPosition(fileList[j], destPath + fileName);
 			}
 		}
+		END(fileList);
 	}
+	END(folderList);
 }
 
 void ImageUtility::autoGroupMonsterImage0(const string& path)
@@ -382,15 +383,13 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 
 	myVector<string> folderList;
 	findFolders(path, folderList);
-	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		// 按照动作重命名
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png", false);
 		sortByFileNumber(fileList);
-		int fileCount = fileList.size();
-		for (int j = 0; j < fileCount; ++j)
+		FOR_VECTOR_J(fileList)
 		{
 			string actionName;
 			int direction;
@@ -406,7 +405,9 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 			string destPath = getFilePath(fileList[j]) + "/";
 			moveImageWithPosition(fileList[j], destPath + actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j]));
 		}
+		END(fileList);
 	}
+	END(folderList);
 }
 
 void ImageUtility::renameImage(const string& path)
@@ -414,21 +415,21 @@ void ImageUtility::renameImage(const string& path)
 	// 将目录中的文件按文件名排序后,重命名为从0开始的数字
 	myVector<string> folderList;
 	findFolders(path, folderList, true);
-	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png");
 		// 先根据文件名重新排列
 		sortByFileNumber(fileList);
-		int count = fileList.size();
-		for (int j = 0; j < count; ++j)
+		FOR_VECTOR_J(fileList)
 		{
 			string curFilePath = getFilePath(fileList[j]) + "/";
 			string suffix = getFileSuffix(fileList[j]);
 			renameImageWithPosition(fileList[j], curFilePath + intToString(j) + "." + suffix);
 		}
+		END(fileList);
 	}
+	END(folderList);
 }
 
 void ImageUtility::renameImageToAnim(const string& path)
@@ -437,7 +438,7 @@ void ImageUtility::renameImageToAnim(const string& path)
 	myVector<string> folderList;
 	findFolders(path, folderList, true);
 	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png", false);
@@ -447,15 +448,16 @@ void ImageUtility::renameImageToAnim(const string& path)
 		}
 		// 先根据文件名重新排列
 		sortByFileNumber(fileList);
-		int count = fileList.size();
-		for (int j = 0; j < count; ++j)
+		FOR_VECTOR_J(fileList)
 		{
 			string folderName = getFolderName(fileList[j]);
 			string curFilePath = getFilePath(fileList[j]) + "/";
 			string suffix = getFileSuffix(fileList[j]);
 			renameImageWithPosition(fileList[j], curFilePath + folderName + "_" + intToString(j) + "." + suffix);
 		}
+		END(fileList);
 	}
+	END(folderList);
 }
 
 void ImageUtility::splitPositionFile(const string& path, bool pathWithFileName)
@@ -477,7 +479,7 @@ void ImageUtility::splitPositionFile(const string& path, bool pathWithFileName)
 	{
 		return;
 	}
-	for (int i = 0; i < posCount; ++i)
+	FOR_I((uint)posCount)
 	{
 		string posStr = intToString(posList[i].x) + "," + intToString(posList[i].y);
 		writeFile(filePath + "/" + intToString(i) + ".txt", posStr);
@@ -490,8 +492,7 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 	// 将目录中的所有文件先按照文件名排序,然后按照顺序分组为8个方向,再对每个方向的文件重命名
 	myVector<string> folderList;
 	findFolders(path, folderList, true);
-	int folderCount = folderList.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folderList)
 	{
 		myVector<string> fileList;
 		findFiles(folderList[i], fileList, ".png", false);
@@ -507,7 +508,7 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 			continue;
 		}
 		int actionFrameCount = fileCount / directionCount;
-		for (int j = 0; j < fileCount; ++j)
+		FOR_J((uint)fileCount)
 		{
 			int imageDir = j / actionFrameCount;
 			int index = j % actionFrameCount;
@@ -528,6 +529,7 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 			}
 		}
 	}
+	END(folderList);
 	// 删除空的目录
 	deleteEmptyFolder(path);
 }
@@ -539,7 +541,7 @@ void ImageUtility::sortByFileNumber(myVector<string>& fileList, bool fileNameIsN
 	if (fileNameIsNumber)
 	{
 		myMap<int, string> sortedList;
-		for (int i = 0; i < count; ++i)
+		FOR_I((uint)count)
 		{
 			sortedList.insert(stringToInt(getFileNameNoSuffix(fileList[i], true)), fileList[i]);
 		}
@@ -547,18 +549,12 @@ void ImageUtility::sortByFileNumber(myVector<string>& fileList, bool fileNameIsN
 		{
 			return;
 		}
-		fileList.clear();
-		auto iter = sortedList.begin();
-		auto iterEnd = sortedList.end();
-		for (; iter != iterEnd; ++iter)
-		{
-			fileList.push_back(iter->second);
-		}
+		valueToList(sortedList, fileList);
 	}
 	else
 	{
 		myMap<string, myMap<int, string>> sortedList;
-		for (int i = 0; i < count; ++i)
+		FOR_I((uint)count)
 		{
 			string fileName = getFileNameNoSuffix(fileList[i], true);
 			string preName = fileName.substr(0, fileName.find_last_of('_') + 1);
@@ -570,17 +566,11 @@ void ImageUtility::sortByFileNumber(myVector<string>& fileList, bool fileNameIsN
 			sortedList[preName].insert(stringToInt(suffixNumber), fileList[i]);
 		}
 		fileList.clear();
-		auto iter = sortedList.begin();
-		auto iterEnd = sortedList.end();
-		for (; iter != iterEnd; ++iter)
+		FOREACH(iter, sortedList)
 		{
-			auto iterName = iter->second.begin();
-			auto iterNameEnd = iter->second.end();
-			for (; iterName != iterNameEnd; ++iterName)
-			{
-				fileList.push_back(iterName->second);
-			}
+			valueToList(iter->second, fileList, false);
 		}
+		END(sortedList);
 	}
 }
 
@@ -589,14 +579,14 @@ void ImageUtility::autoMoveFile(const string& path, int groupSize)
 	myVector<string> fileList;
 	findFiles(path, fileList, ".png");
 	sortByFileNumber(fileList);
-	int fileCount = fileList.size();
-	for (int i = 0; i < fileCount; ++i)
+	FOR_VECTOR(fileList)
 	{
 		int groupIndex = i / groupSize;
 		string destFolderName = intToString(groupIndex, 3);
 		string destPath = getFilePath(fileList[i]) + "/" + destFolderName + "/";
 		moveImageWithPosition(fileList[i], destPath + getFileName(fileList[i]));
 	}
+	END(fileList);
 }
 
 bool ImageUtility::getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex)
@@ -740,14 +730,14 @@ void ImageUtility::deleteInvalidImage(const string& path)
 	myVector<string> fileList;
 	findFiles(path, fileList, ".png");
 	sortByFileNumber(fileList);
-	int count = fileList.size();
-	for (int i = 0; i < count; ++i)
+	FOR_VECTOR(fileList)
 	{
 		if (!isInvalidImage(fileList[i]))
 		{
 			deleteImageWithPosition(fileList[i]);
 		}
 	}
+	END(fileList);
 	deleteEmptyFolder(path);
 }
 
@@ -789,8 +779,7 @@ void ImageUtility::groupAtlas(const string& filePath, int countInAltas)
 	myVector<string> fileList;
 	findFiles(filePath, fileList, ".png", false);
 	sortByFileNumber(fileList);
-	int count = fileList.size();
-	for (int i = 0; i < count; ++i)
+	FOR_VECTOR(fileList)
 	{
 		int atlasIndex = i / countInAltas;
 		string curFile = getFileNameNoSuffix(fileList[i], true);
@@ -803,6 +792,7 @@ void ImageUtility::groupAtlas(const string& filePath, int countInAltas)
 		serializer.write<unsigned short>(stringToInt(getFileNameNoSuffix(fileList[i], true)));
 		serializer.write<unsigned char>(atlasIndex);
 	}
+	END(fileList);
 	writeFile(filePath + "/atlas.txt", atlasInfo);
 	writeFile(filePath + "/atlas.index", serializer.getBuffer(), serializer.getDataSize());
 }
@@ -845,25 +835,23 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 {
 	myVector<string> folderList;
 	findFolders(texturePath, folderList, true);
-	int count = folderList.size();
-	for (int i = 0; i < count; ++i)
+	FOR_VECTOR(folderList)
 	{
 		if (!isEmptyFolder(folderList[i]))
 		{
 			texturePacker(folderList[i]);
-			cout << "已打包:" << i + 1 << "/" << count << endl;
+			cout << "已打包:" << i + 1 << "/" << folderListCount << endl;
 		}
 	}
+	END(folderList);
 }
 
 void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 {
-	SQLite* sqlite = NEW(SQLite, sqlite, "../media/DataBase.db");
-	SQLiteImagePositionAnimation* sqliteImagePosition = sqlite->mSQLiteImagePositionAnimation;
+	NEW_SQLITE(SQLiteImagePositionAnimation, imagePosTable, "ImagePositionAnimation");
 	myVector<string> folders;
 	findFolders("../media", folders, true);
-	int folderCount = folders.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folders)
 	{
 		myVector<string> pngFiles;
 		findFiles(folders[i], pngFiles, ".png", false);
@@ -874,7 +862,7 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 		// 1个Atlas中包含多个动画,一个动画有多个帧
 		myMap<string, pair<myMap<int, int>, myMap<int, int>>> animationInfo;
 		int pngCount = pngFiles.size();
-		for (int j = 0; j < pngCount; ++j)
+		FOR_VECTOR_J(pngFiles)
 		{
 			string& fullFileName = pngFiles[j];
 			string fileNameNoSuffix = getFileNameNoSuffix(fullFileName, true);
@@ -897,9 +885,8 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 				cout << "位置文件错误：" << getFileNameNoSuffix(fullFileName, false) + ".txt" << endl;
 			}
 		}
-		auto iter = animationInfo.begin();
-		auto iterEnd = animationInfo.end();
-		for (; iter != iterEnd; ++iter)
+		END(pngFiles);
+		FOREACH(iter, animationInfo)
 		{
 			TDImagePositionAnimation animationData;
 			animationData.mID = 0;
@@ -909,24 +896,25 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			animationData.mFrameCount = iter->second.first.size();
 			valueToList(iter->second.first, animationData.mPosX);
 			valueToList(iter->second.second, animationData.mPosY);
-			TDImagePositionAnimation existDataList;
-			sqliteImagePosition->query(animationData.mAtlas, animationData.mAnimation, existDataList);
-			if (existDataList.mID > 0)
+			TDImagePositionAnimation existData;
+			imagePosTable.query(animationData.mAtlas, animationData.mAnimation, existData);
+			if (existData.mID > 0)
 			{
-				sqliteImagePosition->updateData(animationData);
+				imagePosTable.update(animationData);
 			}
 			else
 			{
 				// 如果只是更新数据,则不进行插入
 				if (!updateOnly)
 				{
-					animationData.mID = sqliteImagePosition->getMaxID() + 1;
-					sqliteImagePosition->insert(animationData);
+					animationData.mID = imagePosTable.getMaxID() + 1;
+					imagePosTable.insert(animationData);
 				}
 			}
 		}
+		END(animationInfo);
 	}
-	DELETE(sqlite);
+	END(folders);
 }
 
 int ImageUtility::tileIndexToTileX(int index, int mapHeight)
@@ -1133,59 +1121,61 @@ void ImageUtility::generateAllUnreachFile(const string& path)
 {
 	myVector<string> fileList;
 	findFiles(path, fileList, ".map");
-	int fileCount = fileList.size();
-	for (int i = 0; i < fileCount; ++i)
+	FOR_VECTOR(fileList)
 	{
 		generateUnreachFile(fileList[i]);
 		print("完成计算阻挡区域:" + getFileName(fileList[i]));
 	}
+	END(fileList);
 }
 
 void ImageUtility::updateNPCGoodsSQLite()
 {
-	SQLite* sqlite = NEW(SQLite, sqlite, "../media/DataBase.db");
-	myVector<TDGoods*> goodsList;
-	sqlite->mSQLiteGoods->queryAll(goodsList);
-	myMap<int, myVector<int>> npcGoodsList;
-	int count = goodsList.size();
-	for (int i = 0; i < count; ++i)
+	NEW_SQLITE(SQLiteGoods, goodsTable, "Goods");
+	NEW_SQLITE(SQLiteNPC, npcTable, "NPC");
+	auto& goodsList = goodsTable.queryAll();
+	myMap<int, myVector<ushort>> npcGoodsList;
+	FOREACH_CONST(iterGoods, goodsList)
 	{
-		if (npcGoodsList.contains(goodsList[i]->mNPC))
+		TDGoods* goods = iterGoods->second;
+		if (goods->mShopType != (byte)GOODS_SHOP_TYPE::NPC)
 		{
-			npcGoodsList.insert(goodsList[i]->mNPC, myVector<int>());
+			continue;
 		}
-		npcGoodsList[goodsList[i]->mNPC].push_back(goodsList[i]->mID);
-	}
-	myVector<TDNPC*> npcDataList;
-	sqlite->mSQLiteNPC->queryAll(npcDataList);
-	int sceneCount = npcDataList.size();
-	for (int i = 0; i < sceneCount; ++i)
-	{
-		int sceneID = npcDataList[i]->mID;
-		if (npcGoodsList.contains(sceneID))
+		if (npcGoodsList.contains(goods->mParam))
 		{
-			npcDataList[i]->mGoods = npcGoodsList[sceneID];
+			npcGoodsList.insert(goods->mParam, myVector<ushort>());
+		}
+		npcGoodsList[goods->mParam].push_back(goods->mID);
+	}
+	auto& npcDataList = npcTable.queryAll();
+	FOREACH_CONST(iterNPC, npcDataList)
+	{
+		int npcID = iterNPC->first;
+		TDNPC* npcData = iterNPC->second;
+		if (npcGoodsList.contains(npcID))
+		{
+			npcData->mGoods = npcGoodsList[npcID];
 		}
 		else
 		{
-			npcDataList[i]->mGoods.clear();
+			npcData->mGoods.clear();
 		}
-		sqlite->mSQLiteNPC->update(*npcDataList[i]);
+		npcTable.update(*npcData);
 	}
-	DELETE(sqlite);
 }
 
 void ImageUtility::processAllShadow(const string& path)
 {
 	myVector<string> fileList;
 	findFiles(path, fileList, ".png");
-	int fileCount = fileList.size();
-	for (int i = 0; i < fileCount; ++i)
+	FOR_VECTOR(fileList)
 	{
 		processShadowVertical(fileList[i]);
 		processShadowHorizontal(fileList[i]);
-		cout << "已处理文件数:" << i + 1 << "/" << fileCount << endl;
+		cout << "已处理文件数:" << i + 1 << "/" << fileListCount << endl;
 	}
+	END(fileList);
 }
 
 void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb)
@@ -1292,12 +1282,12 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 	int width = FreeImage_GetWidth(bitmap);
 	int height = FreeImage_GetHeight(bitmap);
 	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
-	for (int y = 0; y < height; ++y)
+	FOR_Y((uint)height)
 	{
 		bool lastShadowMark = false;
 		int startIndex = -1;
 		myVector<pair<int, int>> shadowBlockList;
-		for (int x = 0; x < width; ++x)
+		FOR_X((uint)width)
 		{
 			// 检查这一行是否有影子
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
@@ -1344,7 +1334,7 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 			lastShadowMark = curShadowMark;
 		}
 		// 拷贝原图,并且重新设置阴影部分颜色
-		for (int j = 0; j < width; ++j)
+		FOR_J((uint)width)
 		{
 			RGBQUAD pixel = getColor(bitmap, j, y);
 			setColor(newBitmap, j, y, pixel);
@@ -1355,8 +1345,7 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 		halfTransparent.rgbBlue = 0;
 		halfTransparent.rgbReserved = 127;
 		// 重新绘制阴影部分
-		int shadowCount = shadowBlockList.size();
-		for (int j = 0; j < shadowCount; ++j)
+		FOR_VECTOR_J(shadowBlockList)
 		{
 			int start = shadowBlockList[j].first;
 			int end = shadowBlockList[j].second;
@@ -1365,6 +1354,7 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 				setColor(newBitmap, k, y, halfTransparent);
 			}
 		}
+		END(shadowBlockList);
 	}
 	FreeImage_Save(format, newBitmap, filePath.c_str());
 	FreeImage_Unload(bitmap);
@@ -1386,12 +1376,12 @@ void ImageUtility::processShadowVertical(const string& filePath)
 	int width = FreeImage_GetWidth(bitmap);
 	int height = FreeImage_GetHeight(bitmap);
 	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
-	for (int x = 0; x < width; ++x)
+	FOR_X((uint)width)
 	{
 		bool lastShadowMark = false;
 		int startIndex = -1;
 		myVector<pair<int, int>> shadowBlockList;
-		for (int y = 0; y < height; ++y)
+		FOR_Y((uint)height)
 		{
 			// 检查这一行是否有影子
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
@@ -1438,7 +1428,7 @@ void ImageUtility::processShadowVertical(const string& filePath)
 			lastShadowMark = curShadowMark;
 		}
 		// 拷贝原图,并且重新设置阴影部分颜色
-		for (int j = 0; j < height; ++j)
+		FOR_J((uint)height)
 		{
 			RGBQUAD pixel = getColor(bitmap, x, j);
 			setColor(newBitmap, x, j, pixel);
@@ -1449,16 +1439,16 @@ void ImageUtility::processShadowVertical(const string& filePath)
 		halfTransparent.rgbBlue = 0;
 		halfTransparent.rgbReserved = 127;
 		// 重新绘制阴影部分
-		int shadowCount = shadowBlockList.size();
-		for (int j = 0; j < shadowCount; ++j)
+		FOR_VECTOR(shadowBlockList)
 		{
-			int start = shadowBlockList[j].first;
-			int end = shadowBlockList[j].second;
+			int start = shadowBlockList[i].first;
+			int end = shadowBlockList[i].second;
 			for (int k = start; k <= end; ++k)
 			{
 				setColor(newBitmap, x, k, halfTransparent);
 			}
 		}
+		END(shadowBlockList);
 	}
 	FreeImage_Save(format, newBitmap, filePath.c_str());
 	FreeImage_Unload(bitmap);
@@ -1469,17 +1459,15 @@ void ImageUtility::processShadowVertical(const string& filePath)
 void ImageUtility::moveMapObjectTexture(const string& sourcePath)
 {
 	myVector<string> targetFileList;
-	findFiles("./", targetFileList, NULL, 0);
-	int targetFileCount = targetFileList.size();
 	myVector<string> sourceFileList;
-	findFiles(sourcePath, sourceFileList, NULL, 0);
-	int sourceFileCount = sourceFileList.size();
-	for (int i = 0; i < sourceFileCount; ++i)
+	findFiles("./", targetFileList);
+	findFiles(sourcePath, sourceFileList);
+	FOR_VECTOR(sourceFileList)
 	{
 		// 找到同名且不同路径的文件
 		string sourceFileName = getFileName(sourceFileList[i]);
 		string sourceFileFolder = getFolderName(sourceFileList[i]);
-		for (int j = 0; j < targetFileCount; ++j)
+		FOR_VECTOR_J(targetFileList)
 		{
 			string targetFileName = getFileName(targetFileList[j]);
 			string targetFileFolder = getFolderName(targetFileList[j]);
@@ -1489,17 +1477,21 @@ void ImageUtility::moveMapObjectTexture(const string& sourcePath)
 				break;
 			}
 		}
+		END(targetFileList);
 	}
+	END(sourceFileList);
 }
 
 void ImageUtility::updateMapEffect()
 {
+	NEW_SQLITE(SQLiteMapEffect, mapEffectTable, "MapEffect");
+	NEW_SQLITE(SQLiteSceneMapFile, sceneMapFileTable, "MapEffect");
+
 	myVector<pair<int, int>> effectImage;
 	// 查找特效序列帧所在目录
 	myVector<string> folders;
 	findFolders("../media/", folders, true);
-	int folderCount = folders.size();
-	for (int i = 0; i < folderCount; ++i)
+	FOR_VECTOR(folders)
 	{
 		myVector<string> files;
 		findFiles(folders[i], files, ".png", false);
@@ -1513,30 +1505,29 @@ void ImageUtility::updateMapEffect()
 		// 因为只有地图中存储的图片下标是从1开始的,其他所有地方都是从0开始的,所以此处图片下标+1
 		effectImage.push_back(make_pair(stringToInt(effectFileIndex), stringToInt(effectIndex) + 1));
 	}
+	END(folders);
+
 	// 检查所有地图文件,找出所有用到了特效的地方,然后保存到表格中
 	myVector<TDMapEffect*> mapEffectList;
 	int effectCount = effectImage.size();
-	SQLite* sqlite = NEW(SQLite, sqlite, "../media/DataBase.db");
-	myVector<TDSceneMapFile*> mapFileDataList;
-	sqlite->mSQLiteSceneMapFile->queryAll(mapFileDataList);
-	int fileDataCount = mapFileDataList.size();
-	for (int i = 0; i < fileDataCount; ++i)
+	auto& mapFileDataList = sceneMapFileTable.queryAll();
+	FOREACH_CONST(iter, mapFileDataList)
 	{
 		MapData* mapData = NEW(MapData, mapData);
-		mapData->readFile("../media/" + mapFileDataList[i]->mFileName);
+		mapData->readFile("../media/" + iter->second->mFileName);
 		int tileCount = mapData->mHeader->mWidth * mapData->mHeader->mHeight;
-		for (int j = 0; j < tileCount; ++j)
+		FOR_J((uint)tileCount)
 		{
 			MapTile& tile = mapData->mTileList[j];
 			Vector2Int tilePos = tileIndexToTilePos(j, mapData->mHeader->mHeight);
-			for (int k = 0; k < effectCount; ++k)
+			FOR_K((uint)effectCount)
 			{
 				if (tile.mObjFileIdx == effectImage[k].first &&
 					tile.mObjImgIdx == effectImage[k].second)
 				{
-					TDMapEffect* effectData = NEW(MapEffectData, effectData);
+					TDMapEffect* effectData = NEW(TDMapEffect, effectData);
 					effectData->mID = mapEffectList.size() + 1;
-					effectData->mMapFileID = mapFileDataList[i]->mID;
+					effectData->mMapFileID = iter->second->mID;
 					effectData->mTilePosition = tilePos;
 					effectData->mEffectFileIndex = tile.mObjFileIdx;
 					effectData->mEffectIndex = tile.mObjImgIdx - 1;
@@ -1549,31 +1540,30 @@ void ImageUtility::updateMapEffect()
 		}
 		DELETE(mapData);
 	}
-	sqlite->mSQLiteMapEffect->deleteAll();
-	int mapEffectCount = mapEffectList.size();
-	for (int i = 0; i < mapEffectCount; ++i)
+
+	mapEffectTable.deleteAll();
+	FOR_VECTOR(mapEffectList)
 	{
-		sqlite->mSQLiteMapEffect->insert(*mapEffectList[i]);
+		mapEffectTable.insert(*mapEffectList[i]);
 	}
-	DELETE(sqlite);
+	END(mapEffectList);
 }
 
 void ImageUtility::updateAnimationPositionInAnimation()
 {
-	SQLite* sqlite = NEW(SQLite, sqlite, "../media/DataBase.db");
-	myVector<TDAnimation*> animationDataList;
-	sqlite->mSQLiteAnimation->queryAll(animationDataList);
-	int count = animationDataList.size();
-	for (int i = 0; i < count; ++i)
+	NEW_SQLITE(SQLiteAnimation, animationTable, "Animation");
+	NEW_SQLITE(SQLiteImagePositionAnimation, animationPosTable, "ImagePositionAnimation");
+	auto& animationDataList = animationTable.queryAll();
+	FOREACH_CONST(iter, animationDataList)
 	{
-		TDAnimation* animationData = animationDataList[i];
-		myVector<int> posIDList;
+		TDAnimation* animationData = iter->second;
+		myVector<ushort> posIDList;
 		if (animationData->mDirectionCount > 0)
 		{
 			if (animationData->mDirectionCount == 1)
 			{
 				TDImagePositionAnimation dataNoDir;
-				sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationData->mAnimation, dataNoDir);
+				animationPosTable.query(animationData->mAtlas, animationData->mAnimation, dataNoDir);
 				if (dataNoDir.mID > 0)
 				{
 					posIDList.push_back(dataNoDir.mID);
@@ -1582,17 +1572,16 @@ void ImageUtility::updateAnimationPositionInAnimation()
 			else
 			{
 				// 最多8个方向,需要逐一查找
-				for (int j = 0; j < DIRECTION_COUNT; ++j)
+				FOR_J(DIRECTION_COUNT)
 				{
 					TDImagePositionAnimation data;
 					string animationWithDir = animationData->mAnimation + "_dir" + intToString(j);
-					sqlite->mSQLiteImagePositionAnimation->query(animationData->mAtlas, animationWithDir, data);
+					animationPosTable.query(animationData->mAtlas, animationWithDir, data);
 					posIDList.push_back(data.mID);
 				}
 			}
 		}
 		animationData->mAnimationPosition = posIDList;
-		sqlite->mSQLiteAnimation->update(*animationData);
+		animationTable.update(*animationData);
 	}
-	DELETE(sqlite);
 }

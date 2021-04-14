@@ -303,6 +303,30 @@
     <ClCompile Include="Math\Vector2.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDEffect.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDImagePositionAnimation.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDImagePositionIcon.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDMapEffect.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDMapTileIndex.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDModelEquip.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDTalkDialog.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Sqlite\Table\SQLiteImagePositionAnimation.cpp">
+      <Filter>Sqlite\Table</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\ServerDefine.h">
@@ -742,6 +766,48 @@
     </ClInclude>
     <ClInclude Include="Math\Vector2Int.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDEffect.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDImagePositionAnimation.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDImagePositionIcon.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDMapEffect.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDMapTileIndex.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDModelEquip.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDTalkDialog.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteEffect.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteImagePositionAnimation.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteImagePositionIcon.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteMapEffect.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteMapTileIndex.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteModelEquip.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteTalkDialog.h">
+      <Filter>Sqlite\Table</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,13 +12,14 @@ public:
 	static const char* Job;
 public:
 	int mID;
+	string mName;
 	ushort mSkillID;
 	byte mJob;
 public:
 	TDItemSkillBook()
 	{
 		registeParam(mID, ID);
-		registeParamEmpty(Name);
+		registeParam(mName, Name);
 		registeParam(mSkillID, SkillID);
 		registeParam(mJob, Job);
 	}

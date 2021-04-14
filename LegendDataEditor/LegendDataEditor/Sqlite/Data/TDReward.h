@@ -21,28 +21,31 @@ public:
 public:
 	int mID;
 	byte mType;
+	string mDescription;
 	myVector<ushort> mObjectList;
 	myVector<uint> mCountList;
 	uint mGold;
 	uint mGoldIngot;
 	uint mExp;
 	string mParam0;
+	string mParamDesc0;
 	string mParam1;
+	string mParamDesc1;
 public:
 	TDReward()
 	{
 		registeParam(mID, ID);
 		registeParam(mType, Type);
-		registeParamEmpty(Description);
+		registeParam(mDescription, Description);
 		registeParam(mObjectList, ObjectList);
 		registeParam(mCountList, CountList);
 		registeParam(mGold, Gold);
 		registeParam(mGoldIngot, GoldIngot);
 		registeParam(mExp, Exp);
 		registeParam(mParam0, Param0);
-		registeParamEmpty(ParamDesc0);
+		registeParam(mParamDesc0, ParamDesc0);
 		registeParam(mParam1, Param1);
-		registeParamEmpty(ParamDesc1);
+		registeParam(mParamDesc1, ParamDesc1);
 	}
 };
 

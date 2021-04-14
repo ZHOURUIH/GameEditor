@@ -16,18 +16,20 @@ public:
 public:
 	int mID;
 	ushort mSourceMap;
+	string mSourceMapName;
 	Vector2UShort mPosition;
 	ushort mTargetMap;
+	string mTargetMapName;
 	Vector2UShort mTargetPosition;
 public:
 	TDSceneMapTransfer()
 	{
 		registeParam(mID, ID);
 		registeParam(mSourceMap, SourceMap);
-		registeParamEmpty(SourceMapName);
+		registeParam(mSourceMapName, SourceMapName);
 		registeParam(mPosition, Position);
 		registeParam(mTargetMap, TargetMap);
-		registeParamEmpty(TargetMapName);
+		registeParam(mTargetMapName, TargetMapName);
 		registeParam(mTargetPosition, TargetPosition);
 	}
 };

@@ -36,7 +36,7 @@ public:
 #if RUN_PLATFORM == PLATFORM_LINUX
 	static bool isDirectory(const string& path);
 #endif
-	static void findFiles(const string& path, myVector<string>& files, const string* patterns, uint patternCount, bool recursive = true);
+	static void findFiles(const string& path, myVector<string>& files, const string* patterns = NULL, uint patternCount = 0, bool recursive = true);
 	static void findFolders(const string& path, myVector<string>& folders, bool recursive = false);
 	static bool isEmptyFolder(const string& path);
 	static void deleteFolder(const string& path);
