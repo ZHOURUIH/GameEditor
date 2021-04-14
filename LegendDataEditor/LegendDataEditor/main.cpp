@@ -8,33 +8,33 @@ void main()
 
 	while (true)
 	{
-		cout << "选择功能\n\
-1:解析wix和wil文件. \n\
-2:整理角色文件结构 \n\
-3:整理武器文件结构 \n\
-4:整理怪物文件结构0 \n\
-5:整理怪物文件结构1 \n\
-6:整理特效文件结构 \n\
-7:自动计算方向 \n\
-8:拆分位置文件 \n\
-9:删除无效图片 \n\
-10:按序号重命名文件 \n\
-11:重命名为序列帧格式 \n\
-13:分组图集\n\
-14:打包图集\n\
-15:打包全部图集\n\
-18:解析所有wix和wil文件\n\
-19:整理NPC文件结构\n\
-20:将media中全部序列帧数据写入SQLite \n\
-22:生成地图阻挡文件 \n\
-23:生成所有地图阻挡文件 \n\
-25:处理图片阴影\n\
-26:移动并覆盖地图图片\n\
-27:更新NPC商品列表\n\
-28:更新地图中的特效信息到SQLite\n\
-29:更新Animation表格中的AnimationPosition\n\
-30:整理翅膀文件结构 \n\
-0:退出" << endl;
+		cout << "选择功能" << endl;
+		cout << "1:解析wix和wil文件" << endl;
+		cout << "2:整理角色文件结构" << endl;
+		cout << "3:整理武器文件结构" << endl;
+		cout << "4:整理怪物文件结构0" << endl;
+		cout << "5:整理怪物文件结构1" << endl;
+		cout << "6:整理特效文件结构" << endl;
+		cout << "7:自动计算方向" << endl;
+		cout << "8:拆分位置文件" << endl;
+		cout << "9:删除无效图片" << endl;
+		cout << "10:按序号重命名文件" << endl;
+		cout << "11:重命名为序列帧格式" << endl;
+		cout << "13:分组图集" << endl;
+		cout << "14:打包图集" << endl;
+		cout << "15:打包全部图集" << endl;
+		cout << "18:解析所有wix和wil文件" << endl;
+		cout << "19:整理NPC文件结构" << endl;
+		cout << "20:将media中全部序列帧数据写入SQLite" << endl;
+		cout << "22:生成地图阻挡文件" << endl;
+		cout << "23:生成所有地图阻挡文件" << endl;
+		cout << "25:处理图片阴影" << endl;
+		cout << "26:移动并覆盖地图图片" << endl;
+		cout << "27:更新NPC商品列表" << endl;
+		cout << "28:更新地图中的特效信息到SQLite" << endl;
+		cout << "29:更新Animation表格中的AnimationPosition" << endl;
+		cout << "30:整理翅膀文件结构" << endl;
+		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
 		if (input == 0)
