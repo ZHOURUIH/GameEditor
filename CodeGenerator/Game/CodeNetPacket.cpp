@@ -168,7 +168,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "#ifndef _PACKET_DEFINE_H_");
 	line(str, "#define _PACKET_DEFINE_H_");
 	line(str, "");
-	line(str, "#include \"ServerDefine.h\"");
+	line(str, "#include \"FrameDefine.h\"");
 	line(str, "");
 	line(str, "enum class PACKET_TYPE : ushort");
 	line(str, "{");
