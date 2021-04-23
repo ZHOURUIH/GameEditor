@@ -231,6 +231,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		line(table, "#define " + tableHeaderMarco);
 		line(table, "");
 		line(table, "#include \"" + dataClassName + ".h\"");
+		line(table, "#include \"SQLiteTable.h\"");
 		line(table, "");
 		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
 		line(table, "{");
