@@ -6,6 +6,7 @@
 class StringUtility : public BinaryUtility
 {
 public:
+	static string removeStartString(const string& fileName, const string& startStr);
 	static string removeSuffix(const string& str);
 	// 去掉最后一个出现的指定字符
 	static void removeLast(string& stream, char key);

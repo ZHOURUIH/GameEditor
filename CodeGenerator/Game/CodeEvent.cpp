@@ -100,12 +100,18 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	line(str0, "class EVENT_TYPE");
 	line(str0, "{");
 	line(str0, "public:");
+	// 由于需要添加默认的无效值,所以复制一份列表
+	myVector<pair<string, string>> newList;
+	newList.push_back(make_pair("None", "// 无效值"));
+	newList.merge(eventList);
+	// 注释对齐的制表符的个数
 	int maxTableCount = 12;
-	FOR_VECTOR_CONST(eventList)
+	FOR_VECTOR_CONST(newList)
 	{
-		string type = nameToUpper(eventList[i].first);
-		type = type.substr(strlen("_EVENT_"));
-		string str = "\tconst static ushort " + type + " = " + intToString(i + 1) + ";";
+		string type = removeStartString(nameToUpper(newList[i].first), "_EVENT_");
+		// 由于None转换出来是以_开头,所以还是需要确保是字母开头
+		type = removeStartString(type, "_");
+		string str = "\tconst static ushort " + type + " = " + intToString(i) + ";";
 		// 第一个减一是要去除字符串中的开头的制表符,第二个减一是因为字符串开头已经有一个制表符了,所以可以少加1个
 		int tableCount = ceil((maxTableCount * 4 - (str.length() - 1)) / 4.0f) - 1;
 		clampMin(tableCount, 0);
@@ -114,7 +120,7 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 		{
 			tableStr += "\t";
 		}
-		line(str0, str + tableStr + eventList[i].second);
+		line(str0, str + tableStr + newList[i].second);
 	}
 	line(str0, "};");
 	line(str0, "");

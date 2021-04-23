@@ -3,6 +3,15 @@
 const char StringUtility::BOM[4]{ (char)0xEF, (char)0xBB, (char)0xBF, 0 };
 myVector<int> StringUtility::mTempIntList;
 
+string StringUtility::removeStartString(const string& fileName, const string& startStr)
+{
+	if (startWith(fileName, startStr.c_str()))
+	{
+		return fileName.substr(startStr.length(), fileName.length() - startStr.length());
+	}
+	return fileName;
+}
+
 string StringUtility::removeSuffix(const string& str)
 {
 	int dotPos = (int)str.find_last_of('.');
