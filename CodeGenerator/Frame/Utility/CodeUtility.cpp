@@ -79,14 +79,6 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 	{
 		memberInfo.mOwner = SQLITE_OWNER::BOTH;
 	}
-	// 该字段索引的表格
-	int roundStartIndex = line.find_first_of('(');
-	int roundEndIndex = line.find_first_of(')');
-	if (roundStartIndex >= 0 && roundEndIndex >= 0)
-	{
-		memberInfo.mLinkTable = line.substr(roundStartIndex + 1, roundEndIndex - roundStartIndex - 1);
-		line.erase(roundStartIndex, roundEndIndex - roundStartIndex + 1);
-	}
 	// 字段类型和字段名
 	myVector<string> memberStrList;
 	split(line.c_str(), " ", memberStrList);

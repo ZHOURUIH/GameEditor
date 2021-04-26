@@ -433,16 +433,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		line(file, "\t\tparseParam(reader, ref m" + sqliteInfo.mMemberList[i].mMemberName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 	line(file, "\t}");
-	line(file, "\tpublic static void link(SQLiteTable table)");
-	line(file, "\t{");
-	FOR_I(memberCount)
-	{
-		if (sqliteInfo.mMemberList[i].mLinkTable.length() > 0)
-		{
-			line(file, "\t\ttable.link(" + sqliteInfo.mMemberList[i].mMemberName + ", mSQLite" + sqliteInfo.mMemberList[i].mLinkTable + ");");
-		}
-	}
-	line(file, "\t}");
 	line(file, "\tpublic override bool checkData()");
 	line(file, "\t{");
 	// 需要检测空格的字段

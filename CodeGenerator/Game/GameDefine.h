@@ -30,7 +30,6 @@ struct SQLiteMember
 	SQLITE_OWNER mOwner;
 	string mTypeName;
 	string mMemberName;
-	string mLinkTable;
 };
 
 struct SQLiteInfo
