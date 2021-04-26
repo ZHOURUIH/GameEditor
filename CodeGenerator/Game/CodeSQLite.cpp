@@ -482,11 +482,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
 	line(table, "public partial class " + tableClassName + " : SQLiteTable");
 	line(table, "{");
-	line(table, "\tpublic override void linkTable()");
-	line(table, "\t{");
-	line(table, "\t\t// 之所以此处还是调用TableData的函数,是为了使链接表格的代码也跟表格结构代码一起自动生成");
-	line(table, "\t\t" + dataClassName + ".link(this);");
-	line(table, "\t}");
 	line(table, "\tpublic " + dataClassName + " query(int id)");
 	line(table, "\t{");
 	line(table, "\t\treturn query(typeof(" + dataClassName + "), id) as " + dataClassName + ";");
