@@ -2004,8 +2004,8 @@ void ImageUtility::removeBackground(const string& fileName, const string& newFil
 	FreeImage_Initialise();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
 	FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
-	int width = FreeImage_GetWidth(oldBitmap);
-	int height = FreeImage_GetHeight(oldBitmap);
+	uint width = FreeImage_GetWidth(oldBitmap);
+	uint height = FreeImage_GetHeight(oldBitmap);
 
 	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
 	FOR_Y(height)
@@ -2013,12 +2013,11 @@ void ImageUtility::removeBackground(const string& fileName, const string& newFil
 		FOR_X(width)
 		{
 			RGBQUAD color = getColor(oldBitmap, x, y);
-			RGBQUAD newColor;
-			float alpha = getMax(color.rgbRed, color.rgbGreen, color.rgbBlue) / 255.0f;
+			RGBQUAD newColor{};
 			newColor.rgbRed = color.rgbRed;
 			newColor.rgbGreen = color.rgbGreen;
 			newColor.rgbBlue = color.rgbBlue;
-			newColor.rgbReserved = alpha * 255;
+			newColor.rgbReserved = getMax(color.rgbRed, color.rgbGreen, color.rgbBlue);
 			setColor(newBitmap, x, y, newColor);
 		}
 	}
