@@ -76,6 +76,18 @@ public:
 	static void moveMapObjectTexture(const string& sourcePath);
 	static void updateMapEffect();
 	static void updateAnimationPositionInAnimation();
+	static void generateAllOffsetedImage(const string& filePath);
+	static void generateGroupImage(const string& filePath);
+	static void generateGroupMonsterImage(const string& filePath);
+	static void trimAllImage(const string& filePath);
+	static void removeAllBackground(const string& filePath);
+protected:
+	static void removeBackground(const string& fileName, const string& newFileName);
+	static void trimImage(const string& filePath, const string& newFilePath, Vector2Int size);
+	static Vector2Int generateImageSizeWithOffset(const string& fileName, Vector2Int offset);
+	static void generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset);
+	static Vector2Int generateMinSize(const string& fileName);
+	static void removeEmptyRectangle(const string& fileName, Vector2Int );
 };
 
 #endif

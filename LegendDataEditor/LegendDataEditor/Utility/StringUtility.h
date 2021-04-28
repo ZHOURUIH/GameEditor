@@ -13,8 +13,11 @@ public:
 	static string getFolderName(string str);
 	static string getFileName(string str);
 	static string getFileNameNoSuffix(string str, bool removePath);
+	static string getFirstFolderName(const string& dir);
+	static string removeFirstPath(const string& dir);
 	static string getFilePath(const string& dir);
 	static string getFileSuffix(const string& fileName);
+	static string removeStartString(const string& fileName, const string& startStr);
 	static string replaceSuffix(const string& fileName, const string& suffix) { return getFileNameNoSuffix(fileName, false) + suffix; }
 	// 获得字符串最后不是数字的下标
 	static int getLastNotNumberPos(const string& str);
@@ -1002,6 +1005,8 @@ public:
 	// 可指定从后或者从头查找子字符串
 	static bool findString(const string& res, const string& dst, int* pos = NULL, uint startIndex = 0, bool direction = true);
 	static bool findString(const char* res, const char* dst, int* pos = NULL, uint startIndex = 0, bool direction = true);
+	static int findStringPos(const char* res, const char* dst, uint startIndex = 0, bool direction = true);
+	static int findStringPos(const string& res, const string& dst, uint startIndex = 0, bool direction = true);
 	static bool checkString(const string& str, const string& valid);
 	static bool checkFloatString(const string& str, const string& valid = "");
 	static bool checkIntString(const string& str, const string& valid = "");

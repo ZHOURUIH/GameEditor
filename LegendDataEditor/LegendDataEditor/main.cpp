@@ -1,10 +1,12 @@
 #include "ImageUtility.h"
+#include "SQLiteData.h"
 
 void main()
 {
 	// 各个工具函数的初始化需要优先调用
 	MathUtility::initMathUtility();
 	StringUtility::initStringUtility();
+	SQLiteData::initFunctionList();
 
 	while (true)
 	{
@@ -34,6 +36,8 @@ void main()
 		cout << "28:更新地图中的特效信息到SQLite" << endl;
 		cout << "29:更新Animation表格中的AnimationPosition" << endl;
 		cout << "30:整理翅膀文件结构" << endl;
+		cout << "31:重新生成包含偏移量的图片" << endl;
+		cout << "32:裁剪序列帧图片到最小尺寸" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -286,6 +290,26 @@ void main()
 			long startTime = timeGetTime();
 			ImageUtility::autoGroupWingImage("../media/" + fileName);
 			cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << endl;
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 31)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "开始生成..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::generateAllOffsetedImage("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 32)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "开始裁剪..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::trimAllImage("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

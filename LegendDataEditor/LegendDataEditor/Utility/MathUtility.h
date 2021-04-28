@@ -293,6 +293,8 @@ public:
 	template<typename T>
 	static T getMax(T a, T b) { return a > b ? a : b; }
 	template<typename T>
+	static T getMax(T a, T b, T c) { return getMax(a, getMax(b, c)); }
+	template<typename T>
 	static T lerpSimple(const T& start, const T& end, float t) { return start + (end - start) * t; }
 	template<typename T>
 	static T lerp(const T& start, const T& end, float t, T minAbsDelta = 0.0f)

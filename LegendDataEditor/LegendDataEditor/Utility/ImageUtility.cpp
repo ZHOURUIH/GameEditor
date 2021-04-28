@@ -799,8 +799,13 @@ void ImageUtility::groupAtlas(const string& filePath, int countInAltas)
 
 void ImageUtility::texturePacker(const string& texturePath)
 {
-	string outputFileName = getFileName(texturePath);
-	string outputPath = getFilePath(texturePath);
+	string fullPathNoMedia = removeStartString(texturePath, "../media/");
+	string rootFolderName = getFirstFolderName(fullPathNoMedia);
+	string newFullPath = "../media/" + rootFolderName + "_atlas" + "/" + removeFirstPath(fullPathNoMedia);
+
+	string outputFileName = getFileName(newFullPath);
+	string outputPath = getFilePath(newFullPath);
+	createFolder(outputPath);
 	string cmdLine;
 	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
 	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
@@ -1584,4 +1589,442 @@ void ImageUtility::updateAnimationPositionInAnimation()
 		animationData->mAnimationPosition = posIDList;
 		animationTable.update(*animationData);
 	}
+}
+
+struct AnimInfo
+{
+	string mFileName;
+	string mAtlas;
+	int mIndex;
+	Vector2Int mOffset;
+	AnimInfo(const string& fileName, const string& atlas, int index, const Vector2Int& offset)
+	{
+		mFileName = fileName;
+		mAtlas = atlas;
+		mIndex = index;
+		mOffset = offset;
+	}
+};
+
+void ImageUtility::generateGroupImage(const string& filePath)
+{
+	myVector<string> EmptyList;
+	myVector<string> folders;
+	findFolders(filePath, folders, true);
+	FOR_VECTOR(folders)
+	{
+		myVector<string> files;
+		findFiles(folders[i], files, ".png", false);
+		if (files.size() == 0)
+		{
+			continue;
+		}
+		if (getFileName(folders[i]).find_first_of('_') != -1)
+		{
+			continue;
+		}
+		// 先将所有图片按照序列帧放入列表中
+		myMap<string, myVector<string>> animList;
+		FOR_VECTOR_J(files)
+		{
+			string fileName = files[j];
+			string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
+			string animationWithDir = fileNameNoSuffix.substr(0, findStringPos(fileNameNoSuffix, "_"));
+			string animationNoDir = animationWithDir.substr(0, findStringPos(animationWithDir, "_"));
+			animList.tryInsert(animationNoDir, EmptyList).push_back(fileName);
+		}
+
+		// 再对序列帧列表进行处理
+		FOREACH(iterAnim, animList)
+		{
+			auto& list = iterAnim->second;
+			FOR_VECTOR_J(list)
+			{
+				string path = getFilePath(list[j]) + "/" + iterAnim->first + "/";
+				moveFile(list[j], path + getFileName(list[j]));
+			}
+			END(list);
+		}
+		END(animList);
+	}
+	END(folders);
+}
+
+void ImageUtility::generateGroupMonsterImage(const string& filePath)
+{
+	myVector<string> EmptyList;
+	myVector<string> folders;
+	findFolders(filePath, folders, true);
+	FOR_VECTOR(folders)
+	{
+		myVector<string> files;
+		findFiles(folders[i], files, ".png", false);
+		if (files.size() == 0)
+		{
+			continue;
+		}
+		if (getFileName(folders[i]).find_first_of('_') != -1)
+		{
+			continue;
+		}
+		
+		// 先将所有图片按照序列帧放入列表中,first是atlas,second是图集中的带路径的图片名字
+		myMap<string, myVector<string>> animList;
+		FOR_VECTOR_J(files)
+		{
+			string fileName = files[j];
+			string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
+			
+			// 带方向的
+			string atlas = "";
+			int dirCharIndex = findStringPos(fileNameNoSuffix, "_dir");
+			if (dirCharIndex != -1)
+			{
+				int seperateIndexAfterDir = findStringPos(fileNameNoSuffix, "_", dirCharIndex + strlen("_dir"));
+				atlas = fileNameNoSuffix.substr(0, seperateIndexAfterDir);
+			}
+			// 不带方向
+			else
+			{
+				atlas = fileNameNoSuffix.substr(0, findStringPos(fileNameNoSuffix, "_"));
+			}
+			animList.tryInsert(atlas, EmptyList).push_back(fileName);
+		}
+
+		// 再对序列帧列表进行处理
+		FOREACH(iterAnim, animList)
+		{
+			auto& list = iterAnim->second;
+			FOR_VECTOR_J(list)
+			{
+				string path = getFilePath(getFilePath(list[j])) + "/" + iterAnim->first + "/";
+				moveFile(list[j], path + getFileName(list[j]));
+			}
+			END(list);
+		}
+		END(animList);
+	}
+	END(folders);
+	deleteEmptyFolder(filePath);
+}
+
+void ImageUtility::generateAllOffsetedImage(const string& filePath)
+{
+	myMap<int, AnimInfo> EmptyList;
+	NEW_SQLITE(SQLiteImagePositionAnimation, animationPosTable, "ImagePositionAnimation");
+	myVector<string> folders;
+	findFolders(filePath, folders, true);
+	FOR_VECTOR(folders)
+	{
+		myVector<string> files;
+		findFiles(folders[i], files, ".png", false);
+		if (files.size() == 0)
+		{
+			continue;
+		}
+
+		cout << "处理目录:" << folders[i] << endl;
+		// 先将所有图片按照序列帧放入列表中
+		myMap<string, myMap<int, AnimInfo>> animList;
+		FOR_VECTOR_J(files)
+		{
+			string fileName = files[j];
+			string path = removeStartString(getFilePath(fileName), "../media/");
+			string atlas = path + "/" + getFileName(path);
+			string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
+			string animationWithDir = fileNameNoSuffix.substr(0, findStringPos(fileNameNoSuffix, "_", 0, false));
+			int index = stringToInt(fileNameNoSuffix.substr(findStringPos(fileNameNoSuffix, "_", 0, false) + 1));
+			TDImagePositionAnimation data;
+			animationPosTable.query(atlas, animationWithDir, data);
+			if (data.mID == 0)
+			{
+				cout << "找不到图片, atlas:" << atlas << ", animation:" << animationWithDir << endl;
+				break;
+			}
+			animList.tryInsert(animationWithDir, EmptyList).insert(index, AnimInfo(files[j], atlas, index, Vector2Int(data.mPosX[index], -data.mPosY[index])));
+		}
+
+		// 再对序列帧列表进行处理
+		FOREACH(iterAnim, animList)
+		{
+			Vector2Int maxSize;
+			FOREACH(iter0, iterAnim->second)
+			{
+				Vector2Int newSize = generateImageSizeWithOffset(iter0->second.mFileName, iter0->second.mOffset);
+				maxSize.x = getMax(newSize.x, maxSize.x);
+				maxSize.y = getMax(newSize.y, maxSize.y);
+			}
+			FOREACH(iter1, iterAnim->second)
+			{
+				string fullPathNoMedia = removeStartString(iter1->second.mFileName, "../media/");
+				string rootFolderName = getFirstFolderName(fullPathNoMedia);
+				string newFullPath = "../media/" + rootFolderName + "_offseted" + "/" + removeFirstPath(fullPathNoMedia);
+				createFolder(getFilePath(newFullPath));
+				generateOffsetedImage(iter1->second.mFileName, newFullPath, maxSize, iter1->second.mOffset);
+			}
+		}
+	}
+	END(folders);
+}
+
+void ImageUtility::trimAllImage(const string& filePath)
+{
+	myMap<int, string> EmptyList;
+	myVector<string> folders;
+	findFolders(filePath, folders, true);
+	FOR_VECTOR(folders)
+	{
+		myVector<string> files;
+		findFiles(folders[i], files, ".png", false);
+		if (files.size() == 0)
+		{
+			continue;
+		}
+		cout << "处理目录:" << folders[i] << endl;
+
+		// 先将所有图片按照序列帧放入列表中
+		myMap<string, myMap<int, string>> animList;
+		FOR_VECTOR_J(files)
+		{
+			string fileName = files[j];
+			string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
+			string animationWithDir = fileNameNoSuffix.substr(0, findStringPos(fileNameNoSuffix, "_", 0, false));
+			int index = stringToInt(fileNameNoSuffix.substr(findStringPos(fileNameNoSuffix, "_", 0, false) + 1));
+			animList.tryInsert(animationWithDir, EmptyList).insert(index, files[j]);
+		}
+
+		FOREACH(iterAnim, animList)
+		{
+			Vector2Int minSize;
+			FOREACH(iter0, iterAnim->second)
+			{
+				Vector2Int size = generateMinSize(iter0->second);
+				minSize.x = getMax(minSize.x, size.x);
+				minSize.y = getMax(minSize.y, size.y);
+			}
+			FOREACH(iter1, iterAnim->second)
+			{
+				string fullPathNoMedia = removeStartString(iter1->second, "../media/");
+				string rootFolderName = getFirstFolderName(fullPathNoMedia);
+				string newFullPath = "../media/" + rootFolderName + "_trim" + "/" + removeFirstPath(fullPathNoMedia);
+				createFolder(getFilePath(newFullPath));
+				trimImage(iter1->second, newFullPath, minSize);
+			}
+		}
+	}
+}
+
+void ImageUtility::trimImage(const string& filePath, const string& newFilePath, Vector2Int size)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(filePath.c_str());
+	FIBITMAP* oldBitmap = FreeImage_Load(format, filePath.c_str());
+	int width = FreeImage_GetWidth(oldBitmap);
+	int height = FreeImage_GetHeight(oldBitmap);
+	int xInOld = (width - size.x) / 2;
+	int yInOld = (height - size.y) / 2;
+	FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
+	FOR_Y((uint)size.y)
+	{
+		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
+		// 原始图片的底部在新图片中的y坐标,图片中的坐标是底部为0,向上为正
+		BYTE* oldLine = FreeImage_GetScanLine(oldBitmap, y + yInOld);
+		memcpy(newLine, oldLine + 4 * xInOld, size.x * 4);
+	}
+	FreeImage_Save(format, newBitmap, newFilePath.c_str());
+	FreeImage_Unload(oldBitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
+}
+
+Vector2Int ImageUtility::generateImageSizeWithOffset(const string& fileName, Vector2Int offset)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
+	int width = FreeImage_GetWidth(oldBitmap);
+	int height = FreeImage_GetHeight(oldBitmap);
+	int minX = offset.x;
+	int maxX = width + offset.x;
+	int minY = offset.y - height;
+	int maxY = offset.y;
+	Vector2Int newSize;
+	newSize.x = getMax(abs(minX), abs(maxX)) * 2;
+	newSize.y = getMax(abs(minY), abs(maxY)) * 2;
+	FreeImage_Unload(oldBitmap);
+	FreeImage_DeInitialise();
+	return newSize;
+}
+
+void ImageUtility::generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
+	int oldWidth = FreeImage_GetWidth(oldBitmap);
+	int oldHeight = FreeImage_GetHeight(oldBitmap);
+	int xInOld = (int)(offset.x + maxSize.x / 2);
+	int yInOld = (int)(offset.y - oldHeight + maxSize.y / 2);
+	FIBITMAP* newBitmap = FreeImage_Allocate(maxSize.x, maxSize.y, 32);
+	FOR_Y((uint)maxSize.y)
+	{
+		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
+		memset(newLine, 0, maxSize.x * 4);
+		// 原始图片的底部在新图片中的y坐标,图片中的坐标是底部为0,向上为正
+		int indexY = y - yInOld;
+		if(indexY >= 0 && indexY < oldHeight)
+		{
+			BYTE* oldLine = FreeImage_GetScanLine(oldBitmap, indexY);
+			memcpy(newLine + 4 * xInOld, oldLine, oldWidth * 4);
+		}
+	}
+
+	FreeImage_Save(format, newBitmap, newFileName.c_str());
+	FreeImage_Unload(oldBitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
+}
+
+Vector2Int ImageUtility::generateMinSize(const string& fileName)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* bitmap = FreeImage_Load(format, fileName.c_str());
+	uint width = FreeImage_GetWidth(bitmap);
+	uint height = FreeImage_GetHeight(bitmap);
+	int minX = -1;
+	int maxX = -1;
+	int minY = -1;
+	int maxY = -1;
+	FOR_Y(height)
+	{
+		BYTE* newLine = FreeImage_GetScanLine(bitmap, y);
+		int minXInLine = -1;
+		int maxXInLine = -1;
+		FOR_X(width)
+		{
+			RGBQUAD color = getColor(bitmap, x, y);
+			if (color.rgbReserved != 0)
+			{
+				if (minXInLine < 0)
+				{
+					minXInLine = x;
+				}
+				else
+				{
+					minXInLine = getMin(minXInLine, (int)x);
+				}
+				if (maxXInLine < 0)
+				{
+					maxXInLine = x;
+				}
+				else
+				{
+					maxXInLine = getMax(maxXInLine, (int)x);
+				}
+			}
+		}
+		// 存在有效值,表示这一行不是空白的
+		if (minXInLine >= 0 || maxXInLine >= 0)
+		{
+			if (minY < 0)
+			{
+				minY = y;
+			}
+			else
+			{
+				minY = getMin(minY, (int)y);
+			}
+			if (maxY < 0)
+			{
+				maxY = y;
+			}
+			else
+			{
+				maxY = getMax(maxY, (int)y);
+			}
+			if (minX < 0)
+			{
+				minX = minXInLine;
+			}
+			else
+			{
+				minX = getMin(minX, minXInLine);
+			}
+			if (maxX < 0)
+			{
+				maxX = maxXInLine;
+			}
+			else
+			{
+				maxX = getMax(maxX, maxXInLine);
+			}
+		}
+	}
+	FreeImage_Unload(bitmap);
+	FreeImage_DeInitialise();
+	int newWidth = 0;
+	int newHeight = 0;
+	if (minX < 0 || maxX < 0)
+	{
+		newWidth = 1;
+	}
+	else
+	{
+		newWidth = (int)(getMax(abs(minX - (int)width / 2.0f), abs(maxX + 1 - (int)width / 2.0f)) * 2);
+	}
+	if (minY < 0 || maxY < 0)
+	{
+		newHeight = 1;
+	}
+	else
+	{
+		newHeight = (int)(getMax(abs(minY - (int)height / 2.0f), abs(maxY + 1 - (int)height / 2.0f)) * 2);
+	}
+	return Vector2Int(newWidth, newHeight);
+}
+
+void ImageUtility::removeAllBackground(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".png");
+	FOR_VECTOR(files)
+	{
+		string fullPathNoMedia = removeStartString(files[i], "../media/");
+		string rootFolderName = getFirstFolderName(fullPathNoMedia);
+		string newFullPath = "../media/" + rootFolderName + "_transparent" + "/" + removeFirstPath(fullPathNoMedia);
+		createFolder(getFilePath(newFullPath));
+		removeBackground(files[i], newFullPath);
+	}
+	END(files);
+}
+
+void ImageUtility::removeBackground(const string& fileName, const string& newFileName)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
+	int width = FreeImage_GetWidth(oldBitmap);
+	int height = FreeImage_GetHeight(oldBitmap);
+
+	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
+	FOR_Y(height)
+	{
+		FOR_X(width)
+		{
+			RGBQUAD color = getColor(oldBitmap, x, y);
+			RGBQUAD newColor;
+			float alpha = getMax(color.rgbRed, color.rgbGreen, color.rgbBlue) / 255.0f;
+			newColor.rgbRed = color.rgbRed;
+			newColor.rgbGreen = color.rgbGreen;
+			newColor.rgbBlue = color.rgbBlue;
+			newColor.rgbReserved = alpha * 255;
+			setColor(newBitmap, x, y, newColor);
+		}
+	}
+
+	FreeImage_Save(format, newBitmap, newFileName.c_str());
+	FreeImage_Unload(oldBitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
 }

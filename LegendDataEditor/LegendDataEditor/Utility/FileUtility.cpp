@@ -578,6 +578,10 @@ void FileUtility::openBinaryFile(const string& filePath, FileContent& fileConten
 
 bool FileUtility::moveFile(const string& fileName, const string& newName, bool forceCover)
 {
+	if (fileName == newName)
+	{
+		return true;
+	}
 	string newPath = getFilePath(newName);
 	createFolder(newPath);
 	return renameFile(fileName, newName, forceCover);
@@ -591,14 +595,11 @@ bool FileUtility::renameFile(const string& fileName, const string& newName, bool
 	}
 	if (isFileExist(newName))
 	{
-		if (forceCover)
-		{
-			deleteFile(newName);
-		}
-		else
+		if (!forceCover)
 		{
 			return false;
 		}
+		deleteFile(newName);
 	}
 	return rename(fileName.c_str(), newName.c_str()) == 0;
 }

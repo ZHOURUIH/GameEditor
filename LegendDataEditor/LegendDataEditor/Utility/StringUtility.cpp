@@ -108,6 +108,21 @@ string StringUtility::getFileNameNoSuffix(string str, bool removePath)
 	return str;
 }
 
+string StringUtility::getFirstFolderName(const string& dir)
+{
+	string temp = dir;
+	rightToLeft(temp);
+	return temp.substr(0, temp.find_first_of('/'));
+}
+
+string StringUtility::removeFirstPath(const string& dir)
+{
+	string temp = dir;
+	rightToLeft(temp);
+	int index = temp.find_first_of('/');
+	return temp.substr(index + 1, temp.length() - index - 1);
+}
+
 string StringUtility::getFilePath(const string& dir)
 {
 	string tempDir = dir;
@@ -122,6 +137,15 @@ string StringUtility::getFileSuffix(const string& fileName)
 	if (dotPos != NOT_FIND)
 	{
 		return fileName.substr(dotPos + 1, fileName.length() - dotPos - 1);
+	}
+	return fileName;
+}
+
+string StringUtility::removeStartString(const string& fileName, const string& startStr)
+{
+	if (startWith(fileName, startStr.c_str()))
+	{
+		return fileName.substr(startStr.length(), fileName.length() - startStr.length());
 	}
 	return fileName;
 }
@@ -479,7 +503,7 @@ void StringUtility::strcat_s(char* destBuffer, uint size, const char* source)
 	{
 		if (destIndex >= (uint)size)
 		{
-			ERROR("strcat_s buffer is too small");
+			//ERROR("strcat_s buffer is too small");
 			break;
 		}
 		destBuffer[destIndex] = source[index];
@@ -1920,6 +1944,20 @@ bool StringUtility::findString(const char* res, const char* sub, int* pos, uint 
 		*pos = posFind;
 	}
 	return posFind != -1;
+}
+
+int StringUtility::findStringPos(const char* res, const char* dst, uint startIndex, bool direction)
+{
+	int pos = -1;
+	findString(res, dst, &pos, startIndex, direction);
+	return pos;
+}
+
+int StringUtility::findStringPos(const string& res, const string& dst, uint startIndex, bool direction)
+{
+	int pos = -1;
+	findString(res, dst, &pos, startIndex, direction);
+	return pos;
 }
 
 bool StringUtility::checkString(const string& str, const string& valid)
