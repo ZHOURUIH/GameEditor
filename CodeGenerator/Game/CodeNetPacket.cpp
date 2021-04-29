@@ -58,7 +58,18 @@ void CodeNetPacket::generate()
 		if (line == "{}")
 		{
 			PacketInfo info;
-			info.mPacketName = lines[i - 1];
+			int leftIndex = lines[i - 1].find_first_of('[');
+			if (leftIndex != -1)
+			{
+				info.mPacketName = lines[i - 1].substr(0, leftIndex);
+				int rightIndex = lines[i - 1].find_first_of(']');
+				info.mShowInfo = stringToBool(lines[i - 1].substr(leftIndex + 1, rightIndex - leftIndex - 1));
+			}
+			else
+			{
+				info.mPacketName = lines[i - 1];
+				info.mShowInfo = true;
+			}
 			packetInfoList.push_back(info);
 			continue;
 		}
@@ -74,7 +85,18 @@ void CodeNetPacket::generate()
 		if (line == "}")
 		{
 			PacketInfo info;
-			info.mPacketName = tempPacketName;
+			int leftIndex = tempPacketName.find_first_of('[');
+			if (leftIndex != -1)
+			{
+				info.mPacketName = tempPacketName.substr(0, leftIndex);
+				int rightIndex = tempPacketName.find_first_of(']');
+				info.mShowInfo = stringToBool(tempPacketName.substr(leftIndex + 1, rightIndex - leftIndex - 1));
+			}
+			else
+			{
+				info.mPacketName = tempPacketName;
+				info.mShowInfo = true;
+			}
 			info.mMemberList = tempMemberList;
 			packetInfoList.push_back(info);
 			packetStart = false;
@@ -298,12 +320,16 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		line(header, "public:");
 		if (memberListCount == 0)
 		{
-			line(header, "\tvoid fillParams() override{}");
+			line(header, "\tvoid fillParams() override");
+			line(header, "\t{");
+			line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+			line(header, "\t}");
 		}
 		else
 		{
 			line(header, "\tvoid fillParams() override");
 			line(header, "\t{");
+			line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 			FOR_I(memberListCount)
 			{
 				line(header, "\t\t" + cppPushParamString(memberList[i]));
@@ -367,12 +393,16 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 		newLines.push_back("public:");
 		if (memberListCount == 0)
 		{
-			newLines.push_back("\tvoid fillParams() override{}");
+			newLines.push_back("\tvoid fillParams() override");
+			newLines.push_back("\t{");
+			newLines.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+			newLines.push_back("\t}");
 		}
 		else
 		{
 			newLines.push_back("\tvoid fillParams() override");
 			newLines.push_back("\t{");
+			newLines.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 			FOR_I(memberListCount)
 			{
 				newLines.push_back("\t\t" + cppPushParamString(memberList[i]));
@@ -435,36 +465,38 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 			{
 				headerLines.erase(fillParamIndex + 2 + oldVariableCount - 1 - i);
 			}
+			headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 			// 如果没有新的变量,则移除大括号,将大括号合并到函数名所在行
-			if (memberListCount == 0)
-			{
-				headerLines.erase(fillParamIndex + 2);
-				headerLines.erase(fillParamIndex + 1);
-				headerLines[fillParamIndex] = "\t\tvoid fillParams() override{}";
-			}
-			else
+			if (memberListCount > 0)
 			{
 				// 添加新的变量
 				FOR_I(memberListCount)
 				{
-					headerLines.insert(fillParamIndex + 2 + i, "\t\t" + cppPushParamString(memberList[i]));
+					headerLines.insert(fillParamIndex + 3 + i, "\t\t" + cppPushParamString(memberList[i]));
 				}
 			}
 		}
 		// 函数体没有变量注册
 		else
 		{
-			// 如果新的变量数量也为0,则不做处理,大于0时才处理
 			if (memberListCount > 0)
 			{
-				headerLines[fillParamIndex] = "\t\tvoid fillParams() override";
+				headerLines[fillParamIndex] = "\tvoid fillParams() override";
 				headerLines.insert(fillParamIndex + 1, "\t{");
+				headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 				// 添加新的变量
 				FOR_I(memberListCount)
 				{
-					headerLines.insert(fillParamIndex + 2 + i, "\t\t" + cppPushParamString(memberList[i]));
+					headerLines.insert(fillParamIndex + 3 + i, "\t\t" + cppPushParamString(memberList[i]));
 				}
-				headerLines.insert(fillParamIndex + 2 + memberListCount, "\t}");
+				headerLines.insert(fillParamIndex + 3 + memberListCount, "\t}");
+			}
+			else
+			{
+				headerLines[fillParamIndex] = "\tvoid fillParams() override";
+				headerLines.insert(fillParamIndex + 1, "\t{");
+				headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+				headerLines.insert(fillParamIndex + 3, "\t}");
 			}
 		}
 	}
@@ -564,12 +596,16 @@ void CodeNetPacket::generateCppSCPacketFile(const PacketInfo& packetInfo, string
 		line(header, "public:");
 		if (memberListCount == 0)
 		{
-			line(header, "\tvoid fillParams() override{}");
+			line(header, "\tvoid fillParams() override");
+			line(header, "\t{");
+			line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+			line(header, "\t}");
 		}
 		else
 		{
 			line(header, "\tvoid fillParams() override");
 			line(header, "\t{");
+			line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 			FOR_I(memberListCount)
 			{
 				line(header, "\t\t" + cppPushParamString(memberList[i]));
