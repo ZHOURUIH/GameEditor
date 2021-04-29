@@ -374,135 +374,102 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 		ERROR("网络消息包文件解析错误,{出现在最后一行");
 		return;
 	}
+
 	const auto& memberList = packetInfo.mMemberList;
-	// 如果下一行是宏,则说明是旧格式的文件,需要被替换
-	if (findSubstr(headerLines[bracketIndex + 1], packetName + "_Declare;"))
+	// 找到第一个public:
+	int firstPublicIndex = headerLines.find("public:");
+	int secondPublicIndex = headerLines.find("public:", firstPublicIndex + 1);
+	if (firstPublicIndex < 0 || secondPublicIndex < 0)
 	{
-		myVector<string> newLines;
-		newLines.push_back("public:");
-		FOR_VECTOR_CONST(memberList)
-		{
-			newLines.push_back("\t" + cppMemberDeclareString(memberList[i]));
-		}
-		// 宏的下一行应该是public:,否则是无法识别的格式
-		if (headerLines[bracketIndex + 2] != "public:")
-		{
-			ERROR("网络消息包文件解析错误,宏的下一行应该是public:");
-			return;
-		}
-		newLines.push_back("public:");
-		if (memberListCount == 0)
-		{
-			newLines.push_back("\tvoid fillParams() override");
-			newLines.push_back("\t{");
-			newLines.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-			newLines.push_back("\t}");
-		}
-		else
-		{
-			newLines.push_back("\tvoid fillParams() override");
-			newLines.push_back("\t{");
-			newLines.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-			FOR_I(memberListCount)
-			{
-				newLines.push_back("\t\t" + cppPushParamString(memberList[i]));
-			}
-			newLines.push_back("\t}");
-		}
-		headerLines.erase(bracketIndex + 2);
-		headerLines.erase(bracketIndex + 1);
-		// 将新加的行插入到原本的文件中
-		FOR_VECTOR(newLines)
-		{
-			headerLines.insert(headerLines.begin() + bracketIndex + 1 + i, newLines[i]);
-		}
-		END(newLines);
+		ERROR("网络消息包文件解析错误,public:的数量小于2个");
+		return;
 	}
-	// 新格式的文件,也就是没有其他的宏,替换变量声明和注册
-	else
+	// 移除两个public:之间旧的变量声明
+	uint oldVariableCount = secondPublicIndex - firstPublicIndex - 1;
+	FOR_I(oldVariableCount)
 	{
-		// 找到第一个public:
-		int firstPublicIndex = headerLines.find("public:");
-		int secondPublicIndex = headerLines.find("public:", firstPublicIndex + 1);
-		if (firstPublicIndex < 0 || secondPublicIndex < 0)
+		headerLines.erase(secondPublicIndex - 1 - i);
+	}
+	FOR_VECTOR_CONST(memberList)
+	{
+		headerLines.insert(firstPublicIndex + 1 + i, "\t" + cppMemberDeclareString(memberList[i]));
+	}
+	secondPublicIndex += memberList.size() - oldVariableCount;
+	// 找到fillParams()
+	int fillParamIndex = -1;
+	FOR_VECTOR(headerLines)
+	{
+		if (findSubstr(headerLines[i], "void fillParams()"))
 		{
-			ERROR("网络消息包文件解析错误,public:的数量小于2个");
-			return;
+			fillParamIndex = i;
+			break;
 		}
-		// 移除两个public:之间旧的变量声明
-		uint oldVariableCount = secondPublicIndex - firstPublicIndex - 1;
-		FOR_I(oldVariableCount)
+	}
+	END(headerLines);
+	if (fillParamIndex < 0)
+	{
+		ERROR("网络消息包文件解析错误,找不到fillParams函数");
+		return;
+	}
+	// 函数体有变量注册
+	if (headerLines[fillParamIndex + 1] == "\t{")
+	{
+		int removeOldStartIndex = fillParamIndex + 2;
+		if (findSubstr(headerLines[removeOldStartIndex], "mShowInfo = "))
 		{
-			headerLines.erase(secondPublicIndex - 1 - i);
-		}
-		FOR_VECTOR_CONST(memberList)
-		{
-			headerLines.insert(firstPublicIndex + 1 + i, "\t" + cppMemberDeclareString(memberList[i]));
-		}
-		secondPublicIndex += memberList.size() - oldVariableCount;
-		// 找到fillParams()
-		int fillParamIndex = -1;
-		FOR_VECTOR(headerLines)
-		{
-			if (findSubstr(headerLines[i], "void fillParams()"))
-			{
-				fillParamIndex = i;
-				break;
-			}
-		}
-		END(headerLines);
-		if (fillParamIndex < 0)
-		{
-			ERROR("网络消息包文件解析错误,找不到fillParams函数");
-			return;
-		}
-		// 函数体有变量注册
-		if (headerLines[fillParamIndex + 1] == "\t{")
-		{
-			int endBracketIndex = headerLines.find("\t}", fillParamIndex + 2);
+			headerLines[removeOldStartIndex] = "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";";
+			++removeOldStartIndex;
 			// 移除所有已注册的变量
 			FOR_I(oldVariableCount)
 			{
-				headerLines.erase(fillParamIndex + 2 + oldVariableCount - 1 - i);
-			}
-			headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-			// 如果没有新的变量,则移除大括号,将大括号合并到函数名所在行
-			if (memberListCount > 0)
-			{
-				// 添加新的变量
-				FOR_I(memberListCount)
-				{
-					headerLines.insert(fillParamIndex + 3 + i, "\t\t" + cppPushParamString(memberList[i]));
-				}
+				headerLines.erase(removeOldStartIndex + oldVariableCount - 1 - i);
 			}
 		}
-		// 函数体没有变量注册
 		else
 		{
-			if (memberListCount > 0)
+			// 移除所有已注册的变量
+			FOR_I(oldVariableCount)
 			{
-				headerLines[fillParamIndex] = "\tvoid fillParams() override";
-				headerLines.insert(fillParamIndex + 1, "\t{");
-				headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-				// 添加新的变量
-				FOR_I(memberListCount)
-				{
-					headerLines.insert(fillParamIndex + 3 + i, "\t\t" + cppPushParamString(memberList[i]));
-				}
-				headerLines.insert(fillParamIndex + 3 + memberListCount, "\t}");
+				headerLines.erase(removeOldStartIndex + oldVariableCount - 1 - i);
 			}
-			else
+			headerLines.insert(removeOldStartIndex, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+		}
+		if (memberListCount > 0)
+		{
+			// 添加新的变量
+			FOR_I(memberListCount)
 			{
-				headerLines[fillParamIndex] = "\tvoid fillParams() override";
-				headerLines.insert(fillParamIndex + 1, "\t{");
-				headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-				headerLines.insert(fillParamIndex + 3, "\t}");
+				headerLines.insert(fillParamIndex + 3 + i, "\t\t" + cppPushParamString(memberList[i]));
 			}
+		}
+	}
+	// 函数体没有变量注册
+	else
+	{
+		if (memberListCount > 0)
+		{
+			headerLines[fillParamIndex] = "\tvoid fillParams() override";
+			headerLines.insert(fillParamIndex + 1, "\t{");
+			headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+			// 添加新的变量
+			FOR_I(memberListCount)
+			{
+				headerLines.insert(fillParamIndex + 3 + i, "\t\t" + cppPushParamString(memberList[i]));
+			}
+			headerLines.insert(fillParamIndex + 3 + memberListCount, "\t}");
+		}
+		else
+		{
+			headerLines[fillParamIndex] = "\tvoid fillParams() override";
+			headerLines.insert(fillParamIndex + 1, "\t{");
+			headerLines.insert(fillParamIndex + 2, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+			headerLines.insert(fillParamIndex + 3, "\t}");
 		}
 	}
 	// 生成新的文件
 	string newFile;
-	FOR_VECTOR(headerLines)
+	uint newCount = headerLines.size();
+	FOR_I(newCount)
 	{
 		newFile += headerLines[i];
 		if (i != headerLinesCount - 1)
@@ -510,7 +477,6 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 			newFile += "\r\n";
 		}
 	}
-	END(headerLines);
 	writeFile(fullPath, ANSIToUTF8(newFile.c_str(), true));
 }
 
