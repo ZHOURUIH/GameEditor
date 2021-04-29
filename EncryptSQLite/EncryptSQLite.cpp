@@ -18,12 +18,10 @@ bool EncryptSQLite::init()
 		{
 			mTargetPath = params[1];
 		}
-		else if (params[0] == "EncryptKey")
-		{
-			mEncryptKey = params[1];
-		}
 	}
 	END(configLines);
+
+	mEncryptKey = openTxtFile("./EncryptKey.txt", false);
 
 	if (mSourcePath == "" || mTargetPath == "" || mEncryptKey == "")
 	{
