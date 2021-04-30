@@ -26,11 +26,11 @@ public:
 	static bool writeFile(string filePath, const string& text, bool append = false);
 	static bool writeFileSimple(const string& fileName, const char* buffer, uint writeCount, bool append = false);
 	static bool writeFileSimple(const string& fileName, const string& text, bool append = false);
-	static void openFile(const string& filePath, FileContent& fileContent, bool addZero);
-	static string openTxtFile(const string& filePath, bool utf8ToANSI);
-	static void openTxtFile(const string& filePath, string& fileContent, bool utf8ToANSI);
-	static void openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool utf8ToANSI);
-	static void openBinaryFile(const string& filePath, FileContent& fileContent);
+	static void openFile(const string& filePath, FileContent& fileContent, bool showError, bool addZero);
+	static string openTxtFile(const string& filePath, bool utf8ToANSI, bool showError);
+	static void openTxtFile(const string& filePath, string& fileContent, bool showError, bool utf8ToANSI);
+	static void openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool showError, bool utf8ToANSI);
+	static void openBinaryFile(const string& filePath, FileContent& fileContent, bool showError);
 	static bool moveFile(const string& fileName, const string& newName, bool forceCover = false);
 	static bool renameFile(const string& fileName, const string& newName, bool forceCover = false);
 	static uint getFileSize(const string& filePath);
