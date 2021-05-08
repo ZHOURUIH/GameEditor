@@ -471,7 +471,7 @@ bool FileUtility::writeFileSimple(const string& fileName, const string& text, bo
 	return writeFileSimple(fileName, text.c_str(), (uint)text.length(), append);
 }
 
-void FileUtility::openFile(const string& filePath, FileContent& fileContent, bool addZero)
+void FileUtility::openFile(const string& filePath, FileContent& fileContent, bool showError, bool addZero)
 {
 	FILE* pFile = NULL;
 #if RUN_PLATFORM == PLATFORM_WINDOWS
@@ -485,6 +485,10 @@ void FileUtility::openFile(const string& filePath, FileContent& fileContent, boo
 		//转换错误码为对应的错误信息
 		ERROR(string("strerror: ") + strerror(errno) + ",filename:" + filePath);
 #endif
+		if (showError)
+		{
+			ERROR("文件打开失败:" + filePath);
+		}
 		return;
 	}
 	fseek(pFile, 0, SEEK_END);
@@ -504,17 +508,17 @@ void FileUtility::openFile(const string& filePath, FileContent& fileContent, boo
 	}
 }
 
-string FileUtility::openTxtFile(const string& filePath, bool utf8ToANSI)
+string FileUtility::openTxtFile(const string& filePath, bool showError, bool utf8ToANSI)
 {
 	string content;
-	openTxtFile(filePath, content, utf8ToANSI);
+	openTxtFile(filePath, content, showError, utf8ToANSI);
 	return content;
 }
 
-void FileUtility::openTxtFile(const string& filePath, string& fileContent, bool utf8ToANSI)
+void FileUtility::openTxtFile(const string& filePath, string& fileContent, bool showError, bool utf8ToANSI)
 {
 	FileContent file;
-	openFile(filePath, file, true);
+	openFile(filePath, file, showError, true);
 	if (file.mBuffer == NULL)
 	{
 		return;
@@ -527,10 +531,10 @@ void FileUtility::openTxtFile(const string& filePath, string& fileContent, bool 
 	}
 }
 
-void FileUtility::openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool utf8ToANSI)
+void FileUtility::openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool showError, bool utf8ToANSI)
 {
 	string fileContent;
-	openTxtFile(filePath, fileContent, utf8ToANSI);
+	openTxtFile(filePath, fileContent, showError, utf8ToANSI);
 	split(fileContent.c_str(), "\n", fileLines);
 	FOR_VECTOR(fileLines)
 	{
@@ -539,9 +543,9 @@ void FileUtility::openTxtFileLines(const string& filePath, myVector<string>& fil
 	END(fileLines);
 }
 
-void FileUtility::openBinaryFile(const string& filePath, FileContent& fileContent)
+void FileUtility::openBinaryFile(const string& filePath, FileContent& fileContent, bool showError)
 {
-	return openFile(filePath, fileContent, false);
+	return openFile(filePath, fileContent, showError, false);
 }
 
 bool FileUtility::moveFile(const string& fileName, const string& newName, bool forceCover)

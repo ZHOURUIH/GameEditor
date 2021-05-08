@@ -7,11 +7,11 @@ int main()
 	MathUtility::initMathUtility();
 
 	EncryptSQLite encrypt;
-	if (!encrypt.init())
+	bool result = encrypt.init();
+	result = result && encrypt.encrypt();
+	if (!result)
 	{
 		system("pause");
-		return 0;
 	}
-	encrypt.encrypt();
 	return 0;
 }

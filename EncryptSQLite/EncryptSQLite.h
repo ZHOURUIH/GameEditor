@@ -7,7 +7,7 @@ class EncryptSQLite : public FrameUtility
 {
 public:
 	bool init();
-	void encrypt();
+	bool encrypt();
 protected:
 	string mSourcePath;
 	string mTargetPath;

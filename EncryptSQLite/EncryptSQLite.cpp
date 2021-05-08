@@ -3,7 +3,7 @@
 bool EncryptSQLite::init()
 {
 	myVector<string> configLines;
-	openTxtFileLines("./EncryptConfig.txt", configLines, true);
+	openTxtFileLines("./EncryptConfig.txt", configLines, true, true);
 	FOR_VECTOR(configLines)
 	{
 		removeAll(configLines[i], ' ');
@@ -21,7 +21,7 @@ bool EncryptSQLite::init()
 	}
 	END(configLines);
 
-	mEncryptKey = openTxtFile("./EncryptKey.txt", false);
+	mEncryptKey = openTxtFile("./EncryptKey.txt", true, false);
 
 	if (mSourcePath == "" || mTargetPath == "" || mEncryptKey == "")
 	{
@@ -41,14 +41,18 @@ bool EncryptSQLite::init()
 	return true;
 }
 
-void EncryptSQLite::encrypt()
+bool EncryptSQLite::encrypt()
 {
 	myVector<string> files;
 	findFiles(mSourcePath, files, "db");
 	FOR_VECTOR(files)
 	{
 		FileContent file;
-		openBinaryFile(files[i], file);
+		openBinaryFile(files[i], file, true);
+		if (file.mBuffer == NULL)
+		{
+			return false;
+		}
 		FOR_J(file.mFileSize)
 		{
 			file.mBuffer[j] ^= mEncryptKey[j % mEncryptKey.length()];
@@ -57,4 +61,5 @@ void EncryptSQLite::encrypt()
 		writeFileSimple(mTargetPath + getFileName(files[i]), file.mBuffer, file.mFileSize);
 	}
 	END(files);
+	return true;
 }
