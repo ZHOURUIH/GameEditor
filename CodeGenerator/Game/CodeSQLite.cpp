@@ -4,8 +4,8 @@ void CodeSQLite::generate()
 {
 	string cppDataPath = cppGamePath + "DataBase/SQLite/Data/";
 	string cppTablePath = cppGamePath + "DataBase/SQLite/Table/";
-	string csDataPath = csGamePath + "DataBase/SQLite/Data/";
-	string csTablePath = csGamePath + "DataBase/SQLite/Table/";
+	string csDataPath = csHotfixGamePath + "DataBase/SQLite/Data/";
+	string csTablePath = csHotfixGamePath + "DataBase/SQLite/Table/";
 
 	// 解析模板文件
 	string fileContent;
@@ -380,7 +380,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(file, "using System.Collections.Generic;");
 	line(file, "using UnityEngine;");
 	line(file, "");
-	line(file, "public class " + dataClassName + " : SQLiteData");
+	line(file, "public class " + dataClassName + " : ILRSQLiteData");
 	line(file, "{");
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -480,7 +480,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(table, "using System.Collections.Generic;");
 	line(table, "");
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
-	line(table, "public partial class " + tableClassName + " : SQLiteTable");
+	line(table, "public partial class " + tableClassName + " : ILRSQLiteTable");
 	line(table, "{");
 	line(table, "\tpublic " + dataClassName + " query(int id)");
 	line(table, "\t{");
@@ -501,7 +501,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(file, "using System;");
 	line(file, "using System.Collections.Generic;");
 	line(file, "");
-	line(file, "public class SQLiteRegister : GameBase");
+	line(file, "public class SQLiteRegister : GB");
 	line(file, "{");
 	line(file, "\tpublic static void registeAll()");
 	line(file, "\t{");
@@ -517,7 +517,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	}
 	line(file, "\t}");
 	line(file, "\t//-------------------------------------------------------------------------------------------------------------");
-	line(file, "\tprotected static void registeTable<T>(out T sqliteTable, Type tableType, Type dataType, string tableName) where T : SQLiteTable");
+	line(file, "\tprotected static void registeTable<T>(out T sqliteTable, Type tableType, Type dataType, string tableName) where T : ILRSQLiteTable");
 	line(file, "\t{");
 	line(file, "\t\tsqliteTable = mSQLiteManager.registeTable(tableType, dataType, tableName) as T;");
 	line(file, "\t}");

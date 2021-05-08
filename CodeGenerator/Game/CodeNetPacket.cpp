@@ -641,7 +641,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	string str;
 	line(str, "using System;");
 	line(str, "");
-	line(str, "public class PacketRegister : GameBase");
+	line(str, "public class PacketRegister : GB");
 	line(str, "{");
 	line(str, "\tpublic static int PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "\tpublic static void registeAll()");

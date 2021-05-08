@@ -144,7 +144,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// resultRowToTableDataº¯Êý
 	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
 	line(source, "{");
-	line(source, "\tparseULLong(&mID, resultRow.get(ID, NULL));");
+	line(source, "\tparseLLong(&mID, resultRow.get(ID, NULL));");
 	FOR_I(memberCount)
 	{
 		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
@@ -177,9 +177,9 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		{
 			line(source, "\tparseFloat(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
-		else if (typeName == "ullong")
+		else if (typeName == "llong")
 		{
-			line(source, "\tparseULLong(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseLLong(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "string")
 		{
@@ -192,7 +192,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// paramListº¯Êý
 	line(source, "void " + className + "::paramList(char* params, uint size) const");
 	line(source, "{");
-	line(source, "\tappendValueULLong(params, size, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
+	line(source, "\tappendValueLLong(params, size, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
@@ -231,9 +231,9 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		{
 			line(source, "\tappendValueFloat(params, size, m" + memberName + ", " + addComma + ");");
 		}
-		else if (typeName == "ullong")
+		else if (typeName == "llong")
 		{
-			line(source, "\tappendValueULLong(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueLLong(params, size, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
