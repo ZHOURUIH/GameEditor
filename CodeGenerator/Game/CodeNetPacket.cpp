@@ -7,10 +7,10 @@ void CodeNetPacket::generate()
 	string cppCSPacketPath = cppGamePath + "Socket/ClientServer/";
 	string cppSCPacketPath = cppGamePath + "Socket/ServerClient/";
 	string cppPacketDefinePath = cppGamePath + "Socket/";
-	string csharpCSHeaderPath = csGamePath + "Socket/PacketHeaderCS/";
-	string csharpSCHeaderPath = csGamePath + "Socket/PacketHeaderSC/";
-	string csharpSCPacketPath = csGamePath + "Socket/ServerClient/";
-	string csharpPacketDefinePath = csGamePath + "Socket/";
+	string csharpCSHeaderPath = csHotfixGamePath + "Socket/PacketHeaderCS/";
+	string csharpSCHeaderPath = csHotfixGamePath + "Socket/PacketHeaderSC/";
+	string csharpSCPacketPath = csHotfixGamePath + "Socket/ServerClient/";
+	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
 
 	// 解析模板文件
 	string csFileContent;
@@ -689,7 +689,7 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 	string file;
 	line(file, "using System;");
 	line(file, "");
-	line(file, "public partial class " + packetInfo.mPacketName + " : SocketPacket");
+	line(file, "public partial class " + packetInfo.mPacketName + " : ILRSocketPacket");
 	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -730,7 +730,7 @@ void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string 
 		string file;
 		line(file, "using System;");
 		line(file, "");
-		line(file, "public partial class " + packetName + " : SocketPacket");
+		line(file, "public partial class " + packetName + " : ILRSocketPacket");
 		line(file, "{");
 		line(file, "\tpublic override void execute()");
 		line(file, "\t{");

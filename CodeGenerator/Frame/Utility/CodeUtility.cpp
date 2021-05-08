@@ -8,6 +8,7 @@ string CodeUtility::cppGamePath;
 string CodeUtility::cppFramePath;
 string CodeUtility::cppStringDefinePath;
 string CodeUtility::csGamePath;
+string CodeUtility::csHotfixGamePath;
 
 bool CodeUtility::initPath()
 {
@@ -22,6 +23,7 @@ bool CodeUtility::initPath()
 	cppFramePath = cppProjectPath + "Frame/";
 	cppStringDefinePath = cppGamePath + "StringDefine/";
 	csGamePath = GameProjectPath + "Assets/Scripts/Game/";
+	csHotfixGamePath = GameProjectPath + "HotFix/Game/";
 	return true;
 }
 
@@ -268,9 +270,9 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 	{
 		typeName = "byte";
 	}
-	else if (typeName == "ullong")
+	else if (typeName == "ullong" || typeName == "llong")
 	{
-		typeName = "ulong";
+		typeName = "long";
 	}
 	string str;
 	if (memberInfo.mIsArray)
@@ -280,7 +282,7 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GameDefine." + memberInfo.mArrayLengthMacro[i];
+			lengthMacro += "GD." + memberInfo.mArrayLengthMacro[i];
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";
