@@ -13,6 +13,7 @@ protected:
 protected:
 	static string VERSION;
 	static string FILELIST;
+	static string GAME_PDB;
 };
 
 #endif

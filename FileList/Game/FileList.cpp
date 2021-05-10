@@ -4,6 +4,7 @@
 
 string FileList::VERSION = "Version";
 string FileList::FILELIST = "FileList";
+string FileList::GAME_PDB = "GamePDB.bytes";
 
 void FileList::generateFileList()
 {
@@ -15,7 +16,7 @@ void FileList::generateFileList()
 	for (int i = 0; i < fileCount; ++i)
 	{
 		string newPath = removeStartString(fileList[i], "./");
-		if (endWith(newPath, ".meta") || endWith(newPath, ".manifest"))
+		if (endWith(newPath, ".meta"))
 		{
 			continue;
 		}
@@ -27,6 +28,7 @@ void FileList::generateFileList()
 	destroyMapElement(fileInfoList, getFileName(thisFileName));
 	destroyMapElement(fileInfoList, VERSION);
 	destroyMapElement(fileInfoList, FILELIST);
+	destroyMapElement(fileInfoList, GAME_PDB);
 
 	// 计算文件信息
 	// 将所有文件信息写入文件
