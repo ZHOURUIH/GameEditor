@@ -7,9 +7,12 @@ void CodeNetPacket::generate()
 	string cppCSPacketPath = cppGamePath + "Socket/ClientServer/";
 	string cppSCPacketPath = cppGamePath + "Socket/ServerClient/";
 	string cppPacketDefinePath = cppGamePath + "Socket/";
-	string csharpCSHeaderPath = csHotfixGamePath + "Socket/PacketHeaderCS/";
-	string csharpSCHeaderPath = csHotfixGamePath + "Socket/PacketHeaderSC/";
-	string csharpSCPacketPath = csHotfixGamePath + "Socket/ServerClient/";
+	string csharpCSHeaderGamePath = csGamePath + "Socket/PacketHeaderCS/";
+	string csharpCSHeaderHotfixPath = csHotfixGamePath + "Socket/PacketHeaderCS/";
+	string csharpSCHeaderGamePath = csGamePath + "Socket/PacketHeaderSC/";
+	string csharpSCHeaderHotfixPath = csHotfixGamePath + "Socket/PacketHeaderSC/";
+	string csharpSCPacketGamePath = csGamePath + "Socket/ServerClient/";
+	string csharpSCPacketHotfixPath = csHotfixGamePath + "Socket/ServerClient/";
 	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
 
 	// 解析模板文件
@@ -118,13 +121,15 @@ void CodeNetPacket::generate()
 	deleteFolder(cppSCDeclarePath);
 	// c#的只删除代码文件,不删除meta文件
 	myVector<string> csharpCSFileList;
-	findFiles(csharpCSHeaderPath, csharpCSFileList, ".cs");
+	findFiles(csharpCSHeaderGamePath, csharpCSFileList, ".cs");
+	findFiles(csharpCSHeaderHotfixPath, csharpCSFileList, ".cs");
 	FOR_VECTOR_CONST(csharpCSFileList)
 	{
 		deleteFile(csharpCSFileList[i]);
 	}
 	myVector<string> csharpSCFileList;
-	findFiles(csharpSCHeaderPath, csharpSCFileList, ".cs");
+	findFiles(csharpSCHeaderGamePath, csharpSCFileList, ".cs");
+	findFiles(csharpSCHeaderHotfixPath, csharpSCFileList, ".cs");
 	FOR_VECTOR_CONST(csharpSCFileList)
 	{
 		deleteFile(csharpSCFileList[i]);
@@ -139,8 +144,8 @@ void CodeNetPacket::generate()
 		generateCppCSPacketFileSource(packetInfoList[i], cppCSPacketPath);
 		generateCppSCPacketFile(packetInfoList[i], cppSCPacketPath);
 		// .cs代码
-		generateCSharpDecalreFile(packetInfoList[i], csharpCSHeaderPath, csharpSCHeaderPath);
-		generateCSharpSCPacketFile(packetInfoList[i].mPacketName, csharpSCPacketPath);
+		generateCSharpDecalreFile(packetInfoList[i], csharpCSHeaderHotfixPath, csharpCSHeaderGamePath, csharpSCHeaderHotfixPath, csharpSCHeaderGamePath);
+		generateCSharpSCPacketFile(packetInfoList[i].mPacketName, csharpSCPacketHotfixPath, csharpSCPacketGamePath);
 		packetList.push_back(packetInfoList[i].mPacketName);
 	}
 	// c++
@@ -678,7 +683,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 }
 
 // Packet_Declare.cs文件
-void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, string csFilePath, string scFilePath)
+void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, string csHotfixFilePath, string csGameFilePath, string scHotfixFilePath, string scGameFilePath)
 {
 	const int prefixLength = 2;
 	if (packetInfo.mPacketName.substr(0, prefixLength) != "CS" && packetInfo.mPacketName.substr(0, prefixLength) != "SC")
@@ -686,10 +691,26 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 		ERROR("包名前缀错误");
 		return;
 	}
+	bool isHotfixPacket = false;
+	if (startWith(packetInfo.mPacketName, "CS"))
+	{
+		isHotfixPacket = packetInfo.mPacketName != "CSHeartBeat" && packetInfo.mPacketName != "CSPing";
+	}
+	else if (startWith(packetInfo.mPacketName, "SC"))
+	{
+		isHotfixPacket = packetInfo.mPacketName != "SCHeartBeat" && packetInfo.mPacketName != "SCPing";
+	}
 	string file;
 	line(file, "using System;");
 	line(file, "");
-	line(file, "public partial class " + packetInfo.mPacketName + " : ILRSocketPacket");
+	if (isHotfixPacket)
+	{
+		line(file, "public partial class " + packetInfo.mPacketName + " : ILRSocketPacket");
+	}
+	else
+	{
+		line(file, "public partial class " + packetInfo.mPacketName + " : SocketPacket");
+	}
 	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -710,27 +731,37 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 
 	if (startWith(packetInfo.mPacketName, "CS"))
 	{
-		writeFile(csFilePath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
+		string realPath = isHotfixPacket ? csHotfixFilePath : csGameFilePath;
+		writeFile(realPath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
 	}
 	else if (startWith(packetInfo.mPacketName, "SC"))
 	{
-		writeFile(scFilePath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
+		string realPath = isHotfixPacket ? scHotfixFilePath : scGameFilePath;
+		writeFile(realPath + packetInfo.mPacketName + "_Declare.cs", ANSIToUTF8(file.c_str(), true));
 	}
 }
 
-void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string filePath)
+void CodeNetPacket::generateCSharpSCPacketFile(const string& packetName, string fileHotfixPath, string fileGamePath)
 {
 	if (!startWith(packetName, "SC"))
 	{
 		return;
 	}
-	string fullPath = filePath + packetName + ".cs";
+	bool isHotfixPacket = packetName != "SCHeartBeat" && packetName != "SCPing";
+	string fullPath = isHotfixPacket ? fileHotfixPath + packetName + ".cs" : fileGamePath + packetName + ".cs";
 	if (!isFileExist(fullPath))
 	{
 		string file;
 		line(file, "using System;");
 		line(file, "");
-		line(file, "public partial class " + packetName + " : ILRSocketPacket");
+		if (isHotfixPacket)
+		{
+			line(file, "public partial class " + packetName + " : ILRSocketPacket");
+		}
+		else
+		{
+			line(file, "public partial class " + packetName + " : SocketPacket");
+		}
 		line(file, "{");
 		line(file, "\tpublic override void execute()");
 		line(file, "\t{");

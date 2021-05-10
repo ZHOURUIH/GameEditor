@@ -27,7 +27,7 @@ void main()
 		return;
 	}
 
-	cout << "0.全部生成" << endl;
+	cout << "0.全部生成(除了网络通信协议代码)" << endl;
 	cout << "1.网络通信协议代码" << endl;
 	cout << "2.SQLite数据代码" << endl;
 	cout << "3.MySQL数据代码" << endl;
@@ -47,7 +47,6 @@ void main()
 	cin >> input;
 	if (input == 0)
 	{
-		CodeNetPacket::generate();
 		CodeSQLite::generate();
 		CodeMySQL::generate();
 		CodeCmd::generate();
