@@ -430,26 +430,30 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		{
 			continue;
 		}
-		line(file, "\t\tparseParam(reader, ref m" + sqliteInfo.mMemberList[i].mMemberName + ", " + sqliteInfo.mMemberList[i].mMemberName + ");");
+		line(file, "\t\tparseParam(reader, ref m" + sqliteInfo.mMemberList[i].mMemberName + ", " + intToString(i) + ");");
 	}
 	line(file, "\t}");
 	line(file, "\tpublic override bool checkData()");
 	line(file, "\t{");
 	// 需要检测空格的字段
-	myVector<string> checkValueTypeList{"bool", "byte", "short", "ushort", "int", "uint""float", "Vector2", "Vector2Int", "Vector2UShort", 
-										"myVector<byte>", "myVector<short>", "myVector<ushort>", "myVector<int>", "myVector<uint>", "myVector<float>" };
-	myVector<string> checkMemberList;
+	myVector<string> checkValueTypeList{"Vector2", "Vector2Int", "Vector2UShort", 
+										"myVector<byte>", "myVector<short>", "myVector<ushort>", 
+										"myVector<int>", "myVector<uint>", "myVector<float>" };
+	myVector<int> checkMemberList;
 	FOR_I(memberCount)
 	{
-		const SQLiteMember& info = sqliteInfo.mMemberList[i];
-		if (checkValueTypeList.contains(info.mTypeName))
+		if (checkValueTypeList.contains(sqliteInfo.mMemberList[i].mTypeName))
 		{
-			checkMemberList.push_back(info.mMemberName);
+			checkMemberList.push_back(i);
 		}
 	}
-	if (checkMemberList.size() == 1)
+	if (checkMemberList.size() == 0)
 	{
-		line(file, "\t\treturn !mValues[" + checkMemberList[0] + "].Contains(\" \");");
+		line(file, "\t\treturn true;");
+	}
+	else if (checkMemberList.size() == 1)
+	{
+		line(file, "\t\treturn !mValues[" + intToString(checkMemberList[0]) + "].Contains(\" \");");
 	}
 	else
 	{
@@ -457,15 +461,15 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		{
 			if (i == 0)
 			{
-				line(file, "\t\treturn !mValues[" + checkMemberList[i] + "].Contains(\" \") && ");
+				line(file, "\t\treturn !mValues[" + intToString(checkMemberList[i]) + "].Contains(\" \") && ");
 			}
 			else if (i == checkMemberListCount - 1)
 			{
-				line(file, "\t\t\t\t!mValues[" + checkMemberList[i] + "].Contains(\" \");");
+				line(file, "\t\t\t\t!mValues[" + intToString(checkMemberList[i]) + "].Contains(\" \");");
 			}
 			else
 			{
-				line(file, "\t\t\t\t!mValues[" + checkMemberList[i] + "].Contains(\" \") && ");
+				line(file, "\t\t\t\t!mValues[" + intToString(checkMemberList[i]) + "].Contains(\" \") && ");
 			}
 		}
 		END(checkMemberList);
