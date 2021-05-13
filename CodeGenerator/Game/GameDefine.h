@@ -38,6 +38,7 @@ struct SQLiteInfo
 	myVector<SQLiteMember> mMemberList;
 	SQLITE_OWNER mOwner;
 	string mSQLiteName;
+	bool mHotFix;
 };
 
 struct MySQLMember

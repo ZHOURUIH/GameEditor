@@ -84,6 +84,10 @@ string StringUtility::getFilePath(const string& dir)
 {
 	string tempDir = dir;
 	rightToLeft(tempDir);
+	if (tempDir[tempDir.length() - 1] == '/')
+	{
+		tempDir.erase(tempDir.length() - 1);
+	}
 	int pos = (int)tempDir.find_last_of('/');
 	return pos != -1 ? dir.substr(0, pos) : "./";
 }
