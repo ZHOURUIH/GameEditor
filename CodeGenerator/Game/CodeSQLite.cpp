@@ -8,6 +8,8 @@ void CodeSQLite::generate()
 	string csDataHotFixPath = csHotfixGamePath + "DataBase/SQLite/Data/";
 	string csTableGamePath = csGamePath + "DataBase/SQLite/Table/";
 	string csTableHotFixPath = csHotfixGamePath + "DataBase/SQLite/Table/";
+	string csTableDeclareGamePath = csGamePath + "Common/";
+	string csTableDeclareHotFixPath = csHotfixGamePath + "Common/";
 
 	// 解析模板文件
 	string fileContent;
@@ -158,6 +160,8 @@ void CodeSQLite::generate()
 	string registerHotFixPath = getFilePath(csDataHotFixPath) + "/";
 	string registerGamePath = getFilePath(csDataGamePath) + "/";
 	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, registerHotFixPath, registerGamePath);
+
+	generateCSharpSQLiteDeclare(sqliteInfoList, csTableDeclareHotFixPath, csTableDeclareGamePath);
 }
 
 // TDSQLite.h和TDSQLite.cpp,SQLiteTable.h文件
@@ -565,4 +569,45 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(hotFixfile, "}", false);
 
 	writeFile(fileHotFixPath + "SQLiteRegisterILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+}
+
+// GameBaseSQLite.cs文件
+void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteInfo, string fileHotFixPath, string fileGamePath)
+{
+	// 主工程中的表格注册
+	string mainFile;
+	line(mainFile, "using System;");
+	line(mainFile, "");
+	line(mainFile, "// GameBase的部分类,用于定义SQLite表格的对象");
+	line(mainFile, "public partial class GameBase : FrameBase");
+	line(mainFile, "{");
+	uint sqliteCount = sqliteInfo.size();
+	FOR_I(sqliteCount)
+	{
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && !sqliteInfo[i].mHotFix)
+		{
+			line(mainFile, "\tpublic static SQLite" + sqliteInfo[i].mSQLiteName + " mSQLite" + sqliteInfo[i].mSQLiteName + ";");
+		}
+	}
+	line(mainFile, "}");
+
+	writeFile(fileGamePath + "GameBaseSQLite.cs", ANSIToUTF8(mainFile.c_str(), true));
+
+	// 热更工程中的表格注册
+	string hotFixfile;
+	line(hotFixfile, "using System;");
+	line(hotFixfile, "");
+	line(hotFixfile, "// GameBase的部分类,用于定义SQLite表格的对象");
+	line(hotFixfile, "public partial class GB : GameBase");
+	line(hotFixfile, "{");
+	FOR_I(sqliteCount)
+	{
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mHotFix)
+		{
+			line(hotFixfile, "\tpublic static SQLite" + sqliteInfo[i].mSQLiteName + " mSQLite" + sqliteInfo[i].mSQLiteName + ";");
+		}
+	}
+	line(hotFixfile, "}");
+
+	writeFile(fileHotFixPath + "GameBaseSQLiteILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 }
