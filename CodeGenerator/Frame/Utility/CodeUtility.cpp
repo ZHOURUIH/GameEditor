@@ -297,3 +297,35 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 	}
 	return str;
 }
+
+void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
+{
+	int tagStartIndex = 0;
+	int startIndex = -1;
+	int endIndex = -1;
+	// 查找标签
+	myVector<string> tagList;
+	while (true)
+	{
+		findString(line.c_str(), "[", &startIndex, tagStartIndex);
+		findString(line.c_str(), "]", &endIndex, startIndex);
+		if (startIndex < 0 || endIndex < 0)
+		{
+			break;
+		}
+		tagList.push_back(line.substr(startIndex, endIndex - startIndex + 1));
+		tagStartIndex = endIndex;
+	}
+	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
+	packetInfo.mShowInfo = !tagList.contains("[false]");
+	// 获取原始的表格名称
+	int firstTagPos = -1;
+	if (findString(line.c_str(), "[", &firstTagPos))
+	{
+		packetInfo.mPacketName = line.substr(0, firstTagPos);
+	}
+	else
+	{
+		packetInfo.mPacketName = line;
+	}
+}

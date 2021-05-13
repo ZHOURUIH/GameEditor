@@ -17,6 +17,7 @@ struct PacketInfo
 	myVector<PacketMember> mMemberList;
 	string mPacketName;
 	bool mShowInfo;
+	bool mHotFix;
 };
 
 enum class SQLITE_OWNER

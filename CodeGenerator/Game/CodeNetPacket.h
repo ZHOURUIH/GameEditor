@@ -22,8 +22,7 @@ protected:
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath, int packetVersion);
 	static void generateCSharpDecalreFile(const PacketInfo& packetInfo, string csHotfixFilePath, string csGameFilePath, string scHotfixFilePath, string scGameFilePath);
-	static void generateCSharpSCPacketFile(const string& packetName, string fileHotfixPath, string fileGamePath);
-protected:
+	static void generateCSharpSCPacketFile(const PacketInfo& packetInfo, string fileHotfixPath, string fileGamePath);
 };
 
 #endif

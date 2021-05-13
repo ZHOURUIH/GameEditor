@@ -29,6 +29,7 @@ public:
 	static string cppMemberDeclareString(const PacketMember& memberInfo);
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cSharpMemberDeclareString(const PacketMember& memberInfo);
+	static void parsePacketName(const string& line, PacketInfo& packetInfo);
 	static void line(string& str, const string& line, bool returnLine = true) 
 	{
 		str += line;
