@@ -677,7 +677,7 @@ void CodeNetPacket::generateCSharpDecalreFile(const PacketInfo& packetInfo, stri
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i]));
+		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i], packetInfo.mHotFix));
 	}
 	if (memberCount > 0)
 	{

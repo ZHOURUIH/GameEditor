@@ -262,7 +262,7 @@ string CodeUtility::cSharpPushParamString(const PacketMember& memberInfo)
 	return str;
 }
 
-string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
+string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = memberInfo.mTypeName;
@@ -282,7 +282,14 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GD." + memberInfo.mArrayLengthMacro[i];
+			if (isHotFix)
+			{
+				lengthMacro += "GD." + memberInfo.mArrayLengthMacro[i];
+			}
+			else
+			{
+				lengthMacro += "GameDefine." + memberInfo.mArrayLengthMacro[i];
+			}
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";
