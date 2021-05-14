@@ -116,7 +116,12 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "\tvoid parseResult(myMap<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(char* params, uint size) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
+	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
 	line(header, "\tvoid resetProperty() override;");
+	line(header, "\tbool updateInt(int value, int index) override;");
+	line(header, "\tbool updateFloat(float value, int index) override;");
+	line(header, "\tbool updateLLong(llong value, int index) override;");
+	line(header, "\tbool updateString(const string& value, int index) override;");
 	line(header, "};");
 	line(header, "");
 	line(header, "#endif", false);
@@ -134,10 +139,10 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
 	line(source, "{");
-	line(source, "\ttable->addColName(ID);");
+	line(source, "\ttable->addColName(ID, 0);");
 	FOR_I(memberCount)
 	{
-		line(source, "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ");");
+		line(source, "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ", " + intToString(i + 1) + ");");
 	}
 	line(source, "}");
 	line(source, "");
@@ -262,6 +267,25 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "}");
 	line(source, "");
 
+	// cloneWithFlag函数
+	line(source, "void " + className + "::cloneWithFlag(MySQLData* target, llong flag) const");
+	line(source, "{");
+	line(source, "\tbase::cloneWithFlag(target, flag);");
+	if (memberCount > 0)
+	{
+		line(source, "\tauto targetData = CAST<" + className + "*>(target);");
+		FOR_I(memberCount)
+		{
+			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
+			line(source, "\tif (GET_BIT(flag, " + intToString(i + 1) + ") != 0)");
+			line(source, "\t{");
+			line(source, "\t\ttargetData->m" + memberName + " = m" + memberName + ";");
+			line(source, "\t}");
+		}
+	}
+	line(source, "}");
+	line(source, "");
+
 	// resetProperty函数
 	line(source, "void " + className + "::resetProperty()");
 	line(source, "{");
@@ -284,6 +308,106 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 			line(source, "\tm" + memberName + " = 0;");
 		}
 	}
+	line(source, "}");
+	line(source, "");
+
+	// updateInt函数
+	line(source, "bool " + className + "::updateInt(int value, int index)");
+	line(source, "{");
+	line(source, "\tbase::updateInt(value, index);");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "int" || typeName == "ushort" || typeName == "short" || typeName == "byte" || typeName == "char")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// updateFloat函数
+	line(source, "bool " + className + "::updateFloat(float value, int index)");
+	line(source, "{");
+	line(source, "\tbase::updateFloat(value, index);");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "float")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// updateLLong函数
+	line(source, "bool " + className + "::updateLLong(llong value, int index)");
+	line(source, "{");
+	line(source, "\tbase::updateLLong(value, index);");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "llong")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// updateString函数
+	line(source, "bool " + className + "::updateString(const string& value, int index)");
+	line(source, "{");
+	line(source, "\tbase::updateString(value, index);");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "string")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
 	line(source, "}", false);
 
 	writeFile(filePath + className + ".h", ANSIToUTF8(header.c_str(), true));

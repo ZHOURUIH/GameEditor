@@ -51,7 +51,7 @@ struct MySQLMember
 
 struct MySQLInfo
 {
-	myVector<MySQLMember> mMemberList;
+	myVector<MySQLMember> mMemberList;	// 不带ID字段的字段信息列表
 	string mMySQLClassName;
 	string mMySQLTableName;
 };
