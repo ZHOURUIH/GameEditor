@@ -201,7 +201,14 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		string addComma = i != memberCount - 1 ? "true" : "false";
 		if (typeName == "string")
 		{
-			line(source, "\tappendValueString(params, size, m" + memberName + ".c_str(), " + (memberInfo.mUTF8 ? "true" : "false") + ", " + addComma + ");");
+			if (memberInfo.mUTF8)
+			{
+				line(source, "\tappendValueStringUTF8(params, size, m" + memberName + ".c_str(), " + addComma + ");");
+			}
+			else
+			{
+				line(source, "\tappendValueString(params, size, m" + memberName + ".c_str(), " + addComma + ");");
+			}
 		}
 		else if (typeName == "int")
 		{
