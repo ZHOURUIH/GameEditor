@@ -527,16 +527,16 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	{
 		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && !sqliteInfo[i].mHotFix)
 		{
-			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(SQLite%s), typeof(TD%s), \"%s\");";
+			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(TD%s), \"%s\");";
 			replaceAll(lineStr, "%s", sqliteInfo[i].mSQLiteName);
 			line(mainFile, lineStr);
 		}
 	}
 	line(mainFile, "\t}");
 	line(mainFile, "\t//-------------------------------------------------------------------------------------------------------------");
-	line(mainFile, "\tprotected static void registeTable<T>(out T sqliteTable, Type tableType, Type dataType, string tableName) where T : SQLiteTable");
+	line(mainFile, "\tprotected static void registeTable<T>(out T sqliteTable, Type dataType, string tableName) where T : SQLiteTable");
 	line(mainFile, "\t{");
-	line(mainFile, "\t\tsqliteTable = mSQLiteManager.registeTable(tableType, dataType, tableName) as T;");
+	line(mainFile, "\t\tsqliteTable = mSQLiteManager.registeTable(typeof(T), dataType, tableName) as T;");
 	line(mainFile, "\t}");
 	line(mainFile, "}", false);
 
@@ -555,16 +555,16 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	{
 		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mHotFix)
 		{
-			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(SQLite%s), typeof(TD%s), \"%s\");";
+			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(TD%s), \"%s\");";
 			replaceAll(lineStr, "%s", sqliteInfo[i].mSQLiteName);
 			line(hotFixfile, lineStr);
 		}
 	}
 	line(hotFixfile, "\t}");
 	line(hotFixfile, "\t//-------------------------------------------------------------------------------------------------------------");
-	line(hotFixfile, "\tprotected static void registeTable<T>(out T sqliteTable, Type tableType, Type dataType, string tableName) where T : SQLiteTable");
+	line(hotFixfile, "\tprotected static void registeTable<T>(out T sqliteTable, Type dataType, string tableName) where T : SQLiteTable");
 	line(hotFixfile, "\t{");
-	line(hotFixfile, "\t\tsqliteTable = mSQLiteManager.registeTable(tableType, dataType, tableName) as T;");
+	line(hotFixfile, "\t\tsqliteTable = mSQLiteManager.registeTable(typeof(T), dataType, tableName) as T;");
 	line(hotFixfile, "\t}");
 	line(hotFixfile, "}", false);
 
