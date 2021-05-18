@@ -144,9 +144,11 @@ void CodeSQLite::generate()
 	FOR_VECTOR_CONST(sqliteInfoList)
 	{
 		// .h代码
-		generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath, cppTablePath);
+		generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath);
+		generateCppSQLiteTableFile(sqliteInfoList[i], cppTablePath);
 		// .cs代码
-		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataGamePath, csDataHotFixPath, csTableGamePath, csTableHotFixPath);
+		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataGamePath, csDataHotFixPath);
+		generateCSharpSQLiteTableFile(sqliteInfoList[i], csTableGamePath, csTableHotFixPath);
 	}
 
 	// 在上一层目录生成SQLiteHeader.h文件
@@ -157,15 +159,13 @@ void CodeSQLite::generate()
 	generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
 
 	// 在上一层目录生成SQLiteRegister.cs文件
-	string registerHotFixPath = getFilePath(csDataHotFixPath) + "/";
-	string registerGamePath = getFilePath(csDataGamePath) + "/";
-	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, registerHotFixPath, registerGamePath);
+	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, getFilePath(csDataHotFixPath) + "/", getFilePath(csDataGamePath) + "/");
 
 	generateCSharpSQLiteDeclare(sqliteInfoList, csTableDeclareHotFixPath, csTableDeclareGamePath);
 }
 
-// TDSQLite.h和TDSQLite.cpp,SQLiteTable.h文件
-void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath, string tableFilePath)
+// TDSQLite.h和TDSQLite.cpp文件
+void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath)
 {
 	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY)
 	{
@@ -228,8 +228,17 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 
 	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
 	writeFile(dataFilePath + dataClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
+}
 
+// SQLiteTable.h文件
+void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFilePath)
+{
+	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+	{
+		return;
+	}
 	// SQLiteTable.h
+	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
 	string tableFileName = tableFilePath + tableClassName + ".h";
 	if (!isFileExist(tableFileName))
@@ -374,14 +383,13 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 	writeFile(filePath + "SQLiteSTLPoolRegister.h", ANSIToUTF8(header.c_str(), true));
 }
 
-// TDSQLite.cs和SQLiteTable.cs文件
-void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFileGamePath, string dataFileHotFixPath, string tableFileGamePath, string tableFileHotFixPath)
+// TDSQLite.cs文件
+void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFileGamePath, string dataFileHotFixPath)
 {
 	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
 	{
 		return;
 	}
-	// TDSQLite.cs文件
 	string file;
 	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
 	line(file, "using Mono.Data.Sqlite;");
@@ -487,23 +495,50 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(file, "}", false);
 	string dataFilePath = sqliteInfo.mHotFix ? dataFileHotFixPath : dataFileGamePath;
 	writeFile(dataFilePath + dataClassName + ".cs", ANSIToUTF8(file.c_str(), true));
-	
+}
 
+void CodeSQLite::generateCSharpSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFileGamePath, string tableFileHotFixPath)
+{
+	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
+	{
+		return;
+	}
 	// SQLiteTable.cs文件
+	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
+	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
 	string table;
 	line(table, "using System;");
 	line(table, "using System.Collections.Generic;");
 	line(table, "");
-	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
 	line(table, "public partial class " + tableClassName + " : SQLiteTable");
 	line(table, "{");
+	line(table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
+	line(table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
+	line(table, "\tprotected List<" + dataClassName + "> mDataList;");
+	line(table, "\tprotected bool mDataAvailable;");
+	line(table, "\tpublic " + tableClassName + "()");
+	line(table, "\t{");
+	line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
+	line(table, "\t\tmDataAvailable = false;");
+	line(table, "\t}");
 	line(table, "\tpublic " + dataClassName + " query(int id)");
 	line(table, "\t{");
 	line(table, "\t\treturn query(typeof(" + dataClassName + "), id) as " + dataClassName + ";");
 	line(table, "\t}");
-	line(table, "\tpublic void queryAll(List<" + dataClassName + "> list)");
+	line(table, "\tpublic List<" + dataClassName + "> queryAll()");
 	line(table, "\t{");
-	line(table, "\t\tqueryAll(typeof(" + dataClassName + "), list);");
+	line(table, "\t\tif(!mDataAvailable)");
+	line(table, "\t\t{");
+	line(table, "\t\t\tqueryAll(typeof(" + dataClassName + "), mDataList);");
+	line(table, "\t\t\tmDataAvailable = true;");
+	line(table, "\t\t}");
+	line(table, "\t\treturn mDataList;");
+	line(table, "\t}");
+	line(table, "\tprotected override void clearAll()");
+	line(table, "\t{");
+	line(table, "\t\tbase.clearAll();");
+	line(table, "\t\tmDataList.Clear();");
+	line(table, "\t\tmDataAvailable = false;");
 	line(table, "\t}");
 	line(table, "}", false);
 	string tableFilePath = sqliteInfo.mHotFix ? tableFileHotFixPath : tableFileGamePath;
