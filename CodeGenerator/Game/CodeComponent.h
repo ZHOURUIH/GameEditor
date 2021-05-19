@@ -10,6 +10,7 @@ public:
 protected:
 	//c++
 	static void generateStringDefineComponent(const myVector<string>& componentList, string filePath);
+	static void generateComponentRegister(const myVector<string>& componentList, string filePath);
 protected:
 };
 

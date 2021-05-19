@@ -118,6 +118,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "\tvoid clone(MySQLData* target) const override;");
 	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
 	line(header, "\tvoid resetProperty() override;");
+	line(header, "\tbool updateBool(bool value, int index) override;");
 	line(header, "\tbool updateInt(int value, int index) override;");
 	line(header, "\tbool updateFloat(float value, int index) override;");
 	line(header, "\tbool updateLLong(llong value, int index) override;");
@@ -146,7 +147,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	}
 	line(source, "}");
 	line(source, "");
-	// resultRowToTableDataº¯Êý
+	// parseResultº¯Êý
 	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
 	line(source, "{");
 	line(source, "\tparseLLong(&mID, resultRow.get(ID, NULL));");
@@ -161,6 +162,10 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		else if (typeName == "uint")
 		{
 			line(source, "\tparseUInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+		}
+		else if (typeName == "bool")
+		{
+			line(source, "\tparseBool(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "byte")
 		{
@@ -222,6 +227,10 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		else if (typeName == "uint")
 		{
 			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+		}
+		else if (typeName == "bool")
+		{
+			line(source, "\tappendValueInt(params, size, m" + memberName + " ? 1 : 0, " + addComma + ");");
 		}
 		else if (typeName == "byte")
 		{
@@ -308,6 +317,31 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 			line(source, "\tm" + memberName + " = 0;");
 		}
 	}
+	line(source, "}");
+	line(source, "");
+
+	// updateBoolº¯Êý
+	line(source, "bool " + className + "::updateBool(bool value, int index)");
+	line(source, "{");
+	line(source, "\tbase::updateBool(value, index);");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "bool")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
 	line(source, "}");
 	line(source, "");
 
