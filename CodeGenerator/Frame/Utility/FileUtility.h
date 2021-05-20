@@ -51,7 +51,8 @@ public:
 	static bool writeFileSimple(const string& fileName, const char* buffer, uint writeCount, bool append = false);
 	static bool writeFileSimple(const string& fileName, const string& text, bool append = false);
 	static void openFile(const string& filePath, FileContent& fileContent, bool addZero);
-	static void openTxtFile(const string& filePath, string& fileContent);
+	static void openTxtFile(const string& filePath, string& fileContent, bool utf8ToANSI = true);
+	static void openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool utf8ToANSI = true);
 	static void openBinaryFile(const string& filePath, FileContent& fileContent);
 	static bool moveFile(const string& fileName, const string& newName, bool forceCover = false);
 	static bool renameFile(const string& fileName, const string& newName, bool forceCover = false);

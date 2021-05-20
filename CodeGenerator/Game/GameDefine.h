@@ -16,6 +16,7 @@ struct PacketInfo
 {
 	myVector<PacketMember> mMemberList;
 	string mPacketName;
+	string mComment;
 	bool mShowInfo;
 	bool mHotFix;
 };

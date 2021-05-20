@@ -502,7 +502,7 @@ void FileUtility::openFile(const string& filePath, FileContent& fileContent, boo
 	}
 }
 
-void FileUtility::openTxtFile(const string& filePath, string& fileContent)
+void FileUtility::openTxtFile(const string& filePath, string& fileContent, bool utf8ToANSI)
 {
 	FileContent file;
 	openFile(filePath, file, true);
@@ -512,6 +512,22 @@ void FileUtility::openTxtFile(const string& filePath, string& fileContent)
 	}
 	fileContent.clear();
 	fileContent.append(file.mBuffer);
+	if (utf8ToANSI)
+	{
+		fileContent = UTF8ToANSI(fileContent.c_str(), true);
+	}
+}
+
+void FileUtility::openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool utf8ToANSI)
+{
+	string fileContent;
+	openTxtFile(filePath, fileContent, utf8ToANSI);
+	split(fileContent.c_str(), "\n", fileLines);
+	FOR_VECTOR(fileLines)
+	{
+		removeAll(fileLines[i], '\r');
+	}
+	END(fileLines);
 }
 
 void FileUtility::openBinaryFile(const string& filePath, FileContent& fileContent)
