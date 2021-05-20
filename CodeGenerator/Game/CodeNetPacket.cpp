@@ -96,7 +96,7 @@ void CodeNetPacket::generate()
 	FOR_VECTOR_CONST(packetInfoList)
 	{
 		// 生成代码文件
-		// .h代码
+		// .h.cpp代码
 		generateCppCSPacketFileHeader(packetInfoList[i], cppCSPacketPath);
 		generateCppCSPacketFileSource(packetInfoList[i], cppCSPacketPath);
 		generateCppSCPacketFile(packetInfoList[i], cppSCPacketPath);
@@ -321,7 +321,6 @@ void CodeNetPacket::updateOldFormatPackteFile(const PacketInfo& packetInfo, stri
 	// 打开文件,并解析文件
 	string headerFile;
 	openTxtFile(fullPath, headerFile);
-	headerFile = UTF8ToANSI(headerFile.c_str(), true);
 	myVector<string> headerLines;
 	split(headerFile.c_str(), "\r\n", headerLines, false);
 	// 找到第一个{
