@@ -15,14 +15,14 @@ protected:
 	static void generateStringDefinePacket(const myVector<string>& packetList, string filePath);
 	static void generateCppCSPacketFileHeader(const PacketInfo& packetInfo, string filePath);
 	static void generateCppCSPacketFileSource(const PacketInfo& packetInfo, string filePath);
-	static void generateCppSCPacketFile(const PacketInfo& packetInfo, string filePath);
-	static void updateOldFormatPackteFile(const PacketInfo& packetInfo, string fullPath);
+	static void generateCppSCPacketFileHeader(const PacketInfo& packetInfo, string filePath);
 	static int findPacketVersion(const string& filePath);
+	static void findCppIncludeCustomCode(const string& packetName, const string& fullPath, myVector<string>& includeList, myVector<string>& customList);
 	//c#
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath, int packetVersion);
 	static void generateCSharpPacketFile(const PacketInfo& packetInfo, const string& csFileHotfixPath, const string& csFileGamePath, const string& scFileHotfixPath, const string& scFileGamePath);
-	static void findUsingListCustomCode(const string& packetName, const string& fullPath, myVector<string>& usingList, myVector<string>& customList);
+	static void findCSharpUsingListCustomCode(const string& packetName, const string& fullPath, myVector<string>& usingList, myVector<string>& customList);
 };
 
 #endif
