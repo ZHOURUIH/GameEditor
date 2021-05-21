@@ -11,7 +11,6 @@ void CodeFrameSystem::generate()
 		ERROR("Î´ÕÒÎÄ¼þFrameSystem.txt");
 		return;
 	}
-	frameSystemFile = UTF8ToANSI(frameSystemFile.c_str(), true);
 	myVector<string> lineList;
 	split(frameSystemFile.c_str(), "\r\n", lineList);
 	myVector<string> frameSystemList;

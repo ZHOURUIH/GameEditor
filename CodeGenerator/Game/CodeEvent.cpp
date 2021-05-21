@@ -12,7 +12,6 @@ void CodeEvent::generate()
 		ERROR("Î´ÕÒÎÄ¼şEvent.txt");
 		return;
 	}
-	cmdFile = UTF8ToANSI(cmdFile.c_str(), true);
 	myVector<string> eventLineList;
 	split(cmdFile.c_str(), "\r\n", eventLineList);
 	myVector<pair<string, string>> eventList;
