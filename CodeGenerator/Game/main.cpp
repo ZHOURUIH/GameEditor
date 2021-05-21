@@ -28,7 +28,7 @@ void main()
 	}
 
 	cout << "0.全部生成(除了网络通信协议代码)" << endl;
-	cout << "1.网络通信协议代码" << endl;
+	cout << "1.全部生成(包括网络通信协议代码)" << endl;
 	cout << "2.SQLite数据代码" << endl;
 	cout << "3.MySQL数据代码" << endl;
 	cout << "4.命令代码" << endl;
@@ -68,6 +68,23 @@ void main()
 	else if (input == 1)
 	{
 		CodeNetPacket::generate();
+		CodeSQLite::generate();
+		CodeMySQL::generate();
+		CodeCmd::generate();
+		CodeSkill::generate();
+		CodeState::generate();
+		CodeAchivement::generate();
+		CodeEvent::generate();
+		CodeDTNode::generate();
+		CodeUnityBuild::generate();
+		CodeFrameSystem::generate();
+		CodeClassDeclare::generate();
+		CodeObjectItem::generate();
+		CodeStateGroup::generate();
+		CodeComponent::generate();
+		CodeSceneTrigger::generate();
+		CodeFunctionParam::generate();
+		CodeRank::generate();
 	}
 	else if (input == 2)
 	{
