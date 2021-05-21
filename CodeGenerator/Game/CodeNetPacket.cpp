@@ -92,6 +92,8 @@ void CodeNetPacket::generate()
 	// 打开服务器的消息注册文件,找到当前的消息版本号,然后版本号自增
 	int packetVersion = findPacketVersion(cppPacketDefinePath + "PacketRegister.cpp") + 1;
 
+	myVector<string> hotfixList;
+	myVector<string> noHotfixList;
 	myVector<string> packetList;
 	FOR_VECTOR_CONST(packetInfoList)
 	{
@@ -104,6 +106,14 @@ void CodeNetPacket::generate()
 		// .cs代码
 		generateCSharpPacketFile(packetInfo, csharpCSHotfixPath, csharpCSGamePath, csharpSCHotfixPath, csharpSCGamePath);
 		packetList.push_back(packetInfo.mPacketName);
+		if (packetInfo.mHotFix)
+		{
+			hotfixList.push_back(packetInfo.mPacketName);
+		}
+		else
+		{
+			noHotfixList.push_back(packetInfo.mPacketName);
+		}
 	}
 	// c++
 	generateCppPacketDefineFile(packetInfoList, cppPacketDefinePath);
@@ -120,8 +130,7 @@ void CodeNetPacket::generate()
 	findFiles(cppCSPacketPath, cppCSFiles, NULL, 0);
 	FOR_VECTOR(cppCSFiles)
 	{
-		string packetName = getFileNameNoSuffix(cppCSFiles[i], true);
-		if (!packetList.contains(packetName))
+		if (!packetList.contains(getFileNameNoSuffix(cppCSFiles[i], true)))
 		{
 			deleteFile(cppCSFiles[i]);
 		}
@@ -132,48 +141,65 @@ void CodeNetPacket::generate()
 	findFiles(cppSCPacketPath, cppSCFiles, NULL, 0);
 	FOR_VECTOR(cppSCFiles)
 	{
-		string packetName = getFileNameNoSuffix(cppSCFiles[i], true);
-		if (!packetList.contains(packetName))
+		if (!packetList.contains(getFileNameNoSuffix(cppSCFiles[i], true)))
 		{
 			deleteFile(cppSCFiles[i]);
 		}
 	}
 	END(cppSCFiles);
 
-	// c# CS
-	myVector<string> csharpCSFiles;
-	findFiles(csharpCSGamePath, csharpCSFiles, ".cs");
-	findFiles(csharpCSHotfixPath, csharpCSFiles, ".cs");
-	FOR_VECTOR(csharpCSFiles)
+	// c# CS非热更
+	myVector<string> csharpCSNoHotfixFiles;
+	findFiles(csharpCSGamePath, csharpCSNoHotfixFiles, ".cs");
+	FOR_VECTOR(csharpCSNoHotfixFiles)
 	{
-		string packetName = getFileNameNoSuffix(csharpCSFiles[i], true);
-		if (!packetList.contains(packetName))
+		const string& file = csharpCSNoHotfixFiles[i];
+		if (!noHotfixList.contains(getFileNameNoSuffix(file, true)))
 		{
-			deleteFile(csharpCSFiles[i]);
-			if (isFileExist(csharpCSFiles[i] + ".meta"))
-			{
-				deleteFile(csharpCSFiles[i] + ".meta");
-			}
+			deleteFile(file);
+			deleteFile(file + ".meta");
 		}
 	}
-	END(csharpCSFiles);
-	// c# SC
-	myVector<string> csharpSCFiles;
-	findFiles(csharpSCGamePath, csharpSCFiles, ".cs");
-	findFiles(csharpSCHotfixPath, csharpSCFiles, ".cs");
-	FOR_VECTOR(csharpSCFiles)
+	END(csharpCSNoHotfixFiles);
+	// c# CS热更
+	myVector<string> csharpCSHotfixFiles;
+	findFiles(csharpCSHotfixPath, csharpCSHotfixFiles, ".cs");
+	FOR_VECTOR(csharpCSHotfixFiles)
 	{
-		string packetName = getFileNameNoSuffix(csharpSCFiles[i], true);
-		if (!packetList.contains(packetName))
+		const string& file = csharpCSHotfixFiles[i];
+		if (!hotfixList.contains(getFileNameNoSuffix(file, true)))
 		{
-			deleteFile(csharpSCFiles[i]);
-			if (isFileExist(csharpSCFiles[i] + ".meta"))
-			{
-				deleteFile(csharpSCFiles[i] + ".meta");
-			}
+			deleteFile(file);
+			deleteFile(file + ".meta");
 		}
 	}
-	END(csharpSCFiles);
+	END(csharpCSHotfixFiles);
+	// c# SC非热更
+	myVector<string> csharpSCNoHotfixFiles;
+	findFiles(csharpSCGamePath, csharpSCNoHotfixFiles, ".cs");
+	FOR_VECTOR(csharpSCNoHotfixFiles)
+	{
+		const string& file = csharpSCNoHotfixFiles[i];
+		if (!noHotfixList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
+	}
+	END(csharpSCNoHotfixFiles);
+	// c# SC热更
+	myVector<string> csharpSCHotfixFiles;
+	findFiles(csharpSCHotfixPath, csharpSCHotfixFiles, ".cs");
+	FOR_VECTOR(csharpSCHotfixFiles)
+	{
+		const string& file = csharpSCHotfixFiles[i];
+		if (!hotfixList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
+	}
+	END(csharpSCHotfixFiles);
 }
 
 // PacketHeader.h和PacketDeclareHeader.h文件
