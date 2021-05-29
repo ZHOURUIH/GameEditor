@@ -362,6 +362,10 @@ bool FileUtility::deleteEmptyFolder(const string& path)
 
 void FileUtility::deleteFile(const string& fileName)
 {
+	if (!isFileExist(fileName))
+	{
+		return;
+	}
 	remove(fileName.c_str());
 }
 
