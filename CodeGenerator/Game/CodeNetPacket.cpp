@@ -278,7 +278,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	string str;
 	line(str, "#include \"GameHeader.h\"");
 	line(str, "");
-	line(str, "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(PACKET_TYPE::type, NAME(packet));");
+	line(str, "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(type, NAME(packet));");
 	line(str, "");
 	line(str, "int PacketRegister::PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "void PacketRegister::registeAll()");
@@ -289,7 +289,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", " + packetNameToUpper(packetList[i].mPacketName) + ");");
+			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", PACKET_TYPE::" + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
 	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::CS_MAX - (int)PACKET_TYPE::CS_MIN - 1, \"CS\");");
@@ -299,7 +299,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", " + packetNameToUpper(packetList[i].mPacketName) + ");");
+			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", PACKET_TYPE::" + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
 	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::SC_MAX - (int)PACKET_TYPE::SC_MIN - 1, \"SC\");");
@@ -670,8 +670,12 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	}
 	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");
 	line(str, "\t}");
-	line(str, "\tprotected static void registePacket(Type classType, ushort type)");
+	line(str, "\tprotected static void registePacket(Type classType, ushort type, bool executeInMain = true)");
 	line(str, "\t{");
+	line(str, "\t\tif(!executeInMain)");
+	line(str, "\t\t{");
+	line(str, "\t\t\tGB.mSocketManager.getConnect().addExecuteThreadPacket(type);");
+	line(str, "\t\t}");
 	line(str, "\t\tmSocketFactory.registePacket(classType, type);");
 	line(str, "\t\tmSocketFactoryThread.registePacket(classType, type);");
 	line(str, "\t}");
