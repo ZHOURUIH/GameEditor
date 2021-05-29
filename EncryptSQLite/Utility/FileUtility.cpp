@@ -475,7 +475,7 @@ void FileUtility::openFile(const string& filePath, FileContent& fileContent, boo
 {
 	FILE* pFile = NULL;
 #if RUN_PLATFORM == PLATFORM_WINDOWS
-	fopen_s(&pFile, filePath.c_str(), "rb");
+	pFile = _fsopen(filePath.c_str(), "rb", _SH_DENYNO);
 #elif RUN_PLATFORM == PLATFORM_LINUX
 	pFile = fopen(filePath.c_str(), "rb");
 #endif

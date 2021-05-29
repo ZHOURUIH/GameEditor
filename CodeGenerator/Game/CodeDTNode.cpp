@@ -11,7 +11,6 @@ void CodeDTNode::generate()
 		ERROR("未找文件DTNode.txt");
 		return;
 	}
-	file = UTF8ToANSI(file.c_str(), true);
 	myVector<string> nodeLineList;
 	split(file.c_str(), "\r\n", nodeLineList);
 	// 生成StringDefineDTNode文件

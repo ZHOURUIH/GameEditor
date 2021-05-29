@@ -13,7 +13,6 @@ void CodeMySQL::generate()
 		ERROR("未找到表格格式文件MySQL.txt");
 		return;
 	}
-	fileContent = UTF8ToANSI(fileContent.c_str(), true);
 	myVector<string> lines;
 	split(fileContent.c_str(), "\r\n", lines);
 	bool packetStart = false;
