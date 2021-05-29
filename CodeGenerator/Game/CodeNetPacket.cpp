@@ -348,24 +348,15 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		line(header, "\t" + cppMemberDeclareString(memberList[i]));
 	}
 	line(header, "public:");
-	if (memberListCount == 0)
+	line(header, "\tvoid fillParams() override");
+	line(header, "\t{");
+	line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+	line(header, "\t\tmExecuteInMain = " + boolToString(packetInfo.mServerExecuteInMain) + ";");
+	FOR_I(memberListCount)
 	{
-		line(header, "\tvoid fillParams() override");
-		line(header, "\t{");
-		line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-		line(header, "\t}");
+		line(header, "\t\t" + cppPushParamString(memberList[i]));
 	}
-	else
-	{
-		line(header, "\tvoid fillParams() override");
-		line(header, "\t{");
-		line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-		FOR_I(memberListCount)
-		{
-			line(header, "\t\t" + cppPushParamString(memberList[i]));
-		}
-		line(header, "\t}");
-	}
+	line(header, "\t}");
 	line(header, "\tvoid execute() override;");
 	// 自定义代码部分
 	FOR_VECTOR(customList)
@@ -552,24 +543,14 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		line(header, "\t" + cppMemberDeclareString(memberList[i]));
 	}
 	line(header, "public:");
-	if (memberListCount == 0)
+	line(header, "\tvoid fillParams() override");
+	line(header, "\t{");
+	line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+	FOR_I(memberListCount)
 	{
-		line(header, "\tvoid fillParams() override");
-		line(header, "\t{");
-		line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-		line(header, "\t}");
+		line(header, "\t\t" + cppPushParamString(memberList[i]));
 	}
-	else
-	{
-		line(header, "\tvoid fillParams() override");
-		line(header, "\t{");
-		line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-		FOR_I(memberListCount)
-		{
-			line(header, "\t\t" + cppPushParamString(memberList[i]));
-		}
-		line(header, "\t}");
-	}
+	line(header, "\t}");
 	// 自定义代码部分
 	FOR_VECTOR(customList)
 	{
@@ -651,7 +632,14 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+			if (packetList[i].mClientExecuteInMain)
+			{
+				line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+			}
+			else
+			{
+				line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ", false);");
+			}
 		}
 	}
 	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");

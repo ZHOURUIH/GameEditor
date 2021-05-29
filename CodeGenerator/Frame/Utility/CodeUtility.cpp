@@ -325,6 +325,8 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 	}
 	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
 	packetInfo.mShowInfo = !tagList.contains("[false]");
+	packetInfo.mClientExecuteInMain = !tagList.contains("[ClientInThread]");
+	packetInfo.mServerExecuteInMain = !tagList.contains("[ServerInThread]");
 	// 获取原始的表格名称
 	int firstTagPos = -1;
 	if (findString(line.c_str(), "[", &firstTagPos))

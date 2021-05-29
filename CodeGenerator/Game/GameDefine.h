@@ -15,10 +15,12 @@ struct PacketMember
 struct PacketInfo
 {
 	myVector<PacketMember> mMemberList;
-	string mPacketName;
-	string mComment;
-	bool mShowInfo;
-	bool mHotFix;
+	string mPacketName;					// 消息包名
+	string mComment;					// 消息注释
+	bool mShowInfo;						// 是否显示调试信息
+	bool mClientExecuteInMain;			// 客户端接收的SC消息是否在子线程执行
+	bool mServerExecuteInMain;			// 服务器接收的CS消息是否在子线程执行
+	bool mHotFix;						// 消息在客户端是否可热更
 };
 
 enum class SQLITE_OWNER
