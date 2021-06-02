@@ -895,6 +895,9 @@ public:
 	static void jsonAddObject(string& str, const string& name, const string& value, uint preTableCount = 0, bool returnLine = false);
 	static string toLower(const string& str);
 	static string toUpper(const string& str);
+	static bool isUpper(char value) { return value >= 'A' && value <= 'Z'; }
+	static bool isLower(char value) { return value >= 'a' && value <= 'z'; }
+	static bool isNumber(char value) { return value >= '0' && value <= '9'; }
 	static void rightToLeft(string& str);
 	static void leftToRight(string& str);
 	// 将字符串全部转为小写再查找

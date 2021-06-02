@@ -22,7 +22,7 @@ public:
 	static SQLiteMember parseSQLiteMemberLine(string line, bool ignoreClientServer);
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
-	static string nameToUpper(const string& sqliteName);
+	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
 	static string stringDeclare(const string& name) { return "static const char* NAME(" + name + ");"; }
 	static string stringDefine(const string& name) { return "const char* StringDefine::NAME(" + name + ") = STR(" + name + ");"; }
 	static string cppPushParamString(const PacketMember& memberInfo);

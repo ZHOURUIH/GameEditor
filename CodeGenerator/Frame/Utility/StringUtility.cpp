@@ -1789,7 +1789,7 @@ string StringUtility::toLower(const string& str)
 	uint size = ret.length();
 	FOR_I(size)
 	{
-		if (ret[i] >= 'A' && ret[i] <= 'Z')
+		if (isUpper(ret[i]))
 		{
 			ret[i] += 'a' - 'A';
 		}
@@ -1803,7 +1803,7 @@ string StringUtility::toUpper(const string& str)
 	uint size = ret.length();
 	FOR_I(size)
 	{
-		if (ret[i] >= 'a' && ret[i] <= 'z')
+		if (isLower(ret[i]))
 		{
 			ret[i] -= 'a' - 'A';
 		}

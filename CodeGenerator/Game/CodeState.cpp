@@ -17,6 +17,8 @@ void CodeState::generate()
 	generateStringDefineState(stateList, cppStringDefinePath);
 	// 生成StateHeader.h文件
 	generateCppStateTotalHeaderFile(stateList, cppHeaderPath);
+	// 生成StateRegister.cpp文件
+	generateStateRegister(stateList, cppHeaderPath);
 }
 
 // StateHeader.h
@@ -75,4 +77,79 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 		line(source, stringDefine(stateList[i] + "Param"));
 	}
 	writeFile(filePath + "StringDefineState.cpp", ANSIToUTF8(source.c_str(), true));
+}
+
+void CodeState::generateStateRegister(const myVector<string>& stateList, string filePath)
+{
+	myVector<string> preCodeList;
+	myVector<string> endCodeList;
+	findCustomCode(filePath + "StateRegister.cpp", preCodeList, endCodeList);
+	myVector<string> stateRegisteList;
+	FOR_VECTOR(stateList)
+	{
+		if (startWith(stateList[i], "StateAction") || startWith(stateList[i], "StateBehaviour"))
+		{
+			continue;
+		}
+		stateRegisteList.push_back("STATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + nameToUpper(stateList[i], false) + ");");
+	}
+	END(stateList);
+
+	// 生成新的文件
+	string source;
+	FOR_VECTOR(preCodeList)
+	{
+		line(source, preCodeList[i]);
+	}
+	END(preCodeList);
+	FOR_VECTOR(stateRegisteList)
+	{
+		line(source, "\t" + stateRegisteList[i]);
+	}
+	END(stateRegisteList);
+	line(source, "");
+	FOR_VECTOR(endCodeList)
+	{
+		line(source, endCodeList[i]);
+	}
+	END(endCodeList);
+	writeFile(filePath + "StateRegister.cpp", ANSIToUTF8(source.c_str(), true));
+}
+
+void CodeState::findCustomCode(const string& fullPath, myVector<string>& preCodeList, myVector<string>& endCodeList)
+{
+	myVector<string> fileLines;
+	openTxtFileLines(fullPath, fileLines);
+	int preCodeEnd = -1;
+	int endCodeStart = -1;
+	FOR_VECTOR(fileLines)
+	{
+		if (preCodeEnd < 0 && fileLines[i] == "\t// buff状态")
+		{
+			preCodeEnd = i;
+			continue;
+		}
+		if (endCodeStart < 0 && fileLines[i] == "\t// 行为状态")
+		{
+			endCodeStart = i;
+			break;
+		}
+	}
+	END(fileLines);
+	if (preCodeEnd < 0 || endCodeStart < 0)
+	{
+		cout << "状态注册代码文件解析错误" << endl;
+		return;
+	}
+	FOR_I(fileLinesCount)
+	{
+		if ((int)i <= preCodeEnd)
+		{
+			preCodeList.push_back(fileLines[i]);
+		}
+		else if ((int)i >= endCodeStart)
+		{
+			endCodeList.push_back(fileLines[i]);
+		}
+	}
 }

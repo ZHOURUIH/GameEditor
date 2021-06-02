@@ -148,37 +148,25 @@ string CodeUtility::packetNameToUpper(const string& packetName)
 		ERROR("包名前缀错误");
 		return "";
 	}
-	int lastIndex = prefixLength;
-	// 从3开始,因为第0,1个是前缀,第2个始终都是大写,会截取出空字符串
-	for (int i = prefixLength + 1; i < length; ++i)
-	{
-		// 已大写字母为分隔符
-		if (packetName[i] >= 'A' && packetName[i] <= 'Z')
-		{
-			macroList.push_back(packetName.substr(lastIndex, i - lastIndex));
-			lastIndex = i;
-		}
-	}
-	macroList.push_back(packetName.substr(lastIndex, length - lastIndex));
-	string headerMacro = packetName.substr(0, prefixLength);
-	FOR_VECTOR_CONST(macroList)
-	{
-		headerMacro += "_" + toUpper(macroList[i]);
-	}
-	return headerMacro;
+	return nameToUpper(packetName.substr(prefixLength));
 }
 
-string CodeUtility::nameToUpper(const string& sqliteName)
+string CodeUtility::nameToUpper(const string& sqliteName, bool preUnderLine)
 {
 	// 根据大写字母拆分
 	myVector<string> macroList;
 	int length = sqliteName.length();
 	int lastIndex = 0;
-	// 从1开始,因为第0个始终都是大写,会截取出空字符串
+	// 从1开始,因为第0个始终都是大写,会截取出空字符串,最后一个字母也肯不会被分割
 	for (int i = 1; i < length; ++i)
 	{
-		// 以大写字母为分隔符
-		if (sqliteName[i] >= 'A' && sqliteName[i] <= 'Z')
+		// 以大写字母为分隔符,但是连续的大写字符不能被分隔
+		// 非连续数字也会分隔
+		char curChar = sqliteName[i];
+		char lastChar = sqliteName[i - 1];
+		char nextChar = i + 1 < length ? sqliteName[i + 1] : '\0';
+		if (isUpper(curChar) && (!isUpper(lastChar) || (nextChar != '\0' && !isUpper(nextChar))) ||
+			isNumber(curChar) && (!isNumber(lastChar) || (nextChar != '\0' && !isNumber(nextChar))))
 		{
 			macroList.push_back(sqliteName.substr(lastIndex, i - lastIndex));
 			lastIndex = i;
@@ -189,6 +177,10 @@ string CodeUtility::nameToUpper(const string& sqliteName)
 	FOR_VECTOR_CONST(macroList)
 	{
 		headerMacro += "_" + toUpper(macroList[i]);
+	}
+	if (!preUnderLine)
+	{
+		headerMacro = headerMacro.erase(0, 1);
 	}
 	return headerMacro;
 }
