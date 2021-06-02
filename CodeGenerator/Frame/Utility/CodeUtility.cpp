@@ -148,7 +148,7 @@ string CodeUtility::packetNameToUpper(const string& packetName)
 		ERROR("包名前缀错误");
 		return "";
 	}
-	return nameToUpper(packetName.substr(prefixLength));
+	return packetName.substr(0, prefixLength) + nameToUpper(packetName.substr(prefixLength));
 }
 
 string CodeUtility::nameToUpper(const string& sqliteName, bool preUnderLine)
