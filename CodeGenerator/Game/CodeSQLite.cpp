@@ -632,7 +632,7 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 	line(hotFixfile, "using System;");
 	line(hotFixfile, "");
 	line(hotFixfile, "// GameBase的部分类,用于定义SQLite表格的对象");
-	line(hotFixfile, "public partial class GB : GameBase");
+	line(hotFixfile, "public partial class GB : FrameUtilityILR");
 	line(hotFixfile, "{");
 	FOR_I(sqliteCount)
 	{
