@@ -642,7 +642,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\tpublic static int PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "\tpublic static void registeAll()");
 	line(str, "\t{");
-	line(str, "\t\tint preCount = mSocketFactory.getPacketTypeCount();");
+	line(str, "\t\tint preCount = mSocketTypeManager.getPacketTypeCount();");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
@@ -651,9 +651,9 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.CS_MAX - PACKET_TYPE.CS_MIN - 1, preCount, \"CS\");");
+	line(str, "\t\tmSocketTypeManager.checkRegisteCount(PACKET_TYPE.CS_MAX - PACKET_TYPE.CS_MIN - 1, preCount, \"CS\");");
 	line(str, "");
-	line(str, "\t\tpreCount = mSocketFactory.getPacketTypeCount();");
+	line(str, "\t\tpreCount = mSocketTypeManager.getPacketTypeCount();");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
@@ -668,16 +668,15 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 			}
 		}
 	}
-	line(str, "\t\tmSocketFactory.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");
+	line(str, "\t\tmSocketTypeManager.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");
 	line(str, "\t}");
 	line(str, "\tprotected static void registePacket(Type classType, ushort type, bool executeInMain = true)");
 	line(str, "\t{");
 	line(str, "\t\tif(!executeInMain)");
 	line(str, "\t\t{");
-	line(str, "\t\t\tGB.mSocketManager.getConnect().addExecuteThreadPacket(type);");
+	line(str, "\t\t\tmSocketManager.getConnect().addExecuteThreadPacket(type);");
 	line(str, "\t\t}");
-	line(str, "\t\tmSocketFactory.registePacket(classType, type);");
-	line(str, "\t\tmSocketFactoryThread.registePacket(classType, type);");
+	line(str, "\t\tmSocketTypeManager.registePacket(classType, type);");
 	line(str, "\t}");
 	line(str, "}", false);
 
