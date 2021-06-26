@@ -85,7 +85,7 @@ void CodeState::generateStateRegister(const myVector<string>& stateList, string 
 	myVector<string> endCodeList;
 	findCustomCode(filePath + "StateRegister.cpp", preCodeList, endCodeList);
 	myVector<string> stateRegisteList;
-	FOR_VECTOR(stateList)
+	FOR_VECTOR_CONST(stateList)
 	{
 		if (startWith(stateList[i], "StateAction") || startWith(stateList[i], "StateBehaviour"))
 		{
@@ -93,7 +93,6 @@ void CodeState::generateStateRegister(const myVector<string>& stateList, string 
 		}
 		stateRegisteList.push_back("STATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + nameToUpper(stateList[i], false) + ");");
 	}
-	END(stateList);
 
 	// 生成新的文件
 	string source;

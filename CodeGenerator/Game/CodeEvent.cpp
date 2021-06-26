@@ -103,23 +103,18 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	myVector<pair<string, string>> newList;
 	newList.push_back(make_pair("None", "// 无效值"));
 	newList.merge(eventList);
-	// 注释对齐的制表符的个数
-	int maxTableCount = 12;
 	FOR_VECTOR_CONST(newList)
 	{
 		string type = removeStartString(nameToUpper(newList[i].first), "_EVENT_");
 		// 由于None转换出来是以_开头,所以还是需要确保是字母开头
 		type = removeStartString(type, "_");
 		string str = "\tconst static ushort " + type + " = " + intToString(i) + ";";
-		// 第一个减一是要去除字符串中的开头的制表符,第二个减一是因为字符串开头已经有一个制表符了,所以可以少加1个
-		int tableCount = ceil((maxTableCount * 4 - (str.length() - 1)) / 4.0f) - 1;
-		clampMin(tableCount, 0);
-		string tableStr;
-		FOR_J((uint)tableCount)
+		uint tableCount = generateAlignTableCount(str, 48);
+		FOR_J(tableCount)
 		{
-			tableStr += "\t";
+			str += "\t";
 		}
-		line(str0, str + tableStr + newList[i].second);
+		line(str0, str + newList[i].second);
 	}
 	line(str0, "};");
 	line(str0, "");
@@ -137,8 +132,7 @@ void CodeEvent::generateEventFile(const string& eventName, string eventPath)
 	}
 	string header;
 	string marcoName = nameToUpper(eventName) + "_H_";
-	string typeStr = nameToUpper(eventName);
-	typeStr = typeStr.substr(strlen("_EVENT_"));
+	string typeStr = nameToUpper(eventName.substr(strlen("Event")), false);
 	line(header, "#ifndef " + marcoName);
 	line(header, "#define " + marcoName);
 	line(header, "");

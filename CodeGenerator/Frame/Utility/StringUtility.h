@@ -909,6 +909,10 @@ public:
 	static string checkIntString(const string& str, const string& valid = "");
 	static string charToHexString(byte value, bool upper = true);
 	static uint getCharCount(const string& str, char key);
+	// 计算字符串显示所需的宽度,一个制表符按4个字符宽度,只考虑ASCII字符
+	static uint getStringWidth(const string& str);
+	// str计算按照alignWidth个字符宽度对齐时,需要补充的制表符的个数
+	static uint generateAlignTableCount(const string& str, int alignWidth);
 	static string charArrayToHexString(byte* data, uint dataCount, bool addSpace = true, bool upper = true);
 	// sql语法相关字符串处理
 	// insert相关
