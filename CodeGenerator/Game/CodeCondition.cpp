@@ -158,7 +158,7 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 		line(header, "\t{");
 		line(header, "\t\tbase::resetProperty();");
 		line(header, "\t}");
-		line(header, "\tvoid setParam0(const string & param) override");
+		line(header, "\tvoid setParam0(const string& param) override");
 		line(header, "\t{");
 		line(header, "\t}");
 		line(header, "protected:");
