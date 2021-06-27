@@ -148,7 +148,7 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 		line(header, "");
 		line(header, "class " + conditionName + " : public Condition");
 		line(header, "{");
-		line(header, "BASE_CLASS(Condition)");
+		line(header, "\tBASE_CLASS(Condition);");
 		line(header, "public:");
 		line(header, "\t" + conditionName + "()");
 		line(header, "\t{");
@@ -177,6 +177,7 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 		line(source, "");
 		line(source, "void " + conditionName + "::setCharacter(CharacterGame* character)");
 		line(source, "{");
+		line(source, "\tbase::setCharacter(character)");
 		line(source, "}");
 		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
 	}
