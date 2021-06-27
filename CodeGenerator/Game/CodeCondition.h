@@ -8,12 +8,18 @@ class CodeCondition : public CodeUtility
 public:
 	static void generate();
 protected:
-	static void generateHeaderFile(const myVector<pair<string, string>>& conditionList, const string& headerPath);
-	static void generateRegisterFile(const myVector<pair<string, string>>& conditionList, const string& filePath);
-	static void generateConditionEnum(const myVector<pair<string, string>>& conditionList, const string& filePath);
-	static void generateConditionFile(const string& conditionName, const string& conditionPath);
+	// c++
+	static void generateCppHeaderFile(const myVector<pair<string, string>>& conditionList, const string& headerPath);
+	static void generateCppRegisterFile(const myVector<pair<string, string>>& conditionList, const string& filePath);
+	static void generateCppConditionEnum(const myVector<pair<string, string>>& conditionList, const string& filePath);
+	static void generateCppConditionFile(const string& conditionName, const string& conditionPath);
+	// c#
+	static void generateCSRegisterFile(const myVector<pair<string, string>>& conditionList, const string& filePath);
+	static void generateCSConditionEnum(const myVector<pair<string, string>>& conditionList, const string& filePath);
+	static void generateCSConditionFile(const string& conditionName, const string& conditionPath);
 protected:
-	static void findPreAndEndContent(const string& fullPath, myVector<string>& preContent, myVector<string>& endContent);
+	static void findCppPreAndEndContent(const string& fullPath, myVector<string>& preContent, myVector<string>& endContent);
+	static void findCSPreAndEndContent(const string& fullPath, myVector<string>& preContent, myVector<string>& endContent);
 };
 
 #endif
