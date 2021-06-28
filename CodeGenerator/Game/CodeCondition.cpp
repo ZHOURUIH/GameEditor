@@ -177,7 +177,7 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 		line(source, "");
 		line(source, "void " + conditionName + "::setCharacter(CharacterGame* character)");
 		line(source, "{");
-		line(source, "\tbase::setCharacter(character)");
+		line(source, "\tbase::setCharacter(character);");
 		line(source, "}");
 		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
 	}
