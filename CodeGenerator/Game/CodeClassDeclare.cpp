@@ -68,7 +68,7 @@ void CodeClassDeclare::generate()
 				j > 0 && 
 				findSubstr(fileLines[j - 1], "template") == NULL)
 			{
-				int nameStartIndex = strlen("class ");
+				int nameStartIndex = (int)strlen("class ");
 				int index = 0;
 				findSubstr(fileLines[j], " ", &index, nameStartIndex);
 				if (isFrameOrGame)

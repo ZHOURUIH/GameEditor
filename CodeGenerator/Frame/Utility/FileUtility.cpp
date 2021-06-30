@@ -422,7 +422,7 @@ bool FileUtility::createFolder(const string& path)
 
 bool FileUtility::writeFile(string filePath, const string& text, bool append)
 {
-	return writeFile(filePath, text.c_str(), text.length(), append);
+	return writeFile(filePath, text.c_str(), (uint)text.length(), append);
 }
 
 bool FileUtility::writeFile(string filePath, const char* buffer, uint length, bool append)
@@ -470,7 +470,7 @@ bool FileUtility::writeFileSimple(const string& fileName, const char* buffer, ui
 
 bool FileUtility::writeFileSimple(const string& fileName, const string& text, bool append)
 {
-	return writeFileSimple(fileName, text.c_str(), text.length(), append);
+	return writeFileSimple(fileName, text.c_str(), (uint)text.length(), append);
 }
 
 void FileUtility::openFile(const string& filePath, FileContent& fileContent, bool addZero)

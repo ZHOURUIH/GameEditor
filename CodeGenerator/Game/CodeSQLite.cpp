@@ -31,22 +31,30 @@ void CodeSQLite::generate()
 		lines.erase(0);
 		ignoreClientServer = true;
 	}
+
 	bool packetStart = false;
 	myVector<SQLiteInfo> sqliteInfoList;
 	SQLiteInfo tempInfo;
+	bool fileStart = false;
 	FOR_VECTOR_CONST(lines)
 	{
-		string line = lines[i];
-		// 忽略注释
-		if (startWith(line, "//"))
+		if (lines[i] == START_FALG)
+		{
+			fileStart = true;
+			continue;
+		}
+		if (!fileStart)
 		{
 			continue;
 		}
-		// 如果后面插有注释,则去除
-		int pos = -1;
-		if (findString(line.c_str(), "//", &pos))
+		string line = lines[i];
+		// 表格注释
+		if (startWith(line, "//"))
 		{
-			line = line.substr(0, pos);
+			string comment = line.substr(strlen("//"));
+			removeStartAll(comment, ' ');
+			tempInfo.mComment += comment;
+			continue;
 		}
 		// 去除所有制表符
 		strReplaceAll(line, "\t", "");
@@ -106,6 +114,7 @@ void CodeSQLite::generate()
 			idMember.mMemberName = "ID";
 			idMember.mOwner = SQLITE_OWNER::BOTH;
 			idMember.mTypeName = "int";
+			idMember.mComment = "唯一ID";
 			tempInfo.mMemberList.push_back(idMember);
 			continue;
 		}
@@ -113,6 +122,7 @@ void CodeSQLite::generate()
 		if (line == "}")
 		{
 			sqliteInfoList.push_back(tempInfo);
+			tempInfo.mComment = "";
 			packetStart = false;
 			continue;
 		}
@@ -179,6 +189,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(header, "");
 	line(header, "#include \"SQLiteData.h\"");
 	line(header, "");
+	line(header, "// " + sqliteInfo.mComment);
 	line(header, "class " + dataClassName + " : public SQLiteData");
 	line(header, "{");
 	line(header, "public:");
@@ -192,7 +203,18 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	{
 		if (sqliteInfo.mMemberList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
 		{
-			line(header, "\t" + sqliteInfo.mMemberList[i].mTypeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";");
+			string memberLine = "\t" + sqliteInfo.mMemberList[i].mTypeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
+			const int MAX_LENTH = 40;
+			// 如果memberLine中有制表符,则还要再增加空格数
+			int remainSpace = MAX_LENTH - ((int)memberLine.length() + findCharCount(memberLine, '\t') * 3);
+			clampMin(remainSpace, 0);
+			uint tabCount = (uint)ceil(remainSpace / 4.0f);
+			FOR_I(tabCount)
+			{
+				memberLine += '\t';
+			}
+			memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
+			line(header, memberLine);
 		}
 	}
 	line(header, "public:");

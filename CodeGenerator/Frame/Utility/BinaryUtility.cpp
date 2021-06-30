@@ -36,36 +36,36 @@ const ushort BinaryUtility::crc16_table[256]
 		0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
 };
 
-uint BinaryUtility::mStringType = typeid(string).hash_code();
-uint BinaryUtility::mBoolType = typeid(bool).hash_code();
-uint BinaryUtility::mCharType = typeid(char).hash_code();
-uint BinaryUtility::mByteType = typeid(unsigned char).hash_code();
-uint BinaryUtility::mShortType = typeid(short).hash_code();
-uint BinaryUtility::mUShortType = typeid(ushort).hash_code();
-uint BinaryUtility::mIntType = typeid(int).hash_code();
-uint BinaryUtility::mUIntType = typeid(uint).hash_code();
-uint BinaryUtility::mFloatType = typeid(float).hash_code();
-uint BinaryUtility::mULLongType = typeid(ullong).hash_code();
-uint BinaryUtility::mBoolArrayType = typeid(bool*).hash_code();
-uint BinaryUtility::mCharArrayType = typeid(char*).hash_code();
-uint BinaryUtility::mByteArrayType = typeid(byte*).hash_code();
-uint BinaryUtility::mShortArrayType = typeid(short*).hash_code();
-uint BinaryUtility::mUShortArrayType = typeid(ushort*).hash_code();
-uint BinaryUtility::mIntArrayType = typeid(int*).hash_code();
-uint BinaryUtility::mUIntArrayType = typeid(uint*).hash_code();
-uint BinaryUtility::mFloatArrayType = typeid(float*).hash_code();
-uint BinaryUtility::mULLongArrayType = typeid(ullong*).hash_code();
-uint BinaryUtility::mBoolListType = typeid(myVector<bool>).hash_code();
-uint BinaryUtility::mCharListType = typeid(myVector<char>).hash_code();
-uint BinaryUtility::mByteListType = typeid(myVector<byte>).hash_code();
-uint BinaryUtility::mShortListType = typeid(myVector<short>).hash_code();
-uint BinaryUtility::mUShortListType = typeid(myVector<ushort>).hash_code();
-uint BinaryUtility::mIntListType = typeid(myVector<int>).hash_code();
-uint BinaryUtility::mUIntListType = typeid(myVector<uint>).hash_code();
-uint BinaryUtility::mFloatListType = typeid(myVector<float>).hash_code();
-uint BinaryUtility::mULLongListType = typeid(myVector<ullong>).hash_code();
-uint BinaryUtility::mVector2IntType = typeid(Vector2Int).hash_code();
-uint BinaryUtility::mVector2UShortType = typeid(Vector2UShort).hash_code();
+uint BinaryUtility::mStringType = (uint)typeid(string).hash_code();
+uint BinaryUtility::mBoolType = (uint)typeid(bool).hash_code();
+uint BinaryUtility::mCharType = (uint)typeid(char).hash_code();
+uint BinaryUtility::mByteType = (uint)typeid(unsigned char).hash_code();
+uint BinaryUtility::mShortType = (uint)typeid(short).hash_code();
+uint BinaryUtility::mUShortType = (uint)typeid(ushort).hash_code();
+uint BinaryUtility::mIntType = (uint)typeid(int).hash_code();
+uint BinaryUtility::mUIntType = (uint)typeid(uint).hash_code();
+uint BinaryUtility::mFloatType = (uint)typeid(float).hash_code();
+uint BinaryUtility::mULLongType = (uint)typeid(ullong).hash_code();
+uint BinaryUtility::mBoolArrayType = (uint)typeid(bool*).hash_code();
+uint BinaryUtility::mCharArrayType = (uint)typeid(char*).hash_code();
+uint BinaryUtility::mByteArrayType = (uint)typeid(byte*).hash_code();
+uint BinaryUtility::mShortArrayType = (uint)typeid(short*).hash_code();
+uint BinaryUtility::mUShortArrayType = (uint)typeid(ushort*).hash_code();
+uint BinaryUtility::mIntArrayType = (uint)typeid(int*).hash_code();
+uint BinaryUtility::mUIntArrayType = (uint)typeid(uint*).hash_code();
+uint BinaryUtility::mFloatArrayType = (uint)typeid(float*).hash_code();
+uint BinaryUtility::mULLongArrayType = (uint)typeid(ullong*).hash_code();
+uint BinaryUtility::mBoolListType = (uint)typeid(myVector<bool>).hash_code();
+uint BinaryUtility::mCharListType = (uint)typeid(myVector<char>).hash_code();
+uint BinaryUtility::mByteListType = (uint)typeid(myVector<byte>).hash_code();
+uint BinaryUtility::mShortListType = (uint)typeid(myVector<short>).hash_code();
+uint BinaryUtility::mUShortListType = (uint)typeid(myVector<ushort>).hash_code();
+uint BinaryUtility::mIntListType = (uint)typeid(myVector<int>).hash_code();
+uint BinaryUtility::mUIntListType = (uint)typeid(myVector<uint>).hash_code();
+uint BinaryUtility::mFloatListType = (uint)typeid(myVector<float>).hash_code();
+uint BinaryUtility::mULLongListType = (uint)typeid(myVector<ullong>).hash_code();
+uint BinaryUtility::mVector2IntType = (uint)typeid(Vector2Int).hash_code();
+uint BinaryUtility::mVector2UShortType = (uint)typeid(Vector2UShort).hash_code();
 
 // 计算 16进制的c中1的个数
 uint BinaryUtility::crc_check(char c)

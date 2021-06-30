@@ -35,6 +35,7 @@ struct SQLiteMember
 	SQLITE_OWNER mOwner;
 	string mTypeName;
 	string mMemberName;
+	string mComment;
 };
 
 struct SQLiteInfo
@@ -42,6 +43,7 @@ struct SQLiteInfo
 	myVector<SQLiteMember> mMemberList;
 	SQLITE_OWNER mOwner;
 	string mSQLiteName;
+	string mComment;
 	bool mHotFix;
 };
 
@@ -49,6 +51,7 @@ struct MySQLMember
 {
 	string mTypeName;
 	string mMemberName;
+	string mComment;
 	bool mUTF8;
 };
 

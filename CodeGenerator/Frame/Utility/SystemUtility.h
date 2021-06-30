@@ -94,7 +94,7 @@ public:
 	{
 		array<char, 256> name;
 #if RUN_PLATFORM == PLATFORM_WINDOWS
-		GetModuleFileNameA(NULL, name._Elems, name.size());
+		GetModuleFileNameA(NULL, name._Elems, (DWORD)name.size());
 #elif RUN_PLATFORM == PLATFORM_LINUX
 		ssize_t ret = readlink("/proc/self/exe", name._Elems, name.size());
 		if (ret == -1)

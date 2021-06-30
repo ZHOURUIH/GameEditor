@@ -490,13 +490,13 @@ int CodeNetPacket::findPacketVersion(const string& filePath)
 	split(fileContent.c_str(), "\r\n", lines);
 	FOR_VECTOR(lines)
 	{
+		const string& line = lines[i];
 		int index = 0;
-		if (findString(lines[i].c_str(), "PACKET_VERSION = ", &index))
+		if (findString(line.c_str(), "PACKET_VERSION = ", &index))
 		{
-			int pos0 = lines[i].find_first_of('=', index);
-			int pos1 = lines[i].find_first_of(';', index);
-			string versionStr = lines[i].substr(pos0 + 1, pos1 - pos0 - 1);
-			packetVersion = stringToInt(versionStr);
+			int pos0 = (int)line.find_first_of('=', index);
+			int pos1 = (int)line.find_first_of(';', index);
+			packetVersion = stringToInt(line.substr(pos0 + 1, pos1 - pos0 - 1));
 			break;
 		}
 	}

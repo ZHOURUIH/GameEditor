@@ -60,7 +60,7 @@ public:
 #endif
 		mSet.clear();
 	}
-	uint size() const { return mSet.size(); }
+	uint size() const { return (uint)mSet.size(); }
 	void clone(mySet<T>& target) const
 	{
 		target.mSet.clear();

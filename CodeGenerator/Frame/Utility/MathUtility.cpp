@@ -346,7 +346,7 @@ float MathUtility::calculateFloat(string str)
 	myVector<char> factors;
 	// 表示上一个运算符的下标+1
 	int beginpos = 0;
-	uint strLen = str.length();
+	uint strLen = (uint)str.length();
 	FOR_I(strLen)
 	{
 		// 遍历到了最后一个字符,则直接把最后一个数字放入列表,然后退出循环
@@ -533,7 +533,7 @@ int MathUtility::calculateInt(string str)
 	myVector<char> factors;
 	// 表示上一个运算符的下标+1
 	int beginPos = 0;
-	uint strLen = str.length();
+	uint strLen = (uint)str.length();
 	FOR_I(strLen)
 	{
 		// 遍历到了最后一个字符,则直接把最后一个数字放入列表,然后退出循环

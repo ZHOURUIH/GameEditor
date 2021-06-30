@@ -396,7 +396,7 @@ void SerializedData::setElementCount(void* paramPtr, uint count)
 void SerializedData::setArrayByte(char* paramPtr, const char* str, uint length)
 {
 	setString(paramPtr, str);
-	setElementCount(paramPtr, length > 0 ? length : strlen(str));
+	setElementCount(paramPtr, length > 0 ? length : (uint)strlen(str));
 }
 
 void SerializedData::setArrayByte(byte* paramPtr, const byte* valueList, uint count)

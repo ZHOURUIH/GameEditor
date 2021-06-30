@@ -19,7 +19,7 @@ public:
 	}
 	virtual ~myVector(){ clear(); }
 	T* data() const { return (T*)mVector.data(); }
-	uint size() const { return mVector.size(); }
+	uint size() const { return (uint)mVector.size(); }
 	iterator begin() { return mVector.begin(); }
 	iterator end() { return mVector.end(); }
 	reverse_iterator rbegin() { return mVector.rbegin(); }
@@ -68,7 +68,7 @@ public:
 	}
 	void merge(const myVector<T>& other)
 	{
-		uint count = other.mVector.size();
+		uint count = (uint)other.mVector.size();
 		FOR_I(count)
 		{
 #if _DEBUG
@@ -186,7 +186,7 @@ public:
 			checkLock();
 		}
 #endif
-		uint count = mVector.size();
+		uint count = (uint)mVector.size();
 		FOR_I(count)
 		{
 			if (mVector[i] == value)

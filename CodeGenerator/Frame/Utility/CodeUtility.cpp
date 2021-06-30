@@ -9,6 +9,7 @@ string CodeUtility::cppFramePath;
 string CodeUtility::cppStringDefinePath;
 string CodeUtility::csGamePath;
 string CodeUtility::csHotfixGamePath;
+string CodeUtility::START_FALG = "#start";
 
 bool CodeUtility::initPath()
 {
@@ -50,9 +51,20 @@ MySQLMember CodeUtility::parseMySQLMemberLine(string line)
 SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientServer)
 {
 	SQLiteMember memberInfo;
+	
+	// 字段注释
+	string memberComment;
+	int pos = -1;
+	if (findString(line.c_str(), "//", &pos))
+	{
+		memberComment = line.substr(pos + strlen("//"));
+		removeStartAll(memberComment, ' ');
+		line = line.substr(0, pos);
+	}
+
 	// 该字段属于客户端还是服务器
-	int rectStartIndex = line.find_first_of('[');
-	int rectEndIndex = line.find_first_of(']', rectStartIndex);
+	int rectStartIndex = (int)line.find_first_of('[');
+	int rectEndIndex = (int)line.find_first_of(']', rectStartIndex);
 	if (rectStartIndex >= 0 && rectEndIndex >= 0)
 	{
 		string owner = line.substr(rectStartIndex, rectEndIndex - rectStartIndex + 1);
@@ -86,6 +98,7 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 	split(line.c_str(), " ", memberStrList);
 	memberInfo.mTypeName = memberStrList[0];
 	memberInfo.mMemberName = memberStrList[1];
+	memberInfo.mComment = memberComment;
 	return memberInfo;
 }
 
@@ -96,8 +109,8 @@ PacketMember CodeUtility::parseMemberLine(const string& line)
 	if (line.find_first_of('[') != -1)
 	{
 		// 如果是数组,则优先处理[]内部的常量
-		int lengthMarcoStart = line.find_first_of('[');
-		int lengthMarcoEnd = line.find_first_of(']');
+		int lengthMarcoStart = (int)line.find_first_of('[');
+		int lengthMarcoEnd = (int)line.find_first_of(']');
 		string lengthMacro = line.substr(lengthMarcoStart + 1, lengthMarcoEnd - lengthMarcoStart - 1);
 		strReplaceAll(lengthMacro, " ", "");
 		split(lengthMacro.c_str(), "*", memberInfo.mArrayLengthMacro);
@@ -141,7 +154,7 @@ string CodeUtility::packetNameToUpper(const string& packetName)
 {
 	// 根据大写字母拆分
 	myVector<string> macroList;
-	int length = packetName.length();
+	int length = (int)packetName.length();
 	const int prefixLength = 2;
 	if (packetName.substr(0, prefixLength) != "CS" && packetName.substr(0, prefixLength) != "SC")
 	{
@@ -155,7 +168,7 @@ string CodeUtility::nameToUpper(const string& sqliteName, bool preUnderLine)
 {
 	// 根据大写字母拆分
 	myVector<string> macroList;
-	int length = sqliteName.length();
+	int length = (int)sqliteName.length();
 	int lastIndex = 0;
 	// 从1开始,因为第0个始终都是大写,会截取出空字符串,最后一个字母也肯不会被分割
 	for (int i = 1; i < length; ++i)

@@ -12,7 +12,7 @@ public:
 	template<typename T>
 	T* get(uint count, bool zeroMemory)
 	{
-		uint type = typeid(T).hash_code();
+		uint type = (uint)typeid(T).hash_code();
 		void* data = NULL;
 		// 尝试从未使用列表中查找
 		if (mUnuseMemoryList.contains(type))

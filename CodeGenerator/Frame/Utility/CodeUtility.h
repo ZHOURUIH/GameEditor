@@ -15,6 +15,7 @@ protected:
 	static string cppStringDefinePath;
 	static string csGamePath;
 	static string csHotfixGamePath;
+	static string START_FALG;
 public:
 	static bool initPath();
 	static MySQLMember parseMySQLMemberLine(string line);

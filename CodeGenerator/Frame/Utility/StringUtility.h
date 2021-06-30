@@ -9,9 +9,17 @@ public:
 	static string removeStartString(const string& fileName, const string& startStr);
 	static string removeSuffix(const string& str);
 	// 去掉最后一个出现的指定字符
+	static void removeStartAll(string& stream, char key);
+	// 去掉最后一个出现的指定字符
+	static void removeStart(string& stream, char key);
+	// 去掉最后一个出现的指定字符
+	static void removeLastAll(string& stream, char key);
+	// 去掉最后一个出现的指定字符
 	static void removeLast(string& stream, char key);
 	// 去掉最后一个逗号
 	static void removeLastComma(string& stream);
+	// 查找str中指定key的数量
+	static int findCharCount(const string& str, char key);
 	static string getFileName(string str);
 	static string getFileNameNoSuffix(string str, bool removePath);
 	static string getFilePath(const string& dir);
@@ -46,8 +54,8 @@ public:
 	static uint split(const char* str, const char* key, array<string, Length>& stringBuffer, bool removeEmpty = true, bool showError = true)
 	{
 		int startPos = 0;
-		int keyLen = strlen(key);
-		int sourceLen = strlen(str);
+		int keyLen = (int)strlen(key);
+		int sourceLen = (int)strlen(str);
 		const int STRING_BUFFER = 1024;
 		char curString[STRING_BUFFER];
 		int devidePos = -1;
@@ -295,7 +303,7 @@ public:
 			// 判断是否需要在前面补0
 			if (limitLen > 0)
 			{
-				uint len = strlen(temp._Elems);
+				uint len = (uint)strlen(temp._Elems);
 				if (limitLen > len)
 				{
 					// 因为当前函数设计为线程安全,所以只能使用栈内存中的数组
@@ -326,7 +334,7 @@ public:
 			// 判断是否需要在前面补0
 			if (limitLen > 0)
 			{
-				uint len = strlen(temp._Elems);
+				uint len = (uint)strlen(temp._Elems);
 				if (limitLen > len)
 				{
 					array<char, 16> zeroArray;
@@ -576,8 +584,8 @@ public:
 	{
 		uint curCount = 0;
 		uint startPos = 0;
-		uint keyLen = strlen(seperate);
-		uint sourceLen = strlen(str);
+		uint keyLen = (uint)strlen(seperate);
+		uint sourceLen = (uint)strlen(str);
 		const int BUFFER_SIZE = 4;
 		array<char, BUFFER_SIZE> curString;
 		int devidePos = -1;
@@ -623,8 +631,8 @@ public:
 	{
 		uint curCount = 0;
 		uint startPos = 0;
-		uint keyLen = strlen(seperate);
-		uint sourceLen = strlen(str);
+		uint keyLen = (uint)strlen(seperate);
+		uint sourceLen = (uint)strlen(str);
 		const int BUFFER_SIZE = 8;
 		array<char, BUFFER_SIZE> curString;
 		int devidePos = -1;
@@ -670,8 +678,8 @@ public:
 	{
 		uint curCount = 0;
 		uint startPos = 0;
-		uint keyLen = strlen(seperate);
-		uint sourceLen = strlen(str);
+		uint keyLen = (uint)strlen(seperate);
+		uint sourceLen = (uint)strlen(str);
 		const int BUFFER_SIZE = 16;
 		array<char, BUFFER_SIZE> curString;
 		int devidePos = -1;
@@ -717,8 +725,8 @@ public:
 	{
 		uint curCount = 0;
 		uint startPos = 0;
-		uint keyLen = strlen(seperate);
-		uint sourceLen = strlen(str);
+		uint keyLen = (uint)strlen(seperate);
+		uint sourceLen = (uint)strlen(str);
 		const int BUFFER_SIZE = 16;
 		array<char, BUFFER_SIZE> curString;
 		int devidePos = -1;
@@ -764,8 +772,8 @@ public:
 	{
 		uint curCount = 0;
 		uint startPos = 0;
-		uint keyLen = strlen(seperate);
-		uint sourceLen = strlen(str);
+		uint keyLen = (uint)strlen(seperate);
+		uint sourceLen = (uint)strlen(str);
 		const int BUFFER_SIZE = 32;
 		array<char, BUFFER_SIZE> curString;
 		int devidePos = -1;
@@ -811,8 +819,8 @@ public:
 	{
 		uint curCount = 0;
 		uint startPos = 0;
-		uint keyLen = strlen(seperate);
-		uint sourceLen = strlen(str);
+		uint keyLen = (uint)strlen(seperate);
+		uint sourceLen = (uint)strlen(str);
 		const int BUFFER_SIZE = 32;
 		array<char, BUFFER_SIZE> curString;
 		int devidePos = -1;

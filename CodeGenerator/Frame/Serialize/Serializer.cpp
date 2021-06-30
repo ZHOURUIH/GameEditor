@@ -59,7 +59,7 @@ void Serializer::readBuffer(char* buffer, uint readLen)
 void Serializer::writeString(const char* str)
 {
 	// 先写入字符串长度
-	uint writeLen = strlen(str);
+	uint writeLen = (uint)strlen(str);
 	write(writeLen);
 	if (!writeCheck(writeLen))
 	{

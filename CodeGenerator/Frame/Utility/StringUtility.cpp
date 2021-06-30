@@ -22,9 +22,58 @@ string StringUtility::removeSuffix(const string& str)
 	return str;
 }
 
+void StringUtility::removeStartAll(string& stream, char key)
+{
+	int firstNotPos = -1;
+	uint streamSize = (uint)stream.length();
+	FOR_I(streamSize)
+	{
+		if (stream[i] != key)
+		{
+			firstNotPos = i;
+			break;
+		}
+	}
+	if (firstNotPos > 0)
+	{
+		stream.erase(0, firstNotPos);
+	}
+}
+
+void StringUtility::removeStart(string& stream, char key)
+{
+	uint streamSize = (uint)stream.length();
+	FOR_I(streamSize)
+	{
+		if (stream[streamSize - i - 1] == key)
+		{
+			stream.erase(streamSize - i - 1, 1);
+			break;
+		}
+	}
+}
+
+void StringUtility::removeLastAll(string& stream, char key)
+{
+	int lastNotPos = -1;
+	uint streamSize = (uint)stream.length();
+	FOR_I(streamSize)
+	{
+		if (stream[streamSize - i - 1] != key)
+		{
+			lastNotPos = streamSize - i - 1;
+			break;
+		}
+	}
+	if (lastNotPos != -1 && lastNotPos != streamSize - 1)
+	{
+		stream.erase(lastNotPos + 1);
+	}
+}
+
 void StringUtility::removeLast(string& stream, char key)
 {
-	uint streamSize = stream.length();
+	uint streamSize = (uint)stream.length();
 	FOR_I(streamSize)
 	{
 		if (stream[streamSize - i - 1] == key)
@@ -38,6 +87,20 @@ void StringUtility::removeLast(string& stream, char key)
 void StringUtility::removeLastComma(string& stream)
 {
 	removeLast(stream, ',');
+}
+
+int StringUtility::findCharCount(const string& str, char key)
+{
+	int count = 0;
+	uint length = str.length();
+	FOR_I(length)
+	{
+		if (str[i] == key)
+		{
+			++count;
+		}
+	}
+	return count;
 }
 
 string StringUtility::getFileName(string str)
@@ -109,7 +172,7 @@ string StringUtility::replaceSuffix(const string& fileName, const string& suffix
 
 int StringUtility::getLastNotNumberPos(const string& str)
 {
-	uint strLen = str.length();
+	uint strLen = (uint)str.length();
 	FOR_I(strLen)
 	{
 		if (str[strLen - i - 1] > '9' || str[strLen - i - 1] < '0')
@@ -142,8 +205,8 @@ string StringUtility::getNotNumberSubString(string str)
 
 void StringUtility::replace(char* str, int strBufferSize, int begin, int end, const char* reStr)
 {
-	uint curLength = strlen(str);
-	uint replaceLength = strlen(reStr);
+	uint curLength = (uint)strlen(str);
+	uint replaceLength = (uint)strlen(reStr);
 	int lengthAfterReplace = begin + replaceLength + curLength - end;
 	if (lengthAfterReplace >= strBufferSize)
 	{
@@ -163,8 +226,8 @@ void StringUtility::replace(string& str, int begin, int end, const string& reStr
 
 void StringUtility::replaceAll(char* str, int strBufferSize, const char* key, const char* newWords)
 {
-	uint keyLength = strlen(key);
-	uint newWordsLength = strlen(newWords);
+	uint keyLength = (uint)strlen(key);
+	uint newWordsLength = (uint)strlen(newWords);
 	int startPos = 0;
 	while (true)
 	{
@@ -180,8 +243,8 @@ void StringUtility::replaceAll(char* str, int strBufferSize, const char* key, co
 
 void StringUtility::replaceAll(string& str, const string& key, const string& newWords)
 {
-	uint keyLength = key.length();
-	uint newWordsLength = newWords.length();
+	uint keyLength = (uint)key.length();
+	uint newWordsLength = (uint)newWords.length();
 	int startPos = 0;
 	while (true)
 	{
@@ -197,7 +260,7 @@ void StringUtility::replaceAll(string& str, const string& key, const string& new
 
 void StringUtility::removeAll(string& str, char value)
 {
-	int strLength = str.length();
+	int strLength = (int)str.length();
 	char* tempBuffer = ArrayPool::newArray<char>(MathUtility::getGreaterPower2(strLength + 1));
 	memcpy(tempBuffer, str.c_str(), strLength);
 	tempBuffer[strLength] = '\0';
@@ -219,7 +282,7 @@ void StringUtility::removeAll(string& str, char value)
 
 void StringUtility::removeAll(string& str, char value0, char value1)
 {
-	int strLength = str.length();
+	int strLength = (int)str.length();
 	char* tempBuffer = ArrayPool::newArray<char>(MathUtility::getGreaterPower2(strLength + 1));
 	memcpy(tempBuffer, str.c_str(), strLength);
 	tempBuffer[strLength] = '\0';
@@ -242,8 +305,8 @@ void StringUtility::removeAll(string& str, char value0, char value1)
 void StringUtility::split(const char* str, const char* key, myVector<string>& vec, bool removeEmpty)
 {
 	int startPos = 0;
-	int keyLen = strlen(key);
-	int sourceLen = strlen(str);
+	int keyLen = (int)strlen(key);
+	int sourceLen = (int)strlen(str);
 	const int STRING_BUFFER = 1024;
 	char curString[STRING_BUFFER];
 	int devidePos = -1;
@@ -287,8 +350,8 @@ void StringUtility::split(const char* str, const char* key, myVector<string>& ve
 uint StringUtility::split(const char* str, const char* key, string* stringBuffer, uint bufferSize, bool removeEmpty)
 {
 	int startPos = 0;
-	int keyLen = strlen(key);
-	int sourceLen = strlen(str);
+	int keyLen = (int)strlen(key);
+	int sourceLen = (int)strlen(str);
 	const int STRING_BUFFER = 1024;
 	char curString[STRING_BUFFER];
 	int devidePos = -1;
@@ -344,7 +407,7 @@ string StringUtility::strReplace(const string& str, uint begin, uint end, const 
 
 void StringUtility::strReplaceAll(string& str, const char* key, const string& newWords)
 {
-	int keyLen = strlen(key);
+	int keyLen = (int)strlen(key);
 	int startPos = 0;
 	while (true)
 	{
@@ -531,7 +594,7 @@ string StringUtility::intToString(int value, uint limitLen)
 {
 	array<char, 16> temp;
 	_itoa_s(value, temp);
-	uint len = strlen(temp._Elems);
+	uint len = (uint)strlen(temp._Elems);
 	if (limitLen > len)
 	{
 		return zeroString(limitLen - len) + temp._Elems;
@@ -553,7 +616,7 @@ void StringUtility::intToString(char* charArray, uint size, int value, uint limi
 		// 判断是否需要在前面补0
 		if (limitLen > 0)
 		{
-			uint len = strlen(temp._Elems);
+			uint len = (uint)strlen(temp._Elems);
 			if (limitLen > len)
 			{
 				// 因为当前函数设计为线程安全,所以只能使用栈内存中的数组
@@ -571,7 +634,7 @@ string StringUtility::ullongToString(const ullong& value, uint limitLen)
 {
 	array<char, 32> temp;
 	_i64toa_s(value, temp);
-	uint len = strlen(temp._Elems);
+	uint len = (uint)strlen(temp._Elems);
 	if (limitLen > len)
 	{
 		return zeroString(limitLen - len) + temp._Elems;
@@ -592,7 +655,7 @@ void StringUtility::ullongToString(char* charArray, uint size, const ullong& val
 		// 判断是否需要在前面补0
 		if (limitLen > 0)
 		{
-			uint len = strlen(temp._Elems);
+			uint len = (uint)strlen(temp._Elems);
 			if (limitLen > len)
 			{
 				array<char, 16> zeroArray;
@@ -827,8 +890,8 @@ uint StringUtility::stringToByteArray(const char* str, byte* buffer, uint buffer
 {
 	uint curCount = 0;
 	uint startPos = 0;
-	uint keyLen = strlen(seperate);
-	uint sourceLen = strlen(str);
+	uint keyLen = (uint)strlen(seperate);
+	uint sourceLen = (uint)strlen(str);
 	const int BUFFER_SIZE = 4;
 	array<char, BUFFER_SIZE> curString;
 	int devidePos = -1;
@@ -879,8 +942,8 @@ uint StringUtility::stringToUShortArray(const char* str, ushort* buffer, uint bu
 {
 	uint curCount = 0;
 	uint startPos = 0;
-	uint keyLen = strlen(seperate);
-	uint sourceLen = strlen(str);
+	uint keyLen = (uint)strlen(seperate);
+	uint sourceLen = (uint)strlen(str);
 	const int BUFFER_SIZE = 8;
 	array<char, BUFFER_SIZE> curString;
 	int devidePos = -1;
@@ -931,8 +994,8 @@ uint StringUtility::stringToIntArray(const char* str, int* buffer, uint bufferSi
 {
 	uint curCount = 0;
 	uint startPos = 0;
-	uint keyLen = strlen(seperate);
-	uint sourceLen = strlen(str);
+	uint keyLen = (uint)strlen(seperate);
+	uint sourceLen = (uint)strlen(str);
 	const int BUFFER_SIZE = 16;
 	array<char, BUFFER_SIZE> curString;
 	int devidePos = -1;
@@ -983,8 +1046,8 @@ uint StringUtility::stringToUIntArray(const char* str, uint* buffer, uint buffer
 {
 	uint curCount = 0;
 	uint startPos = 0;
-	uint keyLen = strlen(seperate);
-	uint sourceLen = strlen(str);
+	uint keyLen = (uint)strlen(seperate);
+	uint sourceLen = (uint)strlen(str);
 	const int BUFFER_SIZE = 16;
 	array<char, BUFFER_SIZE> curString;
 	int devidePos = -1;
@@ -1035,8 +1098,8 @@ uint StringUtility::stringToULLongArray(const char* str, ullong* buffer, uint bu
 {
 	uint curCount = 0;
 	uint startPos = 0;
-	uint keyLen = strlen(seperate);
-	uint sourceLen = strlen(str);
+	uint keyLen = (uint)strlen(seperate);
+	uint sourceLen = (uint)strlen(str);
 	const int BUFFER_SIZE = 32;
 	array<char, BUFFER_SIZE> curString;
 	int devidePos = -1;
@@ -1126,7 +1189,7 @@ string StringUtility::floatToStringExtra(float f, uint precision, bool removeTai
 				array<char, 16> temp;
 				intToString(temp, abs((int)totalValue));
 				retString = temp._Elems;
-				int dotPosition = strlen(retString.c_str()) - precision;
+				int dotPosition = (int)strlen(retString.c_str()) - precision;
 				if (dotPosition <= 0)
 				{
 					array<char, 16> tempZero;
@@ -1290,8 +1353,8 @@ uint StringUtility::stringToFloatArray(const char* str, float* buffer, uint buff
 {
 	uint curCount = 0;
 	uint startPos = 0;
-	uint keyLen = strlen(seperate);
-	uint sourceLen = strlen(str);
+	uint keyLen = (uint)strlen(seperate);
+	uint sourceLen = (uint)strlen(str);
 	const int BUFFER_SIZE = 32;
 	array<char, BUFFER_SIZE> curString;
 	int devidePos = -1;
@@ -1477,7 +1540,7 @@ bool StringUtility::startWith(const string& oriString, const string& pattern, bo
 
 string StringUtility::removePreNumber(const string& str)
 {
-	uint length = str.length();
+	uint length = (uint)str.length();
 	FOR_I(length)
 	{
 		if (str[i] < '0' || str[i] > '9')
@@ -1786,7 +1849,7 @@ void StringUtility::jsonAddObject(string& str, const string& name, const string&
 string StringUtility::toLower(const string& str)
 {
 	string ret = str;
-	uint size = ret.length();
+	uint size = (uint)ret.length();
 	FOR_I(size)
 	{
 		if (isUpper(ret[i]))
@@ -1800,7 +1863,7 @@ string StringUtility::toLower(const string& str)
 string StringUtility::toUpper(const string& str)
 {
 	string ret = str;
-	uint size = ret.length();
+	uint size = (uint)ret.length();
 	FOR_I(size)
 	{
 		if (isLower(ret[i]))
@@ -1813,7 +1876,7 @@ string StringUtility::toUpper(const string& str)
 
 void StringUtility::rightToLeft(string& str)
 {
-	uint pathLength = str.length();
+	uint pathLength = (uint)str.length();
 	FOR_I(pathLength)
 	{
 		if (str[i] == '\\')
@@ -1824,7 +1887,7 @@ void StringUtility::rightToLeft(string& str)
 }
 void StringUtility::leftToRight(string& str)
 {
-	uint pathLength = str.length();
+	uint pathLength = (uint)str.length();
 	FOR_I(pathLength)
 	{
 		if (str[i] == '/')
@@ -1844,8 +1907,8 @@ bool StringUtility::findSubstrLower(const string& res, const string& sub, int* p
 bool StringUtility::findSubstr(const string& res, const string& sub, int* pos, uint startIndex, bool direction)
 {
 	int posFind = -1;
-	uint subLen = sub.length();
-	int searchLength = res.length() - subLen;
+	uint subLen = (uint)sub.length();
+	int searchLength = (int)res.length() - subLen;
 	if (searchLength < 0)
 	{
 		return false;
@@ -1898,8 +1961,8 @@ bool StringUtility::findSubstr(const string& res, const string& sub, int* pos, u
 bool StringUtility::findString(const char* str, const char* key, int* pos, uint startPos)
 {
 	CLAMP_MIN(startPos, 0);
-	uint length = strlen(str);
-	uint keyLen = strlen(key);
+	uint length = (uint)strlen(str);
+	uint keyLen = (uint)strlen(key);
 	for (uint i = startPos; i < length; ++i)
 	{
 		bool find = true;
@@ -1930,8 +1993,8 @@ bool StringUtility::findString(const char* str, const char* key, int* pos, uint 
 string StringUtility::checkString(const string& str, const string& valid)
 {
 	string newString = "";
-	uint validCount = valid.length();
-	uint oldStrLen = str.length();
+	uint validCount = (uint)valid.length();
+	uint oldStrLen = (uint)str.length();
 	FOR_I(oldStrLen)
 	{
 		bool keep = false;
@@ -1998,7 +2061,7 @@ string StringUtility::charArrayToHexString(byte* data, uint dataCount, bool addS
 uint StringUtility::getCharCount(const string& str, char key)
 {
 	uint count = 0;
-	uint length = str.length();
+	uint length = (uint)str.length();
 	FOR_I(length)
 	{
 		if (str[i] == key)
