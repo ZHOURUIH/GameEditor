@@ -18,19 +18,26 @@ void CodeMySQL::generate()
 	bool packetStart = false;
 	myVector<MySQLInfo> mysqlInfoList;
 	MySQLInfo tempInfo;
+	bool fileStart = false;
 	FOR_VECTOR_CONST(lines)
 	{
-		string line = lines[i];
-		// 忽略注释
-		if (startWith(line, "//"))
+		if (lines[i] == START_FALG)
+		{
+			fileStart = true;
+			continue;
+		}
+		if (!fileStart)
 		{
 			continue;
 		}
-		// 如果后面插有注释,则去除
-		int pos = -1;
-		if (findString(line.c_str(), "//", &pos))
+		string line = lines[i];
+		// 表格注释
+		if (startWith(line, "//"))
 		{
-			line = line.substr(0, pos);
+			string comment = line.substr(strlen("//"));
+			removeStartAll(comment, ' ');
+			tempInfo.mComment += comment;
+			continue;
 		}
 		// 去除所有制表符,分号
 		removeAll(line, '\t', ';');
@@ -96,6 +103,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "");
 	line(header, "#include \"MySQLData.h\"");
 	line(header, "");
+	line(header, "// " + mysqlInfo.mComment);
 	line(header, "class " + className + " : public MySQLData");
 	line(header, "{");
 	line(header, "\tBASE_CLASS(MySQLData);");
@@ -108,7 +116,14 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "public:");
 	FOR_I(memberCount)
 	{
-		line(header, "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + ";");
+		string memberLine = "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + ";";
+		uint tabCount = generateAlignTableCount(memberLine, 40);
+		FOR_I(tabCount)
+		{
+			memberLine += '\t';
+		}
+		memberLine += "// " + mysqlInfo.mMemberList[i].mComment;
+		line(header, memberLine);
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");

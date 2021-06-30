@@ -31,6 +31,16 @@ bool CodeUtility::initPath()
 MySQLMember CodeUtility::parseMySQLMemberLine(string line)
 {
 	MySQLMember memberInfo;
+
+	// 字段注释
+	int pos = -1;
+	if (findString(line.c_str(), "//", &pos))
+	{
+		memberInfo.mComment = line.substr(pos + strlen("//"));
+		removeStartAll(memberInfo.mComment, ' ');
+		line = line.substr(0, pos);
+	}
+
 	// 字段类型和字段名
 	myVector<string> memberStrList;
 	split(line.c_str(), " ", memberStrList);
@@ -53,12 +63,11 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 	SQLiteMember memberInfo;
 	
 	// 字段注释
-	string memberComment;
 	int pos = -1;
 	if (findString(line.c_str(), "//", &pos))
 	{
-		memberComment = line.substr(pos + strlen("//"));
-		removeStartAll(memberComment, ' ');
+		memberInfo.mComment = line.substr(pos + strlen("//"));
+		removeStartAll(memberInfo.mComment, ' ');
 		line = line.substr(0, pos);
 	}
 
@@ -98,7 +107,6 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 	split(line.c_str(), " ", memberStrList);
 	memberInfo.mTypeName = memberStrList[0];
 	memberInfo.mMemberName = memberStrList[1];
-	memberInfo.mComment = memberComment;
 	return memberInfo;
 }
 

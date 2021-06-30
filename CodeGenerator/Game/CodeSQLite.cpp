@@ -56,10 +56,8 @@ void CodeSQLite::generate()
 			tempInfo.mComment += comment;
 			continue;
 		}
-		// 去除所有制表符
-		strReplaceAll(line, "\t", "");
-		// 去除所有的分号
-		strReplaceAll(line, ";", "");
+		// 去除所有制表符,分号
+		removeAll(line, '\t', ';');
 		// 成员变量列表起始
 		if (line == "{")
 		{
@@ -204,11 +202,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 		if (sqliteInfo.mMemberList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
 		{
 			string memberLine = "\t" + sqliteInfo.mMemberList[i].mTypeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
-			const int MAX_LENTH = 40;
-			// 如果memberLine中有制表符,则还要再增加空格数
-			int remainSpace = MAX_LENTH - ((int)memberLine.length() + findCharCount(memberLine, '\t') * 3);
-			clampMin(remainSpace, 0);
-			uint tabCount = (uint)ceil(remainSpace / 4.0f);
+			uint tabCount = generateAlignTableCount(memberLine, 40);
 			FOR_I(tabCount)
 			{
 				memberLine += '\t';
@@ -418,6 +412,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(file, "using System.Collections.Generic;");
 	line(file, "using UnityEngine;");
 	line(file, "");
+	line(file, "// " + sqliteInfo.mComment);
 	line(file, "public class " + dataClassName + " : SQLiteData");
 	line(file, "{");
 	uint memberCount = sqliteInfo.mMemberList.size();
@@ -450,14 +445,22 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		{
 			typeName = "sbyte";
 		}
+		string memberLine;
 		if (findString(typeName.c_str(), "List", NULL))
 		{
-			line(file, "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + " = new " + typeName + "();");
+			memberLine = "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + " = new " + typeName + "();";
 		}
 		else
 		{
-			line(file, "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";");
+			memberLine = "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
 		}
+		uint tabCount = generateAlignTableCount(memberLine, 40);
+		FOR_I(tabCount)
+		{
+			memberLine += '\t';
+		}
+		memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
+		line(file, memberLine);
 	}
 	line(file, "\tpublic override void parse(SqliteDataReader reader)");
 	line(file, "\t{");
