@@ -94,6 +94,7 @@ void convert(const char* src, const char* dst)
 	// ±£´æÎªpng
 	FreeImage_Save(FIF_PNG, destBitmap, dst);
 	FreeImage_Unload(destBitmap);
+	FreeImage_Unload(sourceBitmap);
 }
 
 int main(int argc, char **argv)
