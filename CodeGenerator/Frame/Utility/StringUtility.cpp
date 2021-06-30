@@ -2072,6 +2072,18 @@ uint StringUtility::getCharCount(const string& str, char key)
 	return count;
 }
 
+uint StringUtility::getStringWidth(const string& str)
+{
+	return str.length() + getCharCount(str, '\t') * 3;
+}
+
+uint StringUtility::generateAlignTableCount(const string& str, int alignWidth)
+{
+	int remainChar = alignWidth - getStringWidth(str);
+	MathUtility::clampMin(remainChar, 0);
+	return (uint)ceil(remainChar / 4.0f);
+}
+
 void StringUtility::appendValueString(char* queryStr, uint size, const char* str, bool toUTF8, bool addComma)
 {
 	if (toUTF8)
