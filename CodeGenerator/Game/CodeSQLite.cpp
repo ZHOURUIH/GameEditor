@@ -424,6 +424,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		}
 		line(file, "\tpublic static string " + sqliteInfo.mMemberList[i].mMemberName + " = \"" + sqliteInfo.mMemberList[i].mMemberName + "\";");
 	}
+	myVector<pair<string, string>> listMemberList;
 	FOR_I(memberCount)
 	{
 		if (sqliteInfo.mMemberList[i].mMemberName == "ID")
@@ -445,22 +446,32 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		{
 			typeName = "sbyte";
 		}
-		string memberLine;
+
+		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
 		if (findString(typeName.c_str(), "List", NULL))
 		{
-			memberLine = "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + " = new " + typeName + "();";
+			listMemberList.push_back(make_pair(typeName, sqliteInfo.mMemberList[i].mMemberName));
 		}
-		else
-		{
-			memberLine = "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
-		}
-		uint tabCount = generateAlignTableCount(memberLine, 40);
+
+		string memberLine = "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
+		uint tabCount = generateAlignTableCount(memberLine, 44);
 		FOR_I(tabCount)
 		{
 			memberLine += '\t';
 		}
 		memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
 		line(file, memberLine);
+	}
+	if (listMemberList.size() > 0)
+	{
+		line(file, "\tpublic " + dataClassName + "()");
+		line(file, "\t{");
+		FOR_VECTOR(listMemberList)
+		{
+			line(file, "\t\tm" + listMemberList[i].second + " = new " + listMemberList[i].first + "();");
+		}
+		END(listMemberList);
+		line(file, "\t}");
 	}
 	line(file, "\tpublic override void parse(SqliteDataReader reader)");
 	line(file, "\t{");
