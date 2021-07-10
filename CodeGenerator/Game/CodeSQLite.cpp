@@ -556,9 +556,9 @@ void CodeSQLite::generateCSharpSQLiteTableFile(const SQLiteInfo& sqliteInfo, str
 	line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
 	line(table, "\t\tmDataAvailable = false;");
 	line(table, "\t}");
-	line(table, "\tpublic " + dataClassName + " query(int id)");
+	line(table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
 	line(table, "\t{");
-	line(table, "\t\treturn query(typeof(" + dataClassName + "), id) as " + dataClassName + ";");
+	line(table, "\t\treturn query(typeof(" + dataClassName + "), id, errorIfNull) as " + dataClassName + ";");
 	line(table, "\t}");
 	line(table, "\tpublic List<" + dataClassName + "> queryAll()");
 	line(table, "\t{");
