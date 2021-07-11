@@ -13,13 +13,38 @@ string CodeUtility::START_FALG = "#start";
 
 bool CodeUtility::initPath()
 {
-	ServerProjectPath = getEnvironmentValue("SERVER_PROJECT_PATH");
-	GameProjectPath = getEnvironmentValue("GAME_PROJECT_PATH");
+	myVector<string> configLines;
+	openTxtFileLines("./CodeGenerator_Config.txt", configLines);
+	FOR_VECTOR(configLines)
+	{
+		myVector<string> params;
+		removeAll(configLines[i], ' ', '\t');
+		split(configLines[i].c_str(), "=", params);
+		if (params.size() != 2)
+		{
+			continue;
+		}
+		if (params[0] == "SERVER_PROJECT_PATH")
+		{
+			ServerProjectPath = params[1];
+		}
+		else if (params[0] == "GAME_PROJECT_PATH")
+		{
+			GameProjectPath = params[1];
+		}
+	}
+	END(configLines);
+
 	if (ServerProjectPath == "" || GameProjectPath == "")
 	{
 		return false;
 	}
-	cppProjectPath = ServerProjectPath + "MicroLegend_Server/";
+
+	rightToLeft(ServerProjectPath);
+	rightToLeft(GameProjectPath);
+	validPath(ServerProjectPath);
+	validPath(GameProjectPath);
+	cppProjectPath = ServerProjectPath + getFileName(ServerProjectPath.substr(0, ServerProjectPath.length() - 1)) + "/";
 	cppGamePath = cppProjectPath + "Game/";
 	cppFramePath = cppProjectPath + "Frame/";
 	cppStringDefinePath = cppGamePath + "StringDefine/";
