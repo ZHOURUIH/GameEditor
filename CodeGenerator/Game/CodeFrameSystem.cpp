@@ -24,6 +24,11 @@ void CodeFrameSystem::generate()
 	int typeIndex = -1;
 	FOR_VECTOR(lineList)
 	{
+		removeAll(lineList[i], '\t');
+		if (lineList[i].length() == 0)
+		{
+			continue;
+		}
 		if (lineList[i] == "{")
 		{
 			if (lineList[i - 1] == "FrameSystem")
@@ -45,7 +50,6 @@ void CodeFrameSystem::generate()
 			typeIndex = -1;
 			continue;
 		}
-		removeAll(lineList[i], '\t');
 		if (typeIndex == 0)
 		{
 			frameSystemList.push_back(lineList[i]);

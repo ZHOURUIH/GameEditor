@@ -39,7 +39,7 @@ void CodeUnityBuild::generateCppUnityBuild(const myVector<string>& fileList, str
 	uint count = fileList.size();
 	FOR_I(count)
 	{
-		line(str0, "#include \"" + fileList[i] + "\"");
+		line(str0, "#include \"" + fileList[i] + "\"", i != count - 1);
 	}
 
 	writeFile(filePath + "UnityBuild.cpp", ANSIToUTF8(str0.c_str(), true));

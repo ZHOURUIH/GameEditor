@@ -108,7 +108,7 @@ void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& clas
 		line(str0, "class " + classList[i] + ";");
 	}
 	line(str0, "");
-	line(str0, "#endif");
+	line(str0, "#endif", false);
 
 	writeFile(filePath + "FrameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -126,7 +126,7 @@ void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& class
 		line(str0, "class " + classList[i] + ";");
 	}
 	line(str0, "");
-	line(str0, "#endif");
+	line(str0, "#endif", false);
 
 	writeFile(filePath + "GameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -144,7 +144,7 @@ void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList
 		line(str0, "#include \"" + headerList[i] + ".h\"");
 	}
 	line(str0, "");
-	line(str0, "#endif");
+	line(str0, "#endif", false);
 
 	writeFile(filePath + "FrameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -163,7 +163,7 @@ void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList,
 		line(str0, "#include \"" + headerList[i] + ".h\"");
 	}
 	line(str0, "");
-	line(str0, "#endif");
+	line(str0, "#endif", false);
 
 	writeFile(filePath + "GameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
