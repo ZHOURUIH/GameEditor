@@ -2,6 +2,11 @@
 
 void CodeFunctionParam::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "FunctionParam/";
 
 	string file;

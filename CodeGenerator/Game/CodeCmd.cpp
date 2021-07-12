@@ -2,6 +2,11 @@
 
 void CodeCmd::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "CommandSystem/";
 
 	string cmdFile;

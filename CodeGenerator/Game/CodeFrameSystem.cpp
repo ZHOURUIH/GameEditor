@@ -2,6 +2,11 @@
 
 void CodeFrameSystem::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "Common/";
 
 	string frameSystemFile;

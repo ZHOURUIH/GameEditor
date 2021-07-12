@@ -2,6 +2,11 @@
 
 void CodeComponent::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppRegisterPath = cppGamePath + "/Component/";
 
 	string stateFile;

@@ -446,8 +446,8 @@ StringUtility::strcat_s(charArray, size, str5);
 #ifdef ERROR
 #undef ERROR
 #endif
-#define ERROR(info) cout << info << endl;
-#define INFO(info) cout << info << endl;
+#define ERROR(info) cout << info << " File:" << __FILE__ << ", Line:" << __LINE__ << endl
+#define INFO(info) cout << info << endl
 
 typedef unsigned char byte;
 typedef unsigned short ushort;

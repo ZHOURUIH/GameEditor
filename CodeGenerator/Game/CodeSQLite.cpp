@@ -129,46 +129,65 @@ void CodeSQLite::generate()
 			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line, ignoreClientServer));
 		}
 	}
-	// 删除C++的代码文件
-	deleteFolder(cppDataPath);
-	// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
-	myVector<string> csDataFileList;
-	findFiles(csDataGamePath, csDataFileList, ".cs");
-	findFiles(csDataHotFixPath, csDataFileList, ".cs");
-	FOR_VECTOR_CONST(csDataFileList)
+	if (cppGamePath.length() > 0)
 	{
-		deleteFile(csDataFileList[i]);
+		// 删除C++的代码文件
+		deleteFolder(cppDataPath);
 	}
-	myVector<string> csTableFileList;
-	findFiles(csTableGamePath, csTableFileList, ".cs");
-	findFiles(csTableHotFixPath, csTableFileList, ".cs");
-	FOR_VECTOR_CONST(csTableFileList)
+	
+	if (csGamePath.length() > 0)
 	{
-		deleteFile(csTableFileList[i]);
+		// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
+		myVector<string> csDataFileList;
+		findFiles(csDataGamePath, csDataFileList, ".cs");
+		findFiles(csDataHotFixPath, csDataFileList, ".cs");
+		FOR_VECTOR_CONST(csDataFileList)
+		{
+			deleteFile(csDataFileList[i]);
+		}
+		myVector<string> csTableFileList;
+		findFiles(csTableGamePath, csTableFileList, ".cs");
+		findFiles(csTableHotFixPath, csTableFileList, ".cs");
+		FOR_VECTOR_CONST(csTableFileList)
+		{
+			deleteFile(csTableFileList[i]);
+		}
 	}
 
 	// 生成代码文件
 	FOR_VECTOR_CONST(sqliteInfoList)
 	{
-		// .h代码
-		generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath);
-		generateCppSQLiteTableFile(sqliteInfoList[i], cppTablePath);
-		// .cs代码
-		generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataGamePath, csDataHotFixPath);
-		generateCSharpSQLiteTableFile(sqliteInfoList[i], csTableGamePath, csTableHotFixPath);
+		if (cppGamePath.length() > 0)
+		{
+			// .h代码
+			generateCppSQLiteDataFile(sqliteInfoList[i], cppDataPath);
+			generateCppSQLiteTableFile(sqliteInfoList[i], cppTablePath);
+		}
+		if (csGamePath.length() > 0)
+		{
+			// .cs代码
+			generateCSharpSQLiteDataFile(sqliteInfoList[i], csDataGamePath, csDataHotFixPath);
+			generateCSharpSQLiteTableFile(sqliteInfoList[i], csTableGamePath, csTableHotFixPath);
+		}
 	}
 
-	// 在上一层目录生成SQLiteHeader.h文件
-	string headerPath = getFilePath(cppDataPath) + "/";
-	generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
-	generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
-	generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
-	generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
+	if (cppGamePath.length() > 0)
+	{
+		// 在上一层目录生成SQLiteHeader.h文件
+		string headerPath = getFilePath(cppDataPath) + "/";
+		generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
+		generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
+		generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
+		generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
+	}
 
-	// 在上一层目录生成SQLiteRegister.cs文件
-	generateCSharpSQLiteRegisteFileFile(sqliteInfoList, getFilePath(csDataHotFixPath) + "/", getFilePath(csDataGamePath) + "/");
+	if (csGamePath.length() > 0)
+	{
+		// 在上一层目录生成SQLiteRegister.cs文件
+		generateCSharpSQLiteRegisteFileFile(sqliteInfoList, getFilePath(csDataHotFixPath) + "/", getFilePath(csDataGamePath) + "/");
 
-	generateCSharpSQLiteDeclare(sqliteInfoList, csTableDeclareHotFixPath, csTableDeclareGamePath);
+		generateCSharpSQLiteDeclare(sqliteInfoList, csTableDeclareHotFixPath, csTableDeclareGamePath);
+	}
 }
 
 // TDSQLite.h和TDSQLite.cpp文件

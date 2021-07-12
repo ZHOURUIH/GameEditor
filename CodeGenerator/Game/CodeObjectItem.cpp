@@ -2,6 +2,11 @@
 
 void CodeObjectItem::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string stateFile;
 	openTxtFile("ObjectItem.txt", stateFile);
 	if (stateFile.length() == 0)

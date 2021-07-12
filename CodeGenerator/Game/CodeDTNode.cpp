@@ -2,6 +2,11 @@
 
 void CodeDTNode::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
 
 	string file;

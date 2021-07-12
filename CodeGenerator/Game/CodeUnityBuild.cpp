@@ -2,6 +2,11 @@
 
 void CodeUnityBuild::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	myVector<string> fileList;
 	myVector<string> patterns{".c", ".cpp"};
 	findFiles(cppProjectPath, fileList, patterns.data(), patterns.size());

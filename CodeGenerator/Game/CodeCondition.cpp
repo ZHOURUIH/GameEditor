@@ -31,27 +31,34 @@ void CodeCondition::generate()
 	}
 	END(conditionLineList);
 
-	// c++
-	// 生成ConditionHeader.h文件
-	generateCppHeaderFile(conditionList, cppHeaderPath);
-	// 生成ConditionRegister.h文件
-	generateCppRegisterFile(conditionList, cppHeaderPath);
-	// 生成CONDITION枚举
-	generateCppConditionEnum(conditionList, cppConditionEnumPath);
-	FOR_VECTOR(conditionList)
+	if (cppGamePath.length() > 0)
 	{
-		generateCppConditionFile(conditionList[i].first, cppConditionFilePath);
+		// c++
+		// 生成ConditionHeader.h文件
+		generateCppHeaderFile(conditionList, cppHeaderPath);
+		// 生成ConditionRegister.h文件
+		generateCppRegisterFile(conditionList, cppHeaderPath);
+		// 生成CONDITION枚举
+		generateCppConditionEnum(conditionList, cppConditionEnumPath);
+		FOR_VECTOR(conditionList)
+		{
+			generateCppConditionFile(conditionList[i].first, cppConditionFilePath);
+		}
+		END(conditionList);
 	}
-	END(conditionList);
 
-	// cs
-	// 生成ConditionRegister.cs文件
-	generateCSRegisterFile(conditionList, csRegisterPath);
-	// 生成CONDITION枚举
-	generateCSConditionEnum(conditionList, csConditionEnumPath);
-	FOR_I(conditionListCount)
+	if (csHotfixGamePath.length() > 0)
 	{
-		generateCSConditionFile(conditionList[i].first, csConditionFilePath);
+		// cs
+		// 生成ConditionRegister.cs文件
+		generateCSRegisterFile(conditionList, csRegisterPath);
+		// 生成CONDITION枚举
+		generateCSConditionEnum(conditionList, csConditionEnumPath);
+		FOR_VECTOR(conditionList)
+		{
+			generateCSConditionFile(conditionList[i].first, csConditionFilePath);
+		}
+		END(conditionList);
 	}
 }
 

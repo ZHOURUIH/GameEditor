@@ -2,6 +2,11 @@
 
 void CodeRank::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "RankSystem/";
 
 	string file;

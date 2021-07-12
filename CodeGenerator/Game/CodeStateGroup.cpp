@@ -2,6 +2,11 @@
 
 void CodeStateGroup::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string stateFile;
 	openTxtFile("StateGroup.txt", stateFile);
 	if (stateFile.length() == 0)

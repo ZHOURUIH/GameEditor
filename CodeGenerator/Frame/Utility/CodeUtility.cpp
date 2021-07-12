@@ -35,21 +35,27 @@ bool CodeUtility::initPath()
 	}
 	END(configLines);
 
-	if (ServerProjectPath == "" || GameProjectPath == "")
+	if (ServerProjectPath == "" && GameProjectPath == "")
 	{
 		return false;
 	}
 
-	rightToLeft(ServerProjectPath);
-	rightToLeft(GameProjectPath);
-	validPath(ServerProjectPath);
-	validPath(GameProjectPath);
-	cppProjectPath = ServerProjectPath + getFileName(ServerProjectPath.substr(0, ServerProjectPath.length() - 1)) + "/";
-	cppGamePath = cppProjectPath + "Game/";
-	cppFramePath = cppProjectPath + "Frame/";
-	cppStringDefinePath = cppGamePath + "StringDefine/";
-	csGamePath = GameProjectPath + "Assets/Scripts/Game/";
-	csHotfixGamePath = GameProjectPath + "HotFix/Game/";
+	if (ServerProjectPath.length() > 0)
+	{
+		rightToLeft(ServerProjectPath);
+		validPath(ServerProjectPath);
+		cppProjectPath = ServerProjectPath + getFileName(ServerProjectPath.substr(0, ServerProjectPath.length() - 1)) + "/";
+		cppGamePath = cppProjectPath + "Game/";
+		cppFramePath = cppProjectPath + "Frame/";
+		cppStringDefinePath = cppGamePath + "StringDefine/";
+	}
+	if (GameProjectPath.length() > 0)
+	{
+		rightToLeft(GameProjectPath);
+		validPath(GameProjectPath);
+		csGamePath = GameProjectPath + "Assets/Scripts/Game/";
+		csHotfixGamePath = GameProjectPath + "HotFix/Game/";
+	}
 	return true;
 }
 

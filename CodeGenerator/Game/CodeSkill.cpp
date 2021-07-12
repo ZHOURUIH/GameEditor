@@ -2,6 +2,11 @@
 
 void CodeSkill::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "Character/Component/Skill/";
 
 	string skillFile;

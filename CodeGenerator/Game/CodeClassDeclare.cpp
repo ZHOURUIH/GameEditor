@@ -2,6 +2,11 @@
 
 void CodeClassDeclare::generate()
 {
+	if (cppFramePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppFrameDeclarePath = cppFramePath + "Common/";
 	string cppGameDeclarePath = cppGamePath + "Common/";
 

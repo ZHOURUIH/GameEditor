@@ -2,6 +2,11 @@
 
 void CodeState::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "Character/Component/StateMachine/";
 
 	string stateFile;
@@ -137,7 +142,7 @@ void CodeState::findCustomCode(const string& fullPath, myVector<string>& preCode
 	END(fileLines);
 	if (preCodeEnd < 0 || endCodeStart < 0)
 	{
-		cout << "×´Ì¬×¢²á´úÂëÎÄ¼þ½âÎö´íÎó" << endl;
+		ERROR("×´Ì¬×¢²á´úÂëÎÄ¼þ½âÎö´íÎó");
 		return;
 	}
 	FOR_I(fileLinesCount)

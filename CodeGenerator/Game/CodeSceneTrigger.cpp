@@ -2,6 +2,11 @@
 
 void CodeSceneTrigger::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "SceneTriggerManager/";
 
 	string file;

@@ -2,6 +2,11 @@
 
 void CodeMySQL::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
 	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
 

@@ -2,6 +2,11 @@
 
 void CodeAchivement::generate()
 {
+	if (cppGamePath.length() == 0)
+	{
+		return;
+	}
+
 	string cppHeaderPath = cppGamePath + "Achivement/";
 	string cppAchivementFilePath = cppHeaderPath + "Achivement/";
 
@@ -12,6 +17,7 @@ void CodeAchivement::generate()
 		ERROR("未找文件Achivement.txt");
 		return;
 	}
+
 	myVector<string> lineList;
 	split(file.c_str(), "\r\n", lineList);
 	// 生成AchivementHeader.h文件
