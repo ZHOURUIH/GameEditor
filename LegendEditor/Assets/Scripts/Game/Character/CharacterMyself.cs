@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 public class CharacterMyself : CharacterOther
 {
-	public CharacterMyself(CHARACTER_TYPE type, string name)
-		:
-		base(type, name)
+	public CharacterMyself(string name)
+		:base(name)
 	{}
 	public override void update(float elapsedTime)
 	{

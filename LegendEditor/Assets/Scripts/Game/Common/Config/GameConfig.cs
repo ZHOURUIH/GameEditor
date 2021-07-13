@@ -24,18 +24,14 @@ public class GameConfig : ConfigBase
 		addFloatParam(GAME_DEFINE_FLOAT.GDF_HEART_BEAT_NITERVAL);
 		if (mFloatNameToDefine.Count != (int)GAME_DEFINE_FLOAT.GDF_GAME_MAX - (int)GAME_DEFINE_FLOAT.GDF_GAME_MIN - 1)
 		{
-			UnityUtility.logError("not all float parameter added!");
+			logError("not all float parameter added!");
 		}
 	}
 	protected override void addString()
 	{
-		addStringParam(GAME_DEFINE_STRING.GDS_TCP_SERVER_IP);
-		addStringParam(GAME_DEFINE_STRING.GDS_TCP_HOST_NAME);
-		addStringParam(GAME_DEFINE_STRING.GDS_ACCOUNT);
-		addStringParam(GAME_DEFINE_STRING.GDS_PASSWORD);
 		if (mStringNameToDefine.Count != (int)GAME_DEFINE_STRING.GDS_GAME_MAX - (int)GAME_DEFINE_STRING.GDS_GAME_MIN - 1)
 		{
-			UnityUtility.logError("not all string parameter added!");
+			logError("not all string parameter added!");
 		}
 	}
 	protected override void readConfig()

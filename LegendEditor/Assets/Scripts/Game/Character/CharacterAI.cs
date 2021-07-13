@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 public class CharacterAI : Character
 {
-	public CharacterAI(CHARACTER_TYPE type, string name)
-		:
-		base(type, name)
+	public CharacterAI(string name)
+		:base(name)
 	{
         ;		
 	}

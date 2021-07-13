@@ -3,10 +3,8 @@ using System.Collections;
 
 public class StartSceneExit : SceneProcedure
 {
-	public StartSceneExit(PROCEDURE_TYPE type, GameScene gameScene)
-		:
-		base(type, gameScene)
-	{}
+	public StartSceneExit(GameScene gameScene)
+		:base(gameScene){}
 	protected override void onInit(SceneProcedure lastProcedure, string intent)
     {
 		// 隐藏该场景的所有布局

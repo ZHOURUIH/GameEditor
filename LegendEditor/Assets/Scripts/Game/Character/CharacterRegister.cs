@@ -13,6 +13,6 @@ public class CharacterRegister : GameBase
 	//-------------------------------------------------------------------------------------------------------
 	protected static void registeCharacter<T>(CHARACTER_TYPE type) where T : Character
 	{
-		mCharacterManager.registeCharacter(typeof(T), type);
+		;
 	}
 }

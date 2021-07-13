@@ -5,10 +5,9 @@ using System.Collections.Generic;
 public class CharacterOther : Character
 {
 	//protected HumanAvatar mAvatar;
-	protected HumanAnimation mAnimation;
-	public CharacterOther(CHARACTER_TYPE type, string name)
-		:
-		base(type, name)
+	//protected HumanAnimation mAnimation;
+	public CharacterOther(string name)
+		:base(name)
 	{
         ;		
 	}
@@ -21,12 +20,12 @@ public class CharacterOther : Character
 	public override void initComponents()
 	{
 		base.initComponents();
-		mAnimation = addComponent<HumanAnimation>("HumanAnimation", true);
+		//mAnimation = addComponent<HumanAnimation>("HumanAnimation", true);
 	}
 	public override void update(float elapsedTime)
 	{
 		base.update(elapsedTime);
 	}
-	public HumanAnimation getAnimation() { return mAnimation; }
+	//public HumanAnimation getHumanAnimation() { return mAnimation; }
 	//public HumanAvatar getAvatar() { return mAvatar; }
 }

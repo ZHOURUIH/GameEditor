@@ -12,10 +12,11 @@ public class Game : GameFramework
 	{
 		base.initComponent();
 		registeComponent<GameConfig>();
-		registeComponent<HeadTextureManager>();
 		registeComponent<LogSystem>();
 		registeComponent<DataCenter>();
-		registeComponent<MonsterManager>();
+		registeComponent<Effect2DManager>();
+		registeComponent<SceneCamera>();
+		registeComponent<MapManager>();
 	}
 	protected override void notifyBase()
 	{
@@ -27,15 +28,14 @@ public class Game : GameFramework
 	protected override void registe()
 	{
 		LayoutRegister.registeAllLayout();
-		GameSceneRegister.registerAllGameScene();
 		SQLiteRegister.registeAllTable();
 		CharacterRegister.registeAllCharacter();
 	}
 	protected override void launch()
 	{
 		base.launch();
-		CommandGameSceneManagerEnter cmd = GameBase.newCmd(out cmd, false);
-		cmd.mSceneType = GAME_SCENE_TYPE.GST_START;
-		GameBase.pushCommand(cmd, GameBase.mGameSceneManager);
+		CommandGameSceneManagerEnter cmd = FrameBase.newCmd(out cmd, false);
+		cmd.mSceneType = typeof(StartScene);
+		FrameBase.pushCommand(cmd, FrameBase.mGameSceneManager);
 	}
 }

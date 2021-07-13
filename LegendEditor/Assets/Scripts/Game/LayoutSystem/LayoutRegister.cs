@@ -7,18 +7,12 @@ public class LayoutRegister : GameBase
 {
 	public static void registeAllLayout()
 	{
-		//registeLayout<ScriptObjectEditor>(LAYOUT_TYPE.LT_OBJECT_EDITOR, "UIObjectEditor");
-		registeLayout<ScriptSceneEditor>(LAYOUT_TYPE.LT_SCENE_EDITOR, "UISceneEditor");
-		registeLayout<ScriptSceneAdvanceEditor>(LAYOUT_TYPE.LT_SCENE_ADVANCE_EDITOR, "UISceneAdvanceEditor");
-		registeLayout<ScriptEditorSelect>(LAYOUT_TYPE.LT_EDITOR_SELECT, "UIEditorSelect");
-		registeLayout<ScriptEffectTextureEditor>(LAYOUT_TYPE.LT_EFFECT_TEXTURE_EDITOR, "UIEffectTextureEditor");
-		registeLayout<ScriptEffectSpriteEditor>(LAYOUT_TYPE.LT_EFFECT_SPRITE_EDITOR, "UIEffectSpriteEditor");
-		registeLayout<ScriptMonsterSpriteEditor>(LAYOUT_TYPE.LT_MONSTER_SPRITE_EDITOR, "UIMonsterSpriteEditor");
-		registeLayout<ScriptHumanSpriteEditor>(LAYOUT_TYPE.LT_HUMAN_SPRITE_EDITOR, "UIHumanSpriteEditor");
-		if (mLayoutManager.getLayoutCount() < (int)LAYOUT_TYPE.LT_MAX)
+		registeLayout<ScriptScene>(LAYOUT.L_SCENE, "UIScene");
+		if (mLayoutManager.getLayoutCount() < (int)LAYOUT.L_MAX)
 		{
-			UnityUtility.logError("error : not all script added! max count : " + (int)LAYOUT_TYPE.LT_MAX + ", added count :" + mLayoutManager.getLayoutCount());
+			logError("error : not all script added! max count : " + (int)LAYOUT.L_MAX + ", added count :" + mLayoutManager.getLayoutCount());
 		}
+		GameLayout.mLayoutScriptCallback = onScriptChanged;
 	}
 	public static void onScriptChanged(LayoutScript script, bool created = true)
 	{
@@ -27,17 +21,10 @@ public class LayoutRegister : GameBase
 		{
 			return;
 		}
-		//if (assign(ref mScriptObjectEditor, script, created)) return;
-		if (assign(ref mScriptSceneEditor, script, created)) return;
-		if (assign(ref mScriptSceneAdvanceEditor, script, created)) return;
-		if (assign(ref mScriptEditorSelect, script, created)) return;
-		if (assign(ref mScriptEffectTextureEditor, script, created)) return;
-		if (assign(ref mScriptEffectSpriteEditor, script, created)) return;
-		if (assign(ref mScriptMonsterSpriteEditor, script, created)) return;
-		if (assign(ref mScriptHumanSpriteEditor, script, created)) return;
+		if (assign(ref mScriptScene, script, created)) return;
 	}
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-	protected static void registeLayout<T>(LAYOUT_TYPE layout, string name) where T : LayoutScript
+	protected static void registeLayout<T>(LAYOUT layout, string name) where T : LayoutScript
 	{
 		mLayoutManager.registeLayout(typeof(T), layout, name);
 	}

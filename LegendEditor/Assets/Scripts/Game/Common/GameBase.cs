@@ -7,39 +7,50 @@ public class GameBase : FrameBase
 {
 	public static Game mGame;
 	public static GameConfig mGameConfig;
-	public static HeadTextureManager mHeadTextureManager;
 	public static LogSystem mLogSystem;
 	public static DataCenter mDataCenter;
-	public static MonsterManager mMonsterManager;
+	public static Effect2DManager mEffect2DManager;
+	public static SceneCamera mSceneCamera;
+	public static MapManager mMapManager;
 	// SQLiteTable
-	public static SQLiteCloth mSQLiteCloth;
-	public static SQLiteClothFrame mSQLiteClothFrame;
-	public static SQLiteWeapon mSQLiteWeapon;
-	public static SQLiteWeaponFrame mSQLiteWeaponFrame;
+	public static SQLiteSound mSQLiteSound;
 	public static SQLiteMonster mSQLiteMonster;
-	public static SQLiteMonsterFrame mSQLiteMonsterFrame;
-	public static SQLiteEffect mSQLiteEffect;
-	public static SQLiteEffectFrame mSQLiteEffectFrame;
+	public static SQLiteSceneMap mSQLiteSceneMap;
+	public static SQLiteLog mSQLiteLog;
+	public static SQLiteNPC mSQLiteNPC;
+	public static SQLiteImagePositionAnimation mSQLiteImagePositionAnimation;
+	public static SQLiteImagePositionIcon mSQLiteImagePositionIcon;
+	public static SQLiteImagePositionEffect mSQLiteImagePositionEffect;
+	public static SQLiteMonsterSkill mSQLiteMonsterSkill;
+	public static SQLitePlayerSkill mSQLitePlayerSkill;
+	public static SQLiteSkillBullet mSQLiteSkillBullet;
+	public static SQLiteSkillEffectDirection mSQLiteSkillEffectDirection;
+	public static SQLiteItemBox mSQLiteItemBox;
+	public static SQLiteItemEquip mSQLiteItemEquip;
+	public static SQLiteItemConsumable mSQLiteItemConsumable;
+	public static SQLiteItemMaterial mSQLiteItemMaterial;
+	public static SQLiteItemSkillBook mSQLiteItemSkillBook;
+	public static SQLiteBuff mSQLiteBuff;
+	public static SQLiteBuffDetail mSQLiteBuffDetail;
+	public static SQLiteMonsterTemplate mSQLiteMonsterTemplate;
+	public static SQLiteMapTileIndex mSQLiteMapTileIndex;
+	public static SQLiteAnimation mSQLiteAnimation;
+	public static SQLiteSceneMapTransfer mSQLiteSceneMapTransfer;
+	public static SQLiteMapEffectPosition mSQLiteMapEffectPosition;
 	// 以下是用于快速访问的布局脚本
-	//public static ScriptObjectEditor mScriptObjectEditor;
-	public static ScriptSceneEditor mScriptSceneEditor;
-	public static ScriptSceneAdvanceEditor mScriptSceneAdvanceEditor;
-	public static ScriptEditorSelect mScriptEditorSelect;
-	public static ScriptEffectTextureEditor mScriptEffectTextureEditor;
-	public static ScriptEffectSpriteEditor mScriptEffectSpriteEditor;
-	public static ScriptMonsterSpriteEditor mScriptMonsterSpriteEditor;
-	public static ScriptHumanSpriteEditor mScriptHumanSpriteEditor;
+	public static ScriptScene mScriptScene;
 	public override void notifyConstructDone()
 	{
 		base.notifyConstructDone();
 		if (mGame == null)
 		{
-			mGame = Game.instance as Game;
-			mGameConfig = mGame.getSystem<GameConfig>();
-			mHeadTextureManager = mGame.getSystem<HeadTextureManager>();
-			mLogSystem = mGame.getSystem<LogSystem>();
-			mDataCenter = mGame.getSystem<DataCenter>();
-			mMonsterManager = mGame.getSystem<MonsterManager>();
+			mGame = mGameFramework as Game;
+			mGame.getSystem(out mGameConfig);
+			mGame.getSystem(out mLogSystem);
+			mGame.getSystem(out mDataCenter);
+			mGame.getSystem(out mEffect2DManager);
+			mGame.getSystem(out mSceneCamera);
+			mGame.getSystem(out mMapManager);
 		}
 	}
 }
