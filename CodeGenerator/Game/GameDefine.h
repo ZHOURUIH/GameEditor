@@ -9,7 +9,6 @@ struct PacketMember
 	myVector<string> mArrayLengthMacro;	// 多个常量只能相乘
 	string mTypeName;
 	string mMemberName;
-	bool mVariableLength;
 };
 
 struct PacketInfo

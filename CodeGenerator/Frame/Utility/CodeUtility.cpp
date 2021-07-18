@@ -161,15 +161,6 @@ PacketMember CodeUtility::parseMemberLine(const string& line)
 		strReplaceAll(memberInfo.mTypeName, "\t", "");
 		memberInfo.mIsArray = true;
 		memberInfo.mMemberName = memberStrList[1];
-		// 只有数组成员变量才会有第三个参数
-		if (memberStrList.size() == 3)
-		{
-			memberInfo.mVariableLength = stringToBool(memberStrList[2]);
-		}
-		else
-		{
-			memberInfo.mVariableLength = true;
-		}
 	}
 	// 普通成员变量
 	else
@@ -252,14 +243,7 @@ string CodeUtility::cppPushParamString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		if (!memberInfo.mVariableLength)
-		{
-			str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ", false);";
-		}
-		else
-		{
-			str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ");";
-		}
+		str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ");";
 	}
 	else
 	{
@@ -294,16 +278,7 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 
 string CodeUtility::cSharpPushParamString(const PacketMember& memberInfo)
 {
-	string str;
-	if (memberInfo.mIsArray)
-	{
-		str = "pushParam(" + memberInfo.mMemberName + ", " + boolToString(memberInfo.mVariableLength) + ");";
-	}
-	else
-	{
-		str = "pushParam(" + memberInfo.mMemberName + ");";
-	}
-	return str;
+	return "pushParam(" + memberInfo.mMemberName + ");";
 }
 
 string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix)
