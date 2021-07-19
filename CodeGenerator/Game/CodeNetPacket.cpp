@@ -267,7 +267,6 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	line(str, "\tCS_MAX,");
 	line(str, "");
 	line(str, "\tSC_MIN = 6000,");
 	FOR_I(packetCount)
@@ -277,7 +276,6 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	line(str, "\tSC_MAX,");
 	line(str, "};");
 	line(str, "");
 	line(str, "#endif", false);
@@ -296,7 +294,6 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	line(str, "int PacketRegister::PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "void PacketRegister::registeAll()");
 	line(str, "{");
-	line(str, "\tuint preCount = mPacketFactoryManager->getFactoryCount();");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
@@ -305,9 +302,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", PACKET_TYPE::" + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::CS_MAX - (int)PACKET_TYPE::CS_MIN - 1, \"CS\");");
 	line(str, "");
-	line(str, "\tpreCount = mPacketFactoryManager->getFactoryCount();");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
@@ -315,7 +310,6 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 			line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", PACKET_TYPE::" + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	line(str, "\tmPacketFactoryManager->checkRegisteCount(preCount, (int)PACKET_TYPE::SC_MAX - (int)PACKET_TYPE::SC_MIN - 1, \"SC\");");
 	line(str, "};", false);
 
 	writeFile(filePath + "PacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
@@ -614,7 +608,6 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 	line(str, "\tpublic static ushort MIN = 0;");
 	line(str, "");
 	int csPacketNumber = 3000;
-	line(str, "\tpublic static ushort CS_MIN = " + intToString(csPacketNumber) + ";");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
@@ -625,10 +618,8 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 		}
 	}
 	++csPacketNumber;
-	line(str, "\tpublic static ushort CS_MAX = " + intToString(csPacketNumber) + ";");
 	line(str, "");
 	int scPacketNumber = 6000;
-	line(str, "\tpublic static ushort SC_MIN = " + intToString(scPacketNumber) + ";");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
@@ -638,7 +629,6 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 		}
 	}
 	++scPacketNumber;
-	line(str, "\tpublic static ushort SC_MAX = " + intToString(scPacketNumber) + ";");
 	line(str, "}", false);
 
 	writeFile(filePath + "PacketDefine.cs", ANSIToUTF8(str.c_str(), true));
@@ -655,7 +645,6 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\tpublic static int PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "\tpublic static void registeAll()");
 	line(str, "\t{");
-	line(str, "\t\tint preCount = mSocketTypeManager.getPacketTypeCount();");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
@@ -664,9 +653,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
 	}
-	line(str, "\t\tmSocketTypeManager.checkRegisteCount(PACKET_TYPE.CS_MAX - PACKET_TYPE.CS_MIN - 1, preCount, \"CS\");");
 	line(str, "");
-	line(str, "\t\tpreCount = mSocketTypeManager.getPacketTypeCount();");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
@@ -681,15 +668,14 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 			}
 		}
 	}
-	line(str, "\t\tmSocketTypeManager.checkRegisteCount(PACKET_TYPE.SC_MAX - PACKET_TYPE.SC_MIN - 1, preCount, \"SC\");");
 	line(str, "\t}");
 	line(str, "\tprotected static void registePacket(Type classType, ushort type, bool executeInMain = true)");
 	line(str, "\t{");
-	line(str, "\t\tif(!executeInMain)");
+	line(str, "\t\tif (!executeInMain)");
 	line(str, "\t\t{");
-	line(str, "\t\t\tmSocketManager.getConnect().addExecuteThreadPacket(type);");
+	line(str, "\t\t\tmNetPacketTypeManager.getConnect().addExecuteThreadPacket(type);");
 	line(str, "\t\t}");
-	line(str, "\t\tmSocketTypeManager.registePacket(classType, type);");
+	line(str, "\t\tmNetPacketTypeManager.registePacket(classType, type);");
 	line(str, "\t}");
 	line(str, "}", false);
 
@@ -728,7 +714,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	line(file, "");
 	// 固定格式部分
 	line(file, packetInfo.mComment);
-	line(file, "public class " + packetName + " : SocketPacket");
+	line(file, "public class " + packetName + " : NetPacketTCPGame");
 	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
