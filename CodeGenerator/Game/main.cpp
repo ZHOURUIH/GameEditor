@@ -23,7 +23,6 @@ void main()
 {
 	if (!CodeUtility::initPath())
 	{
-		cout << "未找到环境变量SERVER_PROJECT_PATH或GAME_PROJECT_PATH" << endl;
 		system("pause");
 		return;
 	}

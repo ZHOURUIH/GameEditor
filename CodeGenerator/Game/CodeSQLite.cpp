@@ -607,7 +607,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(mainFile, "using System;");
 	line(mainFile, "using System.Collections.Generic;");
 	line(mainFile, "");
-	line(mainFile, "public class SQLiteRegisterMain : GameBase");
+	line(mainFile, "public class SQLiteRegisterMain : FrameBase");
 	line(mainFile, "{");
 	line(mainFile, "\tpublic static void registeAll()");
 	line(mainFile, "\t{");
@@ -667,8 +667,8 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 	string mainFile;
 	line(mainFile, "using System;");
 	line(mainFile, "");
-	line(mainFile, "// GameBase的部分类,用于定义SQLite表格的对象");
-	line(mainFile, "public partial class GameBase : FrameBase");
+	line(mainFile, "// FrameBase的部分类,用于定义SQLite表格的对象");
+	line(mainFile, "public partial class FrameBase : ClassObject");
 	line(mainFile, "{");
 	uint sqliteCount = sqliteInfo.size();
 	FOR_I(sqliteCount)
@@ -686,7 +686,7 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 	string hotFixfile;
 	line(hotFixfile, "using System;");
 	line(hotFixfile, "");
-	line(hotFixfile, "// GameBase的部分类,用于定义SQLite表格的对象");
+	line(hotFixfile, "// FrameBase的部分类,用于定义SQLite表格的对象");
 	line(hotFixfile, "public partial class GB : FrameUtilityILR");
 	line(hotFixfile, "{");
 	FOR_I(sqliteCount)

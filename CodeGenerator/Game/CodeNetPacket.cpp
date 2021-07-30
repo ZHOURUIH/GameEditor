@@ -673,7 +673,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\t{");
 	line(str, "\t\tif (!executeInMain)");
 	line(str, "\t\t{");
-	line(str, "\t\t\tmNetPacketTypeManager.getConnect().addExecuteThreadPacket(type);");
+	line(str, "\t\t\tGB.mSocketManager.getConnect().addExecuteThreadPacket(type);");
 	line(str, "\t\t}");
 	line(str, "\t\tmNetPacketTypeManager.registePacket(classType, type);");
 	line(str, "\t}");
@@ -714,7 +714,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	line(file, "");
 	// 固定格式部分
 	line(file, packetInfo.mComment);
-	line(file, "public class " + packetName + " : NetPacketTCPGame");
+	line(file, "public class " + packetName + " : NetPacketTCPFrame");
 	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)

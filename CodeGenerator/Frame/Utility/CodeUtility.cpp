@@ -15,6 +15,11 @@ bool CodeUtility::initPath()
 {
 	myVector<string> configLines;
 	openTxtFileLines("./CodeGenerator_Config.txt", configLines);
+	if (configLines.size() == 0)
+	{
+		cout << "未找到配置文件CodeGenerator_Config.txt" << endl;
+		return false;
+	}
 	FOR_VECTOR(configLines)
 	{
 		myVector<string> params;
