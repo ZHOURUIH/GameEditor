@@ -10,7 +10,7 @@ public:
 	bool encrypt();
 protected:
 	string mSourcePath;
-	string mTargetPath;
+	myVector<string> mTargetPath;		// 可能会有多个目标路径需要拷贝
 	string mEncryptKey;
 };
 
