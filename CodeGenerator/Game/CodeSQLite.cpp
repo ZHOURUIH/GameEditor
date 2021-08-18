@@ -678,7 +678,7 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 			line(mainFile, "\tpublic static SQLite" + sqliteInfo[i].mSQLiteName + " mSQLite" + sqliteInfo[i].mSQLiteName + ";");
 		}
 	}
-	line(mainFile, "}");
+	line(mainFile, "}", false);
 
 	writeFile(fileGamePath + "GameBaseSQLite.cs", ANSIToUTF8(mainFile.c_str(), true));
 
@@ -696,7 +696,7 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 			line(hotFixfile, "\tpublic static SQLite" + sqliteInfo[i].mSQLiteName + " mSQLite" + sqliteInfo[i].mSQLiteName + ";");
 		}
 	}
-	line(hotFixfile, "}");
+	line(hotFixfile, "}", false);
 
 	writeFile(fileHotFixPath + "GameBaseSQLiteILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 }

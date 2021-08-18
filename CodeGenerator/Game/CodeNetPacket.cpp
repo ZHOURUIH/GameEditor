@@ -680,7 +680,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\t{");
 	line(str, "\t\tif (!executeInMain)");
 	line(str, "\t\t{");
-	line(str, "\t\t\tGB.mSocketManager.getConnect().addExecuteThreadPacket(type);");
+	line(str, "\t\t\tGB.mNetManager.getConnect().addExecuteThreadPacket(type);");
 	line(str, "\t\t}");
 	line(str, "\t\tmNetPacketTypeManager.registePacket(classType, type);");
 	line(str, "\t}");

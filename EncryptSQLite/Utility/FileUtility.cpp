@@ -554,8 +554,7 @@ bool FileUtility::moveFile(const string& fileName, const string& newName, bool f
 	{
 		return true;
 	}
-	string newPath = getFilePath(newName);
-	createFolder(newPath);
+	createFolder(getFilePath(newName));
 	return renameFile(fileName, newName, forceCover);
 }
 

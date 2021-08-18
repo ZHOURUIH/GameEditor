@@ -13,31 +13,30 @@ bool EncryptSQLite::init()
 		if (params[0] == "SourcePath")
 		{
 			mSourcePath = params[1];
+			continue;
 		}
-		else if (params[0] == "TargetPath")
+		if (startWith(params[0], "TargetPath"))
 		{
-			mTargetPath = params[1];
+			mTargetPath.push_back(params[1]);
 		}
 	}
 	END(configLines);
 
 	mEncryptKey = openTxtFile("./EncryptKey.txt", true, false);
 
-	if (mSourcePath == "" || mTargetPath == "" || mEncryptKey == "")
+	if (mSourcePath == "" || mTargetPath.size() == 0 || mEncryptKey == "")
 	{
 		ERROR("配置文件错误");
 		return false;
 	}
 	rightToLeft(mSourcePath);
-	rightToLeft(mTargetPath);
-	if (mSourcePath[mSourcePath.length() - 1] != '/')
+	validPath(mSourcePath);
+	FOR_VECTOR(mTargetPath)
 	{
-		mSourcePath += "/";
+		rightToLeft(mTargetPath[i]);
+		validPath(mTargetPath[i]);
 	}
-	if (mTargetPath[mTargetPath.length() - 1] != '/')
-	{
-		mTargetPath += "/";
-	}
+	END(mTargetPath);
 	return true;
 }
 
@@ -58,7 +57,14 @@ bool EncryptSQLite::encrypt()
 			file.mBuffer[j] ^= mEncryptKey[j % mEncryptKey.length()];
 		}
 		// 将加密后的文件拷贝到目标目录
-		writeFileSimple(mTargetPath + getFileName(files[i]), file.mBuffer, file.mFileSize);
+		FOR_VECTOR_J(mTargetPath)
+		{
+			if (mTargetPath[j].length() > 0)
+			{
+				writeFile(mTargetPath[j] + getFileName(files[i]), file.mBuffer, file.mFileSize);
+			}
+		}
+		END(mTargetPath);
 	}
 	END(files);
 	return true;
