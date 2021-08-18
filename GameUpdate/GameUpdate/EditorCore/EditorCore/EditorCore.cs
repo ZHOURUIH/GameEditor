@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 public class EditorCore : EditorBase
 {
@@ -23,7 +21,7 @@ public class EditorCore : EditorBase
 	public void init()
 	{
 		registeAllFrameComponents();
-		EditorBase.notifyConstructDone();
+		notifyConstructDone();
 		int count = mFrameComponentList.Count;
 		for (int i = 0; i < count; ++i)
 		{
@@ -48,7 +46,7 @@ public class EditorCore : EditorBase
 		}
 		mFrameComponentList.Clear();
 		mFrameComponentMap.Clear();
-		EditorBase.notifyFrameDestroy();
+		notifyFrameDestroy();
 	}
 	public void notifyInitDone() { mInitFlag = true; }
 	public void sendEvent(CORE_EVENT_TYPE type, string param, bool sendImmediately = true)
@@ -64,9 +62,9 @@ public class EditorCore : EditorBase
 		{
 			sendImmediately = mInitFlag;
 		}
-		if (EditorBase.mEventSystem != null)
+		if (mEventSystem != null)
 		{
-			EditorBase.mEventSystem.pushEvent(type, param, sendImmediately);
+			mEventSystem.pushEvent(type, param, sendImmediately);
 		}
 	}
 	public void sendDelayEvent(CORE_EVENT_TYPE type, string param)
@@ -91,7 +89,6 @@ public class EditorCore : EditorBase
 	{
 		registeComponent<CommandSystem>();
 		registeComponent<DownloadManager>();
-		registeComponent<UploadManager>();
 		registeComponent<HttpDownloadManager>();
 		registeComponent<EventSystem>();
 	}

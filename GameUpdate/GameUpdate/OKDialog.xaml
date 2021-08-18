@@ -8,8 +8,7 @@
 		Height="250" Width="376" AllowsTransparency="True" WindowStyle="None" Background="#00FDFAFA">
     <Grid>
         <Image x:Name="mBackground" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top" Height="501" Width="376" Source="Images/UpdataBackground.png" StretchDirection="UpOnly"/>
-        <Image x:Name="mLogo" HorizontalAlignment="Left" Margin="54,0,0,0" VerticalAlignment="Top" Height="112" Width="271" Source="Images/logo.png" StretchDirection="UpOnly"/>
-        <WrapPanel x:Name="mWindowMove" MouseMove="windowMove_Click" Background="#000576FB" DockPanel.Dock="Top" Margin="0,0,0,170"/>
+		<WrapPanel x:Name="mWindowMove" MouseMove="windowMove_Click" Background="#000576FB" DockPanel.Dock="Top" Margin="0,0,0,170"/>
         <Image x:Name="mLine" HorizontalAlignment="Left" Margin="18,367,0,0" VerticalAlignment="Top" Height="4" Width="348" Source="Images/UpdataLine.png" StretchDirection="UpOnly"/>
         <Button x:Name="mOKButton" Content="确定" HorizontalAlignment="Left" Margin="144,195,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.603,0.059" Height="28" Click="mOKButton_Click" BorderBrush="#00707070" Foreground="#FFFDFBFB">
             <Button.Background>

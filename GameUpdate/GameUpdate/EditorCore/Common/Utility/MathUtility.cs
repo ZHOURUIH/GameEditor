@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-public class MathUtility
+public class MathUtility : StringUtility
 {
 	public static float KMHtoMS(float kmh) { return kmh / 3.6f; }		// km/h转m/s
 	public static float MStoKMH(float ms) { return ms * 3.6f; }
 	public static float MtoKM(float m) { return m / 1000.0f; }
+	public static int abs(int v) { return v >= 0 ? v : -v; }
+	public static float abs(float v) { return v >= 0.0f ? v : -v; }
 	public static float calculateFloat(string str)
 	{
 		// 判断字符串是否含有非法字符,也就是除数字,小数点,运算符以外的字符
-		str = StringUtility.checkFloatString(str, "+-*/()");
+		str = checkFloatString(str, "+-*/()");
 		// 判断左右括号数量是否相等
 		int leftBracketCount = 0;
 		int rightBracketCount = 0;
@@ -37,78 +38,68 @@ public class MathUtility
 		while (true)
 		{
 			// 先判断有没有括号，如果有括号就先算括号里的,如果没有就退出while循环
-			if (str.IndexOf("(") != -1 || str.IndexOf(")") != -1)
-			{
-				int curpos = str.LastIndexOf("(");
-				string strInBracket = str.Substring(curpos + 1, str.Length - curpos - 1);
-				strInBracket = strInBracket.Substring(0, strInBracket.IndexOf(")"));
-				float ret = calculateFloat(strInBracket);
-				// 如果括号中的计算结果是负数,则标记为负数
-				bool isMinus = false;
-				if (ret < 0)
-				{
-					ret = -ret;
-					isMinus = true;
-				}
-				// 将括号中的计算结果替换原来的表达式,包括括号也一起替换
-				string floatStr = (Math.Round(ret, 4)).ToString();
-				str = StringUtility.strReplace(str, curpos, curpos + strInBracket.Length + 2, floatStr);
-				byte[] strchar = BinaryUtility.stringToBytes(str, Encoding.ASCII);
-				if (isMinus)
-				{
-					// 如果括号中计算出来是负数,则将负号提取出来,将左边的第一个加减号改为相反的符号
-					bool changeMark = false;
-					for (int i = curpos - 1; i >= 0; --i)
-					{
-						// 找到第一个+号,则直接改为减号,然后退出遍历
-						if (strchar[i] == '+')
-						{
-							strchar[i] = (byte)'-';
-							str = BinaryUtility.bytesToString(strchar, Encoding.ASCII);
-							changeMark = true;
-							break;
-						}
-						// 找到第一个减号,如果减号的左边有数字,则直接改为+号
-						// 如果减号的左边不是数字,则该减号是负号,将减号去掉,
-						else if (strchar[i] == '-')
-						{
-							if (strchar[i - 1] >= '0' && strchar[i - 1] <= '9')
-							{
-								strchar[i] = (byte)'+';
-								str = BinaryUtility.bytesToString(strchar, Encoding.ASCII);
-							}
-							else
-							{
-								str = StringUtility.strReplace(str, i, i + 1, "");
-							}
-							changeMark = true;
-							break;
-						}
-					}
-					// 如果遍历完了还没有找到可以替换的符号,则在表达式最前面加一个负号
-					if (!changeMark)
-					{
-						str = "-" + str;
-					}
-				}
-			}
-			else
+			if (str.IndexOf("(") == -1 && str.IndexOf(")") == -1)
 			{
 				break;
+			}
+			int curPos = str.LastIndexOf("(");
+			string strInBracket = str.Substring(curPos + 1);
+			strInBracket = strInBracket.Substring(0, strInBracket.IndexOf(")"));
+			float ret = calculateFloat(strInBracket);
+			// 如果括号中的计算结果是负数,则标记为负数
+			bool isMinus = ret < 0;
+			ret = abs(ret);
+			// 将括号中的计算结果替换原来的表达式,包括括号也一起替换
+			str = strReplace(str, curPos, curPos + strInBracket.Length + 2, Math.Round(ret, 4).ToString());
+			byte[] strchar = stringToBytes(str, Encoding.ASCII);
+			if (isMinus)
+			{
+				// 如果括号中计算出来是负数,则将负号提取出来,将左边的第一个加减号改为相反的符号
+				bool changeMark = false;
+				for (int i = curPos - 1; i >= 0; --i)
+				{
+					// 找到第一个+号,则直接改为减号,然后退出遍历
+					if (strchar[i] == '+')
+					{
+						strchar[i] = (byte)'-';
+						str = bytesToString(strchar, Encoding.ASCII);
+						changeMark = true;
+						break;
+					}
+					// 找到第一个减号,如果减号的左边有数字,则直接改为+号
+					// 如果减号的左边不是数字,则该减号是负号,将减号去掉,
+					else if (strchar[i] == '-')
+					{
+						if (strchar[i - 1] >= '0' && strchar[i - 1] <= '9')
+						{
+							strchar[i] = (byte)'+';
+							str = bytesToString(strchar, Encoding.ASCII);
+						}
+						else
+						{
+							str = strReplace(str, i, i + 1, "");
+						}
+						changeMark = true;
+						break;
+					}
+				}
+				// 如果遍历完了还没有找到可以替换的符号,则在表达式最前面加一个负号
+				if (!changeMark)
+				{
+					str = "-" + str;
+				}
 			}
 		}
 		List<float> numbers = new List<float>();
 		List<char> factors = new List<char>();
 		// 表示上一个运算符的下标+1
-		int beginpos = 0;
+		int beginPos = 0;
 		for (int i = 0; i < str.Length; ++i)
 		{
 			// 遍历到了最后一个字符,则直接把最后一个数字放入列表,然后退出循环
 			if (i == str.Length - 1)
 			{
-				string num = str.Substring(beginpos, str.Length - beginpos);
-				float fNum = float.Parse(num);
-				numbers.Add(fNum);
+				numbers.Add(float.Parse(str.Substring(beginPos)));
 				break;
 			}
 			// 找到第一个运算符
@@ -116,9 +107,7 @@ public class MathUtility
 			{
 				if (i != 0)
 				{
-					string num = str.Substring(beginpos, i - beginpos);
-					float fNum = float.Parse(num);
-					numbers.Add(fNum);
+					numbers.Add(float.Parse(str.Substring(beginPos, i - beginPos)));
 				}
 				// 如果在表达式的开始就发现了运算符,则表示第一个数是负数,那就处理为0减去这个数的绝对值
 				else
@@ -126,12 +115,12 @@ public class MathUtility
 					numbers.Add(0);
 				}
 				factors.Add(str[i]);
-				beginpos = i + 1;
+				beginPos = i + 1;
 			}
 		}
+		// 计算错误,运算符与数字数量不符
 		if (factors.Count + 1 != numbers.Count)
 		{
-			// 计算错误,运算符与数字数量不符
 			return 0;
 		}
 		// 现在开始计算表达式,按照运算优先级,先计算乘除和取余
@@ -139,7 +128,7 @@ public class MathUtility
 		{
 			// 表示是否还有乘除表达式
 			bool hasMS = false;
-			for (int i = 0; i < (int)factors.Count; ++i)
+			for (int i = 0; i < factors.Count; ++i)
 			{
 				// 先遍历到哪个就先计算哪个
 				if (factors[i] == '*' || factors[i] == '/')
@@ -208,35 +197,26 @@ public class MathUtility
 				factors.RemoveAt(0);
 			}
 		}
+		// 计算错误
 		if (numbers.Count != 1)
 		{
-			// 计算错误
 			return 0;
 		}
-		else
-		{
-			return numbers[0];
-		}
+		return numbers[0];
 	}
 	// 得到大于等于value的第一个整数,只能是0或者整数
 	public static int getForwardInt(float value)
 	{
 		if (value >= 0.0f)
 		{
-			int intValue = (int)(value);
+			int intValue = (int)value;
 			if (value - intValue > 0.0f)
 			{
 				return intValue + 1;
 			}
-			else
-			{
-				return (int)value;
-			}
+			return intValue;
 		}
-		else
-		{
-			return (int)value;
-		}
+		return (int)value;
 	}
 	public static void checkInt(ref float value, float precision = 0.0001f)
 	{
@@ -251,11 +231,11 @@ public class MathUtility
 		if (value > 0.0f)
 		{
 			// 如果原值减去整数值小于0.5f,则表示原值可能接近于整数值
-			if (value - (float)intValue < 0.5f)
+			if (value - intValue < 0.5f)
 			{
 				if (isFloatZero(value - intValue, precision))
 				{
-					value = (float)intValue;
+					value = intValue;
 				}
 			}
 			// 如果原值减去整数值大于0.5f, 则表示原值可能接近于整数值+1
@@ -263,7 +243,7 @@ public class MathUtility
 			{
 				if (isFloatZero(value - (intValue + 1), precision))
 				{
-					value = (float)(intValue + 1);
+					value = intValue + 1;
 				}
 			}
 		}
@@ -271,11 +251,11 @@ public class MathUtility
 		else if (value < 0.0f)
 		{
 			// 如果原值减去整数值的结果的绝对值小于0.5f,则表示原值可能接近于整数值
-			if (Math.Abs(value - (float)intValue) < 0.5f)
+			if (Math.Abs(value - intValue) < 0.5f)
 			{
 				if (isFloatZero(value - intValue, precision))
 				{
-					value = (float)intValue;
+					value = intValue;
 				}
 			}
 			else
@@ -283,31 +263,16 @@ public class MathUtility
 				// 如果原值减去整数值的结果的绝对值大于0.5f, 则表示原值可能接近于整数值-1
 				if (isFloatZero(value - (intValue - 1), precision))
 				{
-					value = (float)(intValue - 1);
+					value = intValue - 1;
 				}
 			}
 		}
 	}
-	public static int getMin(int a, int b)
-	{
-		return a < b ? a : b;
-	}
-	public static int getMax(int a, int b)
-	{
-		return a > b ? a : b;
-	}
-	public static float getMin(float a, float b)
-	{
-		return a < b ? a : b;
-	}
-	public static float getMax(float a, float b)
-	{
-		return a > b ? a : b;
-	}
-	public static float inverseLerp(float a, float b, float value)
-	{
-		return (value - a) / (b - a);
-	}
+	public static int getMin(int a, int b) { return a < b ? a : b; }
+	public static int getMax(int a, int b) { return a > b ? a : b; }
+	public static float getMin(float a, float b) { return a < b ? a : b; }
+	public static float getMax(float a, float b) { return a > b ? a : b; }
+	public static float inverseLerp(float a, float b, float value) { return (value - a) / (b - a); }
 	public static float lerp(float start, float end, float t)
 	{
 		clamp(ref t, 0.0f, 1.0f);
@@ -382,43 +347,29 @@ public class MathUtility
 		value0 = value1;
 		value1 = temp;
 	}
-	public static void secondsToMinutesSeconds(int seconds, ref int outMin, ref int outSec)
+	public static void secondsToMinutesSeconds(int seconds, out int outMin, out int outSec)
 	{
 		outMin = seconds / 60;
 		outSec = seconds - outMin * 60;
 	}
-	public static void secondsToHoursMinutesSeconds(int seconds, ref int outHour, ref int outMin, ref int outSec)
+	public static void secondsToHoursMinutesSeconds(int seconds, out int outHour, out int outMin, out int outSec)
 	{
 		outHour = seconds / 3600;
 		outMin = (seconds - outHour * 3600) / 60;
 		outSec = seconds - outHour * 3600 - outMin * 60;
 	}
 	//将时间转化成时间戳
-	public static long convertDateTimeUnixTime(System.DateTime dateTime) 
+	public static long convertDateTimeUnixTime(DateTime dateTime) 
 	{
-		System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+		DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1)); // 当地时区
 		long timeStamp = (long)(dateTime - startTime).TotalSeconds; // 相差秒数
 		return timeStamp;
 	}
 	//将时间戳转化成时间
 	public static DateTime ConvertUnixTimeDateTime(long unixTimeStamp)
 	{
-		System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+		DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1)); // 当地时区
 		DateTime dt = startTime.AddSeconds(unixTimeStamp);
 		return dt;
-	}
-	// 将KB转换为MB或者G
-	public static float KBToMBOrG(float kb)
-	{
-		if(kb < 1024.0f)
-		{
-			return kb;
-		}
-		float mb = kb / 1024.0f;
-		if (mb > 1024.0f)
-		{
-			return mb / 1024.0f;
-		}
-		return mb;
 	}
 }

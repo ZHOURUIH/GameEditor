@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 // 返回值表示是否继续运行该线程
@@ -87,7 +85,7 @@ public class CustomThread : EditorBase
 				{
 					continue;
 				}
-				if(!mCallback())
+				if(mCallback?.Invoke() != true)
 				{
 					break;
 				}

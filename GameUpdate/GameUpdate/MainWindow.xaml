@@ -14,12 +14,11 @@
 
 		<Image x:Name="mBackground" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top" Height="441" Width="747" Source="Images/BottomMap.png" StretchDirection="UpOnly" Grid.ColumnSpan="2" OpacityMask="Black"/>
 		<Image x:Name="mTopMap" HorizontalAlignment="Left" Margin="-1,20,0,0" VerticalAlignment="Top" Height="73" Width="748" Source="Images/TopMap.png" StretchDirection="UpOnly" Grid.ColumnSpan="2" OpacityMask="Black"/>
-		<Image x:Name="mLogo" HorizontalAlignment="Left" Margin="246,-20,0,0" VerticalAlignment="Top" Height="114" Width="271" Source="Images/logo.png" StretchDirection="UpOnly" OpacityMask="Black"/>
 		<WrapPanel x:Name="mWindowMove" MouseMove="windowMove_Click" Background="#010576FB" DockPanel.Dock="Top" Grid.ColumnSpan="2" Margin="0,20,0,391"/>
 		<Button x:Name="mMinButton" Click="minButton_Click" Content="-"  BorderBrush="#00707070" FontSize="24" Background="#00000000" Foreground="White" Margin="650,54,5,405" RenderTransformOrigin="-0.333,0.633" Width="25" Height="25"/>
 		<Button x:Name="mCloseButton" Click="closeButton_Click" Content="X" BorderBrush="#00707070" Foreground="White" Background="#00000000" Margin="10,56,32,403" RenderTransformOrigin="12.033,3.2" Grid.Column="1" Width="25" Height="25"/>
 		<TextBlock x:Name="mText" Foreground="White" Text="版本更新" RenderTransformOrigin="2.08,0.5" Margin="41,62,589,408" Background="#00000000"/>
-		<Image x:Name="mIcon" HorizontalAlignment="Left" Margin="21,61,644,408" VerticalAlignment="Top" Height="16" Width="15" Source="Icon.ico" OpacityMask="Black"/>
+		<Image x:Name="mIcon" HorizontalAlignment="Left" Margin="21,61,644,408" VerticalAlignment="Top" Height="16" Width="15" Source="mir.ico" OpacityMask="Black"/>
 		<Label x:Name="label" Content="当前正在下载:" HorizontalAlignment="Left" Margin="56,120,0,0" VerticalAlignment="Top" Height="25" Width="85" Foreground="#FFFDFAFA"/>
 		<Label x:Name="label_Copy" Content="当前文件大小:" HorizontalAlignment="Left" Margin="56,158,0,0" VerticalAlignment="Top" Height="25" Width="85" Foreground="#FFFFFCFC"/>
 		<Label x:Name="mCurDownloadingLabel" Content="" HorizontalAlignment="Left" Margin="140,120,0,0" VerticalAlignment="Top" Height="25" Width="535" Foreground="#FFFDF9F9"/>

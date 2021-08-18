@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 
-public class FileUtility
+public class FileUtility : MathUtility
 {
 	public static void validPath(ref string path)
 	{
@@ -32,7 +31,7 @@ public class FileUtility
 	public static bool writeFile(string fileName, byte[] buffer, int size, bool appenData = false)
 	{
 		// 检测路径是否存在,如果不存在就创建一个
-		createDir(StringUtility.getFilePath(fileName));
+		createDir(getFilePath(fileName));
 		try
 		{
 			FileStream file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
@@ -74,7 +73,7 @@ public class FileUtility
 	public static void writeTxtFile(string fileName, string content)
 	{
 		// 检测路径是否存在,如果不存在就创建一个
-		createDir(StringUtility.getFilePath(fileName));
+		createDir(getFilePath(fileName));
 		StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8);
 		writer.Write(content);
 		writer.Close();
@@ -100,10 +99,8 @@ public class FileUtility
 		{
 			Directory.Move(fileName, newName);
 		}
-		catch(Exception e)
-		{
-			string message = e.Message;
-		}
+		catch
+		{}
 		return true;
 	}
 	public static void deleteFolder(string path)
@@ -144,7 +141,7 @@ public class FileUtility
 	public static void copyFile(string source, string dest, bool overwrite = true)
 	{
 		// 如果目标文件所在的目录不存在,则先创建目录
-		string parentDir = StringUtility.getFilePath(dest);
+		string parentDir = getFilePath(dest);
 		createDir(parentDir);
 		File.Copy(source, dest, overwrite);
 	}
@@ -179,14 +176,14 @@ public class FileUtility
 			return;
 		}
 		// 如果有上一级目录,并且上一级目录不存在,则先创建上一级目录
-		string parentDir = StringUtility.getFilePath(dir);
+		string parentDir = getFilePath(dir);
 		if (parentDir != dir)
 		{
 			createDir(parentDir);
 		}
 		Directory.CreateDirectory(dir);
 	}
-	public static void findFiles(string path, ref List<string> fileList, List<string> pattern = null, bool recursive = true)
+	public static void findFiles(string path, List<string> fileList, List<string> pattern = null, bool recursive = true)
 	{
 		validPath(ref path);
 		if (!isDirExist(path))
@@ -205,7 +202,7 @@ public class FileUtility
 			{
 				for (int j = 0; j < patternCount; ++j)
 				{
-					if (StringUtility.endWith(fileName, pattern[j], false))
+					if (endWith(fileName, pattern[j], false))
 					{
 						fileList.Add(path + fileName);
 					}
@@ -223,7 +220,7 @@ public class FileUtility
 			string[] dirs = Directory.GetDirectories(path);
 			foreach(var item in dirs)
 			{
-				findFiles(item, ref fileList, pattern, recursive);
+				findFiles(item, fileList, pattern, recursive);
 			}
 		}
 	}
@@ -265,6 +262,6 @@ public class FileUtility
 		HashAlgorithm algorithm = MD5.Create();
 		byte[] md5Bytes = algorithm.ComputeHash(file);
 		file.Close();
-		return BinaryUtility.bytesToHEXString(md5Bytes, false, upperOrLower);
+		return bytesToHEXString(md5Bytes, false, upperOrLower);
 	}
 }

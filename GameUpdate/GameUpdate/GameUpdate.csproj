@@ -15,6 +15,21 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,17 +51,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <ApplicationIcon>mir.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -79,28 +94,14 @@
     <Compile Include="EditorCore\CommandSystem\CommandPool.cs" />
     <Compile Include="EditorCore\CommandSystem\CommandReceiver.cs" />
     <Compile Include="EditorCore\CommandSystem\CommandSystem.cs" />
-    <Compile Include="EditorCore\Common\CommonDefine.cs" />
-    <Compile Include="EditorCore\Common\Config\ApplicationConfig.cs" />
-    <Compile Include="EditorCore\Common\Config\ConfigBase.cs" />
-    <Compile Include="EditorCore\Common\Config\FrameConfig.cs" />
-    <Compile Include="EditorCore\Common\Config\GameFloatConfig.cs" />
-    <Compile Include="EditorCore\Common\Config\GameStringConfig.cs" />
+    <Compile Include="EditorCore\Common\GameEnum.cs" />
+    <Compile Include="EditorCore\Common\GameDefine.cs" />
     <Compile Include="EditorCore\Common\CustomThread.cs" />
     <Compile Include="EditorCore\Common\EditorBase.cs" />
     <Compile Include="EditorCore\Common\FrameComponent.cs" />
     <Compile Include="EditorCore\Common\Serialize\BOOL.cs" />
-    <Compile Include="EditorCore\Common\Serialize\BOOLS.cs" />
-    <Compile Include="EditorCore\Common\Serialize\BYTE.cs" />
-    <Compile Include="EditorCore\Common\Serialize\BYTES.cs" />
-    <Compile Include="EditorCore\Common\Serialize\FLOAT.cs" />
-    <Compile Include="EditorCore\Common\Serialize\FLOATS.cs" />
-    <Compile Include="EditorCore\Common\Serialize\INT.cs" />
-    <Compile Include="EditorCore\Common\Serialize\INTS.cs" />
     <Compile Include="EditorCore\Common\Serialize\OBJECT.cs" />
-    <Compile Include="EditorCore\Common\Serialize\SerializedData.cs" />
     <Compile Include="EditorCore\Common\Serialize\Serializer.cs" />
-    <Compile Include="EditorCore\Common\Serialize\SHORT.cs" />
-    <Compile Include="EditorCore\Common\Serialize\SHORTS.cs" />
     <Compile Include="EditorCore\Common\ThreadLock.cs" />
     <Compile Include="EditorCore\Common\ThreadTimeLock.cs" />
     <Compile Include="EditorCore\Common\Utility\BinaryUtility.cs" />
@@ -111,7 +112,6 @@
     <Compile Include="EditorCore\Download\DownloadManager.cs" />
     <Compile Include="EditorCore\Download\FileWrap.cs" />
     <Compile Include="EditorCore\Download\HttpDownloadManager.cs" />
-    <Compile Include="EditorCore\Download\UploadManager.cs" />
     <Compile Include="EditorCore\EditorCore\EditorCore.cs" />
     <Compile Include="EditorCore\EventSystem\EventHandler.cs" />
     <Compile Include="EditorCore\EventSystem\EventSystem.cs" />
@@ -119,19 +119,12 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="YesNoDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="OKDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="YesNoDialog.xaml.cs">
-      <DependentUpon>YesNoDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="OKDialog.xaml.cs">
       <DependentUpon>OKDialog.xaml</DependentUpon>
     </Compile>
@@ -150,6 +143,7 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -162,18 +156,24 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\BottomMap.png" />
     <Resource Include="Images\ButtonBackground.png" />
-    <Resource Include="Images\logo.png" />
     <Resource Include="Images\PopupBottomMap.png" />
     <Resource Include="Images\ProgressBar.png" />
     <Resource Include="Images\ProgressBarBackground.png" />
     <Resource Include="Images\TopMap.png" />
     <Resource Include="Images\UpdataBackground.png" />
     <Resource Include="Images\UpdataLine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mir.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

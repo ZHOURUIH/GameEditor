@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
-public class StringUtility : EditorBase
+public class StringUtility : BinaryUtility
 {
 	public static bool startWith(string oriString, string pattern, bool sensitive = true)
 	{
@@ -57,7 +54,7 @@ public class StringUtility : EditorBase
 		{
 			return -1;
 		}
-		string numStr = str.Substring(lastPos + 1, str.Length - lastPos - 1);
+		string numStr = str.Substring(lastPos + 1);
 		if (numStr == "")
 		{
 			return 0;
@@ -182,7 +179,7 @@ public class StringUtility : EditorBase
 		namePos = ret.LastIndexOf('/');
 		if (namePos != -1)
 		{
-			ret = ret.Substring(namePos + 1, ret.Length - namePos - 1);
+			ret = ret.Substring(namePos + 1);
 		}
 		return ret;
 	}
@@ -212,7 +209,7 @@ public class StringUtility : EditorBase
 		int dotPos = file.LastIndexOf('.');
 		if(dotPos != -1)
 		{
-			return file.Substring(dotPos, file.Length - dotPos);
+			return file.Substring(dotPos);
 		}
 		return "";
 	}
@@ -224,7 +221,7 @@ public class StringUtility : EditorBase
 		// 先判断是否移除目录
 		if(removeDir && namePos != -1)
 		{
-			ret = str.Substring(namePos + 1, str.Length - namePos - 1);
+			ret = str.Substring(namePos + 1);
 		}
 		// 移除后缀
 		int dotPos = ret.LastIndexOf('.');
@@ -271,7 +268,7 @@ public class StringUtility : EditorBase
 		int len = rangeList.Length;
 		if (values != null && len != values.Length)
 		{
-			logError("error : count is not equal " + str.Length);
+			EditorBase.logError("error : count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -281,7 +278,7 @@ public class StringUtility : EditorBase
 
 		for (int i = 0; i < len; ++i)
 		{
-			values[i] = stringToFloat(rangeList[i]);
+			values[i] = SToF(rangeList[i]);
 		}
 	}
 	public static string floatArrayToString(float[] values)
@@ -290,7 +287,7 @@ public class StringUtility : EditorBase
 		int count = values.Length;
 		for (int i = 0; i < count; ++i)
 		{
-			str += floatToString(values[i], 2);
+			str += FToS(values[i], 2);
 			if (i != count - 1)
 			{
 				str += ",";
@@ -304,7 +301,7 @@ public class StringUtility : EditorBase
 		int len = rangeList.Length;
 		if (values != null && len != values.Length)
 		{
-			logError("error : count is not equal " + str.Length);
+			EditorBase.logError("error : count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -322,7 +319,7 @@ public class StringUtility : EditorBase
 		int count = values.Length;
 		for(int i = 0; i < count; ++i)
 		{
-			str += intToString(values[i]);
+			str += IToS(values[i]);
 			if(i != count - 1)
 			{
 				str += ",";
@@ -331,7 +328,7 @@ public class StringUtility : EditorBase
 		return str;
 	}
 	// precision表示小数点后保留几位小数,removeTailZero表示是否去除末尾的0
-	public static string floatToString(float value, int precision = 4, bool removeTailZero = true)
+	public static string FToS(float value, int precision = 4, bool removeTailZero = true)
 	{
 		string str = value.ToString("f" + precision.ToString());
 		// 去除末尾的0
@@ -360,7 +357,7 @@ public class StringUtility : EditorBase
 		}
 		return str;
 	}
-	public static string intToString(int value, int limitLen = 0)
+	public static string IToS(int value, int limitLen = 0)
 	{
 		string retString = value.ToString();
 		int addLen = limitLen - retString.Length;
@@ -381,7 +378,7 @@ public class StringUtility : EditorBase
 	public static string strReplace(string str, int begin, int end, string reStr)
 	{
 		string sub1 = str.Substring(0, begin);
-		string sub2 = str.Substring(end, str.Length - end);
+		string sub2 = str.Substring(end);
 		return sub1 + reStr + sub2;
 	}
 	public static string strReplaceAll(string str, string key, string newWords)
@@ -389,13 +386,12 @@ public class StringUtility : EditorBase
 		int startPos = 0;
 		while (true)
 		{
-			INT pos = new INT();
-			if (!findSubstr(str, key, false, pos, startPos))
+			if (!findSubstr(str, key, false, out int pos, startPos))
 			{
 				break;
 			}
-			str = strReplace(str, pos.mValue, pos.mValue + key.Length, newWords);
-			startPos = pos.mValue + newWords.Length;
+			str = strReplace(str, pos, pos + key.Length, newWords);
+			startPos = pos + newWords.Length;
 		}
 		return str;
 	}
@@ -403,7 +399,7 @@ public class StringUtility : EditorBase
 	{
 		return str == "True" || str == "true";
 	}
-	public static float stringToFloat(string str)
+	public static float SToF(string str)
 	{
 		str = checkFloatString(str, "-");
 		if(str == "")
@@ -414,7 +410,7 @@ public class StringUtility : EditorBase
 	}
 	public static int getStringLength(string str)
 	{
-		byte[] bytes = BinaryUtility.stringToBytes(str);
+		byte[] bytes = stringToBytes(str);
 		for (int i = 0; i < bytes.Length; ++i)
 		{
 			if (bytes[i] == 0)
@@ -431,18 +427,13 @@ public class StringUtility : EditorBase
 		int oldStrLen = str.Length;
 		for (int i = 0; i < oldStrLen; ++i)
 		{
-			bool keep = false;
 			for (int j = 0; j < validCount; ++j)
 			{
 				if (str[i] == valid[j])
 				{
-					keep = true;
+					newString += str[i];
 					break;
 				}
-			}
-			if (keep)
-			{
-				newString += str[i];
 			}
 		}
 		return newString;
@@ -461,7 +452,7 @@ public class StringUtility : EditorBase
 		char[] charPool = new char[]{ 'A', 'B', 'C', 'D', 'E', 'F' };
 		byte highBit = (byte)(b >> 4);
 		// 高字节的十六进制
-		if (highBit < (byte)10)
+		if (highBit < 10)
 		{
 			byteHex[0] = (char)('0' + highBit);
 		}
@@ -471,7 +462,7 @@ public class StringUtility : EditorBase
 		}
 		// 低字节的十六进制
 		byte lowBit = (byte)(b & 0x0F);
-		if (lowBit < (byte)10)
+		if (lowBit < 10)
 		{
 			byteHex[1] = (char)('0' + lowBit);
 		}
@@ -497,8 +488,9 @@ public class StringUtility : EditorBase
 		string str = new string(byteData);
 		return str;
 	}
-	public static bool findSubstr(string res, string dst, bool sensitive, INT pos = null, int startPos = 0, bool firstOrLast = true)
+	public static bool findSubstr(string res, string dst, bool sensitive, out int pos, int startPos = 0, bool firstOrLast = true)
 	{
+		pos = -1;
 		if(res.Length < dst.Length)
 		{
 			return false;
@@ -510,7 +502,6 @@ public class StringUtility : EditorBase
 			res = res.ToLower();
 			dst = dst.ToLower();
 		}
-		int posFind = -1;
 		int subLen = dst.Length;
 		int sourceLength = res.Length;
 		int searchLength = sourceLength - subLen;
@@ -523,7 +514,7 @@ public class StringUtility : EditorBase
 			{
 				continue;
 			}
-			int j = 0;
+			int j;
 			for (j = 0; j < subLen; ++j)
 			{
 				if(i + j >= 0 && i + j < sourceLength)
@@ -536,30 +527,29 @@ public class StringUtility : EditorBase
 			}
 			if (j == subLen)
 			{
-				posFind = i;
+				pos = i;
 			}
 		}
-		if (pos != null)
-		{
-			pos.mValue = posFind;
-		}
-		return posFind != -1;
+		return pos != -1;
 	}
-	public static string unitConversion(float kb)
+	public static string fileSizeString(long size)
 	{
-		string str = "KB";
-		if (kb > 1024.0f)
+		// 不足1KB
+		if (size < 1024)
 		{
-			float mb = kb / 1024.0f;
-			if (mb < 1024.0f)
-			{
-				str = "MB";
-			}
-			else
-			{
-				str = "G";
-			}
+			return IToS((int)size) + "B";
 		}
-		return str;
+		// 不足1MB
+		if (size < 1024 * 1024)
+		{
+			return FToS(size * (1.0f / 1024.0f), 1) + "KB";
+		}
+		// 不足1GB
+		if(size < 1024 * 1024 * 1024)
+		{
+			return FToS(size * (1.0f / (1024.0f * 1024.0f)), 1) + "MB";
+		}
+		// 大于1GB
+		return FToS(size * (1.0f / (1024.0f * 1024.0f * 1024.0f)), 1) + "GB";
 	}
 }

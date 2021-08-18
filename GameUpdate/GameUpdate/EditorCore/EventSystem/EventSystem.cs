@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public class EventBuffer
 {
@@ -13,8 +10,8 @@ public class EventBuffer
 public class EventSystem : FrameComponent
 {
 	protected Dictionary<CORE_EVENT_TYPE, List<EventHandler>> mEventHandlerList;
-	protected List<EventBuffer> mEventBuffer;
 	protected Dictionary<CORE_EVENT_TYPE, int> mEventParamCountList; // 每个事件的参数列表长度
+	protected List<EventBuffer> mEventBuffer;
 	protected ThreadLock mEventLock;
 	public EventSystem(string name)
 	:base(name)
@@ -58,10 +55,8 @@ public class EventSystem : FrameComponent
 	}
 	public void unregisteEventHandler(CORE_EVENT_TYPE evt, EventHandler handler)
 	{
-		if (mEventHandlerList.ContainsKey(evt))
-		{
-			mEventHandlerList[evt].Remove(handler);
-		}
+		mEventHandlerList.TryGetValue(evt, out List<EventHandler> list);
+		list?.Remove(handler);
 	}
 	public void unregisteAllEvent(EventHandler handler)
 	{
@@ -79,12 +74,12 @@ public class EventSystem : FrameComponent
 	}
 	public void registeEventHandler(CORE_EVENT_TYPE evt, EventHandler handler)
 	{
-		if(!mEventHandlerList.ContainsKey(evt))
+		if(!mEventHandlerList.TryGetValue(evt, out List<EventHandler> list))
 		{
-			List<EventHandler> handlerList = new List<EventHandler>();
-			mEventHandlerList.Add(evt, handlerList);
+			list = new List<EventHandler>();
+			mEventHandlerList.Add(evt, list);
 		}
-		mEventHandlerList[evt].Add(handler);
+		list.Add(handler);
 	}
 	public void pushEvent(CORE_EVENT_TYPE evt, List<string> paramList, bool sendImmediately = true)
 	{
@@ -125,30 +120,23 @@ public class EventSystem : FrameComponent
 	}
 	protected void registeAllEventParam()
 	{
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_ERROR_LOG, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_INFO_LOG, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_DOWNLOAD_VERSION, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_DOWNLOAD_LIST_FILE, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_DOWNLOADING_LIST_FILE, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_NEW_VERSION, 2);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_DOWNLOAD, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_FINISH_DOWNLOAD, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_GENERATE_LOCAL_FILE, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_GENERATING_LOCAL_FILE, 2);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_FINISH_GENERATE_LOCAL_FILE, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_UPDATING_FILE, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_UPDATE_DONE, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_CANCEL_UPDATE, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_NOTHING_UPDATE, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_START_UPLOAD, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_UPLOADING_FILE, 1);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_FINISH_UPLOAD, 2);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_ALL_UPLOADED, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_STOP_PROGRAM, 0);
-		mEventParamCountList.Add(CORE_EVENT_TYPE.CET_UPDATING_PROGRESS, 1);
-		if (mEventParamCountList.Count < (int)CORE_EVENT_TYPE.CET_MAX)
+		mEventParamCountList.Add(CORE_EVENT_TYPE.ERROR_LOG, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.INFO_LOG, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.START_DOWNLOAD_LIST_FILE, 0);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.DOWNLOADING_LIST_FILE, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.START_DOWNLOAD, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.FINISH_DOWNLOAD, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.START_GENERATE_LOCAL_FILE, 1);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.GENERATING_LOCAL_FILE, 2);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.FINISH_GENERATE_LOCAL_FILE, 0);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.UPDATING_FILE, 0);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.UPDATE_DONE, 0);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.CANCEL_UPDATE, 0);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.NOTHING_UPDATE, 0);
+		mEventParamCountList.Add(CORE_EVENT_TYPE.UPDATING_PROGRESS, 1);
+		if (mEventParamCountList.Count < (int)CORE_EVENT_TYPE.MAX)
 		{
-			logError("error : all events must be assigned parameter count! cur count : " + mEventParamCountList.Count + ", max count : " + CORE_EVENT_TYPE.CET_MAX);
+			logError("error : all events must be assigned parameter count! cur count : " + mEventParamCountList.Count + ", max count : " + CORE_EVENT_TYPE.MAX);
 		}
 	}
 }

@@ -1,12 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
-public class SystemUtility
+public class SystemUtility : FileUtility
 {
 	public static string getRegistryValue(string path, string keyStr)
 	{
@@ -54,11 +51,11 @@ public class SystemUtility
 	}
 	public static bool launchExecutable(string path, string args = "",  bool waitForExit = false)
 	{
-		if(!FileUtility.isFileExist(path))
+		if(!isFileExist(path))
 		{
 			return false;
 		}
-		Process p = null;
+		Process p;
 		if(args != "")
 		{
 			p = Process.Start(path, args);
