@@ -406,7 +406,6 @@ public class DownloadManager : FrameComponent
 				mLocalFileList.Remove(item);
 			}
 		}
-		mLocalFileList.Remove(GameDefine.NON_ASSETS_FILE_LIST);
 		int totalCount = mLocalFileList.Count + tempFile.Count;
 		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.START_GENERATE_LOCAL_FILE, IToS(totalCount));
 
