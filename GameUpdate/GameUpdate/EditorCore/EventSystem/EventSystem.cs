@@ -102,7 +102,7 @@ public class EventSystem : FrameComponent
 					}
 					else
 					{
-						logError("error : param list size error! should have param count : " + eventParamCount + ", cur param count : " + paramList.Count + ", event : %d" + evt);
+						logError("param list size error! should have param count : " + eventParamCount + ", cur param count : " + paramList.Count + ", event : %d" + evt);
 					}
 				}
 			}
@@ -136,7 +136,7 @@ public class EventSystem : FrameComponent
 		mEventParamCountList.Add(CORE_EVENT_TYPE.UPDATING_PROGRESS, 1);
 		if (mEventParamCountList.Count < (int)CORE_EVENT_TYPE.MAX)
 		{
-			logError("error : all events must be assigned parameter count! cur count : " + mEventParamCountList.Count + ", max count : " + CORE_EVENT_TYPE.MAX);
+			logError("all events must be assigned parameter count! cur count : " + mEventParamCountList.Count + ", max count : " + CORE_EVENT_TYPE.MAX);
 		}
 	}
 }

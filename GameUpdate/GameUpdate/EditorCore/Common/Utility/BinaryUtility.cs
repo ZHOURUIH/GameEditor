@@ -48,6 +48,7 @@ public class BinaryUtility
 		}
 		return ENCODING_GB2312;
 	}
+	public static Encoding getUTF8() { return Encoding.UTF8; }
 	// 计算 16进制的c中1的个数
 	public static int crc_check(byte c)
 	{

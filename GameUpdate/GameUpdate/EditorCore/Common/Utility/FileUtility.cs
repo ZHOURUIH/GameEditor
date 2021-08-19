@@ -105,6 +105,10 @@ public class FileUtility : MathUtility
 	}
 	public static void deleteFolder(string path)
 	{
+		if(!isDirExist(path))
+		{
+			return;
+		}
 		validPath(ref path);
 		string[] dirList = Directory.GetDirectories(path);
 		// 先删除所有文件夹

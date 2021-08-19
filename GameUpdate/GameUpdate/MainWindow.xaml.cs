@@ -48,8 +48,6 @@ namespace GameUpdate
 			mTimer.Interval = TimeSpan.FromMilliseconds(30);
 			mTimer.Tick += Tick;
 			mTimer.Start();
-			// 默认隐藏窗口
-			Hide();
 
 			// 开始下载
 			EditorBase.mDownloadManager.startUpdateGame();
@@ -220,14 +218,14 @@ namespace GameUpdate
 		{
 			DownloadManager manager = EditorBase.mDownloadManager;
 			FileWrap file = manager.getCurDownloadingFile();
-			if (file != null && file.getFileName() != GameDefine.NON_ASSETS_FILE_LIST)
+			if (file != null && file.getFileName() != GameDefine.FILE_LIST)
 			{
 				// 当前进度
 				mCurFileProgress.Value = (file.getTotalSize() > 0 ? (float)file.getCurSize() / file.getTotalSize() : 0.0f) * mCurFileProgress.Maximum;
 				mCurFilePercent.Content = StringUtility.FToS((float)mCurFileProgress.Value, 2) + "%"; 
 				mCurSizeLabel.Content = StringUtility.fileSizeString(file.getCurSize()) + "/" + StringUtility.fileSizeString(file.getTotalSize());
-				// 总文件体积
-				mTotalSizeLabel.Content = StringUtility.fileSizeString(manager.getTotalSize());
+				// 总下载大小/总文件大小
+				mTotalSizeLabel.Content = StringUtility.fileSizeString(manager.getDownloadedSize()) + "/" + StringUtility.fileSizeString(manager.getTotalSize());
 				// 当前下载速度
 				mCurSpeedLabel.Content = StringUtility.fileSizeString(manager.getCurSpeed()) + "/S";
 				// 总进度

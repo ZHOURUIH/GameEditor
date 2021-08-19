@@ -114,7 +114,7 @@ public class DownloadManager : FrameComponent
 		setState(UPGRADE_STATE.DOWNLOADING_FILE_LIST);
 		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.START_DOWNLOAD_LIST_FILE);
 		// 首先从远端下载列表文件
-		repuestDownload(GameDefine.NON_ASSETS_FILE_LIST);
+		repuestDownload(GameDefine.FILE_LIST);
 	}
 	public void setState(UPGRADE_STATE state) { mState = state; }
 	//----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -123,12 +123,12 @@ public class DownloadManager : FrameComponent
 	{
 		if (!mCurDownloading.writeFile(pBuffer, nSize))
 		{
-			logError("文件写入失败! 文件 : " + mCurDownloading.getFileName(), true);
+			logError("文件写入失败! 文件 : " + getFileName(mCurDownloading.getFileName()), true);
 			return false;
 		}
 		mSpeedInSecond += nSize;
 		mLastDownloadingTime = 0.0f;
-		if (mCurDownloading.getFileName() == GameDefine.NON_ASSETS_FILE_LIST)
+		if (mCurDownloading.getFileName() == GameDefine.FILE_LIST)
 		{
 			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.DOWNLOADING_LIST_FILE, FToS((float)mCurDownloading.getCurSize() / mCurDownloading.getTotalSize() * 100.0f, 2));
 		}
@@ -137,7 +137,6 @@ public class DownloadManager : FrameComponent
 		{
 			pushDelayCommand<CommandDownloadManagerCancel>(this);
 		}
-		logConsole("已下载 : " + mCurDownloading.getCurSize() + "/" + mCurDownloading.getTotalSize() + "Bytes");
 		return !mCancel;
 	}
 	protected long onTimeout()
@@ -155,7 +154,7 @@ public class DownloadManager : FrameComponent
 		mCurDownloading = mDownloadingFileList[fileName];
 		mCurDownloading.setTotalSize(totalSize);
 		// 其他文件在接收到数据时就写入文件,并且先存放到临时目录中
-		if (fileName != GameDefine.NON_ASSETS_FILE_LIST)
+		if (fileName != GameDefine.FILE_LIST)
 		{
 			mCurDownloading.startWrite(fileName, GameDefine.TEMP_PATH + fileName);
 			mCurDownloading.setWriteMode(WRITE_MODE.AUTO_WRITE);
@@ -165,7 +164,7 @@ public class DownloadManager : FrameComponent
 		{
 			mCurDownloading.startWrite(fileName);
 			// 列表文件不写入文件
-			if (fileName == GameDefine.NON_ASSETS_FILE_LIST)
+			if (fileName == GameDefine.FILE_LIST)
 			{
 				mCurDownloading.setWriteMode(WRITE_MODE.DONT_WRITE);
 			}
@@ -186,7 +185,7 @@ public class DownloadManager : FrameComponent
 		}
 
 		mLastDownloadingTime = -1.0f;
-		if (fileName == GameDefine.NON_ASSETS_FILE_LIST)
+		if (fileName == GameDefine.FILE_LIST)
 		{
 			notifyFileListDownloaded(file);
 		}
@@ -233,7 +232,7 @@ public class DownloadManager : FrameComponent
 	{
 		// 列表文件下载完毕,解析列表
 		setState(UPGRADE_STATE.PARSING_REMOTE_FILE_LIST);
-		parseRemoteFileList(bytesToString(listFile.getFileData()));
+		parseRemoteFileList(bytesToString(listFile.getFileData(), getUTF8()));
 		setState(UPGRADE_STATE.GENERATE_LOCAL_FILE);
 		// 检查本地文件
 		generateLocalFileList();
@@ -429,7 +428,7 @@ public class DownloadManager : FrameComponent
 			{
 				break;
 			}
-			if (mLocalFileList.TryGetValue(item, out DownloadFileInfo info))
+			if (!mLocalFileList.TryGetValue(item, out DownloadFileInfo info))
 			{
 				info = new DownloadFileInfo();
 				mLocalFileList.Add(item, info);
