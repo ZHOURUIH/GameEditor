@@ -268,7 +268,7 @@ public class StringUtility : BinaryUtility
 		int len = rangeList.Length;
 		if (values != null && len != values.Length)
 		{
-			EditorBase.logError("error : count is not equal " + str.Length);
+			EditorBase.logError("count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)
@@ -301,7 +301,7 @@ public class StringUtility : BinaryUtility
 		int len = rangeList.Length;
 		if (values != null && len != values.Length)
 		{
-			EditorBase.logError("error : count is not equal " + str.Length);
+			EditorBase.logError("count is not equal " + str.Length);
 			return;
 		}
 		if (values == null)

@@ -176,6 +176,10 @@
     <Resource Include="mir.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows" md "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows"
+copy "$(TargetPath)" "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows\我的传奇.exe" /y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
