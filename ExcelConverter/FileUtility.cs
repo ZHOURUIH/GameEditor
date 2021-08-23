@@ -17,6 +17,31 @@ public class FileUtility : StringUtility
 			path += "/";
 		}
 	}
+	// 打开一个文本文件,fileName为绝对路径
+	public static string openTxtFile(string fileName)
+	{
+		StreamReader streamReader = File.OpenText(fileName);
+		if (streamReader == null)
+		{
+			return null;
+		}
+		string fileBuffer = streamReader.ReadToEnd();
+		streamReader.Close();
+		streamReader.Dispose();
+		return fileBuffer;
+	}
+	public static void openTxtFileLines(string filePath, out string[] fileLines)
+	{
+		fileLines = split(openTxtFile(filePath), true, "\n");
+		if (fileLines == null)
+		{
+			return;
+		}
+		for (int i = 0; i < fileLines.Length; ++i)
+		{
+			fileLines[i] = removeAll(fileLines[i], "\r");
+		}
+	}
 	// 写一个文本文件,fileName为绝对路径,content是写入的字符串
 	public static void writeFile(string fileName, byte[] buffer, int size, bool appendData = false)
 	{
