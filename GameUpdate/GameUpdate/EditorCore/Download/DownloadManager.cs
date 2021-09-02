@@ -378,7 +378,7 @@ public class DownloadManager : FrameComponent
 		{
 			// 排除临时文件夹,排除StreamingAssets目录
 			string fileName = fileList[i];
-			if (!startWith(fileName, startPath + GameDefine.TEMP_PATH) || !fileName.Contains("/StreamingAssets/"))
+			if (!startWith(fileName, startPath + GameDefine.TEMP_PATH) && !fileName.Contains("/StreamingAssets/"))
 			{
 				mLocalFileList.Add(fileName.Substring(startPath.Length), new DownloadFileInfo());
 			}
