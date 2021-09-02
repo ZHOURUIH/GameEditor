@@ -332,7 +332,7 @@ public class DownloadManager : FrameComponent
 			int readFileCount = stringToInt(fileList[0]);
 			if (readFileCount == 0)
 			{
-				logError("文件数量读取错误!", true);
+				logError("文件数量读取错误! line:"+ fileList[0], true);
 				return;
 			}
 			int fileCount = fileList.Count();
