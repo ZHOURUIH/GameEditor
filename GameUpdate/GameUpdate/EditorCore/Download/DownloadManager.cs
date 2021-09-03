@@ -323,7 +323,7 @@ public class DownloadManager : FrameComponent
 	{
 		try
 		{
-			string[] fileList = split(listContent, true, "\r\n");
+			splitLine(listContent, out string[] fileList, true);
 			if (fileList.Count() == 0)
 			{
 				logError("列表文件错误!", true);
@@ -344,7 +344,7 @@ public class DownloadManager : FrameComponent
 			// 生成远端文件列表
 			for (int i = 1; i < fileCount; ++i)
 			{
-				string[] contentList = split(fileList[i], false, "\t");
+				string[] contentList = split(fileList[i], false, '\t');
 				if (contentList.Count() != 3)
 				{
 					logError("远端文件列表已损坏!行号 : " + i, true);
