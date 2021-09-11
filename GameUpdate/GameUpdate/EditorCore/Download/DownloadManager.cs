@@ -323,7 +323,7 @@ public class DownloadManager : FrameComponent
 	{
 		try
 		{
-			string[] fileList = split(listContent, true, "\r\n");
+			splitLine(listContent, out string[] fileList, true);
 			if (fileList.Count() == 0)
 			{
 				logError("列表文件错误!", true);
@@ -332,7 +332,7 @@ public class DownloadManager : FrameComponent
 			int readFileCount = stringToInt(fileList[0]);
 			if (readFileCount == 0)
 			{
-				logError("文件数量读取错误!", true);
+				logError("文件数量读取错误! line:"+ fileList[0], true);
 				return;
 			}
 			int fileCount = fileList.Count();
@@ -344,7 +344,7 @@ public class DownloadManager : FrameComponent
 			// 生成远端文件列表
 			for (int i = 1; i < fileCount; ++i)
 			{
-				string[] contentList = split(fileList[i], false, "\t");
+				string[] contentList = split(fileList[i], false, '\t');
 				if (contentList.Count() != 3)
 				{
 					logError("远端文件列表已损坏!行号 : " + i, true);
@@ -378,7 +378,7 @@ public class DownloadManager : FrameComponent
 		{
 			// 排除临时文件夹,排除StreamingAssets目录
 			string fileName = fileList[i];
-			if (!startWith(fileName, startPath + GameDefine.TEMP_PATH) || !fileName.Contains("/StreamingAssets/"))
+			if (!startWith(fileName, startPath + GameDefine.TEMP_PATH) && !fileName.Contains("/StreamingAssets/"))
 			{
 				mLocalFileList.Add(fileName.Substring(startPath.Length), new DownloadFileInfo());
 			}
