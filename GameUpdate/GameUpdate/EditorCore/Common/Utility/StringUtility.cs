@@ -4,6 +4,10 @@ using System.Text;
 
 public class StringUtility : BinaryUtility
 {
+	public static bool isEmpty(string str)
+	{
+		return str == null || str.Length == 0;
+	}
 	public static bool startWith(string oriString, string pattern, bool sensitive = true)
 	{
 		if (oriString.Length < pattern.Length)

@@ -5,7 +5,9 @@ using System.Diagnostics;
 
 public class DownloadFileInfo
 {
-	public string mFileName;	// 文件位置,以dndl_Data开头的相对路径
+	public string mFileName;    // 文件位置,以dndl_Data开头的相对路径
+	public string mFullPath;	// 如果是本地文件,则表示本地文件的绝对路径
+	public string mMD5;			// 文件的MD5码
 	public long mFileSize;
 };
 
@@ -353,6 +355,7 @@ public class DownloadManager : FrameComponent
 				DownloadFileInfo info = new DownloadFileInfo();
 				info.mFileName = strReplaceAll(contentList[0], "%20", " ");
 				info.mFileSize = stringToInt(contentList[1]);
+				info.mMD5 = contentList[2];
 				mRemoteFileList.Add(info.mFileName, info);
 			}
 		}
@@ -369,6 +372,9 @@ public class DownloadManager : FrameComponent
 			return;
 		}
 
+		// 排除列表文件,程序自身
+		string strThisFile = getFileName(Process.GetCurrentProcess().MainModule.FileName);
+		strThisFile = strThisFile.Substring(0, strThisFile.IndexOf("."));
 		// 先查找游戏目录
 		string startPath = "./";
 		List<string> fileList = new List<string>();
@@ -376,67 +382,35 @@ public class DownloadManager : FrameComponent
 		int fileCount = fileList.Count;
 		for (int i = 0; i < fileCount; ++i)
 		{
-			// 排除临时文件夹,排除StreamingAssets目录
-			string fileName = fileList[i];
-			if (!startWith(fileName, startPath + GameDefine.TEMP_PATH) && !fileName.Contains("/StreamingAssets/"))
+			// 排除临时文件夹,排除StreamingAssets目录,排除所有以程序名开头的文件
+			string fullPath = fileList[i];
+			string fileName = fullPath.Substring(startPath.Length);
+			if (!startWith(fullPath, startPath + GameDefine.TEMP_PATH) && 
+				!fullPath.Contains("/StreamingAssets/") && 
+				!startWith(fileName, strThisFile + "."))
 			{
-				mLocalFileList.Add(fileName.Substring(startPath.Length), new DownloadFileInfo());
+				var info = new DownloadFileInfo();
+				info.mFileName = fileName;
+				info.mFullPath = fullPath;
+				info.mFileSize = getFileSize(fullPath);
+				mLocalFileList.Add(info.mFileName, info);
 			}
 		}
 
-		// 查找临时目录
+		// 最后再查找临时目录,因为临时目录中的文件需要覆盖其他目录的文件
 		List<string> tempFile = new List<string>();
 		findFiles(GameDefine.TEMP_PATH, tempFile);
-		int tempCount = tempFile.Count;
-		for (int i = 0; i < tempCount; ++i)
-		{
-			tempFile[i] = tempFile[i].Substring(GameDefine.TEMP_PATH.Length);
-		}
-
-		// 排除列表文件,程序自身
-		string strThisFile = getFileName(Process.GetCurrentProcess().MainModule.FileName);
-		strThisFile = strThisFile.Substring(0, strThisFile.IndexOf("."));
-		// 移除所有以程序名开头的文件
-		var keyList = new List<string>(mLocalFileList.Keys);
-		foreach (var item in keyList)
-		{
-			if (startWith(item, strThisFile + "."))
-			{
-				mLocalFileList.Remove(item);
-			}
-		}
-		int totalCount = mLocalFileList.Count + tempFile.Count;
-		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.START_GENERATE_LOCAL_FILE, IToS(totalCount));
-
-		// 计算文件信息
-		int index = 0;
-		foreach (var item in mLocalFileList)
-		{
-			if (mCancel)
-			{
-				break;
-			}
-			DownloadFileInfo info = item.Value;
-			info.mFileName = item.Key;
-			info.mFileSize = getFileSize(item.Key);
-			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.GENERATING_LOCAL_FILE, new List<string>() { IToS(totalCount), IToS(index + 1)});
-			++index;
-		}
 		foreach (var item in tempFile)
 		{
-			if (mCancel)
-			{
-				break;
-			}
-			if (!mLocalFileList.TryGetValue(item, out DownloadFileInfo info))
+			string fileName = item.Substring(GameDefine.TEMP_PATH.Length);
+			if (!mLocalFileList.TryGetValue(fileName, out DownloadFileInfo info))
 			{
 				info = new DownloadFileInfo();
-				mLocalFileList.Add(item, info);
+				mLocalFileList.Add(fileName, info);
 			}
-			info.mFileName = item;
-			info.mFileSize = getFileSize(GameDefine.TEMP_PATH + item);
-			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.GENERATING_LOCAL_FILE, new List<string>() { IToS(totalCount), IToS(index + 1)});
-			++index;
+			info.mFullPath = item;
+			info.mFileName = fileName;
+			info.mFileSize = getFileSize(item);
 		}
 
 		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.FINISH_GENERATE_LOCAL_FILE);
@@ -466,9 +440,23 @@ public class DownloadManager : FrameComponent
 		{
 			// 远端有本地没有的,文件不一致的都需要下载
 			// 文件大小不一致就认为此文件有修改,文件一致即使文件内容不同也认为没有修改,这样是为了提升效率
-			if (!localList.ContainsKey(itemRemote.Key) || itemRemote.Value.mFileSize != localList[itemRemote.Key].mFileSize)
+			localList.TryGetValue(itemRemote.Key, out DownloadFileInfo localFile);
+			if (localFile == null || itemRemote.Value.mFileSize != localFile.mFileSize)
 			{
 				modifiedList.Add(itemRemote.Key, itemRemote.Value);
+			}
+			else
+			{
+				// 文件大小一致,也要算一下md5码
+				string localMD5 = localFile.mMD5;
+				if (isEmpty(localMD5))
+				{
+					localMD5 = generateFileMD5(localFile.mFullPath);
+				}
+				if (localMD5 != itemRemote.Value.mMD5)
+				{
+					modifiedList.Add(itemRemote.Key, itemRemote.Value);
+				}
 			}
 		}
 		return modifiedList;
