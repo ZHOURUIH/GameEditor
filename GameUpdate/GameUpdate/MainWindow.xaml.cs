@@ -49,7 +49,7 @@ namespace GameUpdate
 			mTimer.Tick += Tick;
 			mTimer.Start();
 
-			// 开始下载
+			// 开始更新
 			EditorBase.mDownloadManager.startUpdateGame();
 		}
 		public void destroy()
@@ -106,7 +106,7 @@ namespace GameUpdate
 			else if (type == CORE_EVENT_TYPE.UPDATING_PROGRESS)
 			{
 				float progress = StringUtility.SToF(param[0]);
-				mBusyInfo.setInfo("正在更新文件..." + StringUtility.FToS(progress * 100.0f, 3) + "%");
+				mBusyInfo.setInfo("正在更新文件..." + StringUtility.FToS(progress * 100.0f, 1) + "%");
 			}
 			// 更新完成,所有资源与服务器上同步完成
 			else if (type == CORE_EVENT_TYPE.UPDATE_DONE)
@@ -222,7 +222,7 @@ namespace GameUpdate
 			{
 				// 当前进度
 				mCurFileProgress.Value = (file.getTotalSize() > 0 ? (float)file.getCurSize() / file.getTotalSize() : 0.0f) * mCurFileProgress.Maximum;
-				mCurFilePercent.Content = StringUtility.FToS((float)mCurFileProgress.Value, 2) + "%"; 
+				mCurFilePercent.Content = StringUtility.FToS((float)mCurFileProgress.Value, 1) + "%"; 
 				mCurSizeLabel.Content = StringUtility.fileSizeString(file.getCurSize()) + "/" + StringUtility.fileSizeString(file.getTotalSize());
 				// 总下载大小/总文件大小
 				mTotalSizeLabel.Content = StringUtility.fileSizeString(manager.getDownloadedSize()) + "/" + StringUtility.fileSizeString(manager.getTotalSize());
@@ -231,7 +231,7 @@ namespace GameUpdate
 				// 总进度
 				mTotalProgress.Value = (float)manager.getDownloadedSize() / manager.getTotalSize() * mTotalProgress.Maximum;
 				mTotalFileCountText.Content = StringUtility.IToS(manager.getDownloadedCount()) + "/" + StringUtility.IToS(manager.getTotalCount());
-				mTotalPercent.Content = StringUtility.FToS((float)mTotalProgress.Value, 2) + "%";
+				mTotalPercent.Content = StringUtility.FToS((float)mTotalProgress.Value, 1) + "%";
 				// 预计剩余时间
 				MathUtility.secondsToHoursMinutesSeconds((int)manager.getRemainTime(), out int hours, out int minutes, out int seconds);
 				mTotalTimeLabel.Content = StringUtility.IToS(hours, 2) + "小时" + StringUtility.IToS(minutes, 2) + "分" + StringUtility.IToS(seconds, 2) + "秒";

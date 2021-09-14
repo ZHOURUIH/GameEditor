@@ -3,21 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 
-public class DownloadFileInfo
-{
-	public string mFileName;    // 文件位置,以dndl_Data开头的相对路径
-	public string mFullPath;	// 如果是本地文件,则表示本地文件的绝对路径
-	public string mMD5;			// 文件的MD5码
-	public long mFileSize;
-};
-
 public class DownloadManager : FrameComponent
 {
-	protected Dictionary<string, FileWrap> mDownloadingFileList;     // 正在下载或已经下载完毕的更新文件
-	protected Dictionary<string, FileWrap> mDownloadedList;          // 已经下载完毕的更新文件
-	protected Dictionary<string, DownloadFileInfo> mRemoteFileList;  // 远端文件列表,Key为远端文件位置
-	protected Dictionary<string, DownloadFileInfo> mLocalFileList;   // 本地文件列表
-	protected Dictionary<string, DownloadFileInfo> mModifiedList;    // 需要更新的文件列表
+	protected Dictionary<string, FileWrap> mDownloadingFileList; // 正在下载或已经下载完毕的更新文件
+	protected Dictionary<string, FileWrap> mDownloadedList;      // 已经下载完毕的更新文件
+	protected Dictionary<string, GameFileInfo> mRemoteFileList;  // 远端文件列表,Key为远端文件位置
+	protected Dictionary<string, GameFileInfo> mLocalFileList;   // 本地文件列表
+	protected Dictionary<string, GameFileInfo> mModifiedList;    // 需要更新的文件列表
 	protected FileWrap mCurDownloading;
 	protected string mRemoteVersion;
 	protected string mLocalVersion;
@@ -37,9 +29,9 @@ public class DownloadManager : FrameComponent
 	{
 		mDownloadingFileList = new Dictionary<string, FileWrap>();
 		mDownloadedList = new Dictionary<string, FileWrap>();
-		mRemoteFileList = new Dictionary<string, DownloadFileInfo>();
-		mLocalFileList = new Dictionary<string, DownloadFileInfo>();
-		mModifiedList = new Dictionary<string, DownloadFileInfo>();
+		mRemoteFileList = new Dictionary<string, GameFileInfo>();
+		mLocalFileList = new Dictionary<string, GameFileInfo>();
+		mModifiedList = new Dictionary<string, GameFileInfo>();
 		mCurTimeCount = -1.0f;
 		mDownloadTimeOut = 120.0f;
 		mLastDownloadingTime = -1.0f;
@@ -115,8 +107,56 @@ public class DownloadManager : FrameComponent
 	{
 		setState(UPGRADE_STATE.DOWNLOADING_FILE_LIST);
 		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.START_DOWNLOAD_LIST_FILE);
-		// 首先从远端下载列表文件
-		repuestDownload(GameDefine.FILE_LIST);
+		// 从远端获得Windows启动器文件列表
+		setState(UPGRADE_STATE.PARSING_REMOTE_FILE_LIST);
+		mRemoteFileList = GameUtility.getFileList(GameDefine.REMOTE_FOLDER, true);
+
+		// 列表文件下载完毕,解析列表
+		setState(UPGRADE_STATE.GENERATE_LOCAL_FILE);
+		// 检查本地文件
+		generateLocalFileList();
+		// 如果在检查本地文件过程中取消了,则直接返回
+		if (mCancel)
+		{
+			setState(UPGRADE_STATE.NONE);
+			return;
+		}
+
+		// 判断出需要更新的文件
+		setState(UPGRADE_STATE.GENERATE_MODIFIED_FILE);
+		// 然后下载修改过和新增的文件
+		mModifiedList = generateModifiedFile(mRemoteFileList, mLocalFileList);
+		setState(UPGRADE_STATE.DOWNLOADING_REMOTE_FILE);
+
+		if (mModifiedList.Count() == 0)
+		{
+			// 如果有临时目录，则将临时目录中的所有文件替换到游戏目录
+			notifyAllDownloaded();
+			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.NOTHING_UPDATE);
+			done();
+			return;
+		}
+
+		// 计算所有需要下载的文件的大小
+		mTotalSize = 0;
+		foreach (var item in mModifiedList)
+		{
+			mTotalSize += item.Value.mFileSize;
+		}
+		// 开始下载所有文件,并且开始计时
+		mCurTimeCount = 0.0f;
+		foreach (var item in mModifiedList)
+		{
+			// 如果临时文件存在,表示之前没下载成功,暂时删除临时文件
+			// 如果实现断点续传时需要获取临时文件的大小
+			long offset = 0;
+			string fullTemp = GameDefine.TEMP_PATH + item.Key + GameDefine.TEMP_FILE_EXTENSION;
+			if (isFileExist(fullTemp))
+			{
+				offset = getFileSize(fullTemp);
+			}
+			repuestDownload(item.Key, offset);
+		}
 	}
 	public void setState(UPGRADE_STATE state) { mState = state; }
 	//----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -187,98 +227,40 @@ public class DownloadManager : FrameComponent
 		}
 
 		mLastDownloadingTime = -1.0f;
-		if (fileName == GameDefine.FILE_LIST)
+		// 如果失败,则不再继续更新
+		WRITE_RESULT ret = file.finishWrite(null);
+		if (ret == WRITE_RESULT.SUCCESS)
 		{
-			notifyFileListDownloaded(file);
+			mDownloadedSize += file.getTotalSize();
+			// 加入下载完成的列表
+			mDownloadedList.Add(fileName, file);
+			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.FINISH_DOWNLOAD, file.getFileName());
+			// 全部文件都下载完毕,则版本更新完毕
+			if (mDownloadedList.Count() == mModifiedList.Count())
+			{
+				notifyAllDownloaded();
+				// 更新完成
+				mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.UPDATE_DONE);
+				// 更新版本号
+				done();
+			}
 		}
 		else
 		{
-			// 如果失败,则不再继续更新
-			WRITE_RESULT ret = file.finishWrite(null);
-			if (ret == WRITE_RESULT.SUCCESS)
+			if (ret == WRITE_RESULT.MD5_ERROR)
 			{
-				mDownloadedSize += file.getTotalSize();
-				// 加入下载完成的列表
-				mDownloadedList.Add(fileName, file);
-				mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.FINISH_DOWNLOAD, file.getFileName());
-				// 全部文件都下载完毕,则版本更新完毕
-				if (mDownloadedList.Count() == mModifiedList.Count())
-				{
-					notifyAllDownloaded();
-					// 更新完成
-					mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.UPDATE_DONE);
-					// 更新版本号
-					done();
-				}
+				logError("文件下载失败," + fileName + "文件校验失败, 可能是上次未更新完成且长时间没有更新,请重新更新", true);
 			}
-			else
+			else if (ret == WRITE_RESULT.RENAME_ERROR)
 			{
-				if (ret == WRITE_RESULT.MD5_ERROR)
-				{
-					logError("文件下载失败," + fileName + "文件校验失败, 可能是上次未更新完成且长时间没有更新,请重新更新", true);
-				}
-				else if (ret == WRITE_RESULT.RENAME_ERROR)
-				{
-					logError("文件下载失败,文件重命名失败,文件可能被占用 : " + fileName, true);
-				}
-				else if (ret == WRITE_RESULT.WRITE_ERROR)
-				{
-					logError("文件下载失败,文件写入失败,文件可能被占用 : " + fileName, true);
-				}
-				setState(UPGRADE_STATE.NONE);
-				pushDelayCommand<CommandDownloadManagerCancel>(mDownloadManager);
+				logError("文件下载失败,文件重命名失败,文件可能被占用 : " + fileName, true);
 			}
-		}
-	}
-	protected void notifyFileListDownloaded(FileWrap listFile)
-	{
-		// 列表文件下载完毕,解析列表
-		setState(UPGRADE_STATE.PARSING_REMOTE_FILE_LIST);
-		parseRemoteFileList(bytesToString(listFile.getFileData(), getUTF8()));
-		setState(UPGRADE_STATE.GENERATE_LOCAL_FILE);
-		// 检查本地文件
-		generateLocalFileList();
-		// 如果在检查本地文件过程中取消了,则直接返回
-		if (mCancel)
-		{
+			else if (ret == WRITE_RESULT.WRITE_ERROR)
+			{
+				logError("文件下载失败,文件写入失败,文件可能被占用 : " + fileName, true);
+			}
 			setState(UPGRADE_STATE.NONE);
-			return;
-		}
-
-		// 判断出需要更新的文件
-		setState(UPGRADE_STATE.GENERATE_MODIFIED_FILE);
-		// 然后下载修改过和新增的文件
-		mModifiedList = generateModifiedFile(mRemoteFileList, mLocalFileList);
-		setState(UPGRADE_STATE.DOWNLOADING_REMOTE_FILE);
-		if (mModifiedList.Count() == 0)
-		{
-			// 如果有临时目录，则将临时目录中的所有文件替换到游戏目录
-			notifyAllDownloaded();
-			mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.NOTHING_UPDATE);
-			done();
-		}
-		else
-		{
-			// 计算所有需要下载的文件的大小
-			mTotalSize = 0;
-			foreach (var item in mModifiedList)
-			{
-				mTotalSize += item.Value.mFileSize;
-			}
-			// 开始下载所有文件,并且开始计时
-			mCurTimeCount = 0.0f;
-			foreach (var item in mModifiedList)
-			{
-				// 如果临时文件存在,表示之前没下载成功,暂时删除临时文件
-				// 如果实现断点续传时需要获取临时文件的大小
-				long offset = 0;
-				string fullTemp = GameDefine.TEMP_PATH + item.Key + GameDefine.TEMP_FILE_EXTENSION;
-				if (isFileExist(fullTemp))
-				{
-					offset = getFileSize(fullTemp);
-				}
-				repuestDownload(item.Key, offset);
-			}
+			pushDelayCommand<CommandDownloadManagerCancel>(mDownloadManager);
 		}
 	}
 	// 所有文件都已经下载完毕,更新所有文件
@@ -321,49 +303,6 @@ public class DownloadManager : FrameComponent
 		mCurSpeed = 0;
 		mRemainTime = 0.0f;
 	}
-	protected void parseRemoteFileList(string listContent)
-	{
-		try
-		{
-			splitLine(listContent, out string[] fileList, true);
-			if (fileList.Count() == 0)
-			{
-				logError("列表文件错误!", true);
-				return;
-			}
-			int readFileCount = stringToInt(fileList[0]);
-			if (readFileCount == 0)
-			{
-				logError("文件数量读取错误! line:"+ fileList[0], true);
-				return;
-			}
-			int fileCount = fileList.Count();
-			if (fileCount - 1 != readFileCount)
-			{
-				logError("文件数量不匹配, 文件头记录数量 : " + readFileCount + ", 实际数量 : " + (fileCount - 1), true);
-				return;
-			}
-			// 生成远端文件列表
-			for (int i = 1; i < fileCount; ++i)
-			{
-				string[] contentList = split(fileList[i], false, '\t');
-				if (contentList.Count() != 3)
-				{
-					logError("远端文件列表已损坏!行号 : " + i, true);
-					continue;
-				}
-				DownloadFileInfo info = new DownloadFileInfo();
-				info.mFileName = strReplaceAll(contentList[0], "%20", " ");
-				info.mFileSize = stringToInt(contentList[1]);
-				info.mMD5 = contentList[2];
-				mRemoteFileList.Add(info.mFileName, info);
-			}
-		}
-		catch (Exception e)
-		{
-			logError("解析错误 : " + e.Message);
-		}
-	}
 	protected void generateLocalFileList()
 	{
 		if (mLocalFileList.Count() > 0)
@@ -389,10 +328,10 @@ public class DownloadManager : FrameComponent
 				!fullPath.Contains("/StreamingAssets/") && 
 				!startWith(fileName, strThisFile + "."))
 			{
-				var info = new DownloadFileInfo();
+				var info = new GameFileInfo();
 				info.mFileName = fileName;
 				info.mFullPath = fullPath;
-				info.mFileSize = getFileSize(fullPath);
+				info.mFileSize = (int)getFileSize(fullPath);
 				mLocalFileList.Add(info.mFileName, info);
 			}
 		}
@@ -403,14 +342,18 @@ public class DownloadManager : FrameComponent
 		foreach (var item in tempFile)
 		{
 			string fileName = item.Substring(GameDefine.TEMP_PATH.Length);
-			if (!mLocalFileList.TryGetValue(fileName, out DownloadFileInfo info))
+			if (fileName.EndsWith(GameDefine.TEMP_FILE_EXTENSION))
 			{
-				info = new DownloadFileInfo();
+				fileName = fileName.Substring(0, fileName.Length - GameDefine.TEMP_FILE_EXTENSION.Length);
+			}
+			if (!mLocalFileList.TryGetValue(fileName, out GameFileInfo info))
+			{
+				info = new GameFileInfo();
 				mLocalFileList.Add(fileName, info);
 			}
 			info.mFullPath = item;
 			info.mFileName = fileName;
-			info.mFileSize = getFileSize(item);
+			info.mFileSize = (int)getFileSize(item);
 		}
 
 		mEditorCore.sendDelayEvent(CORE_EVENT_TYPE.FINISH_GENERATE_LOCAL_FILE);
@@ -418,11 +361,11 @@ public class DownloadManager : FrameComponent
 	protected void repuestDownload(string fileName, long offset = 0)
 	{
 		mDownloadingFileList.Add(fileName, new FileWrap());
-		mHttpDownloadManager.download(GameDefine.REMOTE_URL + fileName, fileName, offset, downloading, onTimeout, onStart, onFinish);
+		mHttpDownloadManager.download(GameDefine.DOWNLOAD_URL + fileName, fileName, offset, downloading, onTimeout, onStart, onFinish);
 	}
-	protected static Dictionary<string, DownloadFileInfo> generateUselessFile(Dictionary<string, DownloadFileInfo> remoteList, Dictionary<string, DownloadFileInfo> localList)
+	protected static Dictionary<string, GameFileInfo> generateUselessFile(Dictionary<string, GameFileInfo> remoteList, Dictionary<string, GameFileInfo> localList)
 	{
-		var uselessList = new Dictionary<string, DownloadFileInfo>();
+		var uselessList = new Dictionary<string, GameFileInfo>();
 		// 本地有但是远端没有的文件
 		foreach (var local in localList)
 		{
@@ -433,14 +376,14 @@ public class DownloadManager : FrameComponent
 		}
 		return uselessList;
 	}
-	protected static Dictionary<string, DownloadFileInfo> generateModifiedFile(Dictionary<string, DownloadFileInfo> remoteList, Dictionary<string, DownloadFileInfo> localList)
+	protected static Dictionary<string, GameFileInfo> generateModifiedFile(Dictionary<string, GameFileInfo> remoteList, Dictionary<string, GameFileInfo> localList)
 	{
-		var modifiedList = new Dictionary<string, DownloadFileInfo>();
+		var modifiedList = new Dictionary<string, GameFileInfo>();
 		foreach (var itemRemote in remoteList)
 		{
 			// 远端有本地没有的,文件不一致的都需要下载
 			// 文件大小不一致就认为此文件有修改,文件一致即使文件内容不同也认为没有修改,这样是为了提升效率
-			localList.TryGetValue(itemRemote.Key, out DownloadFileInfo localFile);
+			localList.TryGetValue(itemRemote.Key, out GameFileInfo localFile);
 			if (localFile == null || itemRemote.Value.mFileSize != localFile.mFileSize)
 			{
 				modifiedList.Add(itemRemote.Key, itemRemote.Value);
@@ -451,7 +394,7 @@ public class DownloadManager : FrameComponent
 				string localMD5 = localFile.mMD5;
 				if (isEmpty(localMD5))
 				{
-					localMD5 = generateFileMD5(localFile.mFullPath);
+					localMD5 = generateFileMD5(localFile.mFullPath, false);
 				}
 				if (localMD5 != itemRemote.Value.mMD5)
 				{
