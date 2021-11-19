@@ -94,6 +94,7 @@ void CodeMySQL::generate()
 	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
 	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
 	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
+	generateMySQLInstanceClear(mysqlInfoList, totalHeaderPath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -617,7 +618,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "MySQLInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string cpp;
@@ -629,4 +630,23 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 		line(cpp, "MySQL" + mysqlList[i].mMySQLClassName + "* GameBase::mMySQL" + mysqlList[i].mMySQLClassName + ";");
 	}
 	writeFile(filePath + "MySQLInstanceDeclare.cpp", ANSIToUTF8(cpp.c_str(), true));
+}
+
+// MySQLInstanceClear.h
+void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, string filePath)
+{
+	string header;
+	line(header, "#ifdef _MYSQL_INSTANCE_CLEAR_H_");
+	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
+	line(header, "#else");
+	line(header, "#define _MYSQL_INSTANCE_CLEAR_H_");
+	line(header, "");
+	uint count = mysqlList.size();
+	FOR_I(count)
+	{
+		line(header, "mMySQL" + mysqlList[i].mMySQLClassName + " = NULL;");
+	}
+	line(header, "");
+	line(header, "#endif", false);
+	writeFile(filePath + "MySQLInstanceClear.h", ANSIToUTF8(header.c_str(), true));
 }

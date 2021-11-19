@@ -179,6 +179,7 @@ void CodeSQLite::generate()
 		generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
 		generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
 		generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
+		generateCppSQLiteInstanceClear(sqliteInfoList, headerPath);
 	}
 
 	if (csGamePath.length() > 0)
@@ -415,6 +416,28 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "SQLiteSTLPoolRegister.h", ANSIToUTF8(header.c_str(), true));
+}
+
+void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqliteList, string filePath)
+{
+	string header;
+	line(header, "#ifdef _SQLITE_INSTANCE_CLEAR_H_");
+	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
+	line(header, "#else");
+	line(header, "#define _SQLITE_INSTANCE_CLEAR_H_");
+	line(header, "");
+	uint count = sqliteList.size();
+	FOR_I(count)
+	{
+		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		{
+			continue;
+		}
+		line(header, "mSQLite" + sqliteList[i].mSQLiteName + " = NULL;");
+	}
+	line(header, "");
+	line(header, "#endif", false);
+	writeFile(filePath + "SQLiteInstanceClear.h", ANSIToUTF8(header.c_str(), true));
 }
 
 // TDSQLite.cs文件

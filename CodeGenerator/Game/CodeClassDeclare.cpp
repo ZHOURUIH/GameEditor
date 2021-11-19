@@ -52,10 +52,13 @@ void CodeClassDeclare::generate()
 			if (fileNameNoSuffix != "GameHeader" && 
 				(!startWith(fileNameNoSuffix, "StringDefine") || fileNameNoSuffix == "StringDefine") && 
 				fileNameNoSuffix != "MySQLInstanceDeclare" && 
+				fileNameNoSuffix != "MySQLInstanceClear" &&
 				fileNameNoSuffix != "SQLiteInstanceDeclare" && 
+				fileNameNoSuffix != "SQLiteInstanceClear" &&
 				fileNameNoSuffix != "FrameSystemDeclare" &&
 				fileNameNoSuffix != "SQLiteSTLPoolRegister" &&
 				fileNameNoSuffix != "FrameSystemGet" &&
+				fileNameNoSuffix != "FrameSystemClear" &&
 				fileNameNoSuffix != "FrameSystemRegiste")
 			{
 				gameHeaderList.push_back(fileNameNoSuffix);

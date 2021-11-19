@@ -235,26 +235,7 @@ string CodeUtility::nameToUpper(const string& sqliteName, bool preUnderLine)
 
 string CodeUtility::cppPushParamString(const PacketMember& memberInfo)
 {
-	string str;
-	if (memberInfo.mIsArray)
-	{
-		string lengthMacro;
-		uint macroCount = memberInfo.mArrayLengthMacro.size();
-		FOR_I(macroCount)
-		{
-			lengthMacro += "GD::" + memberInfo.mArrayLengthMacro[i];
-			if (i != macroCount - 1)
-			{
-				lengthMacro += " * ";
-			}
-		}
-		str = "pushParam(" + memberInfo.mMemberName + ", " + lengthMacro + ");";
-	}
-	else
-	{
-		str = "pushParam(" + memberInfo.mMemberName + ");";
-	}
-	return str;
+	return "pushParam(" + memberInfo.mMemberName + ");";
 }
 
 string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
@@ -272,7 +253,7 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = memberInfo.mTypeName + " " + memberInfo.mMemberName + "[" + lengthMacro + "];";
+		str = "Array<" + memberInfo.mTypeName + ", " + lengthMacro + "> " + memberInfo.mMemberName + ";";
 	}
 	else
 	{

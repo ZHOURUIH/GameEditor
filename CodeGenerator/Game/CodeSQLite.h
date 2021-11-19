@@ -15,6 +15,7 @@ protected:
 	static void generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
 	static void generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath);
 	static void generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, string filePath);
+	static void generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqliteList, string filePath);
 	//c#
 	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFileGamePath, string dataFileHotFixPath);
 	static void generateCSharpSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFileGamePath, string tableFileHotFixPath);

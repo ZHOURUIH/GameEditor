@@ -98,7 +98,7 @@ void CodeFrameSystem::generateHeaderFile(const myVector<string>& frameSystemList
 	writeFile(filePath + "FrameSystemHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
-// FrameSystemRegiste.h, FrameSystemDeclare.h, FrameSystemDefine.cpp, FrameSystemGet.h
+// FrameSystemRegiste.h, FrameSystemDeclare.h, FrameSystemDefine.cpp, FrameSystemGet.h, FrameSystemClear.h
 void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSystemList,
 												const myVector<string>& factoryManagerList,
 												const myVector<string>& classPoolList,
@@ -124,7 +124,7 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 		line(registeAllSystem, "REGISTE_SYSTEM(" + classPoolList[i] + ");");
 	}
 	line(registeAllSystem, "");
-	line(registeAllSystem, "#endif");
+	line(registeAllSystem, "#endif", false);
 	writeFile(filePath + "FrameSystemRegiste.h", ANSIToUTF8(registeAllSystem.c_str(), true));
 
 	// FrameSystemDeclare.h
@@ -147,7 +147,7 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 		line(declareAllSystem, "DECALRE_SYSTEM(" + classPoolList[i] + ");");
 	}
 	line(declareAllSystem, "");
-	line(declareAllSystem, "#endif");
+	line(declareAllSystem, "#endif", false);
 	writeFile(filePath + "FrameSystemDeclare.h", ANSIToUTF8(declareAllSystem.c_str(), true));
 
 	// FrameSystemDefine.cpp
@@ -188,6 +188,29 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 		line(getAllSystem, "GET_SYSTEM(" + classPoolList[i] + ");");
 	}
 	line(getAllSystem, "");
-	line(getAllSystem, "#endif");
+	line(getAllSystem, "#endif", false);
 	writeFile(filePath + "FrameSystemGet.h", ANSIToUTF8(getAllSystem.c_str(), true));
+
+	// FrameSystemClear.h
+	string clearAllSystem;
+	line(clearAllSystem, "#ifdef _FRAME_SYSTEM_CLEAR_H_");
+	line(clearAllSystem, "#error \"特殊头文件,只能在GameBase.cpp中被包含\"");
+	line(clearAllSystem, "#else");
+	line(clearAllSystem, "#define _FRAME_SYSTEM_CLEAR_H_");
+	line(clearAllSystem, "");
+	FOR_I(frameSystemListCount)
+	{
+		line(clearAllSystem, "m" + frameSystemList[i] + " = NULL;");
+	}
+	FOR_I(factoryManagerListCount)
+	{
+		line(clearAllSystem, "m" + factoryManagerList[i] + " = NULL;");
+	}
+	FOR_I(classPoolListCount)
+	{
+		line(clearAllSystem, "m" + classPoolList[i] + " = NULL;");
+	}
+	line(clearAllSystem, "");
+	line(clearAllSystem, "#endif", false);
+	writeFile(filePath + "FrameSystemClear.h", ANSIToUTF8(clearAllSystem.c_str(), true));
 }

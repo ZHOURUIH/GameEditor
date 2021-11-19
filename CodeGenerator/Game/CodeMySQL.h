@@ -15,6 +15,7 @@ protected:
 	static void generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, string filePath);
 	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, string filePath);
+	static void generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, string filePath);
 protected:
 };
 
