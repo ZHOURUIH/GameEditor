@@ -13,6 +13,68 @@ public class StringUtility : BinaryUtility
 	{
 		return str == null || str.Length == 0;
 	}
+	public static bool isUpper(char value) { return value >= 'A' && value <= 'Z'; }
+	public static bool isLower(char value) { return value >= 'a' && value <= 'z'; }
+	public static bool isNumber(char value) { return value >= '0' && value <= '9'; }
+	public static string toLower(string str)
+	{
+		byte[] bytes = stringToBytes(str);
+		int size = bytes.Length;
+		for(int i = 0; i < size; ++i)
+		{
+			if (isUpper((char)bytes[i]))
+			{
+				bytes[i] += 'a' - 'A';
+			}
+		}
+		return bytesToString(bytes);
+	}
+	public static string toUpper(string str)
+	{
+		byte[] bytes = stringToBytes(str);
+		int size = bytes.Length;
+		for (int i = 0; i < size; ++i)
+		{
+			if (isLower((char)bytes[i]))
+			{
+				bytes[i] -= 'a' - 'A';
+			}
+		}
+		return bytesToString(bytes);
+	}
+	public static string removeAll(string str, params string[] key)
+	{
+		int keyCount = key.Length;
+		for (int i = 0; i < keyCount; ++i)
+		{
+			str = replaceAll(str, key[i], "");
+		}
+		return str;
+	}
+	public static string replaceAll(string str, string key, string newWords)
+	{
+		int startPos = 0;
+		while (true)
+		{
+			int pos = findFirstSubstr(str, key, startPos);
+			if (pos < 0)
+			{
+				break;
+			}
+			str = replace(str, pos, pos + key.Length, newWords);
+			startPos = pos + newWords.Length;
+		}
+		return str;
+	}
+	public static string replace(string str, int begin, int end, string reStr)
+	{
+		str = str.Remove(begin, end - begin);
+		if (reStr.Length > 0)
+		{
+			str = str.Insert(begin, reStr);
+		}
+		return str;
+	}
 	public static bool startWith(string oriString, string pattern, bool sensitive = true)
 	{
 		if (oriString.Length < pattern.Length)

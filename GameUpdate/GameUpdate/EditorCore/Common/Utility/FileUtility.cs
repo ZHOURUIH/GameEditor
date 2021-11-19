@@ -19,7 +19,7 @@ public class FileUtility : MathUtility
 		}
 	}
 	// 打开一个二进制文件,fileName为绝对路径
-	public static void openFile(string fileName, ref byte[] fileBuffer, ref int fileSize)
+	public static void openFile(string fileName, out byte[] fileBuffer, out int fileSize)
 	{
 		FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
 		fileSize = (int)fs.Length;

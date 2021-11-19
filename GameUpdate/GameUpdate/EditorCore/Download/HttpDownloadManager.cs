@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 
 public class DownloadInfo
 {
@@ -20,6 +21,7 @@ public class HttpDownloadManager : FrameComponent
 	protected ThreadLock mDownloadListLock;
 	protected List<DownloadInfo> mDownloadList;
 	protected CustomThread mDownloadingThread;
+	protected CustomThread mGetThread;
 	protected byte[] mDownloadBytes;			// 用于下载的临时缓冲区,1MB
 	public HttpDownloadManager(string name)
 	:base(name)
@@ -27,6 +29,7 @@ public class HttpDownloadManager : FrameComponent
 		mDownloadListLock = new ThreadLock();
 		mDownloadList = new List<DownloadInfo>();
 		mDownloadingThread = new CustomThread("download");
+		mGetThread = new CustomThread("get");
 		mDownloadBytes = new byte[1024 * 1024];
 	}
 	public override void init()
@@ -52,7 +55,66 @@ public class HttpDownloadManager : FrameComponent
 		mDownloadList.Add(info);
 		mDownloadListLock.unlock();
 	}
+	public static string get(string url, Dictionary<string, string> paramList, Dictionary<string, string> header)
+	{
+		// 根据url地址创建HttpWebRequest对象
+		url += generateGetParams(paramList);
+		var webRequest = (HttpWebRequest)WebRequest.Create(new Uri(url));
+		webRequest.Method = "GET";
+		webRequest.KeepAlive = true;
+		webRequest.ProtocolVersion = HttpVersion.Version11;
+		webRequest.ContentType = "application/x-www-form-urlencoded";
+		webRequest.AllowAutoRedirect = true;
+		webRequest.MaximumAutomaticRedirections = 2;
+		webRequest.Timeout = 10000;
+		if (header != null)
+		{
+			foreach (var item in header)
+			{
+				webRequest.Headers.Add(item.Key, item.Value);
+			}
+		}
+		return httpRequest(webRequest);
+	}
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------
+	protected static string httpRequest(HttpWebRequest webRequest)
+	{
+		try
+		{
+			var response = (HttpWebResponse)webRequest.GetResponse();
+			var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+			string str = reader.ReadToEnd();
+			reader.Close();
+			response.Close();
+			webRequest.Abort();
+			return str;
+		}
+		catch{}
+		return null;
+	}
+	protected static string generateGetParams(Dictionary<string, string> paramList)
+	{
+		if (paramList == null || paramList.Count == 0)
+		{
+			return "";
+		}
+		int count = paramList.Count;
+		StringBuilder parameters = new StringBuilder("?");
+		// 从集合中取出所有参数，设置表单参数（AddField())
+		int index = 0;
+		foreach (var item in paramList)
+		{
+			parameters.Append(item.Key);
+			parameters.Append("=");
+			parameters.Append(item.Value);
+			if (index != count - 1)
+			{
+				parameters.Append('&');
+			}
+			++index;
+		}
+		return parameters.ToString();
+	}
 	protected Stream startDownload(string url, StartCallback startCallback, string fileName, long offset)
 	{
 		try

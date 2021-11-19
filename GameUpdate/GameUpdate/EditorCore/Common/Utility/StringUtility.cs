@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 public class StringUtility : BinaryUtility
 {
+	public static bool isEmpty(string str)
+	{
+		return str == null || str.Length == 0;
+	}
 	public static bool startWith(string oriString, string pattern, bool sensitive = true)
 	{
 		if (oriString.Length < pattern.Length)
@@ -64,7 +69,16 @@ public class StringUtility : BinaryUtility
 	public static int stringToInt(string str)
 	{
 		str = checkIntString(str);
-		return int.Parse(str);
+		int value = 0;
+		try
+		{
+			value = int.Parse(str);
+		}
+		catch(Exception e)
+		{
+			Console.Write("转换整数失败:" + e.Message + ", string:" + str);
+		}
+		return value;
 	}
 	public static void removeLast(ref string stream, char key)
 	{
@@ -239,28 +253,69 @@ public class StringUtility : BinaryUtility
 	{
 		str = str.Replace('/', '\\');
 	}
-	public static string[] split(string str, bool removeEmpty, params string[] keyword)
+	public static bool arrayContainsValue<T>(T[] array, T value, int arrayLen = -1) where T : IEquatable<T>
 	{
-		StringSplitOptions option = removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None;
-		string[] strList = str.Split(keyword, option);
-		return strList;
-	}
-	public static void split(string str, ref List<string> strList, bool removeEmpty, params string[] keyword)
-	{
-		string[] strArray = split(str, removeEmpty, keyword);
-		if (strList == null)
+		if (arrayLen == -1)
 		{
-			strList = new List<string>(strArray);
+			arrayLen = array.Length;
 		}
-		else
+		for (int i = 0; i < arrayLen; ++i)
 		{
-			strList.Clear();
-			int strCount = strArray.Length;
-			for (int i = 0; i < strCount; ++i)
+			if (array[i].Equals(value))
 			{
-				strList.Add(strArray[i]);
+				return true;
 			}
 		}
+		return false;
+	}
+	public static string removeAll(string str, params char[] key)
+	{
+		StringBuilder builder = new StringBuilder(str);
+		for (int i = builder.Length - 1; i >= 0; --i)
+		{
+			// 判断是否是需要移除的字符
+			if (arrayContainsValue(key, builder[i]))
+			{
+				builder.Remove(i, 1);
+			}
+		}
+		return builder.ToString();
+	}
+	public static void splitLine(string str, out string[] lines, bool removeEmpty = true)
+	{
+		lines = split(str, removeEmpty, '\n');
+		if (lines == null)
+		{
+			return;
+		}
+		for (int i = 0; i < lines.Length; ++i)
+		{
+			lines[i] = removeAll(lines[i], '\r');
+		}
+	}
+	public static string[] split(string str, params string[] keyword)
+	{
+		return split(str, true, keyword);
+	}
+	public static string[] split(string str, bool removeEmpty, params string[] keyword)
+	{
+		if (str == null || str.Length == 0)
+		{
+			return null;
+		}
+		return str.Split(keyword, removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
+	}
+	public static string[] split(string str, params char[] keyword)
+	{
+		return split(str, true, keyword);
+	}
+	public static string[] split(string str, bool removeEmpty, params char[] keyword)
+	{
+		if (str == null || str.Length == 0)
+		{
+			return null;
+		}
+		return str.Split(keyword, removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
 	}
 	public static void stringToFloatArray(string str, ref float[] values)
 	{
