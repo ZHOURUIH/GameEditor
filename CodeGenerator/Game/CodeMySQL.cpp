@@ -306,7 +306,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
-			line(source, "\tif (HAS_BIT(flag, " + intToString(i + 1) + "))");
+			line(source, "\tif (hasBit(flag, " + intToString(i + 1) + "))");
 			line(source, "\t{");
 			line(source, "\t\ttargetData->m" + memberName + " = m" + memberName + ";");
 			line(source, "\t}");

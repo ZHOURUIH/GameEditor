@@ -253,7 +253,7 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 				lengthMacro += " * ";
 			}
 		}
-		str = "Array<" + memberInfo.mTypeName + ", " + lengthMacro + "> " + memberInfo.mMemberName + ";";
+		str = "Array<" + lengthMacro + ", " + memberInfo.mTypeName + "> " + memberInfo.mMemberName + ";";
 	}
 	else
 	{
