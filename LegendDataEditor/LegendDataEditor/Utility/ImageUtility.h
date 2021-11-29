@@ -77,11 +77,14 @@ public:
 	static void updateMapEffect();
 	static void updateAnimationPositionInAnimation();
 	static void generateAllOffsetedImage(const string& filePath);
+	static void generateAllIconToMaxSize(const string& filePath);
 	static void generateGroupImage(const string& filePath);
 	static void generateGroupMonsterImage(const string& filePath);
 	static void trimAllImage(const string& filePath);
 	static void removeAllBackground(const string& filePath);
 protected:
+	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
+	static Vector2Int getImageSize(const string& fileName);
 	static void removeBackground(const string& fileName, const string& newFileName);
 	static void trimImage(const string& filePath, const string& newFilePath, Vector2Int size);
 	static Vector2Int generateImageSizeWithOffset(const string& fileName, Vector2Int offset);

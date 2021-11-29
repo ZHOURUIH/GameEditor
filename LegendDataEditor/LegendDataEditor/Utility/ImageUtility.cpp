@@ -1767,6 +1767,22 @@ void ImageUtility::generateAllOffsetedImage(const string& filePath)
 	END(folders);
 }
 
+void ImageUtility::generateAllIconToMaxSize(const string& filePath)
+{
+	myMap<int, AnimInfo> EmptyList;
+	myVector<string> files;
+	findFiles(filePath, files, ".png", false);
+	FOR_VECTOR(files)
+	{
+		string fileName = files[i];
+		string fullPathNoMedia = removeStartString(fileName, "../media/");
+		string rootFolderName = getFirstFolderName(fullPathNoMedia);
+		string newFullPath = "../media/" + rootFolderName + "_offseted" + "/" + removeFirstPath(fullPathNoMedia);
+		createFolder(getFilePath(newFullPath));
+		generateExpandImage(fileName, newFullPath, Vector2Int(36, 36));
+	}
+}
+
 void ImageUtility::trimAllImage(const string& filePath)
 {
 	myMap<int, string> EmptyList;
@@ -1821,8 +1837,8 @@ void ImageUtility::trimImage(const string& filePath, const string& newFilePath, 
 	FIBITMAP* oldBitmap = FreeImage_Load(format, filePath.c_str());
 	int width = FreeImage_GetWidth(oldBitmap);
 	int height = FreeImage_GetHeight(oldBitmap);
-	int xInOld = (width - size.x) / 2;
-	int yInOld = (height - size.y) / 2;
+	int xInOld = (width - size.x) >> 1;
+	int yInOld = (height - size.y) >> 1;
 	FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
 	FOR_Y((uint)size.y)
 	{
@@ -1835,6 +1851,17 @@ void ImageUtility::trimImage(const string& filePath, const string& newFilePath, 
 	FreeImage_Unload(oldBitmap);
 	FreeImage_Unload(newBitmap);
 	FreeImage_DeInitialise();
+}
+
+Vector2Int ImageUtility::getImageSize(const string& fileName)
+{
+	FreeImage_Initialise();
+	FIBITMAP* oldBitmap = FreeImage_Load(FreeImage_GetFileType(fileName.c_str()), fileName.c_str());
+	int width = FreeImage_GetWidth(oldBitmap);
+	int height = FreeImage_GetHeight(oldBitmap);
+	FreeImage_Unload(oldBitmap);
+	FreeImage_DeInitialise();
+	return Vector2Int(width, height);
 }
 
 Vector2Int ImageUtility::generateImageSizeWithOffset(const string& fileName, Vector2Int offset)
@@ -1854,6 +1881,66 @@ Vector2Int ImageUtility::generateImageSizeWithOffset(const string& fileName, Vec
 	FreeImage_Unload(oldBitmap);
 	FreeImage_DeInitialise();
 	return newSize;
+}
+
+void ImageUtility::generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
+	int oldWidth = FreeImage_GetWidth(oldBitmap);
+	int oldHeight = FreeImage_GetHeight(oldBitmap);
+	int yInOld = (size.y - oldHeight) >> 1;
+	int copyPixels = getMin(oldWidth, size.x);
+	int srcPixelOffset = 0;
+	int xInOld = (size.x - oldWidth) >> 1;
+	if (size.x < oldWidth)
+	{
+		srcPixelOffset = (oldWidth - size.x) >> 1;
+		xInOld = 0;
+	}
+	FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
+	int bpp = FreeImage_GetBPP(oldBitmap);
+	FOR_Y((uint)size.y)
+	{
+		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
+		if (bpp == 32)
+		{
+			memset(newLine, 0, size.x * 4);
+		}
+		else if (bpp == 24)
+		{
+			FOR_I(size.x)
+			{
+				newLine[i * 4 + 0] = 0;
+				newLine[i * 4 + 1] = 0;
+				newLine[i * 4 + 2] = 0;
+				newLine[i * 4 + 3] = 255;
+			}
+		}
+		// 原始图片的底部在新图片中的y坐标,图片中的坐标是底部为0,向上为正
+		int indexY = y - yInOld;
+		if (indexY >= 0 && indexY < oldHeight)
+		{
+			BYTE* oldLine = FreeImage_GetScanLine(oldBitmap, indexY);
+			if (bpp == 32)
+			{
+				memcpy(newLine + 4 * xInOld, oldLine + srcPixelOffset * 4, copyPixels * 4);
+			}
+			else if (bpp == 24)
+			{
+				FOR_I(copyPixels)
+				{
+					memcpy(newLine + 4 * xInOld + 4 * i, oldLine + 3 * i + 3 * srcPixelOffset, 3);
+				}
+			}
+		}
+	}
+
+	FreeImage_Save(format, newBitmap, newFileName.c_str());
+	FreeImage_Unload(oldBitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
 }
 
 void ImageUtility::generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset)

@@ -38,6 +38,7 @@ void main()
 		cout << "30:整理翅膀文件结构" << endl;
 		cout << "31:重新生成包含偏移量的图片" << endl;
 		cout << "32:裁剪序列帧图片到最小尺寸" << endl;
+		cout << "33:将图标调整到统一的最大尺寸" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -310,6 +311,16 @@ void main()
 			cout << "开始裁剪..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::trimAllImage("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 33)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "开始调整图标大小..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::generateAllIconToMaxSize("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");
