@@ -134,7 +134,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid parseResult(myMap<const char*, char*>& resultRow) override;");
-	line(header, "\tvoid paramList(char* params, uint size) const override;");
+	line(header, "\tvoid paramList(Array<1024>& params) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
 	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
 	line(header, "\tvoid resetProperty() override;");
@@ -170,59 +170,59 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// parseResultº¯Êý
 	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
 	line(source, "{");
-	line(source, "\tparseLLong(&mID, resultRow.get(ID, NULL));");
+	line(source, "\tparseLLong(mID, resultRow.get(ID, NULL));");
 	FOR_I(memberCount)
 	{
 		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
 		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
 		if (typeName == "int")
 		{
-			line(source, "\tparseInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseInt(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tparseUInt(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseUInt(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tparseBool(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseBool(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tparseByte(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseByte(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tparseChar(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseChar(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tparseShort(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseShort(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tparseUShort(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseUShort(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tparseFloat(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseFloat(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tparseLLong(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseLLong(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 		else if (typeName == "string")
 		{
-			line(source, "\tparseString(&m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseString(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
 		}
 	}
 	line(source, "}");
 	line(source, "");
 
 	// paramListº¯Êý
-	line(source, "void " + className + "::paramList(char* params, uint size) const");
+	line(source, "void " + className + "::paramList(Array<1024>& params) const");
 	line(source, "{");
-	line(source, "\tappendValueLLong(params, size, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
+	line(source, "\tappendValueLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
@@ -233,48 +233,48 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\tappendValueStringUTF8(params, size, m" + memberName + ".c_str(), " + addComma + ");");
+				line(source, "\tappendValueStringUTF8(params, m" + memberName + ".c_str(), " + addComma + ");");
 			}
 			else
 			{
-				line(source, "\tappendValueString(params, size, m" + memberName + ".c_str(), " + addComma + ");");
+				line(source, "\tappendValueString(params, m" + memberName + ".c_str(), " + addComma + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + " ? 1 : 0, " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tappendValueInt(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tappendValueFloat(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueFloat(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tappendValueLLong(params, size, m" + memberName + ", " + addComma + ");");
+			line(source, "\tappendValueLLong(params, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
