@@ -14,6 +14,10 @@ public class GameDefine
 	public static string TEMP_PATH = "Temp_Data/";				// 下载临时目录
 	public static string TEMP_FILE_EXTENSION = ".download";     // 正在下载的临时文件后缀名
 	public const string REMOTE_URL = "https://microlegend.obs.cn-north-4.myhuaweicloud.com";
+#if DEBUG
+	public const string REMOTE_FOLDER = "Launcher_Test_Windows/";
+#else
 	public const string REMOTE_FOLDER = "Launcher_Windows/";
+#endif
 	public static string DOWNLOAD_URL = REMOTE_URL + "/" + REMOTE_FOLDER;
 }
