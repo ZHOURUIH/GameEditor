@@ -53,6 +53,15 @@
   <PropertyGroup>
     <ApplicationIcon>mir.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test_Release|AnyCPU'">
+    <OutputPath>bin\Test_Release\</OutputPath>
+    <DefineConstants>TRACE;TEST</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -179,8 +188,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows" md "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows"
-copy "$(TargetPath)" "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows\我的传奇_Test.exe" /y</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows"  md "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows"
+
+echo $(ConfigurationName)
+if "$(ConfigurationName)" == "Test_Release" (
+copy "$(TargetPath)" "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows\我的传奇_Test.exe" /y 
+echo "已复制 我的传奇_Test.exe")
+
+if "$(ConfigurationName)" == "Release" (
+copy "$(TargetPath)" "$(ProjectDir)..\..\..\MicroLegend\Launcher\Windows\我的传奇.exe" /y 
+echo "已复制 我的传奇.exe")</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
