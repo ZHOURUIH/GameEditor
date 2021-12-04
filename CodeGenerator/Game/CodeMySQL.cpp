@@ -133,7 +133,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
-	line(header, "\tvoid parseResult(myMap<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid parseResult(Map<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(Array<1024>& params) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
 	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
@@ -168,7 +168,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "}");
 	line(source, "");
 	// parseResultº¯Êý
-	line(source, "void " + className + "::parseResult(myMap<const char*, char*>& resultRow)");
+	line(source, "void " + className + "::parseResult(Map<const char*, char*>& resultRow)");
 	line(source, "{");
 	line(source, "\tparseLLong(mID, resultRow.get(ID, NULL));");
 	FOR_I(memberCount)

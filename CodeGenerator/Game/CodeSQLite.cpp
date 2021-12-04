@@ -476,9 +476,9 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		string typeName = sqliteInfo.mMemberList[i].mTypeName;
 		// 因为模板文件是按照C++来写的,但是有些类型在C#中是没有的,所以要转换为C#中对应的类型
 		// myVector替换为List,Vector2UShort替换为Vector2Int,char替换为sbyte
-		if (startWith(typeName, "myVector"))
+		if (startWith(typeName, "Vector"))
 		{
-			strReplaceAll(typeName, "myVector", "List");
+			strReplaceAll(typeName, "Vector", "List");
 		}
 		else if (typeName == "Vector2UShort")
 		{
@@ -531,8 +531,8 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	line(file, "\t{");
 	// 需要检测空格的字段
 	myVector<string> checkValueTypeList{"Vector2", "Vector2Int", "Vector2UShort", 
-										"myVector<byte>", "myVector<short>", "myVector<ushort>", 
-										"myVector<int>", "myVector<uint>", "myVector<float>" };
+										"Vector<byte>", "Vector<short>", "Vector<ushort>", 
+										"Vector<int>", "Vector<uint>", "Vector<float>" };
 	myVector<int> checkMemberList;
 	FOR_I(memberCount)
 	{
