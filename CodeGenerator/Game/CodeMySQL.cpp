@@ -170,50 +170,50 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// parseResultº¯Êý
 	line(source, "void " + className + "::parseResult(Map<const char*, char*>& resultRow)");
 	line(source, "{");
-	line(source, "\tparseLLong(mID, resultRow.get(ID, NULL));");
+	line(source, "\tparseLLong(mID, resultRow.get(ID, nullptr));");
 	FOR_I(memberCount)
 	{
 		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
 		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
 		if (typeName == "int")
 		{
-			line(source, "\tparseInt(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseInt(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tparseUInt(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseUInt(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tparseBool(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseBool(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tparseByte(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseByte(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tparseChar(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseChar(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tparseShort(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseShort(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tparseUShort(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseUShort(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tparseFloat(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseFloat(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tparseLLong(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseLLong(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 		else if (typeName == "string")
 		{
-			line(source, "\tparseString(m" + memberName + ", resultRow.get(" + memberName + ", NULL));");
+			line(source, "\tparseString(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
 		}
 	}
 	line(source, "}");
@@ -644,7 +644,7 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(header, "mMySQL" + mysqlList[i].mMySQLClassName + " = NULL;");
+		line(header, "mMySQL" + mysqlList[i].mMySQLClassName + " = nullptr;");
 	}
 	line(header, "");
 	line(header, "#endif", false);

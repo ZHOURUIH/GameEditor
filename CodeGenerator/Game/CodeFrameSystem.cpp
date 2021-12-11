@@ -200,15 +200,15 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	line(clearAllSystem, "");
 	FOR_I(frameSystemListCount)
 	{
-		line(clearAllSystem, "m" + frameSystemList[i] + " = NULL;");
+		line(clearAllSystem, "m" + frameSystemList[i] + " = nullptr;");
 	}
 	FOR_I(factoryManagerListCount)
 	{
-		line(clearAllSystem, "m" + factoryManagerList[i] + " = NULL;");
+		line(clearAllSystem, "m" + factoryManagerList[i] + " = nullptr;");
 	}
 	FOR_I(classPoolListCount)
 	{
-		line(clearAllSystem, "m" + classPoolList[i] + " = NULL;");
+		line(clearAllSystem, "m" + classPoolList[i] + " = nullptr;");
 	}
 	line(clearAllSystem, "");
 	line(clearAllSystem, "#endif", false);

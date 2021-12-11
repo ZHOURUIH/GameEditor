@@ -433,7 +433,7 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 		{
 			continue;
 		}
-		line(header, "mSQLite" + sqliteList[i].mSQLiteName + " = NULL;");
+		line(header, "mSQLite" + sqliteList[i].mSQLiteName + " = nullptr;");
 	}
 	line(header, "");
 	line(header, "#endif", false);
