@@ -32,7 +32,6 @@ void main()
 		cout << "23:生成所有地图阻挡文件" << endl;
 		cout << "25:处理图片阴影" << endl;
 		cout << "26:移动并覆盖地图图片" << endl;
-		cout << "27:更新NPC商品列表" << endl;
 		cout << "28:更新地图中的特效信息到SQLite" << endl;
 		cout << "29:更新Animation表格中的AnimationPosition" << endl;
 		cout << "30:整理翅膀文件结构" << endl;
@@ -259,13 +258,6 @@ void main()
 			cout << "正在移动图片..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::moveMapObjectTexture(fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 27)
-		{
-			cout << "正在更新NPC商品列表..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::updateNPCGoodsSQLite();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 28)

@@ -69,7 +69,6 @@ public:
 	static void getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2);
 	static void generateUnreachFile(const string& path);
 	static void generateAllUnreachFile(const string& path);
-	static void updateNPCGoodsSQLite();
 	static void processAllShadow(const string& path);
 	static void processShadowHorizontal(const string& filePath);
 	static void processShadowVertical(const string& filePath);

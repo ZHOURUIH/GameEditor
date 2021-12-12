@@ -1133,42 +1133,6 @@ void ImageUtility::generateAllUnreachFile(const string& path)
 	END(fileList);
 }
 
-void ImageUtility::updateNPCGoodsSQLite()
-{
-	NEW_SQLITE(SQLiteGoods, goodsTable, "Goods");
-	NEW_SQLITE(SQLiteNPC, npcTable, "NPC");
-	auto& goodsList = goodsTable.queryAll();
-	myMap<int, myVector<ushort>> npcGoodsList;
-	FOREACH_CONST(iterGoods, goodsList)
-	{
-		TDGoods* goods = iterGoods->second;
-		if (goods->mShopType != (byte)GOODS_SHOP_TYPE::NPC)
-		{
-			continue;
-		}
-		if (npcGoodsList.contains(goods->mParam))
-		{
-			npcGoodsList.insert(goods->mParam, myVector<ushort>());
-		}
-		npcGoodsList[goods->mParam].push_back(goods->mID);
-	}
-	auto& npcDataList = npcTable.queryAll();
-	FOREACH_CONST(iterNPC, npcDataList)
-	{
-		int npcID = iterNPC->first;
-		TDNPC* npcData = iterNPC->second;
-		if (npcGoodsList.contains(npcID))
-		{
-			npcData->mGoods = npcGoodsList[npcID];
-		}
-		else
-		{
-			npcData->mGoods.clear();
-		}
-		npcTable.update(*npcData);
-	}
-}
-
 void ImageUtility::processAllShadow(const string& path)
 {
 	myVector<string> fileList;
