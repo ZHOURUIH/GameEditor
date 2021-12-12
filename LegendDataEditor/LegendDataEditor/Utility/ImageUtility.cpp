@@ -811,7 +811,6 @@ void ImageUtility::texturePacker(const string& texturePath)
 	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
 	cmdLine += "--format unity-texture2d ";
 	cmdLine += "--alpha-handling KeepTransparentPixels ";
-	cmdLine += "--force-squared ";
 	cmdLine += "--maxrects-heuristics Best ";
 	cmdLine += "--disable-rotation ";
 	cmdLine += "--size-constraints POT ";

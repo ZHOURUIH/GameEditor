@@ -123,6 +123,13 @@ string StringUtility::removeFirstPath(const string& dir)
 	return temp.substr(index + 1, temp.length() - index - 1);
 }
 
+string StringUtility::replaceFolderName(const string& fileName, const string& newFolderName)
+{
+	string file = getFileName(fileName);
+	string lastFolder = getFilePath(getFilePath(fileName));
+	return lastFolder + "/" + newFolderName + "/" + file;
+}
+
 string StringUtility::getFilePath(const string& dir)
 {
 	string tempDir = dir;
