@@ -486,7 +486,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "{");
 	line(header, "\tBASE_CLASS(MySQLTable);");
 	line(header, "public:");
-	line(header, "\t" + tableClassName + "(const char* tableName)");
+	line(header, "\texplicit " + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
 	line(header, "\tvoid init(MYSQL * mysql) override;");
 	line(header, "\tMySQLData* createData() override;");
