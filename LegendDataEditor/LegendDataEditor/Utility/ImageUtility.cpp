@@ -811,7 +811,6 @@ void ImageUtility::texturePacker(const string& texturePath)
 	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
 	cmdLine += "--format unity-texture2d ";
 	cmdLine += "--alpha-handling KeepTransparentPixels ";
-	cmdLine += "--force-squared ";
 	cmdLine += "--maxrects-heuristics Best ";
 	cmdLine += "--disable-rotation ";
 	cmdLine += "--size-constraints POT ";
@@ -1132,42 +1131,6 @@ void ImageUtility::generateAllUnreachFile(const string& path)
 		print("完成计算阻挡区域:" + getFileName(fileList[i]));
 	}
 	END(fileList);
-}
-
-void ImageUtility::updateNPCGoodsSQLite()
-{
-	NEW_SQLITE(SQLiteGoods, goodsTable, "Goods");
-	NEW_SQLITE(SQLiteNPC, npcTable, "NPC");
-	auto& goodsList = goodsTable.queryAll();
-	myMap<int, myVector<ushort>> npcGoodsList;
-	FOREACH_CONST(iterGoods, goodsList)
-	{
-		TDGoods* goods = iterGoods->second;
-		if (goods->mShopType != (byte)GOODS_SHOP_TYPE::NPC)
-		{
-			continue;
-		}
-		if (npcGoodsList.contains(goods->mParam))
-		{
-			npcGoodsList.insert(goods->mParam, myVector<ushort>());
-		}
-		npcGoodsList[goods->mParam].push_back(goods->mID);
-	}
-	auto& npcDataList = npcTable.queryAll();
-	FOREACH_CONST(iterNPC, npcDataList)
-	{
-		int npcID = iterNPC->first;
-		TDNPC* npcData = iterNPC->second;
-		if (npcGoodsList.contains(npcID))
-		{
-			npcData->mGoods = npcGoodsList[npcID];
-		}
-		else
-		{
-			npcData->mGoods.clear();
-		}
-		npcTable.update(*npcData);
-	}
 }
 
 void ImageUtility::processAllShadow(const string& path)
@@ -2113,4 +2076,16 @@ void ImageUtility::removeBackground(const string& fileName, const string& newFil
 	FreeImage_Unload(oldBitmap);
 	FreeImage_Unload(newBitmap);
 	FreeImage_DeInitialise();
+}
+
+void ImageUtility::removeTextureToLastFolder(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".png");
+	FOR_VECTOR(files)
+	{
+		moveFile(files[i], getFilePath(getFilePath(files[i])) + "/" + getFileName(files[i]));
+	}
+	END(files);
+	deleteEmptyFolder(filePath);
 }

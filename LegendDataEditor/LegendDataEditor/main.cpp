@@ -22,23 +22,23 @@ void main()
 		cout << "9:删除无效图片" << endl;
 		cout << "10:按序号重命名文件" << endl;
 		cout << "11:重命名为序列帧格式" << endl;
-		cout << "13:分组图集" << endl;
-		cout << "14:打包图集" << endl;
-		cout << "15:打包全部图集" << endl;
-		cout << "18:解析所有wix和wil文件" << endl;
-		cout << "19:整理NPC文件结构" << endl;
-		cout << "20:将media中全部序列帧数据写入SQLite" << endl;
-		cout << "22:生成地图阻挡文件" << endl;
-		cout << "23:生成所有地图阻挡文件" << endl;
-		cout << "25:处理图片阴影" << endl;
-		cout << "26:移动并覆盖地图图片" << endl;
-		cout << "27:更新NPC商品列表" << endl;
-		cout << "28:更新地图中的特效信息到SQLite" << endl;
-		cout << "29:更新Animation表格中的AnimationPosition" << endl;
-		cout << "30:整理翅膀文件结构" << endl;
-		cout << "31:重新生成包含偏移量的图片" << endl;
-		cout << "32:裁剪序列帧图片到最小尺寸" << endl;
-		cout << "33:将图标调整到统一的最大尺寸" << endl;
+		cout << "12:分组图集" << endl;
+		cout << "13:打包图集" << endl;
+		cout << "14:打包全部图集" << endl;
+		cout << "15:解析所有wix和wil文件" << endl;
+		cout << "16:整理NPC文件结构" << endl;
+		cout << "17:将media中全部序列帧数据写入SQLite" << endl;
+		cout << "18:生成地图阻挡文件" << endl;
+		cout << "19:生成所有地图阻挡文件" << endl;
+		cout << "20:处理图片阴影" << endl;
+		cout << "21:移动并覆盖地图图片" << endl;
+		cout << "22:更新地图中的特效信息到SQLite" << endl;
+		cout << "23:更新Animation表格中的AnimationPosition" << endl;
+		cout << "24:整理翅膀文件结构" << endl;
+		cout << "25:重新生成包含偏移量的图片" << endl;
+		cout << "26:裁剪序列帧图片到最小尺寸" << endl;
+		cout << "27:将图标调整到统一的最大尺寸" << endl;
+		cout << "28:将图片移动到上一层文件夹" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -166,7 +166,7 @@ void main()
 			ImageUtility::renameImageToAnim("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 13)
+		else if (input == 12)
 		{
 			cout << "输入文件夹名:";
 			string fileName;
@@ -176,7 +176,7 @@ void main()
 			ImageUtility::groupAtlas("../media/" + fileName, 100);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 14)
+		else if (input == 13)
 		{
 			cout << "输入media下相对路径:";
 			string fileName;
@@ -186,7 +186,7 @@ void main()
 			ImageUtility::texturePacker("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 15)
+		else if (input == 14)
 		{
 			cout << "输入media下相对路径:";
 			string fileName;
@@ -196,14 +196,14 @@ void main()
 			ImageUtility::texturePackerAll("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 18)
+		else if (input == 15)
 		{
 			cout << "开始解析所有wil..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::allWixWilToPNG("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 19)
+		else if (input == 16)
 		{
 			cout << "输入文件夹名:";
 			string fileName;
@@ -214,7 +214,7 @@ void main()
 			cout << "文件整理完毕" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 20)
+		else if (input == 17)
 		{
 			cout << "开始将所有序列帧数据写入SQLite..." << endl;
 			char updateOnly = 'y';
@@ -227,7 +227,7 @@ void main()
 			}
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 22)
+		else if (input == 18)
 		{
 			cout << "输入media下相对路径:";
 			string fileName;
@@ -237,21 +237,21 @@ void main()
 			ImageUtility::generateUnreachFile("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 23)
+		else if (input == 19)
 		{
 			cout << "正在生成阻挡文件..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::generateAllUnreachFile("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 25)
+		else if (input == 20)
 		{
 			cout << "正在处理图片阴影..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::processAllShadow("../media/");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 26)
+		else if (input == 21)
 		{
 			cout << "输入路径:";
 			string fileName;
@@ -261,28 +261,21 @@ void main()
 			ImageUtility::moveMapObjectTexture(fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 27)
-		{
-			cout << "正在更新NPC商品列表..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::updateNPCGoodsSQLite();
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 28)
+		else if (input == 22)
 		{
 			cout << "正在更新地图中的特效信息到SQLite..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateMapEffect();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 29)
+		else if (input == 23)
 		{
 			cout << "正在更新Animation表格中的AnimationPosition..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::updateAnimationPositionInAnimation();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 30)
+		else if (input == 24)
 		{
 			cout << "输入文件夹名:";
 			string fileName;
@@ -293,7 +286,7 @@ void main()
 			cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 31)
+		else if (input == 25)
 		{
 			cout << "输入文件夹名:";
 			string fileName;
@@ -303,7 +296,7 @@ void main()
 			ImageUtility::generateAllOffsetedImage("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 32)
+		else if (input == 26)
 		{
 			cout << "输入文件夹名:";
 			string fileName;
@@ -313,7 +306,7 @@ void main()
 			ImageUtility::trimAllImage("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 33)
+		else if (input == 27)
 		{
 			cout << "输入文件夹名:";
 			string fileName;
@@ -321,6 +314,16 @@ void main()
 			cout << "开始调整图标大小..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::generateAllIconToMaxSize("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 28)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "开始移动图片..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::removeTextureToLastFolder("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

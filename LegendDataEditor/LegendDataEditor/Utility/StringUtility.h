@@ -15,6 +15,7 @@ public:
 	static string getFileNameNoSuffix(string str, bool removePath);
 	static string getFirstFolderName(const string& dir);
 	static string removeFirstPath(const string& dir);
+	static string replaceFolderName(const string& fileName, const string& newFolderName);
 	static string getFilePath(const string& dir);
 	static string getFileSuffix(const string& fileName);
 	static string removeStartString(const string& fileName, const string& startStr);

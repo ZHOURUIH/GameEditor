@@ -69,7 +69,6 @@ public:
 	static void getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2);
 	static void generateUnreachFile(const string& path);
 	static void generateAllUnreachFile(const string& path);
-	static void updateNPCGoodsSQLite();
 	static void processAllShadow(const string& path);
 	static void processShadowHorizontal(const string& filePath);
 	static void processShadowVertical(const string& filePath);
@@ -82,6 +81,7 @@ public:
 	static void generateGroupMonsterImage(const string& filePath);
 	static void trimAllImage(const string& filePath);
 	static void removeAllBackground(const string& filePath);
+	static void removeTextureToLastFolder(const string& filePath);
 protected:
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);
