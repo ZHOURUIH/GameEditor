@@ -2077,3 +2077,15 @@ void ImageUtility::removeBackground(const string& fileName, const string& newFil
 	FreeImage_Unload(newBitmap);
 	FreeImage_DeInitialise();
 }
+
+void ImageUtility::removeTextureToLastFolder(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".png");
+	FOR_VECTOR(files)
+	{
+		moveFile(files[i], getFilePath(getFilePath(files[i])) + "/" + getFileName(files[i]));
+	}
+	END(files);
+	deleteEmptyFolder(filePath);
+}
