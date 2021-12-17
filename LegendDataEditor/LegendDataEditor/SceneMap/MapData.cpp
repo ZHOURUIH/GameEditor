@@ -4,6 +4,7 @@
 #include "MapHeader.h"
 #include "UnreachTileGroup.h"
 #include "ImageUtility.h"
+#include "MapTileSimple.h"
 
 MapData::MapData()
 {
@@ -217,4 +218,18 @@ void MapData::assignGroupID(MapTile* tile, UnreachTileGroup* group, myVector<int
 	{
 		waitForList.push_back(right);
 	}
+}
+
+void MapData::convertToSimple(const string& writeFile)
+{
+	txSerializer serializer;
+	mHeader->saveHeader(&serializer);
+	int tileCount = mHeader->mWidth * mHeader->mHeight;
+	for (int i = 0; i < tileCount; ++i)
+	{
+		MapTileSimple simple;
+		mTileList[i].toSimple(&simple);
+		simple.saveTile(&serializer);
+	}
+	serializer.writeToFile(writeFile);
 }

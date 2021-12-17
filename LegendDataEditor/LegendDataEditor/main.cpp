@@ -39,6 +39,7 @@ void main()
 		cout << "26:裁剪序列帧图片到最小尺寸" << endl;
 		cout << "27:将图标调整到统一的最大尺寸" << endl;
 		cout << "28:将图片移动到上一层文件夹" << endl;
+		cout << "29:转换地图文件为简化版本" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -324,6 +325,16 @@ void main()
 			cout << "开始移动图片..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::removeTextureToLastFolder("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 29)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "开始转换地图..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::convertMapFile("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		system("pause");

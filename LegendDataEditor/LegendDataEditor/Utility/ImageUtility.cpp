@@ -2089,3 +2089,17 @@ void ImageUtility::removeTextureToLastFolder(const string& filePath)
 	END(files);
 	deleteEmptyFolder(filePath);
 }
+
+void ImageUtility::convertMapFile(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".map");
+	FOR_VECTOR(files)
+	{
+		MapData data;
+		data.readFile(files[i]);
+		data.convertToSimple(getFileNameNoSuffix(replaceFolderName(files[i], "SMap"), false) + ".smap");
+	}
+	END(files);
+	deleteEmptyFolder(filePath);
+}

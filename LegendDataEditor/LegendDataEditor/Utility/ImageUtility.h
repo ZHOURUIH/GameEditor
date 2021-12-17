@@ -82,6 +82,7 @@ public:
 	static void trimAllImage(const string& filePath);
 	static void removeAllBackground(const string& filePath);
 	static void removeTextureToLastFolder(const string& filePath);
+	static void convertMapFile(const string& filePath);
 protected:
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);

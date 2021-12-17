@@ -3,6 +3,7 @@
 
 #include "ServerDefine.h"
 
+class MapTileSimple;
 class MapTile
 {
 public:
@@ -30,6 +31,7 @@ public:
 public:
 	MapTile();
 	void parseTile(char* buffer, int bufferSize, int& offset);
+	void toSimple(MapTileSimple* simpleTile);
 };
 
 #endif

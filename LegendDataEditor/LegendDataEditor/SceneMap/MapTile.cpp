@@ -1,5 +1,6 @@
 ﻿#include "MapTile.h"
 #include "txSerializer.h"
+#include "MapTileSimple.h"
 
 MapTile::MapTile()
 {
@@ -34,4 +35,16 @@ void MapTile::parseTile(char* buffer, int bufferSize, int& offset)
 	mHasDoor = GET_HIGHEST_BIT(mDoorIdx) == 1;
 	mHasAni = GET_HIGHEST_BIT(mAniFrame) == 1;
 	SET_HIGHEST_BIT(mAniFrame, 0);
+}
+
+void MapTile::toSimple(MapTileSimple* simpleTile)
+{
+	simpleTile->mBngImgIdx = mBngImgIdx;
+	simpleTile->mMidImgIdx = mMidImgIdx;
+	simpleTile->mObjImgIdx = mObjImgIdx;
+	simpleTile->mObjFileIdx = mObjFileIdx;
+	simpleTile->mHasBng = mHasBng;
+	simpleTile->mCanWalk = mCanWalk;
+	simpleTile->mHasMid = mHasMid;
+	simpleTile->mHasObj = mHasObj;
 }
