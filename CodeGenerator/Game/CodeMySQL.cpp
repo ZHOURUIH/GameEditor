@@ -222,7 +222,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	// paramListº¯Êý
 	line(source, "void " + className + "::paramList(Array<1024>& params) const");
 	line(source, "{");
-	line(source, "\tappendValueLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
+	line(source, "\tsqlAddLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
@@ -233,48 +233,48 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\tappendValueStringUTF8(params, m" + memberName + ".c_str(), " + addComma + ");");
+				line(source, "\tsqlAddStringUTF8(params, m" + memberName + ".c_str(), " + addComma + ");");
 			}
 			else
 			{
-				line(source, "\tappendValueString(params, m" + memberName + ".c_str(), " + addComma + ");");
+				line(source, "\tsqlAddString(params, m" + memberName + ".c_str(), " + addComma + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tappendValueInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tappendValueFloat(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddFloat(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tappendValueLLong(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddLLong(params, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
