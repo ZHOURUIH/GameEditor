@@ -47,11 +47,6 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& compon
 	// Ô´ÎÄ¼þ
 	string source;
 	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(componentList[i]));
-	}
 	writeFile(filePath + "StringDefineComponent.cpp", ANSIToUTF8(source.c_str(), true));
 }
 

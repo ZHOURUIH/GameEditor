@@ -344,11 +344,6 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	// Ô´ÎÄ¼þ
 	string source;
 	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(packetList[i]));
-	}
 	writeFile(filePath + "StringDefinePacket.cpp", ANSIToUTF8(source.c_str(), true));
 }
 

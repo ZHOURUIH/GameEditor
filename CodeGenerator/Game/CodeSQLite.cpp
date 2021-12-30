@@ -214,7 +214,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	uint memberCount = sqliteInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tstatic const char* " + sqliteInfo.mMemberList[i].mMemberName + ";");
+		line(header, "\tstatic constexpr const char* " + sqliteInfo.mMemberList[i].mMemberName + " = STR(" + sqliteInfo.mMemberList[i].mMemberName + ");");
 	}
 	line(header, "public:");
 	FOR_I(memberCount)
@@ -255,11 +255,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	// TDSQLite.cpp
 	string source;
 	line(source, "#include \"" + dataClassName + ".h\"");
-	line(source, "");
-	FOR_I(memberCount)
-	{
-		line(source, "const char* " + dataClassName + "::" + sqliteInfo.mMemberList[i].mMemberName + " = STR(" + sqliteInfo.mMemberList[i].mMemberName + ");");
-	}
 
 	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
 	writeFile(dataFilePath + dataClassName + ".cpp", ANSIToUTF8(source.c_str(), true));

@@ -117,7 +117,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tstatic const char* " + mysqlInfo.mMemberList[i].mMemberName + ";");
+		line(header, "\tstatic constexpr const char* " + mysqlInfo.mMemberList[i].mMemberName + " = STR(" + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
 	line(header, "public:");
 	FOR_I(memberCount)
@@ -151,13 +151,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	// 字段静态变量定义
-	FOR_I(memberCount)
-	{
-		line(source, "const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + " = STR(" + mysqlInfo.mMemberList[i].mMemberName + ");");
-	}
 	// fillColName函数
-	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
 	line(source, "{");
 	line(source, "\ttable->addColName(ID, 0);");
@@ -594,11 +588,6 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	// 源文件
 	string source;
 	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine("MD" + mysqlList[i].mMySQLClassName));
-	}
 	writeFile(filePath + "StringDefineMySQL.cpp", ANSIToUTF8(source.c_str(), true));
 }
 

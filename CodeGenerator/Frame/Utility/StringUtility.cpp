@@ -318,7 +318,7 @@ void StringUtility::split(const char* str, const char* key, myVector<string>& ve
 		{
 			if (devidePos - startPos >= STRING_BUFFER)
 			{
-				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节");
+				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节, 字符串:" + str + ", key:" + key);
 				return;
 			}
 			MEMCPY(curString, STRING_BUFFER, str + startPos, devidePos - startPos);
@@ -328,7 +328,7 @@ void StringUtility::split(const char* str, const char* key, myVector<string>& ve
 		{
 			if (sourceLen - startPos >= STRING_BUFFER)
 			{
-				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节");
+				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节, 字符串:" + str + ", key:" + key);
 				return;
 			}
 			MEMCPY(curString, STRING_BUFFER, str + startPos, sourceLen - startPos);
@@ -364,7 +364,7 @@ uint StringUtility::split(const char* str, const char* key, string* stringBuffer
 		{
 			if (devidePos - startPos >= STRING_BUFFER)
 			{
-				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节");
+				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节, 字符串:" + str + ", key:" + key);
 				return 0;
 			}
 			MEMCPY(curString, STRING_BUFFER, str + startPos, devidePos - startPos);
@@ -374,7 +374,7 @@ uint StringUtility::split(const char* str, const char* key, string* stringBuffer
 		{
 			if (sourceLen - startPos >= STRING_BUFFER)
 			{
-				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节");
+				ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节, 字符串:" + str + ", key:" + key);
 				return 0;
 			}
 			MEMCPY(curString, STRING_BUFFER, str + startPos, sourceLen - startPos);
