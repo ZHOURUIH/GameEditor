@@ -38,9 +38,4 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& obje
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineObjectItem.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	writeFile(filePath + "StringDefineObjectItem.cpp", ANSIToUTF8(source.c_str(), true));
 }

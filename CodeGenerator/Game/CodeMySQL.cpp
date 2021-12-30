@@ -584,11 +584,6 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineMySQL.h", ANSIToUTF8(header.c_str(), true));
-
-	// 源文件
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	writeFile(filePath + "StringDefineMySQL.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp
