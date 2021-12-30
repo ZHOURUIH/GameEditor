@@ -151,7 +151,13 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
+	// 字段静态变量定义
+	FOR_I(memberCount)
+	{
+		line(source, "constexpr const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + ";");
+	}
 	// fillColName函数
+	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
 	line(source, "{");
 	line(source, "\ttable->addColName(ID, 0);");
