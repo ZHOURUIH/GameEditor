@@ -68,7 +68,7 @@ public:
 			{
 				if (devidePos - startPos >= STRING_BUFFER)
 				{
-					ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节");
+					ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节, 字符串:" + str + ", key:" + key);
 					return 0;
 				}
 				MEMCPY(curString, STRING_BUFFER, str + startPos, devidePos - startPos);
@@ -78,7 +78,7 @@ public:
 			{
 				if (sourceLen - startPos >= STRING_BUFFER)
 				{
-					ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节");
+					ERROR("分隔字符串失败,缓冲区太小,当前缓冲区为" + intToString(STRING_BUFFER) + "字节, 字符串:" + str + ", key:" + key);
 					return 0;
 				}
 				MEMCPY(curString, STRING_BUFFER, str + startPos, sourceLen - startPos);

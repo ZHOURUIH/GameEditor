@@ -62,16 +62,6 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 	line(header, "");
 	line(header, "#endif");
 	writeFile(stringDefinePath + "StringDefineDTNode.h", ANSIToUTF8(header.c_str(), true));
-
-	// 源文件
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(nodeList[i]));
-	}
-	writeFile(stringDefinePath + "StringDefineDTNode.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // DTNodeRegister.h和DTNodeRegister.cpp

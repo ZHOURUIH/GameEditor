@@ -60,14 +60,4 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineSkill.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(skillList[i]));
-	}
-	writeFile(filePath + "StringDefineSkill.cpp", ANSIToUTF8(source.c_str(), true));
 }

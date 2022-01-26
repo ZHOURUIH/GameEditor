@@ -67,21 +67,6 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineState.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(stateList[i]));
-	}
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(stateList[i] + "Param"));
-	}
-	writeFile(filePath + "StringDefineState.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 void CodeState::generateStateRegister(const myVector<string>& stateList, string filePath)

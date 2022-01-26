@@ -155,14 +155,4 @@ void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, string
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineSceneTrigger.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(listCount)
-	{
-		line(source, stringDefine(list[i]));
-	}
-	writeFile(filePath + "StringDefineSceneTrigger.cpp", ANSIToUTF8(source.c_str(), true));
 }

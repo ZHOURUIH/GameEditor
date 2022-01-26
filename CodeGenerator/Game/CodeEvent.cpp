@@ -81,16 +81,6 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	line(header, "");
 	line(header, "#endif");
 	writeFile(stringDefinePath + "StringDefineEvent.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(cmdCount)
-	{
-		line(source, stringDefine(eventList[i].first));
-	}
-	writeFile(stringDefinePath + "StringDefineEvent.cpp", ANSIToUTF8(source.c_str(), true));
 }
 
 // EventType.h

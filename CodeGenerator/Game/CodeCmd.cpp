@@ -64,15 +64,4 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineCmd.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(cmdList[i]));
-	}
-
-	writeFile(filePath + "StringDefineCmd.cpp", ANSIToUTF8(source.c_str(), true));
 }

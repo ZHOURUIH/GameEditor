@@ -83,14 +83,4 @@ void CodeFunctionParam::generateStringDefine(const myVector<string>& list, strin
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineFunctionParam.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(list[i]));
-	}
-	writeFile(filePath + "StringDefineFunctionParam.cpp", ANSIToUTF8(source.c_str(), true));
 }

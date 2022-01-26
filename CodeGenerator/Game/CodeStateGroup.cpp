@@ -38,14 +38,4 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 	line(header, "");
 	line(header, "#endif");
 	writeFile(filePath + "StringDefineStateGroup.h", ANSIToUTF8(header.c_str(), true));
-
-	// Ô´ÎÄ¼þ
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	FOR_I(count)
-	{
-		line(source, stringDefine(stateList[i]));
-	}
-	writeFile(filePath + "StringDefineStateGroup.cpp", ANSIToUTF8(source.c_str(), true));
 }
