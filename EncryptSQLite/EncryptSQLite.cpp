@@ -43,7 +43,8 @@ bool EncryptSQLite::init()
 bool EncryptSQLite::encrypt()
 {
 	myVector<string> files;
-	findFiles(mSourcePath, files, "db");
+	findFiles(mSourcePath, files, ".db");
+	cout << "找到" << files.size() << "个文件" << endl;
 	FOR_VECTOR(files)
 	{
 		FileContent file;
@@ -65,6 +66,7 @@ bool EncryptSQLite::encrypt()
 			}
 		}
 		END(mTargetPath);
+		cout << "已复制:" << getFileName(files[i]) << endl;
 	}
 	END(files);
 	return true;
