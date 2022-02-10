@@ -112,7 +112,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "// " + mysqlInfo.mComment);
 	line(header, "class " + className + " : public MySQLData");
 	line(header, "{");
-	line(header, "\tBASE_CLASS(MySQLData);");
+	line(header, "\tBASE(MySQLData);");
 	line(header, "public:");
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
@@ -484,7 +484,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "");
 	line(header, "class " + tableClassName + " : public MySQLTable");
 	line(header, "{");
-	line(header, "\tBASE_CLASS(MySQLTable);");
+	line(header, "\tBASE(MySQLTable);");
 	line(header, "public:");
 	line(header, "\texplicit " + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
