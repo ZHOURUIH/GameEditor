@@ -9,6 +9,7 @@ public delegate void CommandCallback(object user_data, Command cmd);
 
 public class GameDefine
 {
+	public static string FOLDER_NAME = "我的传奇";				// 游戏exe所在的目录名或者目录名的前缀
 	public static string GAME_NAME = "MicroLegend.exe";			// 固定的游戏名称,即使版本更新也不会修改
 	public static string FILE_LIST = "FileList";				// 远端的文件列表名,只是除了游戏StreamingAssets资源以外的文件列表
 	public static string TEMP_PATH = "Temp_Data/";				// 下载临时目录

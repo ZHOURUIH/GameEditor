@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace GameUpdate
 {
@@ -49,6 +50,15 @@ namespace GameUpdate
 			mTimer.Tick += Tick;
 			mTimer.Start();
 
+			// 检测当前程序是否位于指定目录内
+			string folderName = StringUtility.getFolderName(Process.GetCurrentProcess().MainModule.FileName);
+			if (!folderName.StartsWith(GameDefine.FOLDER_NAME))
+			{
+				mOKDialog.setInfo("不在指定目录,无法启动游戏,只能在 " + GameDefine.FOLDER_NAME + " 目录中启动");
+				mOKDialog.ShowDialog();
+				exit();
+				return;
+			}
 			// 开始更新
 			EditorBase.mDownloadManager.startUpdateGame();
 		}
