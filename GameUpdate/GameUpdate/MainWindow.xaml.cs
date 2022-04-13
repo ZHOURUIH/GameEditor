@@ -51,10 +51,11 @@ namespace GameUpdate
 			mTimer.Start();
 
 			// 检测当前程序是否位于指定目录内
-			string folderName = StringUtility.getFolderName(Process.GetCurrentProcess().MainModule.FileName);
-			if (!folderName.StartsWith(GameDefine.FOLDER_NAME))
+			string folderPath = StringUtility.getFilePath(Process.GetCurrentProcess().MainModule.FileName);
+			string folder = StringUtility.getFileName(folderPath);
+			if (!folder.StartsWith(GameDefine.FOLDER_NAME))
 			{
-				mOKDialog.setInfo("不在指定目录,无法启动游戏,只能在 " + GameDefine.FOLDER_NAME + " 目录中启动");
+				mOKDialog.setInfo("不在指定目录,无法启动游戏,只能在 " + GameDefine.FOLDER_NAME + " 目录中启动\n当前目录:" + folderPath);
 				mOKDialog.ShowDialog();
 				exit();
 				return;

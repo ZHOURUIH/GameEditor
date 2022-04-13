@@ -6,15 +6,17 @@
         xmlns:local="clr-namespace:GameUpdate"
         mc:Ignorable="d"
 		Height="250" Width="376" AllowsTransparency="True" WindowStyle="None" Background="#00FDFAFA">
-    <Grid>
-        <Image x:Name="mBackground" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top" Height="501" Width="376" Source="Images/UpdataBackground.png" StretchDirection="UpOnly"/>
+	<Grid>
+		<Image x:Name="mBackground" HorizontalAlignment="Left" Margin="0,49,0,0" VerticalAlignment="Top" Height="501" Width="376" Source="Images/UpdataBackground.png" StretchDirection="UpOnly"/>
 		<WrapPanel x:Name="mWindowMove" MouseMove="windowMove_Click" Background="#000576FB" DockPanel.Dock="Top" Margin="0,0,0,170"/>
-        <Image x:Name="mLine" HorizontalAlignment="Left" Margin="18,367,0,0" VerticalAlignment="Top" Height="4" Width="348" Source="Images/UpdataLine.png" StretchDirection="UpOnly"/>
-        <Button x:Name="mOKButton" Content="确定" HorizontalAlignment="Left" Margin="144,195,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.603,0.059" Height="28" Click="mOKButton_Click" BorderBrush="#00707070" Foreground="#FFFDFBFB">
-            <Button.Background>
-                <ImageBrush ImageSource="Images/ButtonBackground.png"/>
-            </Button.Background>
-        </Button>
-        <Label x:Name="mInfo" Content="123" Margin="5,140,5,0" VerticalAlignment="Top" Foreground="#FFFDFAFA"  HorizontalContentAlignment="Center" Height="36"/>
-    </Grid>
+		<Image x:Name="mLine" HorizontalAlignment="Left" Margin="18,367,0,0" VerticalAlignment="Top" Height="4" Width="348" Source="Images/UpdataLine.png" StretchDirection="UpOnly"/>
+		<Button x:Name="mOKButton" Content="确定" HorizontalAlignment="Left" Margin="144,195,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.603,0.059" Height="28" Click="mOKButton_Click" BorderBrush="#00707070" Foreground="#FFFDFBFB">
+			<Button.Background>
+				<ImageBrush ImageSource="Images/ButtonBackground.png"/>
+			</Button.Background>
+		</Button>
+		<Label x:Name="mInfo" Margin="5,114,5,0" VerticalAlignment="Top" Foreground="#FFFDFAFA"  HorizontalContentAlignment="Center" Height="62" UseLayoutRounding="False" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+			<TextBlock x:Name="mInfoText" TextWrapping="Wrap" Text="TextBlockTextBlockTextBlockTextBlockTextBlockTextBlockTextBlockTextBlockTextBlockTextBlock" Height="62" Width="364" TextAlignment="Center"/>
+		</Label>
+	</Grid>
 </Window>

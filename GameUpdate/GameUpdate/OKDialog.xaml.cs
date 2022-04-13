@@ -20,7 +20,7 @@ namespace GameUpdate
 		}
 		public void setInfo(string info)
 		{
-			mInfo.Content = info;
+			mInfoText.Text = info;
 		}
 		public void setTitle(string title)
 		{
