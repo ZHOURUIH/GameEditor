@@ -8,14 +8,14 @@ void CodeUnityBuild::generate()
 	}
 
 	myVector<string> fileList;
-	myVector<string> patterns{".c", ".cpp"};
+	myVector<string> patterns{".cpp"};
 	findFiles(cppProjectPath, fileList, patterns.data(), patterns.size());
 	FOR_VECTOR(fileList)
 	{
 		string& fileName = fileList[i];
-		// 如果是Dependency中的文件,则需要保留Dependency路径,但是sqlite3.c是需要排除的文件,所以另外处理
+		// 如果是Dependency中的文件,则需要保留Dependency路径,但是.c是需要排除的文件,所以另外处理
 		int index = 0;
-		if (findSubstr(fileName, "Dependency/", &index) && !endWith(fileName, "sqlite3.c"))
+		if (findSubstr(fileName, "Dependency/", &index))
 		{
 			fileName = fileName.substr(index + strlen("Dependency/"));
 		}
@@ -27,7 +27,6 @@ void CodeUnityBuild::generate()
 	END(fileList);
 	fileList.remove("main.cpp");
 	fileList.remove("UnityBuild.cpp");
-	fileList.remove("sqlite3.c");
 	// 生成UnityBuild.cpp文件
 	generateCppUnityBuild(fileList, cppProjectPath);
 }
