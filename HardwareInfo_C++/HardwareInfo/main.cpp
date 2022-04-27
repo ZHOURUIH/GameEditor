@@ -1,12 +1,14 @@
 #include <iostream>
 #include "txSystemInfo.h"
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int main(int argc, char* args[])
 {
-	if (strlen(lpCmdLine) <= 0)
+	if (argc <= 0)
 	{
 		return 1;
 	}
+	char* infoFullPath = args[1];
+	DeleteFileA(infoFullPath);
 	txSystemInfo* info = new txSystemInfo();
 	info->init();
 	// 将硬件信息计算出的申请码写入文件
@@ -18,16 +20,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	content += info->getMainbord();
 	content += "\r\n";
 	content += info->getCPU();
-	content += "\r\n";
-	content += info->getBIOS();
-	content += "\r\n";
-	content += info->getMainboardType();
-	content += "\r\n";
-	content += info->getCurMAC();
-	std::string fileName = std::string(lpCmdLine) + "Hardware.txt";
-	DeleteFileA(fileName.c_str());
 	FILE* pFile = NULL;
-	fopen_s(&pFile, fileName.c_str(), "wb");
+	fopen_s(&pFile, infoFullPath, "wb");
 	fwrite(content.c_str(), sizeof(char), content.length(), pFile);
 	fclose(pFile);
 	return 0;
