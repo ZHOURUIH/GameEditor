@@ -478,7 +478,7 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 	else
 	{
 		includeList.push_back("#include \"Packet.h\"");
-		customList.push_back("\tvoid debugInfo(Array<512>&buffer) override");
+		customList.push_back("\tvoid debugInfo(Array<512>& buffer) override");
 		customList.push_back("\t{");
 		customList.push_back("\t\tdebug(buffer, "");");
 		customList.push_back("\t}");

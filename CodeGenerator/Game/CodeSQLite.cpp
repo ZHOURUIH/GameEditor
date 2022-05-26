@@ -488,6 +488,10 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		{
 			typeName = "sbyte";
 		}
+		else if (typeName == "llong")
+		{
+			typeName = "long";
+		}
 
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
 		if (findString(typeName.c_str(), "List", NULL))
