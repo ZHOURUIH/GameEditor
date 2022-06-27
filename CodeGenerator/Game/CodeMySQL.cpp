@@ -41,7 +41,7 @@ void CodeMySQL::generate()
 		{
 			string comment = line.substr(strlen("//"));
 			removeStartAll(comment, ' ');
-			tempInfo.mComment += comment;
+			tempInfo.mComment = comment;
 			continue;
 		}
 		// 去除所有制表符,分号
@@ -135,6 +135,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid parseResult(Map<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(Array<1024>& params) const override;");
+	line(header, "\tvoid generateUpdate(Array<4096>& params, llong flag) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
 	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
 	line(header, "\tvoid resetProperty() override;");
@@ -277,6 +278,74 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 			line(source, "\tsqlAddLLong(params, m" + memberName + ", " + addComma + ");");
 		}
 	}
+	line(source, "}");
+	line(source, "");
+
+	// generateUpdate函数
+	line(source, "void " + className + "::generateUpdate(Array<4096>& params, llong flag) const");
+	line(source, "{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		line(source, "\tif (hasBit(flag, " + intToString(i + 1) + "))");
+		line(source, "\t{");
+		if (typeName == "string")
+		{
+			if (memberInfo.mUTF8)
+			{
+				line(source, "\t\tsqlUpdateStringUTF8(params, " + memberName + ", m" + memberName + ".c_str(), (int)m" + memberName + ".length());");
+			}
+			else
+			{
+				line(source, "\t\tsqlUpdateString(params, " + memberName + ", m" + memberName + ".c_str(), (int)m" + memberName + ".length());");
+			}
+		}
+		else if (typeName == "int")
+		{
+			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "uint")
+		{
+			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "bool")
+		{
+			line(source, "\t\tsqlUpdateBool(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "byte")
+		{
+			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "char")
+		{
+			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "short")
+		{
+			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "ushort")
+		{
+			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "float")
+		{
+			line(source, "\t\tsqlUpdateFloat(params, " + memberName + ", m" + memberName + ");");
+		}
+		else if (typeName == "llong")
+		{
+			line(source, "\t\tsqlUpdateLLong(params, " + memberName + ", m" + memberName + ");");
+		}
+		line(source, "\t}");
+	}
+	line(source, "\t// 去除最后的逗号");
+	line(source, "\tint length = params.length();");
+	line(source, "\tif (length > 0)");
+	line(source, "\t{");
+	line(source, "\t\tparams[length - 1] = \'\\0\';");
+	line(source, "\t}");
 	line(source, "}");
 	line(source, "");
 
