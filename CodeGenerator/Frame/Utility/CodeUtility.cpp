@@ -127,6 +127,10 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 			{
 				memberInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
 			}
+			else if (owner == "[None]")
+			{
+				memberInfo.mOwner = SQLITE_OWNER::NONE;
+			}
 			else
 			{
 				memberInfo.mOwner = SQLITE_OWNER::BOTH;

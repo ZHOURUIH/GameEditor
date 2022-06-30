@@ -22,11 +22,12 @@ struct PacketInfo
 	bool mHotFix;						// 消息在客户端是否可热更
 };
 
-enum class SQLITE_OWNER
+enum class SQLITE_OWNER : byte
 {
-	BOTH,
-	CLIENT_ONLY,
-	SERVER_ONLY,
+	NONE,				// 不属于客户端或者服务器,仅表格辅助作用
+	BOTH,				// 客户端和服务器都会用到
+	CLIENT_ONLY,		// 仅客户端用
+	SERVER_ONLY,		// 仅服务器用
 };
 
 struct SQLiteMember

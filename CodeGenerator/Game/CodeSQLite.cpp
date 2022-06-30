@@ -89,6 +89,10 @@ void CodeSQLite::generate()
 			{
 				tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
 			}
+			else if (tagList.contains("[None]"))
+			{
+				tempInfo.mOwner = SQLITE_OWNER::NONE;
+			}
 			else
 			{
 				tempInfo.mOwner = SQLITE_OWNER::BOTH;
@@ -194,7 +198,7 @@ void CodeSQLite::generate()
 // TDSQLite.h和TDSQLite.cpp文件
 void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath)
 {
-	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY || sqliteInfo.mOwner == SQLITE_OWNER::NONE)
 	{
 		return;
 	}
@@ -219,15 +223,16 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(header, "public:");
 	FOR_I(memberCount)
 	{
-		if (sqliteInfo.mMemberList[i].mOwner != SQLITE_OWNER::CLIENT_ONLY)
+		const SQLiteMember& member = sqliteInfo.mMemberList[i];
+		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
 		{
-			string memberLine = "\t" + sqliteInfo.mMemberList[i].mTypeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
+			string memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + ";";
 			uint tabCount = generateAlignTableCount(memberLine, 40);
 			FOR_I(tabCount)
 			{
 				memberLine += '\t';
 			}
-			memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
+			memberLine += "// " + member.mComment;
 			line(header, memberLine);
 		}
 	}
@@ -236,15 +241,15 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 	line(header, "\t{");
 	FOR_I(memberCount)
 	{
-		const string& name = sqliteInfo.mMemberList[i].mMemberName;
-		if (sqliteInfo.mMemberList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		const SQLiteMember& member = sqliteInfo.mMemberList[i];
+		const string& name = member.mMemberName;
+		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
 		{
-			
-			line(header, "\t\tregisteParamEmpty(" + name + ");");
+			line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
 		}
 		else
 		{
-			line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
+			line(header, "\t\tregisteParamEmpty(" + name + ");");
 		}
 	}
 	line(header, "\t}");
@@ -268,7 +273,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string 
 // SQLiteTable.h文件
 void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFilePath)
 {
-	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY || sqliteInfo.mOwner == SQLITE_OWNER::NONE)
 	{
 		return;
 	}
@@ -307,7 +312,7 @@ void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sq
 	uint packetCount = sqliteList.size();
 	FOR_I(packetCount)
 	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
@@ -348,7 +353,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
@@ -370,7 +375,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
@@ -386,7 +391,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 	line(source, "");
 	FOR_I(count)
 	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
@@ -407,7 +412,7 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
@@ -429,7 +434,7 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 	uint count = sqliteList.size();
 	FOR_I(count)
 	{
-		if (sqliteList[i].mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
@@ -443,7 +448,7 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 // TDSQLite.cs文件
 void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFileGamePath, string dataFileHotFixPath)
 {
-	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
+	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY || sqliteInfo.mOwner == SQLITE_OWNER::NONE)
 	{
 		return;
 	}
@@ -469,11 +474,12 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 	myVector<pair<string, string>> listMemberList;
 	FOR_I(memberCount)
 	{
-		if (sqliteInfo.mMemberList[i].mMemberName == "ID")
+		const SQLiteMember& member = sqliteInfo.mMemberList[i];
+		if (member.mMemberName == "ID")
 		{
 			continue;
 		}
-		string typeName = sqliteInfo.mMemberList[i].mTypeName;
+		string typeName = member.mTypeName;
 		// 因为模板文件是按照C++来写的,但是有些类型在C#中是没有的,所以要转换为C#中对应的类型
 		// myVector替换为List,Vector2UShort替换为Vector2Int,char替换为sbyte
 		if (startWith(typeName, "Vector<"))
@@ -496,10 +502,20 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
 		if (findString(typeName.c_str(), "List", NULL))
 		{
-			listMemberList.push_back(make_pair(typeName, sqliteInfo.mMemberList[i].mMemberName));
+			listMemberList.push_back(make_pair(typeName, member.mMemberName));
 		}
 
-		string memberLine = "\tpublic " + typeName + " m" + sqliteInfo.mMemberList[i].mMemberName + ";";
+		string publicType;
+		if (member.mOwner == SQLITE_OWNER::CLIENT_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
+		{
+			publicType = "public";
+		}
+		else
+		{
+			publicType = "protected";
+		}
+
+		string memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
 		uint tabCount = generateAlignTableCount(memberLine, 44);
 		FOR_I(tabCount)
 		{
@@ -580,7 +596,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, stri
 
 void CodeSQLite::generateCSharpSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFileGamePath, string tableFileHotFixPath)
 {
-	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
+	if (sqliteInfo.mOwner == SQLITE_OWNER::SERVER_ONLY || sqliteInfo.mOwner == SQLITE_OWNER::NONE)
 	{
 		return;
 	}
@@ -641,7 +657,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	uint count = sqliteInfo.size();
 	FOR_I(count)
 	{
-		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && !sqliteInfo[i].mHotFix)
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mOwner != SQLITE_OWNER::NONE && !sqliteInfo[i].mHotFix)
 		{
 			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(TD%s), \"%s\");";
 			replaceAll(lineStr, "%s", sqliteInfo[i].mSQLiteName);
@@ -669,7 +685,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 	line(hotFixfile, "\t{");
 	FOR_I(count)
 	{
-		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mHotFix)
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mOwner != SQLITE_OWNER::NONE && sqliteInfo[i].mHotFix)
 		{
 			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(TD%s), \"%s\");";
 			replaceAll(lineStr, "%s", sqliteInfo[i].mSQLiteName);
@@ -700,7 +716,7 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 	uint sqliteCount = sqliteInfo.size();
 	FOR_I(sqliteCount)
 	{
-		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && !sqliteInfo[i].mHotFix)
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mOwner != SQLITE_OWNER::NONE && !sqliteInfo[i].mHotFix)
 		{
 			line(mainFile, "\tpublic static SQLite" + sqliteInfo[i].mSQLiteName + " mSQLite" + sqliteInfo[i].mSQLiteName + ";");
 		}
@@ -718,7 +734,7 @@ void CodeSQLite::generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteI
 	line(hotFixfile, "{");
 	FOR_I(sqliteCount)
 	{
-		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mHotFix)
+		if (sqliteInfo[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteInfo[i].mOwner != SQLITE_OWNER::NONE && sqliteInfo[i].mHotFix)
 		{
 			line(hotFixfile, "\tpublic static SQLite" + sqliteInfo[i].mSQLiteName + " mSQLite" + sqliteInfo[i].mSQLiteName + ";");
 		}
