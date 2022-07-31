@@ -33,13 +33,15 @@ void main()
 		cout << "20:处理图片阴影" << endl;
 		cout << "21:移动并覆盖地图图片" << endl;
 		cout << "22:更新地图中的特效信息到SQLite" << endl;
-		cout << "23:更新Animation表格中的AnimationPosition" << endl;
 		cout << "24:整理翅膀文件结构" << endl;
 		cout << "25:重新生成包含偏移量的图片" << endl;
 		cout << "26:裁剪序列帧图片到最小尺寸" << endl;
-		cout << "27:将图标调整到统一的最大尺寸" << endl;
+		cout << "27:将图标调整到统一的36*36" << endl;
 		cout << "28:将图片移动到上一层文件夹" << endl;
 		cout << "29:转换地图文件为简化版本" << endl;
+		cout << "30:将地砖图片信息写入数据库" << endl;
+		cout << "31:地图文件名重命名为bytes" << endl;
+		cout << "32:将图片宽高缩放为原来的一半" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -100,7 +102,7 @@ void main()
 			cout << "开始整理怪物文件结构1..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::autoGroupMonsterImage1("../media/" + fileName);
-			cout << "文件整理完毕,建议先给每个怪物手动命名后再将帧数据写入SQLite" << endl;
+			cout << "文件整理完毕,建议先给每个怪物手动命名后,且确保每个文件夹中的图片打包后不会超出图集大小,再放入指定的目录中,然后再将帧数据写入SQLite" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 6)
@@ -269,13 +271,6 @@ void main()
 			ImageUtility::updateMapEffect();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 23)
-		{
-			cout << "正在更新Animation表格中的AnimationPosition..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::updateAnimationPositionInAnimation();
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 24)
 		{
 			cout << "输入文件夹名:";
@@ -314,7 +309,7 @@ void main()
 			cin >> fileName;
 			cout << "开始调整图标大小..." << endl;
 			long startTime = timeGetTime();
-			ImageUtility::generateAllIconToMaxSize("../media/" + fileName);
+			ImageUtility::generateAllIconTo36("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 28)
@@ -336,6 +331,27 @@ void main()
 			long startTime = timeGetTime();
 			ImageUtility::convertMapFile("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 30)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			cout << "写入数据库..." << endl;
+			long startTime = timeGetTime();
+			ImageUtility::writeTileObjectImageSizeSQLite("../media/" + fileName);
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 31)
+		{
+			ImageUtility::renameMap("../media/Map");
+		}
+		else if (input == 32)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			ImageUtility::scaleTexture("../media/" + fileName, 0.5f);
 		}
 		system("pause");
 		cout << endl;

@@ -17,10 +17,10 @@ public:
 	const char* getTableName() const { return mTableName; }
 	void init(const string& fullPath);
 	virtual ~SQLiteTableBase();
+	bool executeNonQuery(const char* queryString);
 protected:
 	bool doUpdate(const char* updateString, const char* conditionString);
 	bool doInsert(const char* valueString);
-	bool executeNonQuery(const char* queryString);
 	SQLiteDataReader* executeQuery(const char* queryString);
 	void releaseReader(SQLiteDataReader* reader);
 	// 因为此处要兼容非常规数据表格类型的数据类型(SelectCount),所以不使用T,而是重新定义一个新的模板类型

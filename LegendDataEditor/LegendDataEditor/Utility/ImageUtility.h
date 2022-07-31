@@ -74,15 +74,18 @@ public:
 	static void processShadowVertical(const string& filePath);
 	static void moveMapObjectTexture(const string& sourcePath);
 	static void updateMapEffect();
-	static void updateAnimationPositionInAnimation();
 	static void generateAllOffsetedImage(const string& filePath);
-	static void generateAllIconToMaxSize(const string& filePath);
+	static void generateAllIconTo36(const string& filePath);
 	static void generateGroupImage(const string& filePath);
 	static void generateGroupMonsterImage(const string& filePath);
 	static void trimAllImage(const string& filePath);
 	static void removeAllBackground(const string& filePath);
 	static void removeTextureToLastFolder(const string& filePath);
 	static void convertMapFile(const string& filePath);
+	static void writeTileObjectImageSizeSQLite(const string& filePath);
+	static void renameMap(const string& filePath);
+	static void scaleTexture(const string& path, float scale);
+	static void scalePosition(const string& fileName, float scale);
 protected:
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);

@@ -327,6 +327,9 @@
     <ClCompile Include="SceneMap\MapTileSimple.cpp">
       <Filter>SceneMap</Filter>
     </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDObjectTileImage.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\ServerDefine.h">
@@ -808,6 +811,12 @@
     </ClInclude>
     <ClInclude Include="SceneMap\MapTileSimple.h">
       <Filter>SceneMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteObjectTileImage.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDObjectTileImage.h">
+      <Filter>Sqlite\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

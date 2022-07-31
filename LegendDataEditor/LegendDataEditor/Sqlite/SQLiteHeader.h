@@ -49,5 +49,6 @@
 #include "SQLiteTriggerEvent.h"
 #include "SQLiteTriggerModifier.h"
 #include "SQLiteTimeTask.h"
+#include "SQLiteObjectTileImage.h"
 
 #endif

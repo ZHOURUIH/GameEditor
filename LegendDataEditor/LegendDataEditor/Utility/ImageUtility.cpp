@@ -516,9 +516,8 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 			string curPath = getFilePath(fileList[j]) + "/";
 			if (autoGroup)
 			{
-				string destFolderName = getFolderName(fileList[j]) + "_dir" + intToString(imageDir);
-				string destPath = getFilePath(curPath) + "/" + destFolderName + "/";
-				string destFileName = destFolderName + "_" + intToString(index) + "." + getFileSuffix(fileList[j]);
+				string destPath = getFilePath(curPath) + "/";
+				string destFileName = getFolderName(fileList[j]) + "_dir" + intToString(imageDir) + "_" + intToString(index) + "." + getFileSuffix(fileList[j]);
 				moveImageWithPosition(fileList[j], destPath + destFileName);
 			}
 			else
@@ -846,6 +845,10 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 			texturePacker(folderList[i]);
 			cout << "已打包:" << i + 1 << "/" << folderListCount << endl;
 		}
+		else
+		{
+			cout << "跳过空目录" << endl;
+		}
 	}
 	END(folderList);
 }
@@ -876,9 +879,15 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 				animationInfo.insert(animation, pair<myMap<int, int>, myMap<int, int>>());
 			}
 			string posString = openTxtFile(getFileNameNoSuffix(fullFileName, false) + ".txt", false);
+			replaceAll(posString, "\r", "");
 			int posIndex = getLastNumber(getFileNameNoSuffix(fullFileName, true));
 			myVector<int> pos;
 			stringToInts(posString, pos);
+			if (pos.size() != 2)
+			{
+				pos.clear();
+				stringToInts(posString, pos, "\n");
+			}
 			if (pos.size() == 2)
 			{
 				animationInfo[animation].first.insert(posIndex, pos[0]);
@@ -895,7 +904,7 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			TDImagePositionAnimation animationData;
 			animationData.mID = 0;
 			// 此处多一层目录是因为一般一个图集都会在单独的目录中,且此目录与图集同名
-			animationData.mAtlas = folders[i].substr(strlen("../media/")) + "/" + getFileName(folders[i]);
+			animationData.mAtlas = folders[i].substr(strlen("../media/")) + ".png";
 			animationData.mAnimation = iter->first;
 			animationData.mFrameCount = iter->second.first.size();
 			valueToList(iter->second.first, animationData.mPosX);
@@ -1453,7 +1462,7 @@ void ImageUtility::moveMapObjectTexture(const string& sourcePath)
 void ImageUtility::updateMapEffect()
 {
 	NEW_SQLITE(SQLiteMapEffect, mapEffectTable, "MapEffect");
-	NEW_SQLITE(SQLiteSceneMapFile, sceneMapFileTable, "MapEffect");
+	NEW_SQLITE(SQLiteSceneMapFile, sceneMapFileTable, "SceneMapFile");
 
 	myVector<pair<int, int>> effectImage;
 	// 查找特效序列帧所在目录
@@ -1515,43 +1524,6 @@ void ImageUtility::updateMapEffect()
 		mapEffectTable.insert(*mapEffectList[i]);
 	}
 	END(mapEffectList);
-}
-
-void ImageUtility::updateAnimationPositionInAnimation()
-{
-	NEW_SQLITE(SQLiteAnimation, animationTable, "Animation");
-	NEW_SQLITE(SQLiteImagePositionAnimation, animationPosTable, "ImagePositionAnimation");
-	auto& animationDataList = animationTable.queryAll();
-	FOREACH_CONST(iter, animationDataList)
-	{
-		TDAnimation* animationData = iter->second;
-		myVector<ushort> posIDList;
-		if (animationData->mDirectionCount > 0)
-		{
-			if (animationData->mDirectionCount == 1)
-			{
-				TDImagePositionAnimation dataNoDir;
-				animationPosTable.query(animationData->mAtlas, animationData->mAnimation, dataNoDir);
-				if (dataNoDir.mID > 0)
-				{
-					posIDList.push_back(dataNoDir.mID);
-				}
-			}
-			else
-			{
-				// 最多8个方向,需要逐一查找
-				FOR_J(DIRECTION_COUNT)
-				{
-					TDImagePositionAnimation data;
-					string animationWithDir = animationData->mAnimation + "_dir" + intToString(j);
-					animationPosTable.query(animationData->mAtlas, animationWithDir, data);
-					posIDList.push_back(data.mID);
-				}
-			}
-		}
-		animationData->mAnimationPosition = posIDList;
-		animationTable.update(*animationData);
-	}
 }
 
 struct AnimInfo
@@ -1730,7 +1702,7 @@ void ImageUtility::generateAllOffsetedImage(const string& filePath)
 	END(folders);
 }
 
-void ImageUtility::generateAllIconToMaxSize(const string& filePath)
+void ImageUtility::generateAllIconTo36(const string& filePath)
 {
 	myMap<int, AnimInfo> EmptyList;
 	myVector<string> files;
@@ -1873,7 +1845,7 @@ void ImageUtility::generateExpandImage(const string& fileName, const string& new
 		}
 		else if (bpp == 24)
 		{
-			FOR_I(size.x)
+			FOR_I((uint)size.x)
 			{
 				newLine[i * 4 + 0] = 0;
 				newLine[i * 4 + 1] = 0;
@@ -1892,7 +1864,7 @@ void ImageUtility::generateExpandImage(const string& fileName, const string& new
 			}
 			else if (bpp == 24)
 			{
-				FOR_I(copyPixels)
+				FOR_I((uint)copyPixels)
 				{
 					memcpy(newLine + 4 * xInOld + 4 * i, oldLine + 3 * i + 3 * srcPixelOffset, 3);
 				}
@@ -2102,4 +2074,109 @@ void ImageUtility::convertMapFile(const string& filePath)
 	}
 	END(files);
 	deleteEmptyFolder(filePath);
+}
+
+void ImageUtility::writeTileObjectImageSizeSQLite(const string& filePath)
+{
+	NEW_SQLITE(SQLiteObjectTileImage, objectTileImage, "ObjectTileImage");
+	myVector<string> fileList;
+	findFiles(filePath, fileList, ".png");
+	objectTileImage.executeNonQuery("BEGIN TRANSACTION");
+	cout << "总共" << fileList.size() << "张图片" << endl;
+	FOR_VECTOR(fileList)
+	{
+		const string& filePath = fileList[i];
+		string folderName = getFolderName(filePath);
+		myVector<string> elements;
+		split(folderName.c_str(), "_", elements);
+		if (elements.size() != 3)
+		{
+			cout << "图片所在的文件夹名错误:" << filePath << endl;
+			continue;
+		}
+		int firstIndex = stringToInt(elements[1]);
+		int secondIndex = stringToInt(elements[2]);
+		Vector2Int imageSize = getImageSize(filePath);
+		TDObjectTileImage imageData;
+		imageData.mID = i + 1;
+		imageData.mFileIndex = firstIndex;
+		imageData.mImageSetIndex = secondIndex;
+		imageData.mFileName = stringToInt(getFileNameNoSuffix(filePath, true));
+		imageData.mImageSizeX = imageSize.x;
+		imageData.mImageSizeY = imageSize.y;
+		objectTileImage.insert(imageData);
+		if (i % 1000 == 0)
+		{
+			cout << "已写入" << i + 1 << "个数据" << endl;
+		}
+	}
+	objectTileImage.executeNonQuery("COMMIT");
+}
+
+void ImageUtility::renameMap(const string& filePath)
+{
+	myVector<string> fileList;
+	findFiles(filePath, fileList, ".smap");
+	FOR_VECTOR(fileList)
+	{
+		renameFile(fileList[i], replaceSuffix(fileList[i], ".bytes"));
+	}
+	myVector<string> fileList1;
+	findFiles(filePath, fileList1, ".unreach");
+	FOR_VECTOR(fileList1)
+	{
+		renameFile(fileList1[i], replaceSuffix(fileList1[i], "_unreach.bytes"));
+	}
+}
+
+void ImageUtility::scaleTexture(const string& path, float scale)
+{
+	myVector<string> fileList;
+	findFiles(path, fileList, ".png");
+	FOR_VECTOR(fileList)
+	{
+		const string& fileName = fileList[i];
+		FreeImage_Initialise();
+		FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+		FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
+		uint width = FreeImage_GetWidth(oldBitmap);
+		uint height = FreeImage_GetHeight(oldBitmap);
+		uint newWidth = (uint)(width * scale);
+		uint newHeight = (uint)(height * scale);
+		FIBITMAP* newBitmap = FreeImage_Allocate(newWidth, newHeight, 32);
+		FOR_Y(newHeight)
+		{
+			FOR_X(newWidth)
+			{
+				int mappingOldX = (int)(((float)x / newWidth) * width);
+				int mappingOldY = (int)(((float)y / newHeight) * height);
+				RGBQUAD color = getColor(oldBitmap, mappingOldX, mappingOldY);
+				setColor(newBitmap, x, y, color);
+			}
+		}
+
+		FreeImage_Save(format, newBitmap, fileName.c_str());
+		FreeImage_Unload(oldBitmap);
+		FreeImage_Unload(newBitmap);
+		FreeImage_DeInitialise();
+		scalePosition(getFileNameNoSuffix(fileName, false) + ".txt", scale);
+	}
+	END(fileList);
+}
+
+void ImageUtility::scalePosition(const string& fileName, float scale)
+{
+	string posString = openTxtFile(fileName, false);
+	replaceAll(posString, "\r", "");
+	myVector<int> pos;
+	stringToInts(posString, pos);
+	if (pos.size() != 2)
+	{
+		pos.clear();
+		stringToInts(posString, pos, "\n");
+	}
+	if (pos.size() == 2)
+	{
+		writeFile(fileName, intToString((int)(pos[0] * scale)) + "," + intToString((int)(pos[1] * scale)));
+	}
 }
