@@ -26,7 +26,7 @@ public:
 	static void allWixWilToPNG(const string& sourcePath);
 	static void writePositionFile(const string& positionFile, POINT* posList, int posCount);
 	static POINT* readPositionFile(const string& positionFile, int& posCount);
-	static void renameImage(const string& path);
+	static void renameImageToNumber(const string& path);
 	static void renameImageToAnim(const string& path);
 	static void splitPositionFile(const string& path, bool pathWithFileName = false);
 	static void renameByDirection(const string& path, int directionCount, bool autoGroup = true);
@@ -95,6 +95,12 @@ protected:
 	static void generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset);
 	static Vector2Int generateMinSize(const string& fileName);
 	static void removeEmptyRectangle(const string& fileName, Vector2Int );
+	static void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb);
+	static RGBQUAD getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette);
+	static bool isBlack(const RGBQUAD& rgb);
+	static bool isEmpty(const RGBQUAD& rgb);
+	static RGBQUAD getColor(FIBITMAP* bitmap, int x, int y);
+	static void setColor(FIBITMAP* bitmap, int x, int y, const RGBQUAD& rgb);
 };
 
 #endif

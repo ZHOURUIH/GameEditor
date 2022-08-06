@@ -359,7 +359,7 @@ void ImageUtility::autoGroupMonsterImage1(const string& path)
 {
 	// 手动对动作进行分组后,就可以对每组动作文件进行方向分组
 	// 重命名文件,将每个文件夹中的图片都重命名为该文件夹中的位置序号
-	renameImage(path);
+	renameImageToNumber(path);
 	// 自动计算方向并分组
 	renameByDirection(path, DIRECTION_COUNT);
 }
@@ -410,7 +410,7 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 	END(folderList);
 }
 
-void ImageUtility::renameImage(const string& path)
+void ImageUtility::renameImageToNumber(const string& path)
 {
 	// 将目录中的文件按文件名排序后,重命名为从0开始的数字
 	myVector<string> folderList;
@@ -436,6 +436,7 @@ void ImageUtility::renameImageToAnim(const string& path)
 {
 	// 将目录中的文件按文件名排序后,重命名为序列帧格式的名字,以文件夹名开头,以从0开始的数字结尾
 	myVector<string> folderList;
+	folderList.push_back(path);
 	findFolders(path, folderList, true);
 	int folderCount = folderList.size();
 	FOR_VECTOR(folderList)
@@ -837,6 +838,7 @@ void ImageUtility::texturePacker(const string& texturePath)
 void ImageUtility::texturePackerAll(const string& texturePath)
 {
 	myVector<string> folderList;
+	folderList.push_back(texturePath);
 	findFolders(texturePath, folderList, true);
 	FOR_VECTOR(folderList)
 	{
@@ -1155,7 +1157,7 @@ void ImageUtility::processAllShadow(const string& path)
 	END(fileList);
 }
 
-void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb)
+void ImageUtility::setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb)
 {
 	if (bpp == 24)
 	{
@@ -1172,7 +1174,7 @@ void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb)
 	}
 }
 
-RGBQUAD getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette)
+RGBQUAD ImageUtility::getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette)
 {
 	RGBQUAD pixel;
 	pixel.rgbBlue = 0;
@@ -1205,7 +1207,7 @@ RGBQUAD getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette)
 	return pixel;
 }
 
-bool isBlack(const RGBQUAD& rgb)
+bool ImageUtility::isBlack(const RGBQUAD& rgb)
 {
 	if (rgb.rgbReserved == 127)
 	{
@@ -1221,12 +1223,12 @@ bool isBlack(const RGBQUAD& rgb)
 	return false;
 }
 
-bool isEmpty(const RGBQUAD& rgb)
+bool ImageUtility::isEmpty(const RGBQUAD& rgb)
 {
 	return rgb.rgbReserved == 0;
 }
 
-RGBQUAD getColor(FIBITMAP* bitmap, int x, int y)
+RGBQUAD ImageUtility::getColor(FIBITMAP* bitmap, int x, int y)
 {
 	BYTE* line = FreeImage_GetScanLine(bitmap, y);
 	RGBQUAD* palette = NULL;
@@ -1238,7 +1240,7 @@ RGBQUAD getColor(FIBITMAP* bitmap, int x, int y)
 	return getPixel(line + x * bpp / 8, bpp, palette);
 }
 
-void setColor(FIBITMAP* bitmap, int x, int y, const RGBQUAD& rgb)
+void ImageUtility::setColor(FIBITMAP* bitmap, int x, int y, const RGBQUAD& rgb)
 {
 	int bpp = FreeImage_GetBPP(bitmap);
 	BYTE* line = FreeImage_GetScanLine(bitmap, y);
@@ -1270,7 +1272,7 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
 			int blackOrEmpty = 0;
 			RGBQUAD rgb = getColor(bitmap, x, y);
-			if (isBlack(rgb))
+			if (isBlack(rgb, 35))
 			{
 				blackOrEmpty = 1;
 			}
@@ -1364,7 +1366,7 @@ void ImageUtility::processShadowVertical(const string& filePath)
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
 			int blackOrEmpty = 0;
 			RGBQUAD rgb = getColor(bitmap, x, y);
-			if (isBlack(rgb))
+			if (isBlack(rgb, 35))
 			{
 				blackOrEmpty = 1;
 			}
@@ -1722,6 +1724,7 @@ void ImageUtility::trimAllImage(const string& filePath)
 {
 	myMap<int, string> EmptyList;
 	myVector<string> folders;
+	folders.push_back(filePath);
 	findFolders(filePath, folders, true);
 	FOR_VECTOR(folders)
 	{
@@ -1737,11 +1740,17 @@ void ImageUtility::trimAllImage(const string& filePath)
 		myMap<string, myMap<int, string>> animList;
 		FOR_VECTOR_J(files)
 		{
-			string fileName = files[j];
+			const string& fileName = files[j];
 			string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
-			string animationWithDir = fileNameNoSuffix.substr(0, findStringPos(fileNameNoSuffix, "_", 0, false));
-			int index = stringToInt(fileNameNoSuffix.substr(findStringPos(fileNameNoSuffix, "_", 0, false) + 1));
-			animList.tryInsert(animationWithDir, EmptyList).insert(index, files[j]);
+			int index0 = findStringPos(fileNameNoSuffix, "_", 0, false);
+			if (index0 < 0)
+			{
+				cout << "图片名字不是序列帧" << endl;
+				return;
+			}
+			string animationWithDir = fileNameNoSuffix.substr(0, index0);
+			int frameIndex = stringToInt(fileNameNoSuffix.substr(index0 + 1));
+			animList.tryInsert(animationWithDir, EmptyList).insert(frameIndex, fileName);
 		}
 
 		FOREACH(iterAnim, animList)

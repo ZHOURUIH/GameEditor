@@ -2062,7 +2062,8 @@ void StringUtility::appendValueString(char* queryStr, uint size, const char* str
 	const char* end = addComma ? "\"," : "\"";
 	if (toUTF8)
 	{
-		STR_APPEND3_N(queryStr, size, "\"", ANSIToUTF8(str).c_str(), end);
+		string utf8Str = ANSIToUTF8(str);
+		STR_APPEND3_N(queryStr, size, "\"", utf8Str.c_str(), end);
 	}
 	else
 	{
@@ -2160,7 +2161,8 @@ void StringUtility::appendConditionString(char* condition, uint size, const char
 {
 	if (toUTF8)
 	{
-		STR_APPEND6_N(condition, size, col, relationalOperator, "\"", ANSIToUTF8(str).c_str(), "\"", logicalOperator);
+		string utf8Str = ANSIToUTF8(str);
+		STR_APPEND6_N(condition, size, col, relationalOperator, "\"", utf8Str.c_str(), "\"", logicalOperator);
 	}
 	else
 	{
@@ -2191,7 +2193,8 @@ void StringUtility::appendUpdateString(char* updateInfo, uint size, const char* 
 	const char* end = addComma ? "\"," : "\"";
 	if (toUTF8)
 	{
-		STR_APPEND4_N(updateInfo, size, col, " = \"", ANSIToUTF8(str).c_str(), end);
+		string utf8Str = ANSIToUTF8(str);
+		STR_APPEND4_N(updateInfo, size, col, " = \"", utf8Str.c_str(), end);
 	}
 	else
 	{

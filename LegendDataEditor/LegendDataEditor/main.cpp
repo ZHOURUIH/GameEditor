@@ -15,7 +15,7 @@ void main()
 		cout << "2:整理角色文件结构" << endl;
 		cout << "3:整理武器文件结构" << endl;
 		cout << "4:整理怪物文件结构0" << endl;
-		cout << "5:整理怪物文件结构1" << endl;
+		cout << "5:按序号重命名文件并自动计算方向" << endl;
 		cout << "6:整理特效文件结构" << endl;
 		cout << "7:自动计算方向" << endl;
 		cout << "8:拆分位置文件" << endl;
@@ -99,10 +99,10 @@ void main()
 			cout << "输入文件名:";
 			string fileName;
 			cin >> fileName;
-			cout << "开始整理怪物文件结构1..." << endl;
+			cout << "开始按序号重命名文件并自动计算方向..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::autoGroupMonsterImage1("../media/" + fileName);
-			cout << "文件整理完毕,建议先给每个怪物手动命名后,且确保每个文件夹中的图片打包后不会超出图集大小,再放入指定的目录中,然后再将帧数据写入SQLite" << endl;
+			cout << "文件整理完毕,建议先手动命名后,且确保每个文件夹中的图片打包后不会超出图集大小,再放入指定的目录中,然后再将帧数据写入SQLite" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 6)
@@ -156,7 +156,7 @@ void main()
 			cin >> fileName;
 			cout << "开始按序号重命名文件..." << endl;
 			long startTime = timeGetTime();
-			ImageUtility::renameImage("../media/" + fileName);
+			ImageUtility::renameImageToNumber("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 11)
