@@ -271,18 +271,38 @@ string CodeUtility::cSharpPushParamString(const PacketMember& memberInfo)
 	return "pushParam(" + memberInfo.mMemberName + ");";
 }
 
-string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix)
+string CodeUtility::cppTypeToCSharpType(const string& cppType)
+{
+	if (cppType == "char")
+	{
+		return "byte";
+	}
+	else if (cppType == "ullong" || cppType == "llong")
+	{
+		return "long";
+	}
+	return cppType;
+}
+
+string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
-	string typeName = memberInfo.mTypeName;
-	if (typeName == "char")
+	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
+	if (memberInfo.mIsArray)
 	{
-		typeName = "byte";
+		typeName = toUpper(typeName) + "S";
 	}
-	else if (typeName == "ullong" || typeName == "llong")
+	else
 	{
-		typeName = "long";
+		typeName = toUpper(typeName);
 	}
+	return "public " + typeName + " " + memberInfo.mMemberName + ";";
+}
+
+string CodeUtility::cSharpMemberContructString(const PacketMember& memberInfo, bool isHotFix)
+{
+	// c#里面不用char,使用byte,也没有ullong,使用long
+	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
 	string str;
 	if (memberInfo.mIsArray)
 	{
@@ -304,12 +324,12 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bo
 				lengthMacro += " * ";
 			}
 		}
-		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
+		str = memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
 	}
 	else
 	{
 		typeName = toUpper(typeName);
-		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+		str = memberInfo.mMemberName + " = new " + typeName + "();";
 	}
 	return str;
 }

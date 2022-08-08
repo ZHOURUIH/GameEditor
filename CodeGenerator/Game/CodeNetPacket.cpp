@@ -716,10 +716,19 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i], packetInfo.mHotFix));
+		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i]));
 	}
 	if (memberCount > 0)
 	{
+		// ππ‘Ï
+		line(file, "public " + packetName + "()");
+		line(file, "{");
+		FOR_I(memberCount)
+		{
+			line(file, "\t" + cSharpMemberContructString(packetInfo.mMemberList[i], packetInfo.mHotFix));
+		}
+		line(file, "}");
+		// fillParams
 		line(file, "\tprotected override void fillParams()");
 		line(file, "\t{");
 		FOR_I(memberCount)
