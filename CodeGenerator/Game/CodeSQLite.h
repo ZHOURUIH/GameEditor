@@ -9,18 +9,18 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFilePath);
-	static void generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFilePath);
-	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
-	static void generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, string filePath);
-	static void generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, string filePath);
-	static void generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, string filePath);
-	static void generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqliteList, string filePath);
-	//c#
-	static void generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, string dataFileGamePath, string dataFileHotFixPath);
-	static void generateCSharpSQLiteTableFile(const SQLiteInfo& sqliteInfo, string tableFileGamePath, string tableFileHotFixPath);
-	static void generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, string fileHotFixPath, string fileGamePath);
-	static void generateCSharpSQLiteDeclare(const myVector<SQLiteInfo>& sqliteInfo, string fileHotFixPath, string fileGamePath);
+	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const string& dataFilePath);
+	static void generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const string& tableFilePath);
+	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
+	static void generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
+	static void generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
+	static void generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
+	static void generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
+	//c#,C#这里不再使用SQLite,而是将SQLite转换为自定义的数据来读取,也跟Excel转换以后的数据一样
+	static void generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const string& dataFileGamePath, const string& dataFileHotFixPath);
+	static void generateCSharpExcelTableFile(const SQLiteInfo& sqliteInfo, const string& tableFileGamePath, const string& tableFileHotFixPath);
+	static void generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, const string& fileHotFixPath, const string& fileGamePath);
+	static void generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteInfo, const string& fileHotFixPath, const string& fileGamePath);
 protected:
 };
 
