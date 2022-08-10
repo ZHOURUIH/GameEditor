@@ -586,7 +586,7 @@ void CodeSQLite::generateCSharpExcelTableFile(const SQLiteInfo& sqliteInfo, cons
 	line(table, "\t{");
 	line(table, "\t\tif (!mDataAvailable)");
 	line(table, "\t\t{");
-	line(table, "\t\t\tforeach (var item in mDataMap)");
+	line(table, "\t\t\tforeach (var item in getDataList())");
 	line(table, "\t\t\t{");
 	line(table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
 	line(table, "\t\t\t}");
