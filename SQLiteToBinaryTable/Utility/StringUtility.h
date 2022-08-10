@@ -1334,6 +1334,43 @@ public:
 	//-----------------------------------------------------------------------------------------------------------------------------
 	// 字符串转换为基础数据类型数组
 	//-----------------------------------------------------------------------------------------------------------------------------
+	static void stringToBools(const string& str, Vector<bool>& valueList, const char* seperate = ",");
+	static uint stringToBools(const char* str, bool* buffer, uint bufferSize, const char* seperate = ",");
+	template<size_t Length>
+	static uint stringToBools(const char* str, Array<Length, bool>& buffer, const char* seperate = ",", bool showError = true)
+	{
+		uint curCount = 0;
+		uint startPos = 0;
+		uint keyLen = strlen(seperate);
+		uint sourceLen = strlen(str);
+		Array<4> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= Length)
+			{
+				if (showError)
+				{
+					ERROR("int buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToInt(curString.toString()) != 0;
+		}
+		return curCount;
+	}
 	static void stringToBytes(const string& str, Vector<byte>& valueList, const char* seperate = ",");
 	static uint stringToBytes(const char* str, byte* buffer, uint bufferSize, const char* seperate = ",");
 	template<size_t Length>
@@ -1344,6 +1381,43 @@ public:
 		uint keyLen = strlen(seperate);
 		uint sourceLen = strlen(str);
 		Array<4> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= Length)
+			{
+				if (showError)
+				{
+					ERROR("int buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToInt(curString.toString());
+		}
+		return curCount;
+	}
+	static void stringToShorts(const string& str, Vector<short>& valueList, const char* seperate = ",");
+	static uint stringToShorts(const char* str, short* buffer, uint bufferSize, const char* seperate = ",");
+	template<size_t Length>
+	static uint stringToShorts(const char* str, Array<Length, short>& buffer, const char* seperate = ",", bool showError = true)
+	{
+		uint curCount = 0;
+		uint startPos = 0;
+		uint keyLen = strlen(seperate);
+		uint sourceLen = strlen(str);
+		Array<8> curString{ 0 };
 		int devidePos = -1;
 		bool ret = true;
 		while (ret)

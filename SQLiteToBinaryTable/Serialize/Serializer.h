@@ -29,6 +29,26 @@ public:
 		}
 		value = BinaryUtility::read<T>(mBuffer, mBufferSize, mIndex);
 	}
+	template<typename T>
+	void writeArray(const Vector<T>& value)
+	{
+		BinaryUtility::write<int>(mBuffer, mBufferSize, mIndex, (int)value.size());
+		FOR_CONST(value)
+		{
+			BinaryUtility::write(mBuffer, mBufferSize, mIndex, value[i]);
+		}
+		END_CONST();
+	}
+	template<>
+	void writeArray(const Vector<string>& value)
+	{
+		BinaryUtility::write<int>(mBuffer, mBufferSize, mIndex, (int)value.size());
+		FOR_CONST(value)
+		{
+			writeString(value[i].c_str());
+		}
+		END_CONST();
+	}
 	void writeBuffer(char* buffer, uint bufferSize);
 	void readBuffer(char* buffer, uint bufferSize, uint readLen);
 	void writeString(const char* str);

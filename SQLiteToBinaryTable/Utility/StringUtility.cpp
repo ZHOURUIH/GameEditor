@@ -940,6 +940,54 @@ void StringUtility::floatsToString(char* buffer, uint bufferSize, const Vector<f
 	END_CONST();
 }
 
+void StringUtility::stringToBools(const string& str, Vector<bool>& valueList, const char* seperate)
+{
+	Vector<string> strList;
+	split(str, seperate, strList);
+	uint count = strList.size();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToInt(curStr) != 0);
+		}
+	}
+}
+
+uint StringUtility::stringToBools(const char* str, bool* buffer, uint bufferSize, const char* seperate)
+{
+	uint curCount = 0;
+	uint startPos = 0;
+	uint keyLen = strlen(seperate);
+	uint sourceLen = strlen(str);
+	Array<4> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("int buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToInt(curString.toString()) != 0;
+	}
+	return curCount;
+}
+
 void StringUtility::stringToBytes(const string& str, Vector<byte>& valueList, const char* seperate)
 {
 	Vector<string> strList;
@@ -963,6 +1011,54 @@ uint StringUtility::stringToBytes(const char* str, byte* buffer, uint bufferSize
 	uint keyLen = strlen(seperate);
 	uint sourceLen = strlen(str);
 	Array<4> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("int buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToInt(curString.toString());
+	}
+	return curCount;
+}
+
+void StringUtility::stringToShorts(const string& str, Vector<short>& valueList, const char* seperate)
+{
+	Vector<string> strList;
+	split(str, seperate, strList);
+	uint count = strList.size();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToInt(curStr));
+		}
+	}
+}
+
+uint StringUtility::stringToShorts(const char* str, short* buffer, uint bufferSize, const char* seperate)
+{
+	uint curCount = 0;
+	uint startPos = 0;
+	uint keyLen = strlen(seperate);
+	uint sourceLen = strlen(str);
+	Array<8> curString{ 0 };
 	int devidePos = -1;
 	bool ret = true;
 	while (ret)

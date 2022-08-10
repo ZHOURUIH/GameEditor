@@ -2,7 +2,6 @@
 #include "Serializer.h"
 
 string START_FALG = "#start";
-string ENCRYPT_KEY = "ASLDIHQWILDjadiuahrfiqwdo!@##*^%ishduhasf#*$^(][][dajfgsdfsdgbweghwoeeghwoegh*(%&#$";
 
 enum class SQLITE_OWNER : byte
 {
@@ -259,10 +258,6 @@ int main()
 		SQLiteTableBase* table = new SQLiteTableBase();
 		table->setTableName(StringUtility::getFileNameNoSuffix(files[i], true));
 		table->init(files[i]);
-		if (table->getTableName() == "Animation")
-		{
-			int a = 0;
-		}
 		const SQLiteInfo& sqliteTableInfo = sqliteInfoList[table->getTableName()];
 		SQLiteDataReader* reader = table->doSelect();
 		while (reader->read())
@@ -316,22 +311,105 @@ int main()
 					llong value = (llong)reader->getLLong(j);
 					serializer.write(value);
 				}
-				else if (typeName == "string" || 
-						typeName == "Vector<bool>" || 
-						typeName == "Vector<byte>" || 
-						typeName == "Vector<char>" || 
-						typeName == "Vector<short>" || 
-						typeName == "Vector<ushort>" || 
-						typeName == "Vector<int>" || 
-						typeName == "Vector<uint>" || 
-						typeName == "Vector<float>" || 
-						typeName == "Vector<string>" || 
-						typeName == "Vector2Int" || 
-						typeName == "Vector2UShort")
+				else if (typeName == "string")
+				{
+					string value;
+					reader->getString(j, value, false);
+					serializer.writeString(value.c_str());
+				}
+				else if (typeName == "Vector<bool>")
 				{
 					string value;
 					reader->getString(j, value);
-					serializer.writeString(value.c_str());
+					Vector<bool> bools;
+					StringUtility::stringToBools(value, bools);
+					serializer.writeArray(bools);
+				}
+				else if (typeName == "Vector<byte>")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<byte> bytes;
+					StringUtility::stringToBytes(value, bytes);
+					serializer.writeArray(bytes);
+				}
+				else if (typeName == "Vector<short>")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<short> shorts;
+					StringUtility::stringToShorts(value, shorts);
+					serializer.writeArray(shorts);
+				}
+				else if (typeName == "Vector<ushort>")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<ushort> shorts;
+					StringUtility::stringToUShorts(value, shorts);
+					serializer.writeArray(shorts);
+				}
+				else if (typeName == "Vector<int>")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<int> shorts;
+					StringUtility::stringToInts(value, shorts);
+					serializer.writeArray(shorts);
+				}
+				else if (typeName == "Vector<uint>")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<uint> shorts;
+					StringUtility::stringToUInts(value, shorts);
+					serializer.writeArray(shorts);
+				}
+				else if (typeName == "Vector<float>")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<uint> shorts;
+					StringUtility::stringToUInts(value, shorts);
+					serializer.writeArray(shorts);
+				}
+				else if (typeName == "Vector<string>")
+				{
+					string value;
+					reader->getString(j, value, false);
+					Vector<string> strings;
+					StringUtility::split(value, ",", strings);
+					serializer.writeArray(strings);
+				}
+				else if (typeName == "Vector2UShort")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<ushort> ushorts;
+					StringUtility::stringToUShorts(value, ushorts);
+					if (ushorts.size() == 0)
+					{
+						cout << "字段内容错误,类型Vector2UShort,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						system("pause");
+						return 0;
+					}
+					serializer.write(ushorts[0]);
+					serializer.write(ushorts[1]);
+				}
+				else if (typeName == "Vector2Int")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<int> ints;
+					StringUtility::stringToInts(value, ints);
+					if (ints.size() == 0)
+					{
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						system("pause");
+						return 0;
+					}
+					serializer.write(ints[0]);
+					serializer.write(ints[1]);
 				}
 				else
 				{
@@ -344,8 +422,8 @@ int main()
 		}
 		table->releaseReader(reader);
 		// 重新计算密钥
-		string key = ENCRYPT_KEY + table->getTableName();
-		key = FileUtility::generateFileMD5(key.c_str(), key.length());
+		string key = "ASLD" + table->getTableName();
+		key = FileUtility::generateFileMD5(key.c_str(), key.length()) + "23y35y983";
 		char* buffer = serializer.getWriteableBuffer();
 		uint bufferSize = serializer.getBufferSize();
 		FOR_J(bufferSize)
