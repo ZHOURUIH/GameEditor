@@ -649,6 +649,9 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 			line(hotFixfile, lineStr);
 		}
 	}
+	line(hotFixfile, "");
+	line(hotFixfile, "\t\t// 进入热更以后,所有资源都处于可用状态");
+	line(hotFixfile, "\t\tmExcelManager.resourceAvailable();");
 	line(hotFixfile, "\t}");
 	line(hotFixfile, "\t//-------------------------------------------------------------------------------------------------------------");
 	line(hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
