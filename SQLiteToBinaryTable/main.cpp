@@ -260,8 +260,10 @@ int main()
 		table->init(files[i]);
 		const SQLiteInfo& sqliteTableInfo = sqliteInfoList[table->getTableName()];
 		SQLiteDataReader* reader = table->doSelect();
+		int index = 0;
 		while (reader->read())
 		{
+			++index;
 			const auto& memberList = sqliteTableInfo.mMemberList;
 			FOR_CONST_J(memberList)
 			{

@@ -32,17 +32,17 @@ public:
 	template<typename T>
 	void writeArray(const Vector<T>& value)
 	{
-		BinaryUtility::write<int>(mBuffer, mBufferSize, mIndex, (int)value.size());
+		write((int)value.size());
 		FOR_CONST(value)
 		{
-			BinaryUtility::write(mBuffer, mBufferSize, mIndex, value[i]);
+			write(value[i]);
 		}
 		END_CONST();
 	}
 	template<>
 	void writeArray(const Vector<string>& value)
 	{
-		BinaryUtility::write<int>(mBuffer, mBufferSize, mIndex, (int)value.size());
+		write((int)value.size());
 		FOR_CONST(value)
 		{
 			writeString(value[i].c_str());

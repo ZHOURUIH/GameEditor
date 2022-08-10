@@ -308,8 +308,7 @@ public:
 	{
 		if (i >= (uint)mVector.size())
 		{
-			// 因为函数为const属性,但是directError不是const属性,所以此处调用directError会报错
-			//directError("vector index out of range!");
+			IndependentLog::directError("vector index out of range!");
 		}
 		return mVector[i];
 	}
