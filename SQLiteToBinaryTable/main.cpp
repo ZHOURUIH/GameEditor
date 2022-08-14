@@ -268,48 +268,39 @@ int main()
 				const string& typeName = memberList[j].mTypeName;
 				if (typeName == "bool")
 				{
-					int value = reader->getInt(j);
-					serializer.write(value != 0);
+					serializer.write(reader->getInt(j) != 0);
 				}
 				else if (typeName == "byte")
 				{
-					byte value = (byte)reader->getInt(j);
-					serializer.write(value);
+					serializer.write((byte)reader->getInt(j));
 				}
 				else if (typeName == "char")
 				{
-					char value = (char)reader->getInt(j);
-					serializer.write(value);
+					serializer.write((char)reader->getInt(j));
 				}
 				else if (typeName == "short")
 				{
-					short value = (short)reader->getInt(j);
-					serializer.write(value);
+					serializer.write((short)reader->getInt(j));
 				}
 				else if (typeName == "ushort")
 				{
-					ushort value = (ushort)reader->getInt(j);
-					serializer.write(value);
+					serializer.write((ushort)reader->getInt(j));
 				}
 				else if (typeName == "int")
 				{
-					int value = reader->getInt(j);
-					serializer.write(value);
+					serializer.write(reader->getInt(j));
 				}
 				else if (typeName == "uint")
 				{
-					uint value = (uint)reader->getInt(j);
-					serializer.write(value);
+					serializer.write((uint)reader->getInt(j));
 				}
 				else if (typeName == "float")
 				{
-					float value = reader->getFloat(j);
-					serializer.write(value);
+					serializer.write(reader->getFloat(j));
 				}
 				else if (typeName == "llong")
 				{
-					llong value = (llong)reader->getLLong(j);
-					serializer.write(value);
+					serializer.write(reader->getLLong(j));
 				}
 				else if (typeName == "string")
 				{
@@ -345,33 +336,33 @@ int main()
 				{
 					string value;
 					reader->getString(j, value);
-					Vector<ushort> shorts;
-					StringUtility::stringToUShorts(value, shorts);
-					serializer.writeArray(shorts);
+					Vector<ushort> ushorts;
+					StringUtility::stringToUShorts(value, ushorts);
+					serializer.writeArray(ushorts);
 				}
 				else if (typeName == "Vector<int>")
 				{
 					string value;
 					reader->getString(j, value);
-					Vector<int> shorts;
-					StringUtility::stringToInts(value, shorts);
-					serializer.writeArray(shorts);
+					Vector<int> ints;
+					StringUtility::stringToInts(value, ints);
+					serializer.writeArray(ints);
 				}
 				else if (typeName == "Vector<uint>")
 				{
 					string value;
 					reader->getString(j, value);
-					Vector<uint> shorts;
-					StringUtility::stringToUInts(value, shorts);
-					serializer.writeArray(shorts);
+					Vector<uint> uints;
+					StringUtility::stringToUInts(value, uints);
+					serializer.writeArray(uints);
 				}
 				else if (typeName == "Vector<float>")
 				{
 					string value;
 					reader->getString(j, value);
-					Vector<uint> shorts;
-					StringUtility::stringToUInts(value, shorts);
-					serializer.writeArray(shorts);
+					Vector<float> floats;
+					StringUtility::stringToFloats(value, floats);
+					serializer.writeArray(floats);
 				}
 				else if (typeName == "Vector<string>")
 				{
