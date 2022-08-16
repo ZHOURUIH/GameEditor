@@ -607,7 +607,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 	line(mainFile, "using System;");
 	line(mainFile, "using System.Collections.Generic;");
 	line(mainFile, "");
-	line(mainFile, "public class ExcelRegisterMain : FrameBase");
+	line(mainFile, "public class ExcelRegisterMain : GB");
 	line(mainFile, "{");
 	line(mainFile, "\tpublic static void registeAll()");
 	line(mainFile, "\t{");
@@ -636,7 +636,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 	line(hotFixfile, "using System;");
 	line(hotFixfile, "using System.Collections.Generic;");
 	line(hotFixfile, "");
-	line(hotFixfile, "public class ExcelRegisterILR : GB");
+	line(hotFixfile, "public class ExcelRegisterILR : GBR");
 	line(hotFixfile, "{");
 	line(hotFixfile, "\tpublic static void registeAll()");
 	line(hotFixfile, "\t{");
@@ -649,6 +649,9 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 			line(hotFixfile, lineStr);
 		}
 	}
+	line(hotFixfile, "");
+	line(hotFixfile, "\t\t// 进入热更以后,所有资源都处于可用状态");
+	line(hotFixfile, "\t\tmExcelManager.resourceAvailable();");
 	line(hotFixfile, "\t}");
 	line(hotFixfile, "\t//-------------------------------------------------------------------------------------------------------------");
 	line(hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
@@ -667,8 +670,8 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 	string mainFile;
 	line(mainFile, "using System;");
 	line(mainFile, "");
-	line(mainFile, "// FrameBase的部分类,用于定义Excel表格的对象");
-	line(mainFile, "public partial class FrameBase : ClassObject");
+	line(mainFile, "// GameBase的部分类,用于定义Excel表格的对象");
+	line(mainFile, "public partial class GB : FrameBase");
 	line(mainFile, "{");
 	uint sqliteCount = sqliteInfo.size();
 	FOR_I(sqliteCount)

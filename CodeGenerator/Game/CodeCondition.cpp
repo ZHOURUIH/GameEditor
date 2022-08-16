@@ -197,7 +197,7 @@ void CodeCondition::generateCSRegisterFile(const myVector<pair<string, string>>&
 	line(str0, "using System;");
 	line(str0, "using System.Collections.Generic;");
 	line(str0, "");
-	line(str0, "public class ConditionRegister : GB");
+	line(str0, "public class ConditionRegister : GBR");
 	line(str0, "{");
 	line(str0, "\tpublic static void registeAll()");
 	line(str0, "\t{");
