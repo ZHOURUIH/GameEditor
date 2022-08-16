@@ -642,18 +642,32 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	line(str, "\tpublic static int PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "\tpublic static void registeAll()");
 	line(str, "\t{");
+	myVector<PacketInfo> udpCSList;
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
-		if (startWith(packetList[i].mPacketName, "CS"))
+		if (!startWith(packetList[i].mPacketName, "CS"))
+		{
+			continue;
+		}
+		if (!packetList[i].mUDP)
 		{
 			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		}
+		else
+		{
+			udpCSList.push_back(packetList[i]);
+		}
 	}
 	line(str, "");
+	myVector<PacketInfo> udpSCList;
 	FOR_I(packetCount)
 	{
-		if (startWith(packetList[i].mPacketName, "SC"))
+		if (!startWith(packetList[i].mPacketName, "SC"))
+		{
+			continue;
+		}
+		if (!packetList[i].mUDP)
 		{
 			if (packetList[i].mClientExecuteInMain)
 			{
@@ -664,15 +678,41 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 				line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ", false);");
 			}
 		}
+		else
+		{
+			udpSCList.push_back(packetList[i]);
+		}
+	}
+	if (udpCSList.size() > 0)
+	{
+		line(str, "");
+		FOR_VECTOR(udpCSList)
+		{
+			line(str, "\t\tregisteUDP(PACKET_TYPE." + packetNameToUpper(udpCSList[i].mPacketName) + ", \"" + udpCSList[i].mPacketName + "\");");
+		}
+		END(udpCSList);
+	}
+	if (udpSCList.size() > 0)
+	{
+		line(str, "");
+		FOR_VECTOR(udpSCList)
+		{
+			line(str, "\t\tregisteUDP(PACKET_TYPE." + packetNameToUpper(udpSCList[i].mPacketName) + ", \"" + udpSCList[i].mPacketName + "\");");
+		}
+		END(udpSCList);
 	}
 	line(str, "\t}");
 	line(str, "\tprotected static void registePacket(Type classType, ushort type, bool executeInMain = true)");
 	line(str, "\t{");
 	line(str, "\t\tif (!executeInMain)");
 	line(str, "\t\t{");
-	line(str, "\t\t\tGB.mNetManager.getConnect().addExecuteThreadPacket(type);");
+	line(str, "\t\t\tmNetManager.getConnectTCP().addExecuteThreadPacket(type);");
 	line(str, "\t\t}");
 	line(str, "\t\tmNetPacketTypeManager.registePacket(classType, type);");
+	line(str, "\t}");
+	line(str, "\tprotected static void registeUDP(ushort type, string packetName)");
+	line(str, "\t{");
+	line(str, "\t\tmNetPacketTypeManager.registeUDPPacketName(type, packetName);");
 	line(str, "\t}");
 	line(str, "}", false);
 
@@ -711,7 +751,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	line(file, "");
 	// 固定格式部分
 	line(file, packetInfo.mComment);
-	line(file, "public class " + packetName + " : NetPacketTCPFrame");
+	line(file, "public class " + packetName + " : NetPacketFrame");
 	line(file, "{");
 	uint memberCount = packetInfo.mMemberList.size();
 	FOR_I(memberCount)

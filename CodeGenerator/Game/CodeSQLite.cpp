@@ -687,7 +687,7 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 	line(hotFixfile, "using System;");
 	line(hotFixfile, "");
 	line(hotFixfile, "// FrameBase的部分类,用于定义Excel表格的对象");
-	line(hotFixfile, "public partial class GB : FrameUtilityILR");
+	line(hotFixfile, "public partial class GBR : FrameUtilityILR");
 	line(hotFixfile, "{");
 	FOR_I(sqliteCount)
 	{

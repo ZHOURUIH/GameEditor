@@ -353,6 +353,7 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 		tagStartIndex = endIndex;
 	}
 	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
+	packetInfo.mUDP = tagList.contains("[UDP]");
 	packetInfo.mShowInfo = !tagList.contains("[false]");
 	packetInfo.mClientExecuteInMain = !tagList.contains("[ClientInThread]");
 	packetInfo.mServerExecuteInMain = !tagList.contains("[ServerInThread]");

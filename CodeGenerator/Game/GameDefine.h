@@ -20,6 +20,7 @@ struct PacketInfo
 	bool mClientExecuteInMain;			// 客户端接收的SC消息是否在子线程执行
 	bool mServerExecuteInMain;			// 服务器接收的CS消息是否在子线程执行
 	bool mHotFix;						// 消息在客户端是否可热更
+	bool mUDP;							// 是否通过UDP传输
 };
 
 enum class SQLITE_OWNER : byte
