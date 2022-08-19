@@ -694,14 +694,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		{
 			continue;
 		}
-		if (packetList[i].mClientExecuteInMain)
-		{
-			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
-		}
-		else
-		{
-			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ", false);");
-		}
+		line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		if (packetList[i].mUDP)
 		{
 			udpSCList.push_back(packetList[i]);
@@ -726,12 +719,8 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		END(udpSCList);
 	}
 	line(str, "\t}");
-	line(str, "\tprotected static void registePacket(Type classType, ushort type, bool executeInMain = true)");
+	line(str, "\tprotected static void registePacket(Type classType, ushort type)");
 	line(str, "\t{");
-	line(str, "\t\tif (!executeInMain)");
-	line(str, "\t\t{");
-	line(str, "\t\t\tGB.mNetManager.getConnectTCP().addExecuteThreadPacket(type);");
-	line(str, "\t\t}");
 	line(str, "\t\tmNetPacketTypeManager.registePacket(classType, type);");
 	line(str, "\t}");
 	line(str, "\tprotected static void registeUDP(ushort type, string packetName)");

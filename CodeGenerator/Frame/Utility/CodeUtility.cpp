@@ -354,8 +354,7 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 	}
 	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
 	packetInfo.mUDP = tagList.contains("[UDP]");
-	packetInfo.mShowInfo = !tagList.contains("[false]");
-	packetInfo.mClientExecuteInMain = !tagList.contains("[ClientInThread]");
+	packetInfo.mShowInfo = !tagList.contains("[NoLog]");
 	packetInfo.mServerExecuteInMain = !tagList.contains("[ServerInThread]");
 	// 获取原始的表格名称
 	int firstTagPos = -1;
