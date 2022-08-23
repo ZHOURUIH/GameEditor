@@ -1,9 +1,7 @@
 ﻿#include "txSerializer.h"
 #include "HumanImage.h"
-#include "WeaponImage.h"
 #include "SQLiteHeader.h"
 #include "HumanAction.h"
-#include "WeaponAction.h"
 #include "MapData.h"
 #include "MapHeader.h"
 #include "MapTile.h"
@@ -231,119 +229,27 @@ POINT* ImageUtility::readPositionFile(const string& positionFile, int& posCount)
 
 void ImageUtility::autoGroupHumanImage(const string& path)
 {
-	// 先拆分位置文件
-	splitPositionFile(path);
-	// 按照600个文件一组,放入单独的文件夹中
-	autoMoveFile(path, HUMAN_GROUP_SIZE);
-
-	myVector<string> folderList;
-	findFolders(path, folderList);
-	FOR_VECTOR(folderList)
+	// 按照动作重命名
+	myVector<string> fileList;
+	findFiles(path, fileList, ".png", false);
+	// 一个目录中的文件数量只能是600个
+	if (fileList.size() != HUMAN_GROUP_SIZE)
 	{
-		// 按照动作重命名
-		myVector<string> fileList;
-		findFiles(folderList[i], fileList, ".png", false);
-		sortByFileNumber(fileList);
-		FOR_VECTOR_J(fileList)
-		{
-			string actionName;
-			int direction;
-			int frameIndex;
-			bool isValid = getHumanActionInfo(j, actionName, direction, frameIndex);
-			// 如果是无效图片则需要删除
-			if (!isValid)
-			{
-				deleteImageWithPosition(fileList[j]);
-				continue;
-			}
-			string destPath = getFilePath(fileList[j]) + "/";
-			string actionFolderName = actionName + "_dir" + intToString(direction);
-			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j]);
-			moveImageWithPosition(fileList[j], destPath + fileName);
-		}
-		END(fileList);
+		cout << "目录中的图片数量错误,请确保图片数量为600个" << endl;
+		return;
 	}
-	END(folderList);
-}
-
-void ImageUtility::autoGroupWingImage(const string& path)
-{
-	// 先拆分位置文件
-	splitPositionFile(path);
-	// 按照600个文件一组,放入单独的文件夹中
-	autoMoveFile(path, HUMAN_GROUP_SIZE);
-
-	myVector<string> folderList;
-	findFolders(path, folderList);
-	FOR_VECTOR(folderList)
+	sortByFileNumber(fileList);
+	FOR_VECTOR(fileList)
 	{
-		// 按照动作重命名
-		myVector<string> fileList;
-		findFiles(folderList[i], fileList, ".png", false);
-		sortByFileNumber(fileList);
-		FOR_VECTOR_J(fileList)
-		{
-			string actionName;
-			int direction;
-			int frameIndex;
-			bool isValid = getWingActionInfo(j, actionName, direction, frameIndex);
-			// 如果是无效图片则需要删除
-			if (!isValid)
-			{
-				deleteImageWithPosition(fileList[j]);
-				continue;
-			}
-			string destPath = getFilePath(fileList[j]) + "/";
-			string actionFolderName = actionName + "_dir" + intToString(direction);
-			string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j]);
-			moveImageWithPosition(fileList[j], destPath + fileName);
-		}
-		END(fileList);
+		string actionName;
+		int direction;
+		int frameIndex;
+		getHumanActionInfo(i, actionName, direction, frameIndex);
+		string filePath = fileList[i];
+		string fileName = actionName + "_dir" + intToString(direction) + "_" + intToString(frameIndex) + "." + getFileSuffix(filePath);
+		moveImageWithPosition(filePath, getFilePath(filePath) + "/" + fileName);
 	}
-	END(folderList);
-}
-
-void ImageUtility::autoGroupWeaponImage(const string& path)
-{
-	// 先拆分位置文件
-	splitPositionFile(path);
-	// 按照600个文件一组,放入单独的文件夹中
-	autoMoveFile(path, WEAPON_GROUP_SIZE);
-	// 因为武器文件是角色文件的2倍,可能是左右手的区别,所以暂时只解析前一半的文件,后面的删除
-	myVector<string> folderList;
-	findFolders(path, folderList);
-	FOR_VECTOR(folderList)
-	{
-		// 按照动作重命名
-		myVector<string> fileList;
-		findFiles(folderList[i], fileList, ".png", false);
-		sortByFileNumber(fileList);
-		FOR_VECTOR_J(fileList)
-		{
-			if (WEAPON_GROUP_SIZE == 1200 && j >= WEAPON_GROUP_SIZE / 2)
-			{
-				deleteImageWithPosition(fileList[j]);
-			}
-			else
-			{
-				string actionName;
-				int direction;
-				int frameIndex;
-				// 如果是无效图片则需要删除
-				if (!getHumanActionInfo(j, actionName, direction, frameIndex))
-				{
-					deleteImageWithPosition(fileList[j]);
-					continue;
-				}
-				string destPath = getFilePath(fileList[j]) + "/";
-				string actionFolderName = actionName + "_dir" + intToString(direction);
-				string fileName = actionFolderName + "_" + intToString(frameIndex) + getFileSuffix(fileList[j]);
-				moveImageWithPosition(fileList[j], destPath + fileName);
-			}
-		}
-		END(fileList);
-	}
-	END(folderList);
+	END(fileList);
 }
 
 void ImageUtility::autoGroupMonsterImage0(const string& path)
@@ -589,7 +495,7 @@ void ImageUtility::autoMoveFile(const string& path, int groupSize)
 	END(fileList);
 }
 
-bool ImageUtility::getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex)
+void ImageUtility::getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex)
 {
 	int actionIndex = 0;
 	while (true)
@@ -605,26 +511,6 @@ bool ImageUtility::getHumanActionInfo(int index, string& actionName, int& dir, i
 	dir = index / HUMAN_ACTION[actionIndex].mMaxFrame;
 	frameIndex = index % HUMAN_ACTION[actionIndex].mMaxFrame;
 	actionName = HUMAN_ACTION[actionIndex].mName;
-	return frameIndex < HUMAN_ACTION[actionIndex].mFrameCount;
-}
-
-bool ImageUtility::getWingActionInfo(int index, string& actionName, int& dir, int& frameIndex)
-{
-	int actionIndex = 0;
-	while (true)
-	{
-		if (index - WING_ACTION[actionIndex].mMaxFrame * DIRECTION_COUNT < 0)
-		{
-			break;
-		}
-		index -= WING_ACTION[actionIndex].mMaxFrame * DIRECTION_COUNT;
-		++actionIndex;
-	}
-	// 因为一组动作资源包含了8个方向上的所有动作,所以可以根据下标计算出方向和序列帧下标,前提是保留了空图片作为填充位置
-	dir = index / WING_ACTION[actionIndex].mMaxFrame;
-	frameIndex = index % WING_ACTION[actionIndex].mMaxFrame;
-	actionName = WING_ACTION[actionIndex].mName;
-	return frameIndex < WING_ACTION[actionIndex].mFrameCount;
 }
 
 bool ImageUtility::getNPCActionInfo(int index, string& actionName, int& dir, int& frameIndex)
@@ -1272,7 +1158,7 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
 			int blackOrEmpty = 0;
 			RGBQUAD rgb = getColor(bitmap, x, y);
-			if (isBlack(rgb, 35))
+			if (isBlack(rgb))
 			{
 				blackOrEmpty = 1;
 			}
@@ -1366,7 +1252,7 @@ void ImageUtility::processShadowVertical(const string& filePath)
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
 			int blackOrEmpty = 0;
 			RGBQUAD rgb = getColor(bitmap, x, y);
-			if (isBlack(rgb, 35))
+			if (isBlack(rgb))
 			{
 				blackOrEmpty = 1;
 			}
@@ -1774,6 +1660,23 @@ void ImageUtility::trimAllImage(const string& filePath)
 	}
 }
 
+void ImageUtility::fullImageToMinimal(const string& path)
+{
+	myVector<string> files;
+	findFiles(path, files, ".png", true);
+	FOR_VECTOR(files)
+	{
+		string fullPathNoMedia = removeStartString(files[i], "../media/");
+		string rootFolderName = getFirstFolderName(fullPathNoMedia);
+		string newFullPath = "../media/" + rootFolderName + "_removeEmpty" + "/" + removeFirstPath(fullPathNoMedia);
+		createFolder(getFilePath(newFullPath));
+		Vector2Int offset;
+		generateMinimalImage(files[i], newFullPath, offset);
+		writeFile(replaceSuffix(newFullPath, ".txt"), vector2IntToString(offset));
+	}
+	END(files);
+}
+
 void ImageUtility::trimImage(const string& filePath, const string& newFilePath, Vector2Int size)
 {
 	FreeImage_Initialise();
@@ -1825,6 +1728,97 @@ Vector2Int ImageUtility::generateImageSizeWithOffset(const string& fileName, Vec
 	FreeImage_Unload(oldBitmap);
 	FreeImage_DeInitialise();
 	return newSize;
+}
+
+// 计算图片的最小尺寸,并且返回出该图片的偏移量,以确保渲染位置不变
+void ImageUtility::generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset)
+{
+	FreeImage_Initialise();
+	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
+	FIBITMAP* oldBitmap = FreeImage_Load(format, fileName.c_str());
+
+	int oldWidth = FreeImage_GetWidth(oldBitmap);
+	int oldHeight = FreeImage_GetHeight(oldBitmap);
+	// 从上往下找top
+	int top = 9999;
+	FOR_X(oldWidth)
+	{
+		int columnTop = 9999;
+		FOR_Y(oldHeight)
+		{
+			RGBQUAD color = getColor(oldBitmap, x, y);
+			if (color.rgbReserved > 5)
+			{
+				columnTop = (int)y;
+				break;
+			}
+		}
+		top = getMin(top, columnTop);
+	}
+	int bottom = 0;
+	FOR_X(oldWidth)
+	{
+		int columnBottom = 0;
+		FOR_Y(oldHeight)
+		{
+			RGBQUAD color = getColor(oldBitmap, x, oldHeight - y - 1);
+			if (color.rgbReserved > 5)
+			{
+				columnBottom = (int)(oldHeight - y - 1);
+				break;
+			}
+		}
+		bottom = getMax(bottom, columnBottom);
+	}
+	int left = 9999;
+	FOR_Y(oldHeight)
+	{
+		int lineLeft = 9999;
+		FOR_X(oldWidth)
+		{
+			RGBQUAD color = getColor(oldBitmap, x, y);
+			if (color.rgbReserved > 5)
+			{
+				lineLeft = (int)x;
+				break;
+			}
+		}
+		left = getMin(left, lineLeft);
+	}
+	int right = 0;
+	FOR_Y(oldHeight)
+	{
+		int lineRight = 0;
+		FOR_X(oldWidth)
+		{
+			RGBQUAD color = getColor(oldBitmap, oldWidth - x - 1, y);
+			if (color.rgbReserved > 5)
+			{
+				lineRight = (int)(oldWidth - x - 1);
+				break;
+			}
+		}
+		right = getMax(right, lineRight);
+	}
+
+	int newWidth = right - left + 1;
+	int newHeight = bottom - top + 1;
+	FIBITMAP* newBitmap = FreeImage_Allocate(newWidth, newHeight, 32);
+	FOR_Y(newHeight)
+	{
+		FOR_X(newWidth)
+		{
+			setColor(newBitmap, x, y, getColor(oldBitmap, x + left, y + top));
+		}
+	}
+
+	offset.x = left - oldWidth / 2;
+	offset.y = top - (oldHeight / 2 - newHeight);
+
+	FreeImage_Save(format, newBitmap, newFileName.c_str());
+	FreeImage_Unload(oldBitmap);
+	FreeImage_Unload(newBitmap);
+	FreeImage_DeInitialise();
 }
 
 void ImageUtility::generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size)

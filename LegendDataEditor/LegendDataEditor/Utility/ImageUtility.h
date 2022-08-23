@@ -3,7 +3,6 @@
 
 #include "ImageDefine.h"
 #include "FreeImage.h"
-#include "WeaponAction.h"
 #include "HumanAction.h"
 #include "MonsterAction.h"
 #include "EffectFrame.h"
@@ -33,14 +32,11 @@ public:
 	static void sortByFileNumber(myVector<string>& fileList, bool fileNameIsNumber = true);
 	static void autoMoveFile(const string& path, int groupSize);
 	static void autoGroupHumanImage(const string& path);
-	static void autoGroupWingImage(const string& path);
-	static void autoGroupWeaponImage(const string& path);
 	static void autoGroupMonsterImage0(const string& path);
 	static void autoGroupMonsterImage1(const string& path);
 	static void autoGroupEffectImage(const string& path);
 	static void autoGroupNPCImage(const string& path);
-	static bool getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex);
-	static bool getWingActionInfo(int index, string& actionName, int& dir, int& frameIndex);
+	static void getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex);
 	static bool getNPCActionInfo(int index, string& actionName, int& dir, int& frameIndex);
 	static void moveImageWithPosition(const string& fullFileName, const string& destFullFileName);
 	static void renameImageWithPosition(const string& fullFileName, const string& destFullFileName);
@@ -86,7 +82,9 @@ public:
 	static void renameMap(const string& filePath);
 	static void scaleTexture(const string& path, float scale);
 	static void scalePosition(const string& fileName, float scale);
+	static void fullImageToMinimal(const string& path);
 protected:
+	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset);
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);
 	static void removeBackground(const string& fileName, const string& newFileName);

@@ -13,11 +13,7 @@ public:
 public:
 	void addFrame(const HumanImage& frame)
 	{
-		// 只添加有效的序列帧
-		if (frame.isValidImage())
-		{
-			mImageFrame.push_back(frame);
-		}
+		mImageFrame.push_back(frame);
 	}
 };
 

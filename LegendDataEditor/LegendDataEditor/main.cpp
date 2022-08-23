@@ -12,8 +12,7 @@ void main()
 	{
 		cout << "选择功能" << endl;
 		cout << "1:解析wix和wil文件" << endl;
-		cout << "2:整理角色文件结构" << endl;
-		cout << "3:整理武器文件结构" << endl;
+		cout << "2:自动计算角色,武器,翅膀图片名" << endl;
 		cout << "4:整理怪物文件结构0" << endl;
 		cout << "5:按序号重命名文件并自动计算方向" << endl;
 		cout << "6:整理特效文件结构" << endl;
@@ -33,7 +32,6 @@ void main()
 		cout << "20:处理图片阴影" << endl;
 		cout << "21:移动并覆盖地图图片" << endl;
 		cout << "22:更新地图中的特效信息到SQLite" << endl;
-		cout << "24:整理翅膀文件结构" << endl;
 		cout << "25:重新生成包含偏移量的图片" << endl;
 		cout << "26:裁剪序列帧图片到最小尺寸" << endl;
 		cout << "27:将图标调整到统一的36*36" << endl;
@@ -42,6 +40,7 @@ void main()
 		cout << "30:将地砖图片信息写入数据库" << endl;
 		cout << "31:地图文件名重命名为bytes" << endl;
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
+		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -70,17 +69,6 @@ void main()
 			long startTime = timeGetTime();
 			ImageUtility::autoGroupHumanImage("../media/" + fileName);
 			cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << endl;
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 3)
-		{
-			cout << "输入文件夹名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始整理武器文件结构..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::autoGroupWeaponImage("../media/" + fileName);
-			cout << "文件整理完毕,建议先给每个武器手动命名后再将帧数据写入SQLite" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 4)
@@ -271,17 +259,6 @@ void main()
 			ImageUtility::updateMapEffect();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 24)
-		{
-			cout << "输入文件夹名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始整理翅膀文件结构..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::autoGroupWingImage("../media/" + fileName);
-			cout << "文件整理完毕,建议先给每个外观手动命名后再将帧数据写入SQLite" << endl;
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 25)
 		{
 			cout << "输入文件夹名:";
@@ -352,6 +329,13 @@ void main()
 			string fileName;
 			cin >> fileName;
 			ImageUtility::scaleTexture("../media/" + fileName, 0.5f);
+		}
+		else if (input == 33)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			ImageUtility::fullImageToMinimal("../media/" + fileName);
 		}
 		system("pause");
 		cout << endl;

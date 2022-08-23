@@ -17,7 +17,6 @@ public:
 	int mActionIndex;		// 动作在数组中的下标
 public:
 	void setFileName(const string& fileName);
-	bool isValidImage() const { return mFrameIndex < HUMAN_ACTION[mActionIndex].mFrameCount; }
 };
 
 #endif
