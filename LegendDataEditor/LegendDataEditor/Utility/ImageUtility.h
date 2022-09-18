@@ -83,6 +83,7 @@ public:
 	static void scaleTexture(const string& path, float scale);
 	static void scalePosition(const string& fileName, float scale);
 	static void fullImageToMinimal(const string& path);
+	static void checkMapTile(const string& path);
 protected:
 	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset);
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);

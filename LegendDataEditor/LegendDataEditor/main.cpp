@@ -41,6 +41,7 @@ void main()
 		cout << "31:地图文件名重命名为bytes" << endl;
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
 		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
+		cout << "34:检查所有地图是否有无效地砖下标" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -336,6 +337,13 @@ void main()
 			string fileName;
 			cin >> fileName;
 			ImageUtility::fullImageToMinimal("../media/" + fileName);
+		}
+		else if (input == 34)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			ImageUtility::checkMapTile("../media/" + fileName);
 		}
 		system("pause");
 		cout << endl;

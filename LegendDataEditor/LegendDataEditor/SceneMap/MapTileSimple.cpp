@@ -1,11 +1,6 @@
 ﻿#include "MapTileSimple.h"
 #include "txSerializer.h"
 
-MapTileSimple::MapTileSimple()
-{
-	;
-}
-
 void MapTileSimple::parseTile(char* buffer, int bufferSize, int& offset)
 {
 	txSerializer serializer(buffer, bufferSize);

@@ -1,17 +1,17 @@
-﻿#include "MapData.h"
+﻿#include "MapDataSimple.h"
 #include "MapTile.h"
 #include "txSerializer.h"
 #include "MapHeader.h"
-#include "UnreachTileGroup.h"
+#include "UnreachTileGroupSimple.h"
 #include "ImageUtility.h"
 #include "MapTileSimple.h"
 
-MapData::MapData()
+MapDataSimple::MapDataSimple()
 {
 	NEW(MapHeader, mHeader);
 }
 
-void MapData::destroy()
+void MapDataSimple::destroy()
 {
 	FOREACH(iter, mUnreachTileGroupList)
 	{
@@ -22,7 +22,7 @@ void MapData::destroy()
 	DELETE(mHeader);
 }
 
-void MapData::readFile(const string& fileName)
+void MapDataSimple::readFile(const string& fileName)
 {
 	mFileName = fileName;
 	FileContent file;
@@ -30,7 +30,7 @@ void MapData::readFile(const string& fileName)
 	int offset = 0;
 	mHeader->parseHeader(file.mBuffer, file.mFileSize, offset);
 	mTileCount = mHeader->mWidth * mHeader->mHeight;
-	NEW_ARRAY(MapTile, mTileCount, mTileList);
+	NEW_ARRAY(MapTileSimple, mTileCount, mTileList);
 	for (int i = 0; i < mTileCount; ++i)
 	{
 		mTileList[i].mIndex = i;
@@ -40,7 +40,7 @@ void MapData::readFile(const string& fileName)
 	findAllUnreachGroupNoRecursive();
 }
 
-void MapData::writeUnreachFile()
+void MapDataSimple::writeUnreachFile()
 {
 	txSerializer serializer;
 	serializer.write(mHeader->mWidth);
@@ -52,7 +52,7 @@ void MapData::writeUnreachFile()
 	for (; iter != iterEnd; ++iter)
 	{
 		// 地砖数量
-		UnreachTileGroup* group = iter->second;
+		UnreachTileGroupSimple* group = iter->second;
 		serializer.write((unsigned int)group->mTriangleList.size());
 		auto iterTile = group->mTriangleList.begin();
 		auto iterTileEnd = group->mTriangleList.end();
@@ -74,7 +74,7 @@ void MapData::writeUnreachFile()
 	serializer.writeToFile(StringUtility::getFileNameNoSuffix(mFileName, false) + ".unreach");
 }
 
-//void MapData::findAllUnreachGroup()
+//void MapDataSimple::findAllUnreachGroup()
 //{
 //	int tileCount = mHeader->mWidth * mHeader->mHeight;
 //	for (int i = 0; i < tileCount; ++i)
@@ -98,7 +98,7 @@ void MapData::writeUnreachFile()
 //	}
 //}
 
-//void MapData::findGroup(int x, int y, int id)
+//void MapDataSimple::findGroup(int x, int y, int id)
 //{
 //	// 判断当前坐标是否允许行走
 //	if (x < 0 || x >= mHeader->mWidth || y < 0 || y >= mHeader->mHeight)
@@ -125,7 +125,7 @@ void MapData::writeUnreachFile()
 //	findGroup(x + 1, y, id);
 //}
 
-int MapData::getTileUnreachIndex(int x, int y)
+int MapDataSimple::getTileUnreachIndex(int x, int y)
 {
 	if (x < 0 || x >= mHeader->mWidth || y < 0 || y >= mHeader->mHeight)
 	{
@@ -140,14 +140,14 @@ int MapData::getTileUnreachIndex(int x, int y)
 	return -1;
 }
 
-void MapData::findAllUnreachGroupNoRecursive()
+void MapDataSimple::findAllUnreachGroupNoRecursive()
 {
 	// 找出所有的不可行走的地砖
 	mySet<int> tileNearList;
 	int tileCount = mHeader->mWidth * mHeader->mHeight;
 	for (int i = 0; i < tileCount; ++i)
 	{
-		MapTile& tile = mTileList[i];
+		MapTileSimple& tile = mTileList[i];
 		if (!tile.mCanWalk)
 		{
 			tileNearList.insert(i);
@@ -160,7 +160,7 @@ void MapData::findAllUnreachGroupNoRecursive()
 			break;
 		}
 		int id = ++mIDSeed;
-		UnreachTileGroup* group = NEW(UnreachTileGroup, group, id, this);
+		UnreachTileGroupSimple* group = NEW(UnreachTileGroupSimple, group, id, this);
 		mUnreachTileGroupList.insert(id, group);
 		myVector<int> waitForList;
 		waitForList.push_back(*tileNearList.begin());
@@ -189,7 +189,7 @@ void MapData::findAllUnreachGroupNoRecursive()
 	END(mUnreachTileGroupList);
 }
 
-void MapData::assignGroupID(MapTile* tile, UnreachTileGroup* group, myVector<int>& waitForList)
+void MapDataSimple::assignGroupID(MapTileSimple* tile, UnreachTileGroupSimple* group, myVector<int>& waitForList)
 {
 	tile->mUnreachGroupID = group->mGroupID;
 	group->addTile(tile);
@@ -215,18 +215,4 @@ void MapData::assignGroupID(MapTile* tile, UnreachTileGroup* group, myVector<int
 	{
 		waitForList.push_back(right);
 	}
-}
-
-void MapData::convertToSimple(const string& writeFile)
-{
-	txSerializer serializer;
-	mHeader->saveHeader(&serializer);
-	int tileCount = mHeader->mWidth * mHeader->mHeight;
-	for (int i = 0; i < tileCount; ++i)
-	{
-		MapTileSimple simple;
-		mTileList[i].toSimple(&simple);
-		simple.saveTile(&serializer);
-	}
-	serializer.writeToFile(writeFile);
 }

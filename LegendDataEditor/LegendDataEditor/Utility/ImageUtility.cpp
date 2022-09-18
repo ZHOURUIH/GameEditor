@@ -3,9 +3,12 @@
 #include "SQLiteHeader.h"
 #include "HumanAction.h"
 #include "MapData.h"
+#include "MapDataSimple.h"
+#include "MapTileSimple.h"
 #include "MapHeader.h"
 #include "MapTile.h"
 #include "UnreachTileGroup.h"
+#include "UnreachTileGroupSimple.h"
 #include "ImageUtility.h"
 
 void ImageUtility::encodePNG(const string& path, unsigned char* color, int width, int height, FREE_IMAGE_FORMAT format)
@@ -1677,6 +1680,49 @@ void ImageUtility::fullImageToMinimal(const string& path)
 	END(files);
 }
 
+void ImageUtility::checkMapTile(const string& path)
+{
+	NEW_SQLITE(SQLiteObjectTileImage, objTileTable, "ObjectTileImage");
+	myMap<int, myMap<int, TDObjectTileImage*>> mTileImageDataList;
+	// key是FileIndex,value每个图集的终止图片下标
+	const auto& allList = objTileTable.queryAll();
+	FOREACH_CONST(iter, allList)
+	{
+		TDObjectTileImage* data = iter->second;
+		auto& ptr = mTileImageDataList.tryInsert(data->mFileIndex, myMap<int, TDObjectTileImage*>());
+		ptr.insert(data->mFileName, data);
+	}
+
+	myMap<int, mySet<int>> missingList;
+	myVector<string> files;
+	findFiles(path, files, ".bytes", true);
+	FOR_VECTOR(files)
+	{
+		const string& file = files[i];
+		cout << "开始检查" << file << endl;
+		MapDataSimple data;
+		data.readFile(file);
+		FOR_J(data.mTileCount)
+		{
+			const MapTileSimple& tile = data.mTileList[j];
+			auto* ptr = mTileImageDataList.get(tile.mObjFileIdx);
+			if (ptr == nullptr || !ptr->contains(tile.mObjImgIdx))
+			{
+				auto* missionPtr = missingList.get(tile.mObjFileIdx);
+				// 不再打印重复的丢失信息
+				if (missionPtr != nullptr && missionPtr->contains(tile.mObjImgIdx))
+				{
+					continue;
+				}
+				missingList.tryInsert(tile.mObjFileIdx, mySet<int>()).insert(tile.mObjImgIdx);
+				Vector2Int tilePos = tileIndexToTilePos(j, data.mHeader->mHeight);
+				cout << "找不到地砖信息:tile.mObjFileIdx:" << (int)tile.mObjFileIdx << ", tile.mObjImgIdx:" << tile.mObjImgIdx << ", 地图:" << file << ",地砖坐标:" << tilePos.x << "," << tilePos.y << endl;
+			}
+		}
+	}
+	END(files);
+}
+
 void ImageUtility::trimImage(const string& filePath, const string& newFilePath, Vector2Int size)
 {
 	FreeImage_Initialise();
@@ -2073,7 +2119,7 @@ void ImageUtility::convertMapFile(const string& filePath)
 	{
 		MapData data;
 		data.readFile(files[i]);
-		data.convertToSimple(getFileNameNoSuffix(replaceFolderName(files[i], "SMap"), false) + ".smap");
+		data.convertToSimple(getFileNameNoSuffix(replaceFolderName(files[i], "SMap"), false) + ".bytes");
 	}
 	END(files);
 	deleteEmptyFolder(filePath);

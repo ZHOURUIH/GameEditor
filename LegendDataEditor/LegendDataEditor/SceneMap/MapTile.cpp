@@ -2,13 +2,6 @@
 #include "txSerializer.h"
 #include "MapTileSimple.h"
 
-MapTile::MapTile()
-{
-	mUnreachGroupID = -1;
-	mIndex = 0;
-	mAroundChecked = false;
-}
-
 void MapTile::parseTile(char* buffer, int bufferSize, int& offset)
 {
 	txSerializer serializer(buffer, bufferSize);
