@@ -264,7 +264,14 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "");
 	line(str, "\tGATE_SC_MIN = 1200,");
 	line(str, "\tGATE_SC_HEART_BEAT,");
-	line(str, "");	
+	line(str, "");
+	line(str, "\tMAIL_CS_MIN = 1500,");
+	line(str, "\tMAIL_CS_HEART_BEAT,");
+	line(str, "\tMAIL_CS_SEND_MAIL,");
+	line(str, "");
+	line(str, "\tMAIL_SC_MIN = 2000,");
+	line(str, "\tMAIL_SC_HEART_BEAT,");
+	line(str, "");
 	line(str, "\tCS_MIN = 3000,");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
