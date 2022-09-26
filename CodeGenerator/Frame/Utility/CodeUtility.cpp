@@ -296,14 +296,7 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bo
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			if (isHotFix)
-			{
-				lengthMacro += "GD." + memberInfo.mArrayLengthMacro[i];
-			}
-			else
-			{
-				lengthMacro += "GameDefine." + memberInfo.mArrayLengthMacro[i];
-			}
+			lengthMacro += memberInfo.mArrayLengthMacro[i];
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";

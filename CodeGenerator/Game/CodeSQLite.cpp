@@ -605,9 +605,10 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 	// 主工程中的表格注册
 	string mainFile;
 	line(mainFile, "using System;");
-	line(mainFile, "using System.Collections.Generic;");
+	line(mainFile, "using static GB;");
+	line(mainFile, "using static FrameBase;");
 	line(mainFile, "");
-	line(mainFile, "public class ExcelRegisterMain : GB");
+	line(mainFile, "public class ExcelRegisterMain");
 	line(mainFile, "{");
 	line(mainFile, "\tpublic static void registeAll()");
 	line(mainFile, "\t{");
@@ -634,9 +635,10 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 	// 热更工程中的表格注册
 	string hotFixfile;
 	line(hotFixfile, "using System;");
-	line(hotFixfile, "using System.Collections.Generic;");
+	line(hotFixfile, "using static GBR;");
+	line(hotFixfile, "using static FrameBase;");
 	line(hotFixfile, "");
-	line(hotFixfile, "public class ExcelRegisterILR : GBR");
+	line(hotFixfile, "public class ExcelRegisterILR");
 	line(hotFixfile, "{");
 	line(hotFixfile, "\tpublic static void registeAll()");
 	line(hotFixfile, "\t{");
@@ -671,7 +673,7 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 	line(mainFile, "using System;");
 	line(mainFile, "");
 	line(mainFile, "// GameBase的部分类,用于定义Excel表格的对象");
-	line(mainFile, "public partial class GB : FrameBase");
+	line(mainFile, "public partial class GB");
 	line(mainFile, "{");
 	uint sqliteCount = sqliteInfo.size();
 	FOR_I(sqliteCount)
@@ -690,7 +692,7 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 	line(hotFixfile, "using System;");
 	line(hotFixfile, "");
 	line(hotFixfile, "// FrameBase的部分类,用于定义Excel表格的对象");
-	line(hotFixfile, "public partial class GBR : FrameUtilityILR");
+	line(hotFixfile, "public partial class GBR");
 	line(hotFixfile, "{");
 	FOR_I(sqliteCount)
 	{

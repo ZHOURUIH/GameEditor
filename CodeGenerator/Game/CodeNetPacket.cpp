@@ -636,6 +636,7 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 {
 	string str;
 	line(str, "using System;");
+	
 	line(str, "");
 	line(str, "public class PACKET_TYPE");
 	line(str, "{");
@@ -673,8 +674,9 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 {
 	string str;
 	line(str, "using System;");
+	line(str, "using static FrameBase;");
 	line(str, "");
-	line(str, "public class PacketRegister : GBR");
+	line(str, "public class PacketRegister");
 	line(str, "{");
 	line(str, "\tpublic static int PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "\tpublic static void registeAll()");

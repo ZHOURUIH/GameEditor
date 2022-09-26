@@ -193,11 +193,10 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 void CodeCondition::generateCSRegisterFile(const myVector<pair<string, string>>& conditionList, const string& filePath)
 {
 	string str0;
-	line(str0, "using UnityEngine;");
 	line(str0, "using System;");
-	line(str0, "using System.Collections.Generic;");
+	line(str0, "using static GBR;");
 	line(str0, "");
-	line(str0, "public class ConditionRegister : GBR");
+	line(str0, "public class ConditionRegister");
 	line(str0, "{");
 	line(str0, "\tpublic static void registeAll()");
 	line(str0, "\t{");
