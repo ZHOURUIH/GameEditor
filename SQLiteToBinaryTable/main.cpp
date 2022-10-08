@@ -218,7 +218,7 @@ int main()
 	string destPath;
 	string typeDefinePath;
 	Vector<string> lines;
-	FileUtility::openTxtFileLines("./Config.txt", lines, true);
+	FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true);
 	FOR_VECTOR(lines)
 	{
 		Vector<string> params;
