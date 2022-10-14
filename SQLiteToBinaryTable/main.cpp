@@ -218,7 +218,7 @@ int main()
 	string destPath;
 	string typeDefinePath;
 	Vector<string> lines;
-	FileUtility::openTxtFileLines("./Config.txt", lines, true);
+	FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true);
 	FOR_VECTOR(lines)
 	{
 		Vector<string> params;
@@ -387,6 +387,21 @@ int main()
 					serializer.write(shorts[0]);
 					serializer.write(shorts[1]);
 				}
+				else if (typeName == "Vector2UShort")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<ushort> ushorts;
+					StringUtility::stringToUShorts(value, ushorts);
+					if (ushorts.size() == 0)
+					{
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						system("pause");
+						return 0;
+					}
+					serializer.write(ushorts[0]);
+					serializer.write(ushorts[1]);
+				}
 				else if (typeName == "Vector2Int")
 				{
 					string value;
@@ -401,6 +416,21 @@ int main()
 					}
 					serializer.write(ints[0]);
 					serializer.write(ints[1]);
+				}
+				else if (typeName == "Vector2UInt")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<uint> uints;
+					StringUtility::stringToUInts(value, uints);
+					if (uints.size() == 0)
+					{
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						system("pause");
+						return 0;
+					}
+					serializer.write(uints[0]);
+					serializer.write(uints[1]);
 				}
 				else
 				{
