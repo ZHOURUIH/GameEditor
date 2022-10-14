@@ -882,8 +882,10 @@ void CodeNetPacket::findCSharpUsingListCustomCode(const string& packetName, cons
 	else
 	{
 		usingList.push_back("using System;");
+		usingList.push_back("using GD;");
 		if (startWith(packetName, "SC"))
 		{
+			usingList.push_back("using GBR;");
 			customList.push_back("\tpublic override void execute()");
 			customList.push_back("\t{}");
 		}
