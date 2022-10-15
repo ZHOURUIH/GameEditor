@@ -380,7 +380,8 @@ int main()
 					StringUtility::stringToShorts(value, shorts);
 					if (shorts.size() == 0)
 					{
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -395,7 +396,8 @@ int main()
 					StringUtility::stringToUShorts(value, ushorts);
 					if (ushorts.size() == 0)
 					{
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -410,7 +412,8 @@ int main()
 					StringUtility::stringToInts(value, ints);
 					if (ints.size() == 0)
 					{
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -425,7 +428,8 @@ int main()
 					StringUtility::stringToUInts(value, uints);
 					if (uints.size() == 0)
 					{
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
