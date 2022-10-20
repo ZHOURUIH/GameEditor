@@ -76,9 +76,9 @@ void CodeNetPacket::generate()
 			if (!packetStart)
 			{
 				cout << "未找到前一个匹配的{, NetPacket,前5行内容:" << endl;
-				int printStartLine = i - 5;
+				int printStartLine = (int)i - 5;
 				clampMin(printStartLine, 0);
-				for (int j = printStartLine; j <= i; ++j)
+				for (int j = printStartLine; j <= (int)i; ++j)
 				{
 					cout << lines[j] << endl;
 				}
