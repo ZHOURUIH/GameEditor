@@ -73,6 +73,16 @@ void CodeNetPacket::generate()
 		// 成员变量列表结束
 		if (line == "}")
 		{
+			if (!packetStart)
+			{
+				cout << "未找到前一个匹配的{, NetPacket,前5行内容:" << endl;
+				int printStartLine = i - 5;
+				clampMin(printStartLine, 0);
+				for (int j = printStartLine; j <= i; ++j)
+				{
+					cout << lines[j] << endl;
+				}
+			}
 			PacketInfo info;
 			parsePacketName(lines[tempPacketNameLine], info);
 			info.mMemberList = tempMemberList;
