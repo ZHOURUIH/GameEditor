@@ -380,12 +380,29 @@ int main()
 					StringUtility::stringToShorts(value, shorts);
 					if (shorts.size() == 0)
 					{
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
 					serializer.write(shorts[0]);
 					serializer.write(shorts[1]);
+				}
+				else if (typeName == "Vector2UShort")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<ushort> ushorts;
+					StringUtility::stringToUShorts(value, ushorts);
+					if (ushorts.size() == 0)
+					{
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
+						system("pause");
+						return 0;
+					}
+					serializer.write(ushorts[0]);
+					serializer.write(ushorts[1]);
 				}
 				else if (typeName == "Vector2Int")
 				{
@@ -395,12 +412,29 @@ int main()
 					StringUtility::stringToInts(value, ints);
 					if (ints.size() == 0)
 					{
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() << endl;
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
 					serializer.write(ints[0]);
 					serializer.write(ints[1]);
+				}
+				else if (typeName == "Vector2UInt")
+				{
+					string value;
+					reader->getString(j, value);
+					Vector<uint> uints;
+					StringUtility::stringToUInts(value, uints);
+					if (uints.size() == 0)
+					{
+						llong id = reader->getLLong(0);
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
+						system("pause");
+						return 0;
+					}
+					serializer.write(uints[0]);
+					serializer.write(uints[1]);
 				}
 				else
 				{
