@@ -891,8 +891,8 @@ void CodeNetPacket::findCSharpUsingListCustomCode(const string& packetName, cons
 	}
 	else
 	{
-		usingList.push_back("using System;");
-		usingList.push_back("using GD;");
+		usingList.push_back("using static System;");
+		usingList.push_back("using static GD;");
 		if (startWith(packetName, "SC"))
 		{
 			usingList.push_back("using GBR;");
