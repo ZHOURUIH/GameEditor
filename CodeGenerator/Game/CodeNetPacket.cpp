@@ -226,7 +226,7 @@ void CodeNetPacket::generate()
 }
 
 // PacketHeader.h和PacketDeclareHeader.h文件
-void CodeNetPacket::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, string filePath)
+void CodeNetPacket::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
 	// PacketHeader.h
 	string str0;
@@ -256,7 +256,7 @@ void CodeNetPacket::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>&
 }
 
 // PacketDefine.h文件
-void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath)
+void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
 	string str;
 	line(str, "#ifndef _PACKET_DEFINE_H_");
@@ -308,7 +308,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 }
 
 // PacketRegister.cpp文件
-void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath, int packetVersion)
+void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion)
 {
 	string str;
 	line(str, "#include \"GameHeader.h\"");
@@ -370,7 +370,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 }
 
 // StringDefinePacket.h和StringDefinePacket.cpp
-void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetList, string filePath)
+void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -390,7 +390,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 }
 
 // CSPacket.h和CSPacket.cpp
-void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, string filePath)
+void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "CS"))
@@ -555,7 +555,7 @@ int CodeNetPacket::findPacketVersion(const string& filePath)
 	return packetVersion;
 }
 
-void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, string filePath)
+void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "CS"))
@@ -584,7 +584,7 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 }
 
 // SCPacket.h文件
-void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, string filePath)
+void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "SC"))
@@ -642,7 +642,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 }
 
 // PacketDefine.cs文件
-void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, string filePath)
+void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
 	string str;
 	line(str, "using System;");
@@ -680,7 +680,7 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 }
 
 // PacketRegister.cs文件
-void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, string filePath, int packetVersion)
+void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion)
 {
 	string str;
 	line(str, "using System;");
@@ -891,11 +891,11 @@ void CodeNetPacket::findCSharpUsingListCustomCode(const string& packetName, cons
 	}
 	else
 	{
-		usingList.push_back("using static System;");
+		usingList.push_back("using System;");
 		usingList.push_back("using static GD;");
 		if (startWith(packetName, "SC"))
 		{
-			usingList.push_back("using GBR;");
+			usingList.push_back("using static GBR;");
 			customList.push_back("\tpublic override void execute()");
 			customList.push_back("\t{}");
 		}
