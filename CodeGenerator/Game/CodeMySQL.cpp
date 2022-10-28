@@ -98,7 +98,7 @@ void CodeMySQL::generate()
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
-void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string filePath)
+void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -112,12 +112,12 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(header, "// " + mysqlInfo.mComment);
 	line(header, "class " + className + " : public MySQLData");
 	line(header, "{");
-	line(header, "\tBASE(MySQLData);");
+	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tstatic constexpr const char* " + mysqlInfo.mMemberList[i].mMemberName + " = STR(" + mysqlInfo.mMemberList[i].mMemberName + ");");
+		line(header, "\tstatic constexpr const char* " + mysqlInfo.mMemberList[i].mMemberName + " = \"" + mysqlInfo.mMemberList[i].mMemberName + "\";");
 	}
 	line(header, "public:");
 	FOR_I(memberCount)
@@ -282,7 +282,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// generateUpdate函数
-	line(source, "void " + className + "::generateUpdate(Array<4096>& params, llong flag) const");
+	line(source, "void " + className + "::generateUpdate(Array<4096>& params, const llong flag) const");
 	line(source, "{");
 	FOR_I(memberCount)
 	{
@@ -341,7 +341,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 		line(source, "\t}");
 	}
 	line(source, "\t// 去除最后的逗号");
-	line(source, "\tint length = params.length();");
+	line(source, "\tconst int length = params.length();");
 	line(source, "\tif (length > 0)");
 	line(source, "\t{");
 	line(source, "\t\tparams[length - 1] = \'\\0\';");
@@ -355,7 +355,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "\tbase::clone(target);");
 	if (memberCount > 0)
 	{
-		line(source, "\tauto targetData = CAST<" + className + "*>(target);");
+		line(source, "\tauto* targetData = CAST<" + className + "*>(target);");
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
@@ -366,12 +366,12 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// cloneWithFlag函数
-	line(source, "void " + className + "::cloneWithFlag(MySQLData* target, llong flag) const");
+	line(source, "void " + className + "::cloneWithFlag(MySQLData* target, const llong flag) const");
 	line(source, "{");
 	line(source, "\tbase::cloneWithFlag(target, flag);");
 	if (memberCount > 0)
 	{
-		line(source, "\tauto targetData = CAST<" + className + "*>(target);");
+		line(source, "\tauto* targetData = CAST<" + className + "*>(target);");
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
@@ -410,7 +410,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// updateBool函数
-	line(source, "bool " + className + "::updateBool(bool value, int index)");
+	line(source, "bool " + className + "::updateBool(const bool value, const int index)");
 	line(source, "{");
 	line(source, "\tbase::updateBool(value, index);");
 	line(source, "\tswitch (index)");
@@ -435,7 +435,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// updateInt函数
-	line(source, "bool " + className + "::updateInt(int value, int index)");
+	line(source, "bool " + className + "::updateInt(const int value, const int index)");
 	line(source, "{");
 	line(source, "\tbase::updateInt(value, index);");
 	line(source, "\tswitch (index)");
@@ -460,7 +460,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// updateFloat函数
-	line(source, "bool " + className + "::updateFloat(float value, int index)");
+	line(source, "bool " + className + "::updateFloat(const float value, const int index)");
 	line(source, "{");
 	line(source, "\tbase::updateFloat(value, index);");
 	line(source, "\tswitch (index)");
@@ -485,7 +485,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// updateLLong函数
-	line(source, "bool " + className + "::updateLLong(llong value, int index)");
+	line(source, "bool " + className + "::updateLLong(const llong value, const int index)");
 	line(source, "{");
 	line(source, "\tbase::updateLLong(value, index);");
 	line(source, "\tswitch (index)");
@@ -510,7 +510,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 	line(source, "");
 
 	// updateString函数
-	line(source, "bool " + className + "::updateString(const string& value, int index)");
+	line(source, "bool " + className + "::updateString(const string& value, const int index)");
 	line(source, "{");
 	line(source, "\tbase::updateString(value, index);");
 	line(source, "\tswitch (index)");
@@ -538,7 +538,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string file
 }
 
 // 生成MySQLTable.h和MySQLTable.cpp文件
-void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string filePath)
+void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const string& filePath)
 {
 	string tableClassName = "MySQL" + mysqlInfo.mMySQLClassName;
 	string dataClassName = "MD" + mysqlInfo.mMySQLClassName;
@@ -553,12 +553,13 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(header, "");
 	line(header, "class " + tableClassName + " : public MySQLTable");
 	line(header, "{");
-	line(header, "\tBASE(MySQLTable);");
+	line(header, "\ttypedef MySQLTable base;");
 	line(header, "public:");
 	line(header, "\texplicit " + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
 	line(header, "\tvoid init(MYSQL * mysql) override;");
 	line(header, "\tMySQLData* createData() override;");
+	line(header, "\tvoid createDataList(Vector<MySQLData*>&dataList, const int count) override;");
 	line(header, "protected:");
 	line(header, "};");
 	line(header, "");
@@ -577,6 +578,10 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
 	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
+	line(source, "}");
+	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>&dataList, const int count)");
+	line(source, "{");
+	line(source, "\treturn mMySQLDataBase->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count); ");
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
@@ -584,7 +589,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string fil
 }
 
 // MySQLHeader.h文件
-void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath)
+void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _MYSQL_HEADER_H_");
@@ -607,7 +612,7 @@ void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysql
 }
 
 // MySQLRegiste.h和MySQLRegiste.cpp文件
-void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, string filePath)
+void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath)
 {
 	// MySQLRegiste.h
 	string str0;
@@ -642,7 +647,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 }
 
 // StringDefineMySQL.h和StringDefineMySQL.cpp
-void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, string filePath)
+void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -662,7 +667,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 }
 
 // MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp
-void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, string filePath)
+void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -692,7 +697,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 }
 
 // MySQLInstanceClear.h
-void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, string filePath)
+void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, const string& filePath)
 {
 	string header;
 	line(header, "#ifdef _MYSQL_INSTANCE_CLEAR_H_");
