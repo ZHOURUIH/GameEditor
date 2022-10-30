@@ -9,13 +9,13 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, string filePath);
-	static void generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, string filePath);
-	static void generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, string filePath);
-	static void generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, string filePath);
-	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, string filePath);
-	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, string filePath);
-	static void generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, string filePath);
+	static void generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const string& filePath);
+	static void generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const string& filePath);
+	static void generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, const string& filePath);
+	static void generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath);
+	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& filePath);
+	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& filePath);
+	static void generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 protected:
 };
 
