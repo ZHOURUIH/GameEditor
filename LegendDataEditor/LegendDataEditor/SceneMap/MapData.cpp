@@ -71,7 +71,7 @@ void MapData::writeUnreachFile()
 			serializer.write(triangleFlag);
 		}
 	}
-	serializer.writeToFile(StringUtility::getFileNameNoSuffix(mFileName, false) + ".unreach");
+	serializer.writeToFile(StringUtility::getFileNameNoSuffix(mFileName, false) + "_unreach.bytes");
 }
 
 //void MapData::findAllUnreachGroup()

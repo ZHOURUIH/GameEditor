@@ -21,7 +21,7 @@ public:
 	}
 	void deleteAll()
 	{
-		doDelete("");
+		doDelete(NULL);
 	}
 	T* query(uint id, bool showError = true)
 	{

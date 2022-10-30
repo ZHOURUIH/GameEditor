@@ -16,14 +16,13 @@ void MapTile::parseTile(char* buffer, int bufferSize, int& offset)
 	serializer.read(mObjFileIdx);
 	serializer.read(mLight);
 	offset = serializer.getIndex();
-	mHasBng = GET_HIGHEST_BIT(mBngImgIdx) == 1;
+	bool hasBng = GET_HIGHEST_BIT(mBngImgIdx) == 1;
 	SET_HIGHEST_BIT(mBngImgIdx, 0);
-	mHasMid = GET_HIGHEST_BIT(mMidImgIdx) == 1;
 	SET_HIGHEST_BIT(mMidImgIdx, 0);
-	mHasObj = GET_HIGHEST_BIT(mObjImgIdx) == 1;
+	bool hasObj = GET_HIGHEST_BIT(mObjImgIdx) == 1;
 	SET_HIGHEST_BIT(mObjImgIdx, 0);
-	mCanWalk = (!mHasBng && !mHasObj);
-	mCanFly = !mHasObj;
+	mCanWalk = (!hasBng && !hasObj);
+	mCanFly = !hasObj;
 	mDoorOpen = GET_HIGHEST_BIT(mDoorOffset) == 1;
 	mHasDoor = GET_HIGHEST_BIT(mDoorIdx) == 1;
 	mHasAni = GET_HIGHEST_BIT(mAniFrame) == 1;
@@ -36,8 +35,5 @@ void MapTile::toSimple(MapTileSimple* simpleTile)
 	simpleTile->mMidImgIdx = mMidImgIdx;
 	simpleTile->mObjImgIdx = mObjImgIdx;
 	simpleTile->mObjFileIdx = mObjFileIdx;
-	simpleTile->mHasBng = mHasBng;
 	simpleTile->mCanWalk = mCanWalk;
-	simpleTile->mHasMid = mHasMid;
-	simpleTile->mHasObj = mHasObj;
 }

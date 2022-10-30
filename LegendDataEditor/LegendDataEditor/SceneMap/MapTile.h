@@ -16,10 +16,7 @@ public:
 	unsigned char mAniTick = 0;		// 动画跳帧数
 	unsigned char mObjFileIdx = 0;	// 资源文件索引
 	unsigned char mLight = 0;		// 亮度
-	bool mHasBng = false;			// 是否有背景图(在热血传奇2地图中，背景图大小为4个地图块，具体到绘制地图时则表现在只有横纵坐标都为双数时才绘制)
 	bool mCanWalk = false;			// 是否可行走(站立)
-	bool mHasMid = false;			// 是否有补充图
-	bool mHasObj = false;			// 是否有对象图
 	bool mCanFly = false;			// 是否可以飞越
 	bool mHasDoor = false;			// 是否有门
 	bool mDoorOpen = false;			// 门是否开启

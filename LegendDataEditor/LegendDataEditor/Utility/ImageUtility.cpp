@@ -1682,15 +1682,15 @@ void ImageUtility::fullImageToMinimal(const string& path)
 
 void ImageUtility::checkMapTile(const string& path)
 {
-	NEW_SQLITE(SQLiteObjectTileImage, objTileTable, "ObjectTileImage");
-	myMap<int, myMap<int, TDObjectTileImage*>> mTileImageDataList;
+	NEW_SQLITE(SQLiteTileImageObject, objTileTable, "TileImageObject");
+	myMap<int, myMap<int, TDTileImageObject*>> tileImageDataList;
 	// key是FileIndex,value每个图集的终止图片下标
 	const auto& allList = objTileTable.queryAll();
 	FOREACH_CONST(iter, allList)
 	{
-		TDObjectTileImage* data = iter->second;
-		auto& ptr = mTileImageDataList.tryInsert(data->mFileIndex, myMap<int, TDObjectTileImage*>());
-		ptr.insert(data->mFileName, data);
+		TDTileImageObject* data = iter->second;
+		auto& ptr = tileImageDataList.tryInsert(data->mFileIndex, myMap<int, TDTileImageObject*>());
+		ptr.insert(data->mImageName, data);
 	}
 
 	myMap<int, mySet<int>> missingList;
@@ -1705,7 +1705,7 @@ void ImageUtility::checkMapTile(const string& path)
 		FOR_J(data.mTileCount)
 		{
 			const MapTileSimple& tile = data.mTileList[j];
-			auto* ptr = mTileImageDataList.get(tile.mObjFileIdx);
+			auto* ptr = tileImageDataList.get(tile.mObjFileIdx);
 			if (ptr == nullptr || !ptr->contains(tile.mObjImgIdx))
 			{
 				auto* missionPtr = missingList.get(tile.mObjFileIdx);
@@ -2127,7 +2127,8 @@ void ImageUtility::convertMapFile(const string& filePath)
 
 void ImageUtility::writeTileObjectImageSizeSQLite(const string& filePath)
 {
-	NEW_SQLITE(SQLiteObjectTileImage, objectTileImage, "ObjectTileImage");
+	NEW_SQLITE(SQLiteTileImageObject, objectTileImage, "TileImageObject");
+	int maxID = objectTileImage.getMaxID();
 	myVector<string> fileList;
 	findFiles(filePath, fileList, ".png");
 	objectTileImage.executeNonQuery("BEGIN TRANSACTION");
@@ -2140,21 +2141,20 @@ void ImageUtility::writeTileObjectImageSizeSQLite(const string& filePath)
 		split(folderName.c_str(), "_", elements);
 		if (elements.size() != 3)
 		{
-			cout << "图片所在的文件夹名错误:" << filePath << endl;
+			cout << "图片所在的文件夹名错误:" << filePath << ",正确的文件夹名格式为比如Objects_0_0" << endl;
 			continue;
 		}
 		int firstIndex = stringToInt(elements[1]);
-		int secondIndex = stringToInt(elements[2]);
 		Vector2Int imageSize = getImageSize(filePath);
-		TDObjectTileImage imageData;
-		imageData.mID = i + 1;
+		TDTileImageObject imageData;
+		imageData.mID = maxID + i + 1;
 		imageData.mFileIndex = firstIndex;
-		imageData.mImageSetIndex = secondIndex;
-		imageData.mFileName = stringToInt(getFileNameNoSuffix(filePath, true));
+		imageData.mAtlasName = folderName;
+		imageData.mImageName = stringToInt(getFileNameNoSuffix(filePath, true));
 		imageData.mImageSizeX = imageSize.x;
 		imageData.mImageSizeY = imageSize.y;
 		objectTileImage.insert(imageData);
-		if (i % 1000 == 0)
+		if ((i + 1) % 1000 == 0)
 		{
 			cout << "已写入" << i + 1 << "个数据" << endl;
 		}

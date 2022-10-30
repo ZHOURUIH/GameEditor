@@ -312,7 +312,7 @@ void main()
 		}
 		else if (input == 30)
 		{
-			cout << "输入文件夹名:";
+			cout << "输入图片所在文件夹名:";
 			string fileName;
 			cin >> fileName;
 			cout << "写入数据库..." << endl;

@@ -98,12 +98,9 @@ string StringUtility::getFileNameNoSuffix(string str, bool removePath)
 			}
 		}
 	}
-	else
+	if (dotPos != NOT_FIND)
 	{
-		if (dotPos != NOT_FIND)
-		{
-			return str.substr(0, dotPos);
-		}
+		return str.substr(0, dotPos);
 	}
 	return str;
 }
