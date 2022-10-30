@@ -19,7 +19,7 @@ void main()
 		cout << "7:自动计算方向" << endl;
 		cout << "8:拆分位置文件" << endl;
 		cout << "9:删除无效图片" << endl;
-		cout << "10:按序号重命名文件" << endl;
+		cout << "10:按序号重命名文件,添加数字后缀" << endl;
 		cout << "11:重命名为序列帧格式" << endl;
 		cout << "12:分组图集" << endl;
 		cout << "13:打包图集" << endl;
