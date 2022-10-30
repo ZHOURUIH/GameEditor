@@ -238,7 +238,7 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 	// 一个目录中的文件数量只能是600个
 	if (fileList.size() != HUMAN_GROUP_SIZE)
 	{
-		cout << "目录中的图片数量错误,请确保图片数量为600个" << endl;
+		cout << "目录中的图片数量错误,请确保图片数量为600个,且不包含子目录" << endl;
 		return;
 	}
 	sortByFileNumber(fileList);
@@ -786,7 +786,7 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			}
 			else
 			{
-				cout << "位置文件错误：" << getFileNameNoSuffix(fullFileName, false) + ".txt" << endl;
+				cout << "位置文件错误或者找不到此图片的同名位置文件：" << getFileNameNoSuffix(fullFileName, false) + ".txt" << endl;
 			}
 		}
 		END(pngFiles);
