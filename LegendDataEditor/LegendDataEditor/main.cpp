@@ -354,7 +354,7 @@ void main()
 			cout << "输入ImagePositionAnimation中的起始ID:";
 			int startID;
 			cin >> startID;
-			ImageUtility::autoFillAnimationTable("../media/" + clothName, startID);
+			ImageUtility::autoFillAnimationTable(clothName, startID);
 		}
 		system("pause");
 		cout << endl;

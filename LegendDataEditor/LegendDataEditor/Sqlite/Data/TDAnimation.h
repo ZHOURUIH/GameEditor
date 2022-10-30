@@ -8,8 +8,6 @@ class TDAnimation : public SQLiteData
 public:
 	static const char* ID;
 	static const char* Description;
-	static const char* Atlas;
-	static const char* Animation;
 	static const char* FrameCount;
 	static const char* Loop;
 	static const char* AnimationSpeed;
@@ -18,8 +16,6 @@ public:
 public:
 	int mID;
 	string mDescription;
-	string mAtlas;
-	string mAnimation;
 	byte mFrameCount;
 	bool mLoop;
 	float mAnimationSpeed;
@@ -30,8 +26,6 @@ public:
 	{
 		registeParam(mID, ID);
 		registeParam(mDescription, Description);
-		registeParam(mAtlas, Atlas);
-		registeParam(mAnimation, Animation);
 		registeParam(mFrameCount, FrameCount);
 		registeParam(mLoop, Loop);
 		registeParam(mAnimationSpeed, AnimationSpeed);
