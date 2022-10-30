@@ -1723,6 +1723,34 @@ void ImageUtility::checkMapTile(const string& path)
 	END(files);
 }
 
+void ImageUtility::autoFillAnimationTable(const string& clothName, int startID)
+{
+	string animationName[11]{"攻击", "释放技能", "跑步", "走路", "死亡", "被击", "站立", "挖矿", "搜寻", "跳跃攻击", "野蛮冲撞"};
+	int frameCount[11]{6, 6, 6, 6, 4, 3, 4, 6, 2, 8, 6};
+	bool loop[11]{false, false, true, true, false, false, true, true, true, false, true};
+	float animationSpeed[11]{0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.7f};
+	int startIDOffset[11]{0 * DIRECTION_COUNT, 8 * DIRECTION_COUNT, 6 * DIRECTION_COUNT, 10 * DIRECTION_COUNT, 
+						  1 * DIRECTION_COUNT, 3 * DIRECTION_COUNT, 9 * DIRECTION_COUNT, 2 * DIRECTION_COUNT,
+						  7 * DIRECTION_COUNT, 4 * DIRECTION_COUNT, 10 * DIRECTION_COUNT };
+	NEW_SQLITE(SQLiteAnimation, animationTable, "Animation");
+	int curAnimationID = animationTable.getMaxID();
+	FOR_I(11)
+	{
+		TDAnimation data;
+		data.mID = ++curAnimationID;
+		data.mDescription = clothName + "的" + animationName[i];
+		data.mFrameCount = frameCount[i];
+		data.mLoop = loop[i] ? 1 : 0;
+		data.mAnimationSpeed = animationSpeed[i];
+		data.mDirectionCount = DIRECTION_COUNT;
+		FOR_J(DIRECTION_COUNT)
+		{
+			data.mAnimationPosition.push_back(startID + startIDOffset[i] + j);
+		}
+		animationTable.insert(data);
+	}
+}
+
 void ImageUtility::trimImage(const string& filePath, const string& newFilePath, Vector2Int size)
 {
 	FreeImage_Initialise();

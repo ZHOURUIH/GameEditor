@@ -42,6 +42,7 @@ void main()
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
 		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << "34:检查所有地图是否有无效地砖下标" << endl;
+		cout << "35:将角色动作写入Animation表格" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -344,6 +345,16 @@ void main()
 			string fileName;
 			cin >> fileName;
 			ImageUtility::checkMapTile("../media/" + fileName);
+		}
+		else if (input == 35)
+		{
+			cout << "输入角色中文名字:";
+			string clothName;
+			cin >> clothName;
+			cout << "输入ImagePositionAnimation中的起始ID:";
+			int startID;
+			cin >> startID;
+			ImageUtility::autoFillAnimationTable("../media/" + clothName, startID);
 		}
 		system("pause");
 		cout << endl;

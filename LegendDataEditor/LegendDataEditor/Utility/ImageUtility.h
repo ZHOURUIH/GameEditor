@@ -84,6 +84,7 @@ public:
 	static void scalePosition(const string& fileName, float scale);
 	static void fullImageToMinimal(const string& path);
 	static void checkMapTile(const string& path);
+	static void autoFillAnimationTable(const string& clothName, int startID);
 protected:
 	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset);
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
