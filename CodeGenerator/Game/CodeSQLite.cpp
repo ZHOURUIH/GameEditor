@@ -623,7 +623,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		}
 	}
 	line(mainFile, "\t}");
-	line(mainFile, "\t//-------------------------------------------------------------------------------------------------------------");
+	line(mainFile, "\t//------------------------------------------------------------------------------------------------------------------------------");
 	line(mainFile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
 	line(mainFile, "\t{");
 	line(mainFile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
@@ -655,7 +655,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 	line(hotFixfile, "\t\t// 进入热更以后,所有资源都处于可用状态");
 	line(hotFixfile, "\t\tmExcelManager.resourceAvailable();");
 	line(hotFixfile, "\t}");
-	line(hotFixfile, "\t//-------------------------------------------------------------------------------------------------------------");
+	line(hotFixfile, "\t//------------------------------------------------------------------------------------------------------------------------------");
 	line(hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
 	line(hotFixfile, "\t{");
 	line(hotFixfile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
