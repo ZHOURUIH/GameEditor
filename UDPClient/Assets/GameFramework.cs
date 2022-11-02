@@ -16,7 +16,7 @@ public class GameFramework : MonoBehaviour
 		mMyselfPlayer = createPlayer(mMyselfID);
 		mPlayerList.Add(mMyselfID, mMyselfPlayer);
 		mUDPClient = new UDPClient();
-		mUDPClient.connect("192.168.1.5", 11115);
+		mUDPClient.connect("192.168.1.2", 11112);
 		mUDPClient.sendPacket(UDPClient.createPacket(PACKET_TPYE.CS_INIT));
 	}
 	void OnDestroy()
@@ -42,14 +42,17 @@ public class GameFramework : MonoBehaviour
 		{
 			direction += Vector3.down;
 		}
-		Vector3 pos = mMyselfPlayer.transform.localPosition + Vector3.Normalize(direction);
-		mMyselfPlayer.transform.localPosition = pos;
-		var packet = UDPClient.createPacket(PACKET_TPYE.CS_MOVE) as CSPacketMove;
-		packet.mPlayerID = mMyselfID;
-		packet.mPosX = pos.x;
-		packet.mPosY = pos.y;
-		mUDPClient.sendPacket(packet);
-		// 通知服务器位置改变
+		if (direction.magnitude > 0.0f)
+		{
+			Vector3 pos = mMyselfPlayer.transform.localPosition + Vector3.Normalize(direction);
+			mMyselfPlayer.transform.localPosition = pos;
+			// 通知服务器位置改变
+			var packet = UDPClient.createPacket(PACKET_TPYE.CS_MOVE) as CSPacketMove;
+			packet.mPlayerID = mMyselfID;
+			packet.mPosX = pos.x;
+			packet.mPosY = pos.y;
+			mUDPClient.sendPacket(packet);
+		}
 		mUDPClient.update();
 	}
 	public static GameFramework get() { return mInstance; }
