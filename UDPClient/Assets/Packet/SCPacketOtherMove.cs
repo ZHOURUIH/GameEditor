@@ -10,8 +10,8 @@ public class SCPacketOtherMove : UDPPacket
 	{
 		base.read(buffer, ref index);
 		mPlayerID = readInt(buffer, ref index, out _);
-		mPosX = readInt(buffer, ref index, out _);
-		mPosY = readInt(buffer, ref index, out _);
+		mPosX = readFloat(buffer, ref index, out _);
+		mPosY = readFloat(buffer, ref index, out _);
 	}
 	public override void execute()
 	{
