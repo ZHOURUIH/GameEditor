@@ -11,6 +11,7 @@ public class GameFramework : MonoBehaviour
 	public GameObject mPlayerPrefab;
 	void Start()
     {
+		Application.targetFrameRate = 30;
 		mInstance = this;
 		mMyselfID = Random.Range(10, 100000);
 		mMyselfPlayer = createPlayer(mMyselfID);
@@ -44,7 +45,7 @@ public class GameFramework : MonoBehaviour
 		}
 		if (direction.magnitude > 0.0f)
 		{
-			Vector3 pos = mMyselfPlayer.transform.localPosition + Vector3.Normalize(direction);
+			Vector3 pos = mMyselfPlayer.transform.localPosition + Vector3.Normalize(direction) * Time.deltaTime * 500;
 			mMyselfPlayer.transform.localPosition = pos;
 			// 通知服务器位置改变
 			var packet = UDPClient.createPacket(PACKET_TPYE.CS_MOVE) as CSPacketMove;
