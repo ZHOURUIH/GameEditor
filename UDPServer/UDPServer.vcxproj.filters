@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Main\Packet">
+      <UniqueIdentifier>{5c4dda51-8411-4f61-ab0c-038ab8f3462e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPServer.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\CSPacketMove.cpp">
+      <Filter>Main\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\SCPacketOtherMove.cpp">
+      <Filter>Main\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\UDPPacket.cpp">
+      <Filter>Main\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\CSPacketInit.cpp">
+      <Filter>Main\Packet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UDPServer.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonMacro.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonDefine.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\CSPacketMove.h">
+      <Filter>Main\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\SCPacketOtherMove.h">
+      <Filter>Main\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\UDPPacket.h">
+      <Filter>Main\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\CSPacketInit.h">
+      <Filter>Main\Packet</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
