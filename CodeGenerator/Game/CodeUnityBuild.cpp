@@ -25,7 +25,6 @@ void CodeUnityBuild::generate()
 		}
 	}
 	END(fileList);
-	fileList.remove("main.cpp");
 	fileList.remove("UnityBuild.cpp");
 	// 生成UnityBuild.cpp文件
 	generateCppUnityBuild(fileList, cppProjectPath);
