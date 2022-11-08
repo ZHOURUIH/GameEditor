@@ -56,11 +56,11 @@ public class UDPClient
 	public static UDPPacket createPacket(PACKET_TPYE type)
 	{
 		UDPPacket packet = null;
-		switch(type)
+		switch (type)
 		{
-			case PACKET_TPYE.CS_INIT: packet = new CSInit();break;
-			case PACKET_TPYE.CS_MOVE: packet = new CSPacketMove();break;
-			case PACKET_TPYE.SC_OTHER_MOVE: packet = new SCPacketOtherMove();break;
+			case PACKET_TPYE.CS_INIT: packet = new CSInit(); break;
+			case PACKET_TPYE.CS_MOVE: packet = new CSPacketMove(); break;
+			case PACKET_TPYE.SC_OTHER_MOVE: packet = new SCPacketOtherMove(); break;
 		}
 		if (packet != null)
 		{
