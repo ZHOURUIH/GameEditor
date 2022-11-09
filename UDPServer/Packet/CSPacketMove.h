@@ -8,7 +8,8 @@ class CSPacketMove : public UDPPacket
 	typedef UDPPacket base;
 public:
 	void read(char* buffer, int bufferSize, int& index) override;
-	void execute(const sockaddr_in& addr) override;
+	void execute(llong token) override;
+	virtual llong getToken() { return mPlayerID; }
 public:
 	int mPlayerID = 0;
 	float mPosX = 0.0f;

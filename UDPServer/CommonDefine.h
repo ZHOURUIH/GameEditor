@@ -9,3 +9,10 @@ enum class PACKET_TYPE : byte
 	CS_MOVE,
 	SC_OTHER_MOVE,
 };
+
+// »Øµ÷
+class CustomThread;
+typedef void (*CustomThreadCallback)(CustomThread* thread);
+typedef void (*DelayCallback0)();
+
+typedef function<void()> DelayLambda;

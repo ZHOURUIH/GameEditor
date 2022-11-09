@@ -132,8 +132,9 @@ if (thread != NULL_THREAD)		\
 
 #ifdef ERROR
 #undef ERROR
-#define ERROR(info) cout << info << endl;
+#define ERROR(info) cout << "程序错误:" << info << endl;
 #endif
+#define LOG(info) cout << info << endl;
 
 // 只开放部分std的内容,避免不必要的命名冲突
 using std::vector;
@@ -152,6 +153,7 @@ using std::move;
 using std::is_same;
 using std::decay;
 using std::function;
+using std::atomic;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 // 基础数据类型简化定义
@@ -161,3 +163,27 @@ typedef unsigned int uint;
 typedef unsigned long ulong;
 typedef unsigned long long ullong;
 typedef long long llong;
+
+#define FOR_I(count)			for (int i = 0; i < (int)count; ++i)
+#define FOR_J(count)			for (int j = 0; j < (int)count; ++j)
+#define FOR_K(count)			for (int k = 0; k < (int)count; ++k)
+#define FOR_INVERSE_I(count)	for (int i = count - 1; i >= 0; --i)
+#define FOR_INVERSE_J(count)	for (int j = count - 1; j >= 0; --j)
+#define FOR_INVERSE_K(count)	for (int k = count - 1; k >= 0; --k)
+#define FOR_ONCE				for(int tempI = 0; tempI < 1; ++tempI)
+
+#ifdef LOCK
+#undef LOCK
+#endif
+#define LOCK(lock)							\
+(lock).waitForUnlock(__FILE__, __LINE__);	\
+try											\
+{
+
+#ifdef UNLOCK
+#undef UNLOCK
+#endif
+#define UNLOCK(lock)						\
+}											\
+catch(...){}								\
+(lock).unlock()
