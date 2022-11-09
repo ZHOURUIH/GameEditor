@@ -12,6 +12,18 @@
     <Filter Include="Main\Packet">
       <UniqueIdentifier>{5c4dda51-8411-4f61-ab0c-038ab8f3462e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main\Thread">
+      <UniqueIdentifier>{3b39a61e-d740-4b01-9250-1ce34e5eb321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\STL">
+      <UniqueIdentifier>{fbd82551-3be6-4436-921c-d65860627ce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\CommandSystem">
+      <UniqueIdentifier>{9f5fef65-0a66-4491-a2ad-1da804bdda33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\CommandSystem\CmdNetServer">
+      <UniqueIdentifier>{7d3af255-66c2-4eda-a142-15e3d2752fec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,6 +46,42 @@
     </ClCompile>
     <ClCompile Include="Packet\CSPacketInit.cpp">
       <Filter>Main\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\ThreadManager.cpp">
+      <Filter>Main\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\TimeLock.cpp">
+      <Filter>Main\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\CustomThread.cpp">
+      <Filter>Main\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\ThreadLock.cpp">
+      <Filter>Main\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="STL\mySTL.cpp">
+      <Filter>Main\STL</Filter>
+    </ClCompile>
+    <ClCompile Include="STL\IndependentLog.cpp">
+      <Filter>Main\STL</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPServerClient.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPClientInfo.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandSystem.cpp">
+      <Filter>Main\CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\GameCommand.cpp">
+      <Filter>Main\CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CommandReceiver.cpp">
+      <Filter>Main\CommandSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandSystem\CmdNetServer\CmdNetServerReceiveUDPPacket.cpp">
+      <Filter>Main\CommandSystem\CmdNetServer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +108,81 @@
     </ClInclude>
     <ClInclude Include="Packet\CSPacketInit.h">
       <Filter>Main\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\ThreadManager.h">
+      <Filter>Main\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\TimeLock.h">
+      <Filter>Main\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\CustomThread.h">
+      <Filter>Main\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\ThreadLock.h">
+      <Filter>Main\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\mySTL.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Queue.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\SafeMap.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\SafeSet.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\SafeVector.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Set.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Stack.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Vector.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\IndependentLog.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Map.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Array.h">
+      <Filter>Main\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="UDPServerClient.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="UDPClientInfo.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DoubleBufferNoListThread.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DoubleBufferThread.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DoubleBuffer.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandSystem.h">
+      <Filter>Main\CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\DelayCommand.h">
+      <Filter>Main\CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\GameCommand.h">
+      <Filter>Main\CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CommandReceiver.h">
+      <Filter>Main\CommandSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandSystem\CmdNetServer\CmdNetServerReceiveUDPPacket.h">
+      <Filter>Main\CommandSystem\CmdNetServer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

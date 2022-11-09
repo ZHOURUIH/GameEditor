@@ -10,8 +10,10 @@ public:
 	virtual void read(char* buffer, int bufferSize, int& index);
 	virtual void write(char* buffer, int bufferSize, int& index);
 	PACKET_TYPE getType() const { return mType; }
+	virtual llong getToken() { return 0; }
 	void setType(PACKET_TYPE type) { mType = type; }
-	virtual void execute(const sockaddr_in& addr) {}
+	// token表示执行此消息的客户端凭证
+	virtual void execute(llong token) {}
 protected:
 	PACKET_TYPE mType = PACKET_TYPE::NONE;
 };

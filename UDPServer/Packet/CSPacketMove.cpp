@@ -10,13 +10,13 @@ void CSPacketMove::read(char* buffer, int bufferSize, int& index)
 	mPosY = Utility::read<float>(buffer, bufferSize, index);
 }
 
-void CSPacketMove::execute(const sockaddr_in& addr)
+void CSPacketMove::execute(llong token)
 {
 	auto* otherMovePacket = static_cast<SCPacketOtherMove*>(UDPServer::createPacket(PACKET_TYPE::SC_OTHER_MOVE));
 	otherMovePacket->mPlayerID = mPlayerID;
 	otherMovePacket->mPosX = mPosX;
 	otherMovePacket->mPosY = mPosY;
 	// 给其他玩家广播消息
-	UDPServer::get()->broadcastPacket(otherMovePacket, addr);
+	UDPServer::get()->broadcastPacket(otherMovePacket, token);
 	delete otherMovePacket;
 }
