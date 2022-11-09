@@ -20,6 +20,7 @@ public abstract class NetConnectUDP : NetConnect
 	protected Socket mSocket;                               // 套接字实例
 	protected byte[] mRecvBuff;                             // 从Socket接收时使用的缓冲区
 	protected int mMinPacketSize;                           // 解析一个消息包所需的最少字节数
+	static DateTime lastTime;
 	public NetConnectUDP()
 	{
 		mReceiveBuffer = new DoubleBuffer<UDPPacket>();
@@ -35,7 +36,7 @@ public abstract class NetConnectUDP : NetConnect
 	}
 	public virtual void init(string targetIP, int targetPort)
 	{
-		mSendThread.start(sendSocket);
+		mSendThread.start(sendSocket, 0, 1);
 		mReceiveThread.start(receiveSocket, 0, 1);
 		mInputBuffer.init(2048);
 		if (!string.IsNullOrEmpty(targetIP) && targetPort != 0)
@@ -117,6 +118,11 @@ public abstract class NetConnectUDP : NetConnect
 			try
 			{
 				int count = readList.Count;
+				if (count > 0)
+				{
+					Debug.Log("发送数量:" + count + ", time:" + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond + ", 时间差:" + (DateTime.Now - lastTime).TotalMilliseconds);
+					lastTime = DateTime.Now;
+				}
 				for (int i = 0; i < count; ++i)
 				{
 					byte[] item = readList[i];

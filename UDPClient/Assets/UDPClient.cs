@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class UDPClient
 	protected EndPoint mRecvAddress;
 	protected byte[] mSendBuffer = new byte[2048];
 	protected byte[] mRecvBuffer = new byte[2048];
+	protected DateTime lastTime;
 	public void connect(string serverIP, int serverPort)
 	{
 		mSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -39,6 +41,8 @@ public class UDPClient
 	{
 		int packetSize = 0;
 		packet.write(mSendBuffer, ref packetSize);
+		Debug.Log("发送数量:" + packetSize + ", time:" + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond + ", 时间差:" + (DateTime.Now - lastTime).TotalMilliseconds);
+		lastTime = DateTime.Now;
 		mSocket.SendTo(mSendBuffer, 0, packetSize, SocketFlags.None, mServerAddress);
 	}
 	protected void recvPacket(byte[] buffer, int recvCount)
