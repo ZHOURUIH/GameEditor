@@ -20,30 +20,6 @@ void CodeCmd::generate()
 	split(cmdFile.c_str(), "\r\n", cmdList);
 	// 生成StringDefineCmd文件
 	generateStringDefineCmd(cmdList, cppStringDefinePath);
-	// 生成CommandHeader.h文件
-	generateCppCmdTotalHeaderFile(cmdList, cppHeaderPath);
-}
-
-// CommandHeader.h文件
-void CodeCmd::generateCppCmdTotalHeaderFile(const myVector<string>& cmdList, string filePath)
-{
-	string str0;
-	line(str0, "#ifndef _COMMAND_HEADER_H_");
-	line(str0, "#define _COMMAND_HEADER_H_");
-	line(str0, "");
-	line(str0, "#include \"CommandHeaderBase.h\"");
-	line(str0, "");
-	uint count = cmdList.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + cmdList[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#include \"StringDefine.h\"");
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(filePath + "CommandHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineCmd.h和StringDefineCmd.cpp
