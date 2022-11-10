@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,30 +7,44 @@ public class GameFramework : MonoBehaviour
 	protected int mMyselfID;
 	protected Dictionary<int, GameObject> mPlayerList = new Dictionary<int, GameObject>();
 	protected GameObject mMyselfPlayer;
-	//protected UDPClient mUDPClient;
+	protected UDPClient mUDPClient;
 	protected NetConnectUDPFrame mUDPConnect;
+	bool mUseMultiThread = false;
 	protected CommandSystem mCommandSystem;
 	protected static GameFramework mInstance;
 	public GameObject mPlayerPrefab;
+	protected DateTime lastTime;
 	void Start()
     {
 		mCommandSystem = new CommandSystem();
 		Application.targetFrameRate = 60;
 		mInstance = this;
-		mMyselfID = Random.Range(10, 100000);
+		mMyselfID = UnityEngine.Random.Range(10, 100000);
 		mMyselfPlayer = createPlayer(mMyselfID);
 		mPlayerList.Add(mMyselfID, mMyselfPlayer);
-		mUDPConnect = new NetConnectUDPFrame();
-		mUDPConnect.init("192.168.1.5", 11112);
-		mUDPConnect.sendPacket(UDPClient.createPacket(PACKET_TPYE.CS_INIT));
-		//mUDPClient = new UDPClient();
-		//mUDPClient.connect("192.168.1.5", 11112);
-		//mUDPClient.sendPacket(UDPClient.createPacket(PACKET_TPYE.CS_INIT));
+		if (mUseMultiThread)
+		{
+			mUDPConnect = new NetConnectUDPFrame();
+			mUDPConnect.init("192.168.1.5", 11112);
+			mUDPConnect.sendPacket(UDPClient.createPacket(PACKET_TPYE.CS_INIT));
+		}
+		else
+		{
+			mUDPClient = new UDPClient();
+			mUDPClient.connect("192.168.1.5", 11112);
+			mUDPClient.sendPacket(UDPClient.createPacket(PACKET_TPYE.CS_INIT));
+		}
 	}
 	void OnDestroy()
 	{
-		mUDPConnect.destroy();
-		//mUDPClient.close();
+		if (mUseMultiThread)
+		{
+			mUDPConnect.destroy();
+		}
+		else
+		{
+			mUDPClient.close();
+		}
 	}
 	void Update()
     {
@@ -53,17 +68,29 @@ public class GameFramework : MonoBehaviour
 		if (direction.magnitude > 0.0f)
 		{
 			Vector3 pos = mMyselfPlayer.transform.localPosition + Vector3.Normalize(direction) * Time.deltaTime * 500;
-			Debug.Log("移动方向:" + direction + ", 位置:" + pos);
 			mMyselfPlayer.transform.localPosition = pos;
 			// 通知服务器位置改变
 			var packet = UDPClient.createPacket(PACKET_TPYE.CS_MOVE) as CSPacketMove;
 			packet.mPlayerID = mMyselfID;
 			packet.mPosX = pos.x;
 			packet.mPosY = pos.y;
-			mUDPConnect.sendPacket(packet);
-			//mUDPClient.sendPacket(packet);
+			if (mUseMultiThread)
+			{
+				mUDPConnect.sendPacket(packet);
+			}
+			else
+			{
+				mUDPClient.sendPacket(packet);
+			}
 		}
-		//mUDPClient.update();
+		if (mUseMultiThread)
+		{
+			mUDPConnect.update(Time.deltaTime);
+		}	
+		else
+		{
+			mUDPClient.update();
+		}
 		mCommandSystem.update(Time.deltaTime);
 	}
 	public static GameFramework get() { return mInstance; }
@@ -75,6 +102,8 @@ public class GameFramework : MonoBehaviour
 			mPlayerList.Add(playerID, player);
 		}
 		player.transform.localPosition = pos;
+		Debug.Log("时间差:" + (DateTime.Now - lastTime).TotalMilliseconds);
+		lastTime = DateTime.Now;
 	}
 	//------------------------------------------------------------------------------------------------------------------------------
 	protected GameObject createPlayer(int playerID)
