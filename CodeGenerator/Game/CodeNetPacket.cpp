@@ -572,8 +572,8 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
-		line(source, "\tconst CharacterPlayer* player = getPlayer(mClient->getCharacterGUID());");
-		line(source, "\tif (player == NULL)");
+		line(source, "\tconst CharacterPlayer* player = getPlayer(mClient->getPlayerGUID());");
+		line(source, "\tif (player == nullptr)");
 		line(source, "\t{");
 		line(source, "\t\treturn;");
 		line(source, "\t}");
