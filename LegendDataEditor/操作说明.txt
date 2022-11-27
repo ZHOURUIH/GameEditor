@@ -21,7 +21,7 @@
 6.删除无效图片
 7.将所有的序列帧放入同一个目录中,用于打包图集,如果目录中的图片过多,则需要拆分为多个AnimationSet+数字的目录,确保每个目录正好能打包一个图集
 8.然后选择工具选项17将所有序列帧数据写入ImagePositionAnimation表格中.
-9.手动填写Animation表格,ModelEquip表格,ItemEquip表格,Item表格
-10.选择14打包全部图集,将打包好的图集放入Unity工程的指定目录
+9.选择14打包全部图集,将打包好的图集放入Unity工程的指定目录
+10.手动填写Animation表格,ModelEquip表格,ItemEquip表格,Item表格
 
 解析特效资源:选择1,解析对应的wix和wil文件,然后选择6将特效按10个一组放入独立的文件夹,再对所有的特效进行重命名,建议为中文拼音,由于部分特效是有方向的,部分特效没有方向,所以认为所有特效都有方向属性,没有方向的特效认为方向数量只有1个.同一个特效中的所有序列帧需要遵循命名规则,ActionName_dir0,ActionName可以是任意的名字,比如attack,hit,dir0表示第0方向上的特效.选择21将每个文件夹中的图片重命名为序列帧格式,再选择10将所有特效帧数据写入SQLite中的EffectFrame表格中,手动修改EffectFrame中的Label和ID,填写SQLite中的Effect表格.在unity中做成图集,然后就可以在游戏中使用了.

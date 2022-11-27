@@ -161,21 +161,21 @@ auto iter##End = stl.cend();\
 for(; iter != iter##End; ++iter)
 
 // 使用下标遍历列表,需要在循环结束后添加END
-#define FOR_VECTOR(stl) uint stl##Count = stl.size(); FOR(stl, uint i = 0; i < stl##Count; ++i)
-#define FOR_VECTOR_J(stl) uint stl##Count = stl.size(); FOR(stl, uint j = 0; j < stl##Count; ++j)
-#define FOR_VECTOR_K(stl) uint stl##Count = stl.size(); FOR(stl, uint k = 0; k < stl##Count; ++k)
-#define FOR_VECTOR_INVERSE(stl) uint stl##Count = stl.size(); FOR(stl, int i = stl##Count - 1; i >= 0; --i)
+#define FOR_VECTOR(stl) int stl##Count = (int)stl.size(); FOR(stl, int i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR_J(stl) int stl##Count = (int)stl.size(); FOR(stl, int j = 0; j < stl##Count; ++j)
+#define FOR_VECTOR_K(stl) int stl##Count = (int)stl.size(); FOR(stl, int k = 0; k < stl##Count; ++k)
+#define FOR_VECTOR_INVERSE(stl) int stl##Count = (int)stl.size(); FOR(stl, int i = stl##Count - 1; i >= 0; --i)
 // 使用下标遍历常量列表,不需要在循环结束后添加END
-#define FOR_VECTOR_CONST(stl) uint stl##Count = stl.size(); for(uint i = 0; i < stl##Count; ++i)
-#define FOR_VECTOR_CONST_J(stl) uint stl##Count = stl.size(); for(uint j = 0; j < stl##Count; ++j)
-#define FOR_VECTOR_CONST_K(stl) uint stl##Count = stl.size(); for(uint k = 0; k < stl##Count; ++k)
+#define FOR_VECTOR_CONST(stl) int stl##Count = (int)stl.size(); for(int i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR_CONST_J(stl) int stl##Count = (int)stl.size(); for(int j = 0; j < stl##Count; ++j)
+#define FOR_VECTOR_CONST_K(stl) int stl##Count = (int)stl.size(); for(int k = 0; k < stl##Count; ++k)
 #define FOR_VECTOR_CONST_INVERSE(stl) uint stl##Count = stl.size(); for(stl, int i = stl##Count - 1; i >= 0; --i)
 // 简单的for循环
-#define FOR_I(count) for (uint i = 0; i < (uint)count; ++i)
-#define FOR_J(count) for (uint j = 0; j < (uint)count; ++j)
-#define FOR_K(count) for (uint k = 0; k < (uint)count; ++k)
-#define FOR_X(count) for (uint x = 0; x < (uint)count; ++x)
-#define FOR_Y(count) for (uint y = 0; y < (uint)count; ++y)
+#define FOR_I(count) for (int i = 0; i < (int)count; ++i)
+#define FOR_J(count) for (int j = 0; j < (int)count; ++j)
+#define FOR_K(count) for (int k = 0; k < (int)count; ++k)
+#define FOR_X(count) for (int x = 0; x < (int)count; ++x)
+#define FOR_Y(count) for (int y = 0; y < (int)count; ++y)
 #define FOR_INVERSE_I(count) for (int i = count - 1; i >= 0; --i)
 #define FOR_INVERSE_J(count) for (int j = count - 1; j >= 0; --j)
 #define FOR_INVERSE_K(count) for (int k = count - 1; k >= 0; --k)
@@ -573,6 +573,7 @@ typedef unsigned long long ullong;
 #include "Vector2UShort.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Vector4Int.h"
 #include "ServerCallback.h"
 #include "ServerEnum.h"
 

@@ -35,7 +35,7 @@ bool ImageUtility::readWixFile(const string& filePath, WIXFileImageInfo& info)
 	txSerializer serializer(file.mBuffer, file.mFileSize);
 	serializer.readBuffer(info.mStrHeader, 44);
 	serializer.read(info.mIndexCount);
-	FOR_I((uint)info.mIndexCount)
+	FOR_I(info.mIndexCount)
 	{
 		int curStartPos = 0;
 		if (serializer.read(curStartPos))
@@ -135,9 +135,9 @@ void ImageUtility::wixWilToPNG(const string& wixFileName, const string& wilFileN
 		}
 		// 固定转换为32位png图片
 		NEW_ARRAY(unsigned char, pixelCount * 4, curInfo.mColor);
-		FOR_Y((uint)curInfo.mHeight)
+		FOR_Y(curInfo.mHeight)
 		{
-			FOR_X((uint)curInfo.mWidth)
+			FOR_X(curInfo.mWidth)
 			{
 				int pos = y * lineLength + x;
 				int pngPos = y * curInfo.mWidth + x;
@@ -194,7 +194,7 @@ void ImageUtility::allWixWilToPNG(const string& sourcePath)
 void ImageUtility::writePositionFile(const string& positionFile, POINT* posList, int posCount)
 {
 	string posStr;
-	FOR_I((uint)posCount)
+	FOR_I(posCount)
 	{
 		posStr += intToString(posList[i].x);
 		posStr += ",";
@@ -389,7 +389,7 @@ void ImageUtility::splitPositionFile(const string& path, bool pathWithFileName)
 	{
 		return;
 	}
-	FOR_I((uint)posCount)
+	FOR_I(posCount)
 	{
 		string posStr = intToString(posList[i].x) + "," + intToString(posList[i].y);
 		writeFile(filePath + "/" + intToString(i) + ".txt", posStr);
@@ -418,7 +418,7 @@ void ImageUtility::renameByDirection(const string& path, int directionCount, boo
 			continue;
 		}
 		int actionFrameCount = fileCount / directionCount;
-		FOR_J((uint)fileCount)
+		FOR_J(fileCount)
 		{
 			int imageDir = j / actionFrameCount;
 			int index = j % actionFrameCount;
@@ -450,7 +450,7 @@ void ImageUtility::sortByFileNumber(myVector<string>& fileList, bool fileNameIsN
 	if (fileNameIsNumber)
 	{
 		myMap<int, string> sortedList;
-		FOR_I((uint)count)
+		FOR_I(count)
 		{
 			sortedList.insert(stringToInt(getFileNameNoSuffix(fileList[i], true)), fileList[i]);
 		}
@@ -463,7 +463,7 @@ void ImageUtility::sortByFileNumber(myVector<string>& fileList, bool fileNameIsN
 	else
 	{
 		myMap<string, myMap<int, string>> sortedList;
-		FOR_I((uint)count)
+		FOR_I(count)
 		{
 			string fileName = getFileNameNoSuffix(fileList[i], true);
 			string preName = fileName.substr(0, fileName.find_last_of('_') + 1);
@@ -1150,12 +1150,12 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 	int width = FreeImage_GetWidth(bitmap);
 	int height = FreeImage_GetHeight(bitmap);
 	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
-	FOR_Y((uint)height)
+	FOR_Y(height)
 	{
 		bool lastShadowMark = false;
 		int startIndex = -1;
 		myVector<pair<int, int>> shadowBlockList;
-		FOR_X((uint)width)
+		FOR_X(width)
 		{
 			// 检查这一行是否有影子
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
@@ -1202,7 +1202,7 @@ void ImageUtility::processShadowHorizontal(const string& filePath)
 			lastShadowMark = curShadowMark;
 		}
 		// 拷贝原图,并且重新设置阴影部分颜色
-		FOR_J((uint)width)
+		FOR_J(width)
 		{
 			RGBQUAD pixel = getColor(bitmap, j, y);
 			setColor(newBitmap, j, y, pixel);
@@ -1244,12 +1244,12 @@ void ImageUtility::processShadowVertical(const string& filePath)
 	int width = FreeImage_GetWidth(bitmap);
 	int height = FreeImage_GetHeight(bitmap);
 	FIBITMAP* newBitmap = FreeImage_Allocate(width, height, 32);
-	FOR_X((uint)width)
+	FOR_X(width)
 	{
 		bool lastShadowMark = false;
 		int startIndex = -1;
 		myVector<pair<int, int>> shadowBlockList;
-		FOR_Y((uint)height)
+		FOR_Y(height)
 		{
 			// 检查这一行是否有影子
 			// 当前像素为黑色或者透明,0表示两者都不是,1表示黑色,2表示透明
@@ -1296,7 +1296,7 @@ void ImageUtility::processShadowVertical(const string& filePath)
 			lastShadowMark = curShadowMark;
 		}
 		// 拷贝原图,并且重新设置阴影部分颜色
-		FOR_J((uint)height)
+		FOR_J(height)
 		{
 			RGBQUAD pixel = getColor(bitmap, x, j);
 			setColor(newBitmap, x, j, pixel);
@@ -1384,11 +1384,11 @@ void ImageUtility::updateMapEffect()
 		MapData* mapData = NEW(MapData, mapData);
 		mapData->readFile("../media/" + iter->second->mFileName);
 		int tileCount = mapData->mHeader->mWidth * mapData->mHeader->mHeight;
-		FOR_J((uint)tileCount)
+		FOR_J(tileCount)
 		{
 			MapTile& tile = mapData->mTileList[j];
 			Vector2Int tilePos = tileIndexToTilePos(j, mapData->mHeader->mHeight);
-			FOR_K((uint)effectCount)
+			FOR_K(effectCount)
 			{
 				if (tile.mObjFileIdx == effectImage[k].first &&
 					tile.mObjImgIdx == effectImage[k].second)
@@ -1609,7 +1609,7 @@ void ImageUtility::generateAllIconTo36(const string& filePath)
 	}
 }
 
-void ImageUtility::trimAllImage(const string& filePath)
+void ImageUtility::trimAllImage(const string& filePath, const int minAlpha)
 {
 	myMap<int, string> EmptyList;
 	myVector<string> folders;
@@ -1644,20 +1644,36 @@ void ImageUtility::trimAllImage(const string& filePath)
 
 		FOREACH(iterAnim, animList)
 		{
-			Vector2Int minSize;
+			Vector4Int minRect(9999, 9999, 0, 0);
 			FOREACH(iter0, iterAnim->second)
 			{
-				Vector2Int size = generateMinSize(iter0->second);
-				minSize.x = getMax(minSize.x, size.x);
-				minSize.y = getMax(minSize.y, size.y);
+				Vector4Int rect = generateMinRect(iter0->second, minAlpha);
+				if (rect.x >= 0)
+				{
+					minRect.x = getMin(rect.x, minRect.x);
+				}
+				if (rect.y >= 0)
+				{
+					minRect.y = getMin(rect.y, minRect.y);
+				}
+				if (rect.z >= 0)
+				{
+					minRect.z = getMax(rect.z, minRect.z);
+				}
+				if (rect.w >= 0)
+				{
+					minRect.w = getMax(rect.w, minRect.w);
+				}
 			}
+			Vector2Int minSize(minRect.z - minRect.x, minRect.w - minRect.y);
+			Vector2Int center((minRect.z + minRect.x) >> 1, (minRect.w + minRect.y) >> 1);
 			FOREACH(iter1, iterAnim->second)
 			{
 				string fullPathNoMedia = removeStartString(iter1->second, "../media/");
 				string rootFolderName = getFirstFolderName(fullPathNoMedia);
 				string newFullPath = "../media/" + rootFolderName + "_trim" + "/" + removeFirstPath(fullPathNoMedia);
 				createFolder(getFilePath(newFullPath));
-				trimImage(iter1->second, newFullPath, minSize);
+				trimImage(iter1->second, newFullPath, minSize, center);
 			}
 		}
 	}
@@ -1751,17 +1767,17 @@ void ImageUtility::autoFillAnimationTable(const string& clothName, int startID)
 	}
 }
 
-void ImageUtility::trimImage(const string& filePath, const string& newFilePath, Vector2Int size)
+void ImageUtility::trimImage(const string& filePath, const string& newFilePath, const Vector2Int size, const Vector2Int center)
 {
 	FreeImage_Initialise();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(filePath.c_str());
 	FIBITMAP* oldBitmap = FreeImage_Load(format, filePath.c_str());
 	int width = FreeImage_GetWidth(oldBitmap);
 	int height = FreeImage_GetHeight(oldBitmap);
-	int xInOld = (width - size.x) >> 1;
-	int yInOld = (height - size.y) >> 1;
+	int xInOld = ((width - size.x) >> 1) + (center.x - (width >> 1));
+	int yInOld = ((height - size.y) >> 1) + (center.y - (height >> 1));
 	FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
-	FOR_Y((uint)size.y)
+	FOR_Y(size.y)
 	{
 		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
 		// 原始图片的底部在新图片中的y坐标,图片中的坐标是底部为0,向上为正
@@ -1796,12 +1812,9 @@ Vector2Int ImageUtility::generateImageSizeWithOffset(const string& fileName, Vec
 	int maxX = width + offset.x;
 	int minY = offset.y - height;
 	int maxY = offset.y;
-	Vector2Int newSize;
-	newSize.x = getMax(abs(minX), abs(maxX)) * 2;
-	newSize.y = getMax(abs(minY), abs(maxY)) * 2;
 	FreeImage_Unload(oldBitmap);
 	FreeImage_DeInitialise();
-	return newSize;
+	return Vector2Int(getMax(abs(minX), abs(maxX)) << 1, getMax(abs(minY), abs(maxY)) << 1);
 }
 
 // 计算图片的最小尺寸,并且返回出该图片的偏移量,以确保渲染位置不变
@@ -1877,6 +1890,13 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 
 	int newWidth = right - left + 1;
 	int newHeight = bottom - top + 1;
+	if (newWidth < 0 || newHeight < 0)
+	{
+		newWidth = oldWidth;
+		newHeight = oldHeight;
+		left = 0;
+		top = 0;
+	}
 	FIBITMAP* newBitmap = FreeImage_Allocate(newWidth, newHeight, 32);
 	FOR_Y(newHeight)
 	{
@@ -1886,12 +1906,11 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 		}
 	}
 
-	offset.x = left - oldWidth / 2;
-	offset.y = top - (oldHeight / 2 - newHeight);
-
+	offset.x = left - (oldWidth >> 1);
+	offset.y = top - ((oldHeight >> 1) - newHeight);
 	FreeImage_Save(format, newBitmap, newFileName.c_str());
-	FreeImage_Unload(oldBitmap);
 	FreeImage_Unload(newBitmap);
+	FreeImage_Unload(oldBitmap);
 	FreeImage_DeInitialise();
 }
 
@@ -1913,7 +1932,7 @@ void ImageUtility::generateExpandImage(const string& fileName, const string& new
 	}
 	FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
 	int bpp = FreeImage_GetBPP(oldBitmap);
-	FOR_Y((uint)size.y)
+	FOR_Y(size.y)
 	{
 		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
 		if (bpp == 32)
@@ -1922,7 +1941,7 @@ void ImageUtility::generateExpandImage(const string& fileName, const string& new
 		}
 		else if (bpp == 24)
 		{
-			FOR_I((uint)size.x)
+			FOR_I(size.x)
 			{
 				newLine[i * 4 + 0] = 0;
 				newLine[i * 4 + 1] = 0;
@@ -1941,7 +1960,7 @@ void ImageUtility::generateExpandImage(const string& fileName, const string& new
 			}
 			else if (bpp == 24)
 			{
-				FOR_I((uint)copyPixels)
+				FOR_I(copyPixels)
 				{
 					memcpy(newLine + 4 * xInOld + 4 * i, oldLine + 3 * i + 3 * srcPixelOffset, 3);
 				}
@@ -1965,7 +1984,7 @@ void ImageUtility::generateOffsetedImage(const string& fileName, const string& n
 	int xInOld = (int)(offset.x + maxSize.x / 2);
 	int yInOld = (int)(offset.y - oldHeight + maxSize.y / 2);
 	FIBITMAP* newBitmap = FreeImage_Allocate(maxSize.x, maxSize.y, 32);
-	FOR_Y((uint)maxSize.y)
+	FOR_Y(maxSize.y)
 	{
 		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
 		memset(newLine, 0, maxSize.x * 4);
@@ -1984,7 +2003,7 @@ void ImageUtility::generateOffsetedImage(const string& fileName, const string& n
 	FreeImage_DeInitialise();
 }
 
-Vector2Int ImageUtility::generateMinSize(const string& fileName)
+Vector4Int ImageUtility::generateMinRect(const string& fileName, const int minAlpha)
 {
 	FreeImage_Initialise();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());
@@ -2003,7 +2022,7 @@ Vector2Int ImageUtility::generateMinSize(const string& fileName)
 		FOR_X(width)
 		{
 			RGBQUAD color = getColor(bitmap, x, y);
-			if (color.rgbReserved != 0)
+			if (color.rgbReserved > minAlpha)
 			{
 				if (minXInLine < 0)
 				{
@@ -2062,25 +2081,7 @@ Vector2Int ImageUtility::generateMinSize(const string& fileName)
 	}
 	FreeImage_Unload(bitmap);
 	FreeImage_DeInitialise();
-	int newWidth = 0;
-	int newHeight = 0;
-	if (minX < 0 || maxX < 0)
-	{
-		newWidth = 1;
-	}
-	else
-	{
-		newWidth = (int)(getMax(abs(minX - (int)width / 2.0f), abs(maxX + 1 - (int)width / 2.0f)) * 2);
-	}
-	if (minY < 0 || maxY < 0)
-	{
-		newHeight = 1;
-	}
-	else
-	{
-		newHeight = (int)(getMax(abs(minY - (int)height / 2.0f), abs(maxY + 1 - (int)height / 2.0f)) * 2);
-	}
-	return Vector2Int(newWidth, newHeight);
+	return Vector4Int(minX, minY, maxX, maxY);
 }
 
 void ImageUtility::removeAllBackground(const string& filePath)

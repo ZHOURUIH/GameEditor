@@ -74,7 +74,7 @@ public:
 	static void generateAllIconTo36(const string& filePath);
 	static void generateGroupImage(const string& filePath);
 	static void generateGroupMonsterImage(const string& filePath);
-	static void trimAllImage(const string& filePath);
+	static void trimAllImage(const string& filePath, const int minAlpha);
 	static void removeAllBackground(const string& filePath);
 	static void removeTextureToLastFolder(const string& filePath);
 	static void convertMapFile(const string& filePath);
@@ -90,10 +90,10 @@ protected:
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);
 	static void removeBackground(const string& fileName, const string& newFileName);
-	static void trimImage(const string& filePath, const string& newFilePath, Vector2Int size);
+	static void trimImage(const string& filePath, const string& newFilePath, Vector2Int size, Vector2Int center);
 	static Vector2Int generateImageSizeWithOffset(const string& fileName, Vector2Int offset);
 	static void generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset);
-	static Vector2Int generateMinSize(const string& fileName);
+	static Vector4Int generateMinRect(const string& fileName, const int minAlpha);
 	static void removeEmptyRectangle(const string& fileName, Vector2Int );
 	static void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb);
 	static RGBQUAD getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette);

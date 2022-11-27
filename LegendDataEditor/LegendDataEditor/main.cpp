@@ -276,9 +276,12 @@ void main()
 			cout << "输入文件夹名:";
 			string fileName;
 			cin >> fileName;
+			cout << "输入最低透明度:";
+			int minAlpha;
+			cin >> minAlpha;
 			cout << "开始裁剪..." << endl;
 			long startTime = timeGetTime();
-			ImageUtility::trimAllImage("../media/" + fileName);
+			ImageUtility::trimAllImage("../media/" + fileName, minAlpha);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 27)
