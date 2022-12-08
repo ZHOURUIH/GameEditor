@@ -41,14 +41,6 @@ void CodeMySQL::generate()
 			continue;
 		}
 		string line = lines[i];
-		// 表格注释
-		if (startWith(line, "//"))
-		{
-			string comment = line.substr(strlen("//"));
-			removeStartAll(comment, ' ');
-			tempInfo.mComment = comment;
-			continue;
-		}
 		// 去除所有制表符,分号
 		removeAll(line, '\t', ';');
 		// 成员变量列表起始
@@ -56,6 +48,13 @@ void CodeMySQL::generate()
 		{
 			indexStart = false;
 			packetStart = true;
+			string comment;
+			// 表格注释,只取一行,不支持多行
+			if (i >= 2 && startWith(lines[i - 2], "//"))
+			{
+				comment = lines[i - 2].substr(strlen("//"));
+				removeStartAll(comment, ' ');
+			}
 			string tableTitle = lines[i - 1];
 			removeAll(tableTitle, '\t', ';');
 			myVector<string> titleVector;
@@ -65,9 +64,7 @@ void CodeMySQL::generate()
 				ERROR("mysql表格的格式错误: " + lines[i - 1]);
 				return;
 			}
-			tempInfo.mMySQLClassName = titleVector[0];
-			tempInfo.mMySQLTableName = titleVector[1];
-			tempInfo.mMemberList.clear();
+			tempInfo.init(titleVector[0], titleVector[1], comment);
 			continue;
 		}
 		// 成员变量列表结束

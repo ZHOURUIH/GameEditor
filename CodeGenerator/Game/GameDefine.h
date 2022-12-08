@@ -62,6 +62,14 @@ struct MySQLInfo
 	string mMySQLClassName;
 	string mMySQLTableName;
 	string mComment;
+	void init(const string& className, const string& tableName, const string& comment)
+	{
+		mMemberList.clear();
+		mIndexList.clear();
+		mMySQLClassName = className;
+		mMySQLTableName = tableName;
+		mComment = comment;
+	}
 };
 
 #endif
