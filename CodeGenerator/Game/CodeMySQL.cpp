@@ -575,6 +575,10 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(header, "\texplicit " + tableClassName + "(const char* tableName)");
 	line(header, "\t\t:MySQLTable(tableName) {}");
 	line(header, "\tvoid init(MYSQL * mysql) override;");
+	if (mysqlInfo.mIndexList.size() > 0)
+	{
+		line(header, "\tvoid lateInit() override;");
+	}
 	line(header, "\tMySQLData* createData() override;");
 	line(header, "\tvoid createDataList(Vector<MySQLData*>&dataList, const int count) override;");
 	line(header, "protected:");
@@ -588,14 +592,22 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(source, "");
 	line(source, "void " + tableClassName + "::init(MYSQL* mysql)");
 	line(source, "{");
-	line(source, "\tMySQLTable::init(mysql);");
+	line(source, "\tbase::init(mysql);");
 	line(source, "\t" + dataClassName + "::fillColName(this);");
-	for (const string& indexName : mysqlInfo.mIndexList)
-	{
-		line(source, "\tquery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::" + indexName + " + \")\").c_str(), false);");
-	}
 	line(source, "}");
 	line(source, "");
+	if (mysqlInfo.mIndexList.size() > 0)
+	{
+		line(source, "void " + tableClassName + "::lateInit()");
+		line(source, "{");
+		line(source, "\tbase::lateInit();");
+		for (const string& indexName : mysqlInfo.mIndexList)
+		{
+			line(source, "\tquery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::" + indexName + " + \")\").c_str(), false);");
+		}
+		line(source, "}");
+		line(source, "");
+	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
 	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
