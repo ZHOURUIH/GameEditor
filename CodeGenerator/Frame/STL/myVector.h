@@ -22,6 +22,8 @@ public:
 	uint size() const { return (uint)mVector.size(); }
 	iterator begin() { return mVector.begin(); }
 	iterator end() { return mVector.end(); }
+	const_iterator begin() const { return mVector.begin(); }
+	const_iterator end() const { return mVector.end(); }
 	reverse_iterator rbegin() { return mVector.rbegin(); }
 	reverse_iterator rend() { return mVector.rend(); }
 	const_iterator cbegin() const { return mVector.cbegin(); }

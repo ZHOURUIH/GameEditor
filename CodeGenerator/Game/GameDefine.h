@@ -58,6 +58,7 @@ struct MySQLMember
 struct MySQLInfo
 {
 	myVector<MySQLMember> mMemberList;	// 不带ID字段的字段信息列表
+	myVector<string> mIndexList;		// 索引列表
 	string mMySQLClassName;
 	string mMySQLTableName;
 	string mComment;

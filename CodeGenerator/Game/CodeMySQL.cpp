@@ -18,12 +18,17 @@ void CodeMySQL::generate()
 		ERROR("未找到表格格式文件MySQL.txt");
 		return;
 	}
+
+	// 整个文件是否已经开始解析
+	bool fileStart = false;
+	// 是否已经开始解析一个表格的数据体
+	bool packetStart = false;
+	// 是否已经开始解析一个表格中的索引
+	bool indexStart = false;
 	myVector<string> lines;
 	split(fileContent.c_str(), "\r\n", lines);
-	bool packetStart = false;
 	myVector<MySQLInfo> mysqlInfoList;
 	MySQLInfo tempInfo;
-	bool fileStart = false;
 	FOR_VECTOR_CONST(lines)
 	{
 		if (lines[i] == START_FALG)
@@ -49,6 +54,7 @@ void CodeMySQL::generate()
 		// 成员变量列表起始
 		if (line == "{")
 		{
+			indexStart = false;
 			packetStart = true;
 			string tableTitle = lines[i - 1];
 			removeAll(tableTitle, '\t', ';');
@@ -71,9 +77,23 @@ void CodeMySQL::generate()
 			packetStart = false;
 			continue;
 		}
+		if (line == "index:")
+		{
+			indexStart = true;
+			continue;
+		}
 		if (packetStart)
 		{
-			tempInfo.mMemberList.push_back(parseMySQLMemberLine(line));
+			// 当前是在解析索引
+			if (indexStart)
+			{
+				tempInfo.mIndexList.push_back(line);
+			}
+			// 当前是在解析列表的字段
+			else
+			{
+				tempInfo.mMemberList.push_back(parseMySQLMemberLine(line));
+			}
 		}
 	}
 	deleteFolder(cppDataPath);
@@ -573,6 +593,10 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(source, "{");
 	line(source, "\tMySQLTable::init(mysql);");
 	line(source, "\t" + dataClassName + "::fillColName(this);");
+	for (const string& indexName : mysqlInfo.mIndexList)
+	{
+		line(source, "\tquery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::" + indexName + " + \")\").c_str(), false);");
+	}
 	line(source, "}");
 	line(source, "");
 	line(source, "MySQLData* " + tableClassName + "::createData()");
