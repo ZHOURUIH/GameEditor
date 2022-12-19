@@ -51,16 +51,13 @@ void CodeFunctionParam::generateCppRegister(const myVector<string>& list, string
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
 	line(str0, "");
-	line(str0, "#define ADD_FUNCTION_PARAM(param) mFunctionParamFactoryManager->addFactory<param>(NAME(param))");
-	line(str0, "");
 	line(str0, "void FunctionParamRegister::registeAll()");
 	line(str0, "{");
-	uint count = list.size();
-	FOR_I(count)
+	for (const string& item : list)
 	{
-		line(str0, "\tADD_FUNCTION_PARAM(" + list[i] + ");");
+		line(str0, "\tmFunctionParamFactoryManager->addFactory<" + item + ">(NAME(" + item + "));");
 	}
-	line(str0, "}");
+	line(str0, "}", false);
 
 	writeFile(filePath + "FunctionParamRegister.cpp", ANSIToUTF8(str0.c_str(), true));
 }
@@ -81,6 +78,6 @@ void CodeFunctionParam::generateStringDefine(const myVector<string>& list, strin
 		line(header, stringDeclare(list[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineFunctionParam.h", ANSIToUTF8(header.c_str(), true));
 }
