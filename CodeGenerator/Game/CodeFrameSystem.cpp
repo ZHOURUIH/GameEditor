@@ -111,17 +111,17 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	line(registeAllSystem, "#else");
 	line(registeAllSystem, "#define _FRAME_SYSTEM_REGISTE_H_");
 	line(registeAllSystem, "");
-	FOR_VECTOR_CONST(frameSystemList)
+	for (const string& item : frameSystemList)
 	{
-		line(registeAllSystem, "REGISTE_SYSTEM(" + frameSystemList[i] + ");");
+		line(registeAllSystem, "registeSystem<" + item + ">(STR(" + item + "));");
 	}
-	FOR_VECTOR_CONST(factoryManagerList)
+	for (const string& item : factoryManagerList)
 	{
-		line(registeAllSystem, "REGISTE_SYSTEM(" + factoryManagerList[i] + ");");
+		line(registeAllSystem, "registeSystem<" + item + ">(STR(" + item + "));");
 	}
-	FOR_VECTOR_CONST(classPoolList)
+	for (const string& item : classPoolList)
 	{
-		line(registeAllSystem, "REGISTE_SYSTEM(" + classPoolList[i] + ");");
+		line(registeAllSystem, "registeSystem<" + item + ">(STR(" + item + "));");
 	}
 	line(registeAllSystem, "");
 	line(registeAllSystem, "#endif", false);
@@ -134,17 +134,17 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	line(declareAllSystem, "#else");
 	line(declareAllSystem, "#define _FRAME_SYSTEM_DECLARE_H_");
 	line(declareAllSystem, "");
-	FOR_I(frameSystemListCount)
+	for (const string& item : frameSystemList)
 	{
-		line(declareAllSystem, "DECALRE_SYSTEM(" + frameSystemList[i] + ");");
+		line(declareAllSystem, "static " + item + "* m" + item + ";");
 	}
-	FOR_I(factoryManagerListCount)
+	for (const string& item : factoryManagerList)
 	{
-		line(declareAllSystem, "DECALRE_SYSTEM(" + factoryManagerList[i] + ");");
+		line(declareAllSystem, "static " + item + "* m" + item + ";");
 	}
-	FOR_I(classPoolListCount)
+	for (const string& item : classPoolList)
 	{
-		line(declareAllSystem, "DECALRE_SYSTEM(" + classPoolList[i] + ");");
+		line(declareAllSystem, "static " + item + "* m" + item + ";");
 	}
 	line(declareAllSystem, "");
 	line(declareAllSystem, "#endif", false);
@@ -154,17 +154,17 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	string defineAllSystem;
 	line(defineAllSystem, "#include \"GameHeader.h\"");
 	line(defineAllSystem, "");
-	FOR_I(frameSystemListCount)
+	for (const string& item : frameSystemList)
 	{
-		line(defineAllSystem, "DEFINE_SYSTEM_GAME(" + frameSystemList[i] + ");");
+		line(defineAllSystem, item + "* GameBase::m" + item + ";");
 	}
-	FOR_I(factoryManagerListCount)
+	for (const string& item : factoryManagerList)
 	{
-		line(defineAllSystem, "DEFINE_SYSTEM_GAME(" + factoryManagerList[i] + ");");
+		line(defineAllSystem, item + "* GameBase::m" + item + ";");
 	}
-	FOR_I(classPoolListCount)
+	for (const string& item : classPoolList)
 	{
-		line(defineAllSystem, "DEFINE_SYSTEM_GAME(" + classPoolList[i] + ");");
+		line(defineAllSystem, item + "* GameBase::m" + item + ";");
 	}
 	writeFile(filePath + "FrameSystemDefine.cpp", ANSIToUTF8(defineAllSystem.c_str(), true));
 
@@ -175,17 +175,17 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	line(getAllSystem, "#else");
 	line(getAllSystem, "#define _FRAME_SYSTEM_GET_H_");
 	line(getAllSystem, "");
-	FOR_I(frameSystemListCount)
+	for (const string& item : frameSystemList)
 	{
-		line(getAllSystem, "GET_SYSTEM(" + frameSystemList[i] + ");");
+		line(getAllSystem, "mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
-	FOR_I(factoryManagerListCount)
+	for (const string& item : factoryManagerList)
 	{
-		line(getAllSystem, "GET_SYSTEM(" + factoryManagerList[i] + ");");
+		line(getAllSystem, "mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
-	FOR_I(classPoolListCount)
+	for (const string& item : classPoolList)
 	{
-		line(getAllSystem, "GET_SYSTEM(" + classPoolList[i] + ");");
+		line(getAllSystem, "mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
 	line(getAllSystem, "");
 	line(getAllSystem, "#endif", false);
@@ -198,17 +198,17 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	line(clearAllSystem, "#else");
 	line(clearAllSystem, "#define _FRAME_SYSTEM_CLEAR_H_");
 	line(clearAllSystem, "");
-	FOR_I(frameSystemListCount)
+	for (const string& item : frameSystemList)
 	{
-		line(clearAllSystem, "m" + frameSystemList[i] + " = nullptr;");
+		line(clearAllSystem, "m" + item + " = nullptr;");
 	}
-	FOR_I(factoryManagerListCount)
+	for (const string& item : factoryManagerList)
 	{
-		line(clearAllSystem, "m" + factoryManagerList[i] + " = nullptr;");
+		line(clearAllSystem, "m" + item + " = nullptr;");
 	}
-	FOR_I(classPoolListCount)
+	for (const string& item : classPoolList)
 	{
-		line(clearAllSystem, "m" + classPoolList[i] + " = nullptr;");
+		line(clearAllSystem, "m" + item + " = nullptr;");
 	}
 	line(clearAllSystem, "");
 	line(clearAllSystem, "#endif", false);
