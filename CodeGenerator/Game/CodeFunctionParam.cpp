@@ -27,7 +27,7 @@ void CodeFunctionParam::generate()
 }
 
 // FunctionParamHeader.h
-void CodeFunctionParam::generateCppTotalHeaderFile(const myVector<string>& list, string filePath)
+void CodeFunctionParam::generateCppTotalHeaderFile(const myVector<string>& list, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _FUNCTION_PARAM_HEADER_H_");
@@ -46,7 +46,7 @@ void CodeFunctionParam::generateCppTotalHeaderFile(const myVector<string>& list,
 }
 
 // FunctionParamRegister文件
-void CodeFunctionParam::generateCppRegister(const myVector<string>& list, string filePath)
+void CodeFunctionParam::generateCppRegister(const myVector<string>& list, const string& filePath)
 {
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
@@ -63,7 +63,7 @@ void CodeFunctionParam::generateCppRegister(const myVector<string>& list, string
 }
 
 // StringDefineFunctionParam.h和StringDefineFunctionParam.cpp
-void CodeFunctionParam::generateStringDefine(const myVector<string>& list, string filePath)
+void CodeFunctionParam::generateStringDefine(const myVector<string>& list, const string& filePath)
 {
 	// 头文件
 	string header;

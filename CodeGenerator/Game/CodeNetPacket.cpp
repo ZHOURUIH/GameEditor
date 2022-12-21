@@ -313,8 +313,6 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	string str;
 	line(str, "#include \"GameHeader.h\"");
 	line(str, "");
-	line(str, "#define PACKET_FACTORY(packet, type) mPacketFactoryManager->addFactory<packet>(type, NAME(packet));");
-	line(str, "");
 	line(str, "int PacketRegister::PACKET_VERSION = " + intToString(packetVersion) + ";");
 	line(str, "void PacketRegister::registeAll()");
 	line(str, "{");
@@ -322,11 +320,12 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
-		if (!startWith(packetList[i].mPacketName, "CS"))
+		const string& packetName = packetList[i].mPacketName;
+		if (!startWith(packetName, "CS"))
 		{
 			continue;
 		}
-		line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", PACKET_TYPE::" + packetNameToUpper(packetList[i].mPacketName) + ");");
+		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", NAME(" + packetName + "));");
 		if (packetList[i].mUDP)
 		{
 			udpCSList.push_back(packetList[i]);
@@ -336,11 +335,12 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	myVector<PacketInfo> udpSCList;
 	FOR_I(packetCount)
 	{
-		if (!startWith(packetList[i].mPacketName, "SC"))
+		const string& packetName = packetList[i].mPacketName;
+		if (!startWith(packetName, "SC"))
 		{
 			continue;
 		}
-		line(str, "\tPACKET_FACTORY(" + packetList[i].mPacketName + ", PACKET_TYPE::" + packetNameToUpper(packetList[i].mPacketName) + ");");
+		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", NAME(" + packetName + "));");
 		if (packetList[i].mUDP)
 		{
 			udpSCList.push_back(packetList[i]);
@@ -385,7 +385,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 		line(header, stringDeclare(packetList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefinePacket.h", ANSIToUTF8(header.c_str(), true));
 }
 

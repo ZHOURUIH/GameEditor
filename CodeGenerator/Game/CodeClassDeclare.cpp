@@ -99,7 +99,7 @@ void CodeClassDeclare::generate()
 }
 
 // FrameClassDeclare.cpp
-void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& classList, string filePath)
+void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& classList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _FRAME_CLASS_DECLARE_H_");
@@ -117,7 +117,7 @@ void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& clas
 }
 
 // GameClassDeclare.cpp
-void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& classList, string filePath)
+void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& classList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _GAME_CLASS_DECLARE_H_");
@@ -135,7 +135,7 @@ void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& class
 }
 
 // FrameHeader.h
-void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList, string filePath)
+void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _FRAME_HEADER_H_");
@@ -153,7 +153,7 @@ void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList
 }
 
 // GameHeader.h
-void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList, string filePath)
+void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _GAME_HEADER_H_");

@@ -25,7 +25,7 @@ void CodeSkill::generate()
 }
 
 // CharacterSkillHeader.h
-void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath)
+void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _CHARACTER_SKILL_HEADER_H_");
@@ -43,7 +43,7 @@ void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillLis
 }
 
 // StringDefineSkill.h和StringDefineSkill.cpp
-void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, string filePath)
+void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -58,6 +58,6 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, str
 		line(header, stringDeclare(skillList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineSkill.h", ANSIToUTF8(header.c_str(), true));
 }

@@ -9,7 +9,7 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateStringDefineCmd(const myVector<string>& cmdList, string filePath);
+	static void generateStringDefineCmd(const myVector<string>& cmdList, const string& filePath);
 protected:
 };
 

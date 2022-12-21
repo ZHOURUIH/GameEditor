@@ -9,7 +9,7 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateStringDefineStateGroup(const myVector<string>& stateList, string filePath);
+	static void generateStringDefineStateGroup(const myVector<string>& stateList, const string& filePath);
 protected:
 };
 

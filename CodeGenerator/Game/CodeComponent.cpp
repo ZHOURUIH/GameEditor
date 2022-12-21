@@ -7,7 +7,7 @@ void CodeComponent::generate()
 		return;
 	}
 
-	string cppRegisterPath = cppGamePath + "/Component/";
+	const string cppRegisterPath = cppGamePath + "/Component/";
 
 	string stateFile;
 	openTxtFile("Component.txt", stateFile);
@@ -26,7 +26,7 @@ void CodeComponent::generate()
 }
 
 // StringDefineComponent.h和StringDefineComponent.cpp
-void CodeComponent::generateStringDefineComponent(const myVector<string>& componentList, string filePath)
+void CodeComponent::generateStringDefineComponent(const myVector<string>& componentList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -35,30 +35,27 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& compon
 	line(header, "#else");
 	line(header, "#define _STRING_DEFINE_COMPONENT_H_");
 	line(header, "");
-	uint count = componentList.size();
-	FOR_I(count)
+	FOR_VECTOR_CONST(componentList)
 	{
 		line(header, stringDeclare(componentList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineComponent.h", ANSIToUTF8(header.c_str(), true));
 }
 
 // ComponentRegister.cpp
-void CodeComponent::generateComponentRegister(const myVector<string>& componentList, string filePath)
+void CodeComponent::generateComponentRegister(const myVector<string>& componentList, const string& filePath)
 {
 	string source;
 	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	line(source, "#define COMPONENT_FACTORY(T) mGameComponentFactoryManager->addFactory<T>(NAME(T))");
 	line(source, "");
 	line(source, "void ComponentRegister::registeAll()");
 	line(source, "{");
 	FOR_VECTOR_CONST(componentList)
 	{
-		line(source, "\tCOMPONENT_FACTORY(" + componentList[i] + ");");
+		line(source, "\tmGameComponentFactoryManager->addFactory<" + componentList[i] + ">(NAME(" + componentList[i] + "));");
 	}
-	line(source, "}");
+	line(source, "}", false);
 	writeFile(filePath + "ComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));
 }

@@ -21,7 +21,7 @@ void CodeObjectItem::generate()
 }
 
 // StringDefineObjectItem.h和StringDefineObjectItem.cpp
-void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, string filePath)
+void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -36,6 +36,6 @@ void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& obje
 		line(header, stringDeclare(objectItemList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineObjectItem.h", ANSIToUTF8(header.c_str(), true));
 }

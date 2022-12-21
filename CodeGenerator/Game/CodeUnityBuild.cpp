@@ -31,7 +31,7 @@ void CodeUnityBuild::generate()
 }
 
 // UnityBuild.cpp
-void CodeUnityBuild::generateCppUnityBuild(const myVector<string>& fileList, string filePath)
+void CodeUnityBuild::generateCppUnityBuild(const myVector<string>& fileList, const string& filePath)
 {
 	string str0;
 	uint count = fileList.size();

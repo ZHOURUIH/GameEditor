@@ -9,8 +9,8 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, string filePath);
-	static void generateStringDefineSkill(const myVector<string>& skillList, string filePath);
+	static void generateCppSkillTotalHeaderFile(const myVector<string>& skillList, const string& filePath);
+	static void generateStringDefineSkill(const myVector<string>& skillList, const string& filePath);
 protected:
 };
 

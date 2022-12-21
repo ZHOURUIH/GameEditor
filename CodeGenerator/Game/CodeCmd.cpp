@@ -23,7 +23,7 @@ void CodeCmd::generate()
 }
 
 // StringDefineCmd.h和StringDefineCmd.cpp
-void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string filePath)
+void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -38,6 +38,6 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, string fi
 		line(header, stringDeclare(cmdList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineCmd.h", ANSIToUTF8(header.c_str(), true));
 }

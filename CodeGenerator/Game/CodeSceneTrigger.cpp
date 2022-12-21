@@ -91,7 +91,7 @@ void CodeSceneTrigger::generate()
 }
 
 // SceneTriggerHeader.h
-void CodeSceneTrigger::generateCppTotalHeaderFile(const myVector<string>& list, string filePath)
+void CodeSceneTrigger::generateCppTotalHeaderFile(const myVector<string>& list, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _SCENE_TRIGGER_HEADER_H_");
@@ -110,13 +110,10 @@ void CodeSceneTrigger::generateCppTotalHeaderFile(const myVector<string>& list, 
 }
 
 // SceneTriggerRegister文件
-void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, const myVector<string>& modifierList, string filePath)
+void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, const myVector<string>& modifierList, const string& filePath)
 {
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
-	line(str0, "");
-	line(str0, "#define ADD_TRIGGER(trigger, type) mSceneTriggerFactoryManager->addFactory<trigger>(type)");
-	line(str0, "#define ADD_MODIFIER(modifier, type) mTriggerModifierFactoryManager->addFactory<modifier>(type)");
 	line(str0, "");
 	line(str0, "void SceneTriggerRegister::registeAll()");
 	line(str0, "{");
@@ -125,21 +122,21 @@ void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, 
 	{
 		string enumName = nameToUpper(triggerList[i].substr(strlen("SceneTrigger")));
 		enumName.erase(0, 1);
-		line(str0, "\tADD_TRIGGER(" + triggerList[i] + ", SCENE_TRIGGER::" + enumName + ");");
+		line(str0, "\tmSceneTriggerFactoryManager->addFactory<" + triggerList[i] + ">(SCENE_TRIGGER::" + enumName + ");");
 	}
 	line(str0, "");
 	// 触发器的修改器
 	FOR_VECTOR_CONST(modifierList)
 	{
-		line(str0, "\tADD_MODIFIER(" + modifierList[i] + ", " + intToString(getLastNumber(modifierList[i])) + ");");
+		line(str0, "\tmTriggerModifierFactoryManager->addFactory<" + modifierList[i] + ">(" + intToString(getLastNumber(modifierList[i])) + ");");
 	}
-	line(str0, "}");
+	line(str0, "}", false);
 
 	writeFile(filePath + "SceneTriggerRegister.cpp", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineSceneTrigger.h和StringDefineSceneTrigger.cpp
-void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, string filePath)
+void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -153,6 +150,6 @@ void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, string
 		line(header, stringDeclare(list[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineSceneTrigger.h", ANSIToUTF8(header.c_str(), true));
 }

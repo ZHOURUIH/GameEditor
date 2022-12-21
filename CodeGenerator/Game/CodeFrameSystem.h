@@ -12,11 +12,11 @@ protected:
 	static void generateHeaderFile(const myVector<string>& frameSystemList, 
 								   const myVector<string>& factoryManagerList, 
 								   const myVector<string>& classPoolList, 
-								   string filePath);
+								   const string& filePath);
 	static void generateSystemDefineFile(const myVector<string>& frameSystemList,
 										const myVector<string>& factoryManagerList,
 										const myVector<string>& classPoolList,
-										string filePath);
+										const string& filePath);
 protected:
 };
 

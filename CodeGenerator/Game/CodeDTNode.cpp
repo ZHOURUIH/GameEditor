@@ -7,7 +7,7 @@ void CodeDTNode::generate()
 		return;
 	}
 
-	string cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
+	const string cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
 
 	string file;
 	openTxtFile("DTNode.txt", file);
@@ -27,7 +27,7 @@ void CodeDTNode::generate()
 }
 
 // DTNodeHeader.h文件
-void CodeDTNode::generateHeaderFile(const myVector<string>& nodeList, string headerPath)
+void CodeDTNode::generateHeaderFile(const myVector<string>& nodeList, const string& headerPath)
 {
 	string str0;
 	line(str0, "#ifndef _DT_NODE_HEADER_H_");
@@ -45,7 +45,7 @@ void CodeDTNode::generateHeaderFile(const myVector<string>& nodeList, string hea
 }
 
 // StringDefineDTNode.h和StringDefineDTNode.cpp
-void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string stringDefinePath)
+void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const string& stringDefinePath)
 {
 	// 头文件
 	string header;
@@ -60,24 +60,22 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, string s
 		line(header, stringDeclare(nodeList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(stringDefinePath + "StringDefineDTNode.h", ANSIToUTF8(header.c_str(), true));
 }
 
 // DTNodeRegister.h和DTNodeRegister.cpp
-void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, string headerPath)
+void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, const string& headerPath)
 {
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	line(source, "#define REGISTE_NODE(type) mDTNodeFactoryManager->addFactory<type>(NAME(type));");
-	line(source, "");
 	line(source, "void DTNodeRegister::registeAll()");
 	line(source, "{");
-	uint count = nodeList.size();
+	const uint count = nodeList.size();
 	FOR_I(count)
 	{
-		line(source, "\tREGISTE_NODE(" + nodeList[i] + ");");
+		line(source, "\tmDTNodeFactoryManager->addFactory<" + nodeList[i] + ">(NAME(" + nodeList[i] + "));");
 	}
 	line(source, "}", false);
 

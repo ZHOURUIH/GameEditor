@@ -45,7 +45,7 @@ void CodeEvent::generate()
 }
 
 // EventHeader.h文件
-void CodeEvent::generateHeaderFile(const myVector<pair<string, string>>& eventList, string headerPath)
+void CodeEvent::generateHeaderFile(const myVector<pair<string, string>>& eventList, const string& headerPath)
 {
 	string str0;
 	line(str0, "#ifndef _EVENT_HEADER_H_");
@@ -59,12 +59,11 @@ void CodeEvent::generateHeaderFile(const myVector<pair<string, string>>& eventLi
 	line(str0, "");
 	line(str0, "#endif", false);
 
-	str0 = ANSIToUTF8(str0.c_str(), true);
-	writeFile(headerPath + "EventHeader.h", str0);
+	writeFile(headerPath + "EventHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineEvent.h和StringDefineEvent.cpp
-void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& eventList, string stringDefinePath)
+void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& eventList, const string& stringDefinePath)
 {
 	// 头文件
 	string header;
@@ -79,12 +78,12 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 		line(header, stringDeclare(eventList[i].first));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(stringDefinePath + "StringDefineEvent.h", ANSIToUTF8(header.c_str(), true));
 }
 
 // EventType.h
-void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventList, string headerPath)
+void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventList, const string& headerPath)
 {
 	string str0;
 	line(str0, "#ifndef _EVENT_TYPE_H_");
@@ -118,7 +117,7 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	writeFile(headerPath + "EventType.h", ANSIToUTF8(str0.c_str(), true));
 }
 
-void CodeEvent::generateEventFile(const string& eventName, string eventPath)
+void CodeEvent::generateEventFile(const string& eventName, const string& eventPath)
 {
 	string headerFullPath = eventPath + eventName + ".h";
 	if (isFileExist(headerFullPath))

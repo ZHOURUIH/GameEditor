@@ -86,8 +86,6 @@ void CodeCondition::generateCppRegisterFile(const myVector<pair<string, string>>
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
 	line(str0, "");
-	line(str0, "#define CONDITION_FACTORY(classType, type) mConditionFactoryManager->addFactory<classType>(type);");
-	line(str0, "");
 	line(str0, "void ConditionRegister::registeAll()");
 	line(str0, "{");
 	uint count = conditionList.size();
@@ -95,7 +93,7 @@ void CodeCondition::generateCppRegisterFile(const myVector<pair<string, string>>
 	{
 		const string& conditionName = conditionList[i].first;
 		string conditionEnum = nameToUpper(conditionName.substr(strlen("Condition")), false);
-		line(str0, "\tCONDITION_FACTORY(" + conditionName + ", CONDITION::" + conditionEnum + ");");
+		line(str0, "\tmConditionFactoryManager->addFactory<" + conditionName + ">(CONDITION::" + conditionEnum + ");");
 	}
 	line(str0, "}", false);
 
@@ -185,7 +183,7 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 		line(source, "void " + conditionName + "::setCharacter(CharacterGame* character)");
 		line(source, "{");
 		line(source, "\tbase::setCharacter(character);");
-		line(source, "}");
+		line(source, "}", false);
 		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
 	}
 }

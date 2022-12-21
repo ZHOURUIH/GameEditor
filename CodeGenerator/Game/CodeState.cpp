@@ -27,7 +27,7 @@ void CodeState::generate()
 }
 
 // StateHeader.h
-void CodeState::generateCppStateTotalHeaderFile(const myVector<string>& stateList, string filePath)
+void CodeState::generateCppStateTotalHeaderFile(const myVector<string>& stateList, const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _STATE_HEADER_H_");
@@ -45,7 +45,7 @@ void CodeState::generateCppStateTotalHeaderFile(const myVector<string>& stateLis
 }
 
 // StringDefineState.h和StringDefineState.cpp
-void CodeState::generateStringDefineState(const myVector<string>& stateList, string filePath)
+void CodeState::generateStringDefineState(const myVector<string>& stateList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -65,11 +65,11 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, str
 		line(header, stringDeclare(stateList[i] + "Param"));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineState.h", ANSIToUTF8(header.c_str(), true));
 }
 
-void CodeState::generateStateRegister(const myVector<string>& stateList, string filePath)
+void CodeState::generateStateRegister(const myVector<string>& stateList, const string& filePath)
 {
 	myVector<string> preCodeList;
 	myVector<string> endCodeList;

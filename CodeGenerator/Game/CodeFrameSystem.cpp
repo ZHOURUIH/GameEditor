@@ -72,7 +72,7 @@ void CodeFrameSystem::generate()
 void CodeFrameSystem::generateHeaderFile(const myVector<string>& frameSystemList,
 										const myVector<string>& factoryManagerList, 
 										const myVector<string>& classPoolList, 
-										string filePath)
+										const string& filePath)
 {
 	string str0;
 	line(str0, "#ifndef _FRAME_SYSTEM_HEADER_H_");
@@ -102,7 +102,7 @@ void CodeFrameSystem::generateHeaderFile(const myVector<string>& frameSystemList
 void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSystemList,
 												const myVector<string>& factoryManagerList,
 												const myVector<string>& classPoolList,
-												string filePath)
+												const string& filePath)
 {
 	// FrameSystemRegiste.h
 	string registeAllSystem;

@@ -345,8 +345,6 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
-	line(str1, "#define REGISTE_SQLITE(classType, tableName) m##classType = NEW(classType, m##classType);mSQLiteManager->addSQLiteTable(m##classType, tableName)");
-	line(str1, "");
 	line(str1, "void SQLiteRegister::registeAll()");
 	line(str1, "{");
 	uint count = sqliteList.size();
@@ -356,7 +354,18 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 		{
 			continue;
 		}
-		line(str1, "\tREGISTE_SQLITE(SQLite" + sqliteList[i].mSQLiteName + ", \"" + sqliteList[i].mSQLiteName + "\");");
+		const string& sqliteName = sqliteList[i].mSQLiteName;
+		line(str1, "\tmSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
+	}
+	line(str1, "");
+	FOR_I(count)
+	{
+		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
+		{
+			continue;
+		}
+		const string& sqliteName = sqliteList[i].mSQLiteName;
+		line(str1, "\tmSQLiteManager->addSQLiteTable(mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
@@ -415,10 +424,10 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 		{
 			continue;
 		}
-		line(header, "REGISTE_VECTOR_POOL(TD" + sqliteList[i].mSQLiteName + "*);");
+		line(header, "mVectorPoolManager->registeVectorPool<TD" + sqliteList[i].mSQLiteName + "*>();");
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "SQLiteSTLPoolRegister.h", ANSIToUTF8(header.c_str(), true));
 }
 

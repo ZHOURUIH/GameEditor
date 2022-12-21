@@ -33,7 +33,7 @@ void CodeAchivement::generate()
 }
 
 // AchivementHeader.h文件
-void CodeAchivement::generateHeaderFile(const myVector<string>& list, string headerPath)
+void CodeAchivement::generateHeaderFile(const myVector<string>& list, const string& headerPath)
 {
 	string str0;
 	line(str0, "#ifndef _ACHIVEMENT_HEADER_H_");
@@ -50,21 +50,18 @@ void CodeAchivement::generateHeaderFile(const myVector<string>& list, string hea
 }
 
 // AcvehimentRegister.cpp
-void CodeAchivement::generateRegister(const myVector<string>& list, string headerPath)
+void CodeAchivement::generateRegister(const myVector<string>& list, const string& headerPath)
 {
 	// 源文件
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	line(source, "#define ACHIVEMENT_FACTORY(classType, type) mAchivementFactoryManager->addFactory<classType>(type)");
-	line(source, "");
 	line(source, "void AchivementRegister::registeAll()");
 	line(source, "{");
 	FOR_VECTOR_CONST(list)
 	{
-		string type = nameToUpper(list[i]);
-		type = type.substr(strlen("_ACHIVEMENT_"));
-		line(source, "\tACHIVEMENT_FACTORY(" + list[i] + ", ACHIVEMENT_TYPE::" + type + ");");
+		string type = nameToUpper(list[i]).substr(strlen("_ACHIVEMENT_"));
+		line(source, "\tmAchivementFactoryManager->addFactory<" + list[i] + ">(ACHIVEMENT_TYPE::" + type + ");");
 	}
 	line(source, "}", false);
 
@@ -72,7 +69,7 @@ void CodeAchivement::generateRegister(const myVector<string>& list, string heade
 }
 
 // Achivement.h和Achivement.cpp
-void CodeAchivement::generateAchivementFile(const string& achivement, string achivementPath)
+void CodeAchivement::generateAchivementFile(const string& achivement, const string& achivementPath)
 {
 	// Achivement.h
 	string headerFullPath = achivementPath + achivement + ".h";

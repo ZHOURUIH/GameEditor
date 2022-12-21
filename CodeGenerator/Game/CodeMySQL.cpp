@@ -666,14 +666,13 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
-	line(str1, "#define REGISTE_MYSQL(classType, tableName) m##classType = mMySQLDataBase->registeTable<classType>(tableName);");
-	line(str1, "");
 	line(str1, "void MySQLRegister::registeAll()");
 	line(str1, "{");
 	uint count = mysqlList.size();
 	FOR_I(count)
 	{
-		line(str1, "\tREGISTE_MYSQL(MySQL" + mysqlList[i].mMySQLClassName + ", \"" + mysqlList[i].mMySQLTableName + "\");");
+		const string& mysqlClassName = mysqlList[i].mMySQLClassName;
+		line(str1, "\tmMySQL" + mysqlClassName + " = mMySQLDataBase->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
@@ -695,7 +694,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 		line(header, stringDeclare("MD" + mysqlList[i].mMySQLClassName));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineMySQL.h", ANSIToUTF8(header.c_str(), true));
 }
 

@@ -8,9 +8,9 @@ class CodeDTNode : public CodeUtility
 public:
 	static void generate();
 protected:
-	static void generateHeaderFile(const myVector<string>& nodeList, string headerPath);
-	static void generateStringDefine(const myVector<string>& nodeList, string stringDefinePath);
-	static void generateRegisterFile(const myVector<string>& nodeList, string headerPath);
+	static void generateHeaderFile(const myVector<string>& nodeList, const string& headerPath);
+	static void generateStringDefine(const myVector<string>& nodeList, const string& stringDefinePath);
+	static void generateRegisterFile(const myVector<string>& nodeList, const string& headerPath);
 protected:
 };
 

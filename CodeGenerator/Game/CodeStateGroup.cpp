@@ -21,7 +21,7 @@ void CodeStateGroup::generate()
 }
 
 // StringDefineStateGroup.h和StringDefineStateGroup.cpp
-void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stateList, string filePath)
+void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stateList, const string& filePath)
 {
 	// 头文件
 	string header;
@@ -36,6 +36,6 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 		line(header, stringDeclare(stateList[i]));
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "StringDefineStateGroup.h", ANSIToUTF8(header.c_str(), true));
 }
