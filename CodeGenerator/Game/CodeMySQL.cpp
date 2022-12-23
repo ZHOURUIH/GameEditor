@@ -372,7 +372,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "\tbase::clone(target);");
 	if (memberCount > 0)
 	{
-		line(source, "\tauto* targetData = CAST<" + className + "*>(target);");
+		line(source, "\tauto* targetData = static_cast<" + className + "*>(target);");
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
@@ -388,7 +388,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "\tbase::cloneWithFlag(target, flag);");
 	if (memberCount > 0)
 	{
-		line(source, "\tauto* targetData = CAST<" + className + "*>(target);");
+		line(source, "\tauto* targetData = static_cast<" + className + "*>(target);");
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
