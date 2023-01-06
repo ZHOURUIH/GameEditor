@@ -131,6 +131,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "{");
 	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
+	line(header, "\tstatic constexpr const char* MySQLType = NAME(" + className + ");");
 	uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
@@ -149,6 +150,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		line(header, memberLine);
 	}
 	line(header, "public:");
+	line(header, "\t" + className + "();");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid parseResult(Map<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(Array<1024>& params) const override;");
@@ -170,10 +172,17 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	// 字段静态变量定义
+	line(source, "constexpr const char* " + className + "::MySQLType;");
 	FOR_I(memberCount)
 	{
 		line(source, "constexpr const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + ";");
 	}
+	// 构造
+	line(source, "");
+	line(source, className + "::" + className + "()");
+	line(source, "{");
+	line(source, "\tmDataType = MySQLType;");
+	line(source, "}");
 	// fillColName函数
 	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
@@ -572,8 +581,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(header, "{");
 	line(header, "\ttypedef MySQLTable base;");
 	line(header, "public:");
-	line(header, "\texplicit " + tableClassName + "(const char* tableName)");
-	line(header, "\t\t:MySQLTable(tableName) {}");
+	line(header, "\texplicit " + tableClassName + "(const char* tableName);");
 	line(header, "\tvoid init(MYSQL * mysql) override;");
 	if (mysqlInfo.mIndexList.size() > 0)
 	{
@@ -589,6 +597,12 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	// 源文件
 	string source;
 	line(source, "#include \"GameHeader.h\"");
+	line(source, "");
+	line(source, tableClassName + "::" + tableClassName + "(const char* tableName):");
+	line(source, "\tMySQLTable(tableName)");
+	line(source, "{");
+	line(source, "\tmDataType = NAME(" + dataClassName + ");");
+	line(source, "}");
 	line(source, "");
 	line(source, "void " + tableClassName + "::init(MYSQL* mysql)");
 	line(source, "{");
