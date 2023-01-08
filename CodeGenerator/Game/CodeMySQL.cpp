@@ -9,6 +9,7 @@ void CodeMySQL::generate()
 
 	string cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
 	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
+	string cacheCppPath = cppGamePath + "MySQLCacheManager/";
 
 	// 解析模板文件
 	string fileContent;
@@ -112,6 +113,7 @@ void CodeMySQL::generate()
 	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
 	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
 	generateMySQLInstanceClear(mysqlInfoList, totalHeaderPath);
+	generateMySQLRegister(mysqlInfoList, cacheCppPath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -163,6 +165,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\tbool updateFloat(float value, int index) override;");
 	line(header, "\tbool updateLLong(llong value, int index) override;");
 	line(header, "\tbool updateString(const string& value, int index) override;");
+	line(header, "\tbool hasBool(bool value, int index);");
+	line(header, "\tbool hasInt(int value, int index);");
+	line(header, "\tbool hasFloat(float value, int index);");
+	line(header, "\tbool hasLLong(llong value, int index);");
+	line(header, "\tbool hasString(const string& value, int index);");
 	line(header, "};");
 	line(header, "");
 	line(header, "#endif", false);
@@ -557,6 +564,125 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	}
 	line(source, "\t}");
 	line(source, "\treturn false;");
+	line(source, "}");
+
+	// hasBool函数
+	line(source, "bool " + className + "::hasBool(const bool value, const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "bool")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// hasInt函数
+	line(source, "bool " + className + "::hasInt(const int value, const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "int" || typeName == "ushort" || typeName == "short" || typeName == "byte" || typeName == "char")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// hasFloat函数
+	line(source, "bool " + className + "::hasFloat(const float value, const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "float")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// hasLLong函数
+	line(source, "bool " + className + "::hasLLong(const llong value, const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "llong")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// hasString函数
+	line(source, "bool " + className + "::hasString(const string& value, const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "string")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
 	line(source, "}", false);
 
 	writeFile(filePath + className + ".h", ANSIToUTF8(header.c_str(), true));
@@ -759,4 +885,20 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 	line(header, "");
 	line(header, "#endif", false);
 	writeFile(filePath + "MySQLInstanceClear.h", ANSIToUTF8(header.c_str(), true));
+}
+
+void CodeMySQL::generateMySQLRegister(const myVector<MySQLInfo>& mysqlList, const string& filePath)
+{
+	string source;
+	line(source, "#include \"GameHeader.h\"");
+	line(source, "");
+	line(source, "void MySQLCacheRegister::registerAll()");
+	line(source, "{");
+	uint count = mysqlList.size();
+	FOR_I(count)
+	{
+		line(source, "\tmMySQLCacheManager->registerMySQL<MD" + mysqlList[i].mMySQLClassName + ">();");
+	}
+	line(source, "}", false);
+	writeFile(filePath + "MySQLCacheRegister.cpp", ANSIToUTF8(source.c_str(), true));
 }
