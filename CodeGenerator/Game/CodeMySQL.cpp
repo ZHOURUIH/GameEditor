@@ -9,7 +9,6 @@ void CodeMySQL::generate()
 
 	string cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
 	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
-	string cacheCppPath = cppGamePath + "MySQLCacheManager/";
 
 	// 解析模板文件
 	string fileContent;
@@ -113,7 +112,6 @@ void CodeMySQL::generate()
 	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
 	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
 	generateMySQLInstanceClear(mysqlInfoList, totalHeaderPath);
-	generateMySQLRegister(mysqlInfoList, cacheCppPath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -165,11 +163,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\tbool updateFloat(float value, int index) override;");
 	line(header, "\tbool updateLLong(llong value, int index) override;");
 	line(header, "\tbool updateString(const string& value, int index) override;");
-	line(header, "\tbool hasBool(bool value, int index);");
-	line(header, "\tbool hasInt(int value, int index);");
-	line(header, "\tbool hasFloat(float value, int index);");
-	line(header, "\tbool hasLLong(llong value, int index);");
-	line(header, "\tbool hasString(const string& value, int index);");
+	line(header, "\tbool hasBool(bool value, int index) override;");
+	line(header, "\tbool hasInt(int value, int index) override;");
+	line(header, "\tbool hasFloat(float value, int index) override;");
+	line(header, "\tbool hasLLong(llong value, int index) override;");
+	line(header, "\tbool hasString(const string& value, int index) override;");
 	line(header, "};");
 	line(header, "");
 	line(header, "#endif", false);
@@ -885,20 +883,4 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 	line(header, "");
 	line(header, "#endif", false);
 	writeFile(filePath + "MySQLInstanceClear.h", ANSIToUTF8(header.c_str(), true));
-}
-
-void CodeMySQL::generateMySQLRegister(const myVector<MySQLInfo>& mysqlList, const string& filePath)
-{
-	string source;
-	line(source, "#include \"GameHeader.h\"");
-	line(source, "");
-	line(source, "void MySQLCacheRegister::registerAll()");
-	line(source, "{");
-	uint count = mysqlList.size();
-	FOR_I(count)
-	{
-		line(source, "\tmMySQLCacheManager->registerMySQL<MD" + mysqlList[i].mMySQLClassName + ">();");
-	}
-	line(source, "}", false);
-	writeFile(filePath + "MySQLCacheRegister.cpp", ANSIToUTF8(source.c_str(), true));
 }

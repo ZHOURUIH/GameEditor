@@ -16,7 +16,6 @@ protected:
 	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 	static void generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, const string& filePath);
-	static void generateMySQLRegister(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 protected:
 };
 
