@@ -153,8 +153,8 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\t" + className + "();");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid parseResult(Map<const char*, char*>& resultRow) override;");
-	line(header, "\tvoid paramList(Array<1024>& params) const override;");
-	line(header, "\tvoid generateUpdate(Array<4096>& params, llong flag) const override;");
+	line(header, "\tvoid paramList(string& params) const override;");
+	line(header, "\tvoid generateUpdate(string& params, llong flag) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
 	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
 	line(header, "\tvoid resetProperty() override;");
@@ -252,7 +252,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "");
 
 	// paramListº¯Êý
-	line(source, "void " + className + "::paramList(Array<1024>& params) const");
+	line(source, "void " + className + "::paramList(string& params) const");
 	line(source, "{");
 	line(source, "\tsqlAddLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
@@ -265,11 +265,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\tsqlAddStringUTF8(params, m" + memberName + ".c_str(), " + addComma + ");");
+				line(source, "\tsqlAddStringUTF8(params, m" + memberName + ", " + addComma + ");");
 			}
 			else
 			{
-				line(source, "\tsqlAddString(params, m" + memberName + ".c_str(), " + addComma + ");");
+				line(source, "\tsqlAddString(params, m" + memberName + ", " + addComma + ");");
 			}
 		}
 		else if (typeName == "int")
@@ -313,7 +313,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "");
 
 	// generateUpdateº¯Êý
-	line(source, "void " + className + "::generateUpdate(Array<4096>& params, const llong flag) const");
+	line(source, "void " + className + "::generateUpdate(string& params, const llong flag) const");
 	line(source, "{");
 	FOR_I(memberCount)
 	{
@@ -326,11 +326,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\t\tsqlUpdateStringUTF8(params, " + memberName + ", m" + memberName + ".c_str(), (int)m" + memberName + ".length());");
+				line(source, "\t\tsqlUpdateStringUTF8(params, " + memberName + ", m" + memberName + ");");
 			}
 			else
 			{
-				line(source, "\t\tsqlUpdateString(params, " + memberName + ", m" + memberName + ".c_str(), (int)m" + memberName + ".length());");
+				line(source, "\t\tsqlUpdateString(params, " + memberName + ", m" + memberName + ");");
 			}
 		}
 		else if (typeName == "int")
