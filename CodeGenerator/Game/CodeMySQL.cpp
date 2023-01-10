@@ -132,7 +132,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
 	line(header, "\tstatic constexpr const char* MySQLType = NAME(" + className + ");");
-	uint memberCount = mysqlInfo.mMemberList.size();
+	const uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
 		line(header, "\tstatic constexpr const char* " + mysqlInfo.mMemberList[i].mMemberName + " = \"" + mysqlInfo.mMemberList[i].mMemberName + "\";");
@@ -140,8 +140,25 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "public:");
 	FOR_I(memberCount)
 	{
-		string memberLine = "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + ";";
-		uint tabCount = generateAlignTableCount(memberLine, 40);
+		string memberLine;
+		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
+		if (typeName == "int" || typeName == "uint" || typeName == "byte" || typeName == "char" || typeName == "short" || typeName == "ushort" || typeName == "llong")
+		{
+			memberLine = "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + " = 0;";
+		}
+		else if (typeName == "bool")
+		{
+			memberLine = "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + " = false;";
+		}
+		else if (typeName == "float")
+		{
+			memberLine = "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + " = 0.0f;";
+		}
+		else if (typeName == "string")
+		{
+			memberLine = "\t" + mysqlInfo.mMemberList[i].mTypeName + " m" + mysqlInfo.mMemberList[i].mMemberName + ";";
+		}
+		const uint tabCount = generateAlignTableCount(memberLine, 48);
 		FOR_I(tabCount)
 		{
 			memberLine += '\t';
@@ -186,7 +203,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "");
 	line(source, className + "::" + className + "()");
 	line(source, "{");
-	line(source, "\tmDataType = MySQLType;");
+	line(source, "\tmDataType = NAME(" + className + ");");
 	line(source, "}");
 	// fillColNameº¯Êý
 	line(source, "");
