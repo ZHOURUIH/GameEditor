@@ -389,7 +389,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		line(source, "\t}");
 	}
 	line(source, "\t// 去除最后的逗号");
-	line(source, "\tconst int length = params.length();");
+	line(source, "\tconst int length = (int)params.length();");
 	line(source, "\tif (length > 0)");
 	line(source, "\t{");
 	line(source, "\t\tparams[length - 1] = \'\\0\';");
