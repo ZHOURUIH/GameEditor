@@ -131,7 +131,6 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "{");
 	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
-	line(header, "\tstatic constexpr const char* MySQLType = NAME(" + className + ");");
 	const uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
@@ -194,7 +193,6 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
 	// 字段静态变量定义
-	line(source, "constexpr const char* " + className + "::MySQLType;");
 	FOR_I(memberCount)
 	{
 		line(source, "constexpr const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + ";");
