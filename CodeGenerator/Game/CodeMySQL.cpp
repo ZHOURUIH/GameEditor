@@ -184,6 +184,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\tbool hasFloat(float value, int index) override;");
 	line(header, "\tbool hasLLong(llong value, int index) override;");
 	line(header, "\tbool hasString(const string& value, int index) override;");
+	line(header, "\tbool getBool(int index) override;");
+	line(header, "\tint getInt(int index) override;");
+	line(header, "\tfloat getFloat(int index) override;");
+	line(header, "\tllong getLLong(int index) override;");
+	line(header, "\tconst string& getString(int index) override;");
 	line(header, "};");
 	line(header, "");
 	line(header, "#endif", false);
@@ -696,6 +701,126 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	}
 	line(source, "\t}");
 	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// getBool函数
+	line(source, "bool " + className + "::getBool(const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "bool")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn false;");
+	line(source, "}");
+	line(source, "");
+
+	// getInt函数
+	line(source, "int " + className + "::getInt(const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "int" || typeName == "ushort" || typeName == "short" || typeName == "byte" || typeName == "char")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return 0;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn 0;");
+	line(source, "}");
+	line(source, "");
+
+	// getFloat函数
+	line(source, "float " + className + "::getFloat(const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "float")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return 0.0f;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn 0.0f;");
+	line(source, "}");
+	line(source, "");
+
+	// getLLong函数
+	line(source, "llong " + className + "::getLLong(const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "llong")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return 0;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn 0;");
+	line(source, "}");
+	line(source, "");
+
+	// getString函数
+	line(source, "const string& " + className + "::getString(const int index)");
+	line(source, "{");
+	line(source, "\tswitch (index)");
+	line(source, "\t{");
+	FOR_I(memberCount)
+	{
+		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
+		const string& typeName = memberInfo.mTypeName;
+		const string& memberName = memberInfo.mMemberName;
+		if (typeName == "string")
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+		}
+		else
+		{
+			line(source, "\tcase " + intToString(i + 1) + ": return EMPTY;");
+		}
+	}
+	line(source, "\t}");
+	line(source, "\treturn EMPTY;");
 	line(source, "}", false);
 
 	writeFile(filePath + className + ".h", ANSIToUTF8(header.c_str(), true));
