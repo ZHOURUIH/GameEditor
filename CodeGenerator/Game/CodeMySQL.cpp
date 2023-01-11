@@ -170,9 +170,9 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
 	line(header, "\tvoid parseResult(Map<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(string& params) const override;");
-	line(header, "\tvoid generateUpdate(string& params, llong flag) const override;");
+	line(header, "\tvoid generateUpdate(string& params, ullong flag) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
-	line(header, "\tvoid cloneWithFlag(MySQLData* target, llong flag) const override;");
+	line(header, "\tvoid cloneWithFlag(MySQLData* target, ullong flag) const override;");
 	line(header, "\tvoid resetProperty() override;");
 	line(header, "\tbool updateBool(bool value, int index) override;");
 	line(header, "\tbool updateInt(int value, int index) override;");
@@ -328,7 +328,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "");
 
 	// generateUpdateº¯Êý
-	line(source, "void " + className + "::generateUpdate(string& params, const llong flag) const");
+	line(source, "void " + className + "::generateUpdate(string& params, const ullong flag) const");
 	line(source, "{");
 	FOR_I(memberCount)
 	{
@@ -412,7 +412,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "");
 
 	// cloneWithFlagº¯Êý
-	line(source, "void " + className + "::cloneWithFlag(MySQLData* target, const llong flag) const");
+	line(source, "void " + className + "::cloneWithFlag(MySQLData* target, const ullong flag) const");
 	line(source, "{");
 	line(source, "\tbase::cloneWithFlag(target, flag);");
 	if (memberCount > 0)
