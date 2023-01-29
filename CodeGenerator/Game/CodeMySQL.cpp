@@ -852,7 +852,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		line(header, "\tvoid lateInit() override;");
 	}
 	line(header, "\tMySQLData* createData() override;");
-	line(header, "\tvoid createDataList(Vector<MySQLData*>&dataList, const int count) override;");
+	line(header, "\tvoid createDataList(Vector<MySQLData*>& dataList, const int count) override;");
 	line(header, "protected:");
 	line(header, "};");
 	line(header, "");
@@ -890,7 +890,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(source, "{");
 	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
 	line(source, "}");
-	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>&dataList, const int count)");
+	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
 	line(source, "\treturn mMySQLDataBase->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count); ");
 	line(source, "}", false);
