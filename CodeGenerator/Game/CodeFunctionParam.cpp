@@ -20,29 +20,8 @@ void CodeFunctionParam::generate()
 	split(file.c_str(), "\r\n", list);
 	// 生成StringDefineFunctionParam文件
 	generateStringDefine(list, cppStringDefinePath);
-	// 生成FunctionParamHeader.h文件
-	generateCppTotalHeaderFile(list, cppHeaderPath);
 	// 生成FunctionParamRegister文件
 	generateCppRegister(list, cppHeaderPath);
-}
-
-// FunctionParamHeader.h
-void CodeFunctionParam::generateCppTotalHeaderFile(const myVector<string>& list, const string& filePath)
-{
-	string str0;
-	line(str0, "#ifndef _FUNCTION_PARAM_HEADER_H_");
-	line(str0, "#define _FUNCTION_PARAM_HEADER_H_");
-	line(str0, "");
-	line(str0, "#include \"FunctionParam.h\"");
-	uint count = list.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + list[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(filePath + "FunctionParamHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // FunctionParamRegister文件

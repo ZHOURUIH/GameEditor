@@ -64,38 +64,7 @@ void CodeFrameSystem::generate()
 		}
 	}
 	END(lineList);
-	generateHeaderFile(frameSystemList, factoryManagerList, classPoolList, cppHeaderPath);
 	generateSystemDefineFile(frameSystemList, factoryManagerList, classPoolList, cppHeaderPath);
-}
-
-// FrameSystemHeader.h
-void CodeFrameSystem::generateHeaderFile(const myVector<string>& frameSystemList,
-										const myVector<string>& factoryManagerList, 
-										const myVector<string>& classPoolList, 
-										const string& filePath)
-{
-	string str0;
-	line(str0, "#ifndef _FRAME_SYSTEM_HEADER_H_");
-	line(str0, "#define _FRAME_SYSTEM_HEADER_H_");
-	line(str0, "");
-	line(str0, "// 常规系统组件");
-	FOR_VECTOR_CONST(frameSystemList)
-	{
-		line(str0, "#include \"" + frameSystemList[i] + ".h\"");
-	}
-	line(str0, "// 工厂管理器");
-	FOR_VECTOR_CONST(factoryManagerList)
-	{
-		line(str0, "#include \"" + factoryManagerList[i] + ".h\"");
-	}
-	line(str0, "// 对象池");
-	FOR_VECTOR_CONST(classPoolList)
-	{
-		line(str0, "#include \"" + classPoolList[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif");
-	writeFile(filePath + "FrameSystemHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // FrameSystemRegiste.h, FrameSystemDeclare.h, FrameSystemDefine.cpp, FrameSystemGet.h, FrameSystemClear.h

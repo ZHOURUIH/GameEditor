@@ -9,7 +9,6 @@ public:
 	static void generate();
 protected:
 	// c++
-	static void generateCppHeaderFile(const myVector<pair<string, string>>& conditionList, const string& headerPath);
 	static void generateCppRegisterFile(const myVector<pair<string, string>>& conditionList, const string& filePath);
 	static void generateCppConditionEnum(const myVector<pair<string, string>>& conditionList, const string& filePath);
 	static void generateCppConditionFile(const string& conditionName, const string& conditionPath);

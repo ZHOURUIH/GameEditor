@@ -11,7 +11,6 @@ protected:
 	//c++
 	static void generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const string& filePath);
 	static void generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const string& filePath);
-	static void generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 	static void generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 	static void generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& filePath);

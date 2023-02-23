@@ -179,7 +179,6 @@ void CodeSQLite::generate()
 	{
 		// 在上一层目录生成SQLiteHeader.h文件
 		string headerPath = getFilePath(cppDataPath) + "/";
-		generateCppSQLiteTotalHeaderFile(sqliteInfoList, headerPath);
 		generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
 		generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
 		generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
@@ -299,28 +298,6 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 
 		writeFile(tableFileName, ANSIToUTF8(table.c_str(), true));
 	}
-}
-
-// SQLiteHeader.h文件
-void CodeSQLite::generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
-{
-	string str0;
-	line(str0, "#ifndef _SQLITE_HEADER_H_");
-	line(str0, "#define _SQLITE_HEADER_H_");
-	line(str0, "");
-	uint packetCount = sqliteList.size();
-	FOR_I(packetCount)
-	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
-		line(str0, "#include \"SQLite" + sqliteList[i].mSQLiteName + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(filePath + "SQLiteHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // SQLiteRegister.h和SQLiteRegister.cpp文件

@@ -8,8 +8,6 @@ class CodeState : public CodeUtility
 public:
 	static void generate();
 protected:
-	//c++
-	static void generateCppStateTotalHeaderFile(const myVector<string>& stateList, const string& filePath);
 	static void generateStringDefineState(const myVector<string>& stateList, const string& filePath);
 	static void generateStateRegister(const myVector<string>& stateList, const string& filePath);
 protected:

@@ -18,24 +18,7 @@ void CodeRank::generate()
 	}
 	myVector<string> lineList;
 	split(file.c_str(), "\r\n", lineList);
-	generateHeaderFile(lineList, cppHeaderPath);
 	generateRegister(lineList, cppHeaderPath);
-}
-
-void CodeRank::generateHeaderFile(const myVector<string>& list, const string& headerPath)
-{
-	string str0;
-	line(str0, "#ifndef _RANK_HEADER_H_");
-	line(str0, "#define _RANK_HEADER_H_");
-	line(str0, "");
-	FOR_VECTOR_CONST(list)
-	{
-		line(str0, "#include \"" + list[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(headerPath + "RankHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 void CodeRank::generateRegister(const myVector<string>& list, const string& headerPath)

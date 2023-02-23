@@ -20,8 +20,6 @@ void CodeAchivement::generate()
 
 	myVector<string> lineList;
 	split(file.c_str(), "\r\n", lineList);
-	// 生成AchivementHeader.h文件
-	generateHeaderFile(lineList, cppHeaderPath);
 	// 生成AcvehimentRegister.cpp文件
 	generateRegister(lineList, cppHeaderPath);
 
@@ -30,23 +28,6 @@ void CodeAchivement::generate()
 		generateAchivementFile(lineList[i], cppAchivementFilePath);
 	}
 	END(lineList);
-}
-
-// AchivementHeader.h文件
-void CodeAchivement::generateHeaderFile(const myVector<string>& list, const string& headerPath)
-{
-	string str0;
-	line(str0, "#ifndef _ACHIVEMENT_HEADER_H_");
-	line(str0, "#define _ACHIVEMENT_HEADER_H_");
-	line(str0, "");
-	FOR_VECTOR_CONST(list)
-	{
-		line(str0, "#include \"" + list[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(headerPath + "AchivementHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // AcvehimentRegister.cpp
@@ -115,7 +96,6 @@ void CodeAchivement::generateAchivementFile(const string& achivement, const stri
 	{
 		string source;
 		line(source, "#include \"" + achivement + ".h\"");
-		line(source, "#include \"SQLiteHeader.h\"");
 		line(source, "#include \"EventSystem.h\"");
 		line(source, "#include \"EventType.h\"");
 		line(source, "#include \"CharacterPlayer.h\"");

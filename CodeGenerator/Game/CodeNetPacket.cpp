@@ -136,7 +136,6 @@ void CodeNetPacket::generate()
 	{
 		generateCppPacketDefineFile(packetInfoList, cppPacketDefinePath);
 		generateCppPacketRegisteFile(packetInfoList, cppPacketDefinePath, packetVersion);
-		generateCppPacketTotalHeaderFile(packetInfoList, cppPacketDefinePath);
 		generateStringDefinePacket(packetList, cppStringDefinePath);
 
 		// 删除无用的消息
@@ -223,36 +222,6 @@ void CodeNetPacket::generate()
 		}
 		END(csharpSCHotfixFiles);
 	}
-}
-
-// PacketHeader.h和PacketDeclareHeader.h文件
-void CodeNetPacket::generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, const string& filePath)
-{
-	// PacketHeader.h
-	string str0;
-	line(str0, "#ifndef _PACKET_HEADER_H_");
-	line(str0, "#define _PACKET_HEADER_H_");
-	line(str0, "");
-	uint packetCount = packetList.size();
-	FOR_I(packetCount)
-	{
-		if (startWith(packetList[i].mPacketName, "CS"))
-		{
-			line(str0, "#include \"" + packetList[i].mPacketName + ".h\"");
-		}
-	}
-	line(str0, "");
-	FOR_I(packetCount)
-	{
-		if (startWith(packetList[i].mPacketName, "SC"))
-		{
-			line(str0, "#include \"" + packetList[i].mPacketName + ".h\"");
-		}
-	}
-	line(str0, "#include \"StringDefine.h\"");
-	line(str0, "");
-	line(str0, "#endif", false);
-	writeFile(filePath + "PacketHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // PacketDefine.h文件

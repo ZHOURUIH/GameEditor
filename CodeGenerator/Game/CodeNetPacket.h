@@ -9,7 +9,6 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppPacketTotalHeaderFile(const myVector<PacketInfo>& packetList, const string& filePath);
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
 	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);
 	static void generateStringDefinePacket(const myVector<string>& packetList, const string& filePath);

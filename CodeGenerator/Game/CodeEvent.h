@@ -8,7 +8,6 @@ class CodeEvent : public CodeUtility
 public:
 	static void generate();
 protected:
-	static void generateHeaderFile(const myVector<pair<string, string>>& eventList, const string& headerPath);
 	static void generateStringDefineEvent(const myVector<pair<string, string>>& eventList, const string& stringDefinePath);
 	static void generateEventType(const myVector<pair<string, string>>& eventList, const string& headerPath);
 	static void generateEventFile(const string& eventName, const string& eventPath);

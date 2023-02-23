@@ -33,8 +33,6 @@ void CodeEvent::generate()
 	END(eventLineList);
 	// 生成StringDefineEvent文件
 	generateStringDefineEvent(eventList, cppStringDefinePath);
-	// 生成EventHeader.h文件
-	generateHeaderFile(eventList, cppHeaderPath);
 	// 生成EventType.h文件
 	generateEventType(eventList, cppHeaderPath);
 	FOR_VECTOR(eventList)
@@ -42,24 +40,6 @@ void CodeEvent::generate()
 		generateEventFile(eventList[i].first, cppEventFilePath);
 	}
 	END(eventList);
-}
-
-// EventHeader.h文件
-void CodeEvent::generateHeaderFile(const myVector<pair<string, string>>& eventList, const string& headerPath)
-{
-	string str0;
-	line(str0, "#ifndef _EVENT_HEADER_H_");
-	line(str0, "#define _EVENT_HEADER_H_");
-	line(str0, "");
-	uint count = eventList.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + eventList[i].first + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(headerPath + "EventHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineEvent.h和StringDefineEvent.cpp

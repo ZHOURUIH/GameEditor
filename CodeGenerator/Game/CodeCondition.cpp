@@ -34,8 +34,6 @@ void CodeCondition::generate()
 	if (cppGamePath.length() > 0)
 	{
 		// c++
-		// 生成ConditionHeader.h文件
-		generateCppHeaderFile(conditionList, cppHeaderPath);
 		// 生成ConditionRegister.h文件
 		generateCppRegisterFile(conditionList, cppHeaderPath);
 		// 生成CONDITION枚举
@@ -60,24 +58,6 @@ void CodeCondition::generate()
 		}
 		END(conditionList);
 	}
-}
-
-// ConditionHeader.h文件
-void CodeCondition::generateCppHeaderFile(const myVector<pair<string, string>>& conditionList, const string& headerPath)
-{
-	string str0;
-	line(str0, "#ifndef _CONDITION_HEADER_H_");
-	line(str0, "#define _CONDITION_HEADER_H_");
-	line(str0, "");
-	uint count = conditionList.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + conditionList[i].first + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(headerPath + "ConditionHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // ConditionRegister.h文件

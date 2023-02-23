@@ -11,7 +11,6 @@ protected:
 	//c++
 	static void generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const string& dataFilePath);
 	static void generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const string& tableFilePath);
-	static void generateCppSQLiteTotalHeaderFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
 	static void generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
 	static void generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& filePath);
 	static void generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, const string& filePath);

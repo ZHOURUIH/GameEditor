@@ -8,11 +8,6 @@ class CodeFrameSystem : public CodeUtility
 public:
 	static void generate();
 protected:
-	//c++
-	static void generateHeaderFile(const myVector<string>& frameSystemList, 
-								   const myVector<string>& factoryManagerList, 
-								   const myVector<string>& classPoolList, 
-								   const string& filePath);
 	static void generateSystemDefineFile(const myVector<string>& frameSystemList,
 										const myVector<string>& factoryManagerList,
 										const myVector<string>& classPoolList,

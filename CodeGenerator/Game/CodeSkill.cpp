@@ -20,26 +20,6 @@ void CodeSkill::generate()
 	split(skillFile.c_str(), "\r\n", skillList);
 	// 生成StringDefineSkill文件
 	generateStringDefineSkill(skillList, cppStringDefinePath);
-	// 生成CharacterSkillHeader.h文件
-	generateCppSkillTotalHeaderFile(skillList, cppHeaderPath);
-}
-
-// CharacterSkillHeader.h
-void CodeSkill::generateCppSkillTotalHeaderFile(const myVector<string>& skillList, const string& filePath)
-{
-	string str0;
-	line(str0, "#ifndef _CHARACTER_SKILL_HEADER_H_");
-	line(str0, "#define _CHARACTER_SKILL_HEADER_H_");
-	line(str0, "");
-	uint count = skillList.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + skillList[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(filePath + "CharacterSkillHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineSkill.h和StringDefineSkill.cpp

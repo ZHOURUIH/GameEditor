@@ -107,7 +107,6 @@ void CodeMySQL::generate()
 		totalHeaderPath = totalHeaderPath.substr(0, totalHeaderPath.length() - 1);
 	}
 	totalHeaderPath = getFilePath(totalHeaderPath) + "/";
-	generateCppMySQLTotalHeaderFile(mysqlInfoList, totalHeaderPath);
 	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
 	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
 	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
@@ -897,29 +896,6 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
 	writeFile(filePath + tableClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
-}
-
-// MySQLHeader.h文件
-void CodeMySQL::generateCppMySQLTotalHeaderFile(const myVector<MySQLInfo>& mysqlList, const string& filePath)
-{
-	string str0;
-	line(str0, "#ifndef _MYSQL_HEADER_H_");
-	line(str0, "#define _MYSQL_HEADER_H_");
-	line(str0, "");
-	uint packetCount = mysqlList.size();
-	FOR_I(packetCount)
-	{
-		line(str0, "#include \"MD" + mysqlList[i].mMySQLClassName + ".h\"");
-	}
-	line(str0, "");
-	FOR_I(packetCount)
-	{
-		line(str0, "#include \"MySQL" + mysqlList[i].mMySQLClassName + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(filePath + "MySQLHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // MySQLRegiste.h和MySQLRegiste.cpp文件

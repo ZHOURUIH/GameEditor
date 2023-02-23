@@ -84,29 +84,8 @@ void CodeSceneTrigger::generate()
 	}
 	// 生成StringDefineSceneTrigger文件
 	generateStringDefine(triggerList, cppStringDefinePath);
-	// 生成SceneTriggerHeader.h文件
-	generateCppTotalHeaderFile(triggerList, cppHeaderPath);
 	// 生成SceneTriggerRegister文件
 	generateCppRegister(triggerList, modifierList, cppHeaderPath);
-}
-
-// SceneTriggerHeader.h
-void CodeSceneTrigger::generateCppTotalHeaderFile(const myVector<string>& list, const string& filePath)
-{
-	string str0;
-	line(str0, "#ifndef _SCENE_TRIGGER_HEADER_H_");
-	line(str0, "#define _SCENE_TRIGGER_HEADER_H_");
-	line(str0, "");
-	line(str0, "#include \"SceneTrigger.h\"");
-	uint count = list.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + list[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(filePath + "SceneTriggerHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // SceneTriggerRegister文件

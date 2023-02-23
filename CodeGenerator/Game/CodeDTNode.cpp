@@ -20,28 +20,8 @@ void CodeDTNode::generate()
 	split(file.c_str(), "\r\n", nodeLineList);
 	// 生成StringDefineDTNode文件
 	generateStringDefine(nodeLineList, cppStringDefinePath);
-	// 生成DTNodeHeader.h文件
-	generateHeaderFile(nodeLineList, cppHeaderPath);
 	// 生成DTNodeRegister.cpp文件
 	generateRegisterFile(nodeLineList, cppHeaderPath);
-}
-
-// DTNodeHeader.h文件
-void CodeDTNode::generateHeaderFile(const myVector<string>& nodeList, const string& headerPath)
-{
-	string str0;
-	line(str0, "#ifndef _DT_NODE_HEADER_H_");
-	line(str0, "#define _DT_NODE_HEADER_H_");
-	line(str0, "");
-	uint count = nodeList.size();
-	FOR_I(count)
-	{
-		line(str0, "#include \"" + nodeList[i] + ".h\"");
-	}
-	line(str0, "");
-	line(str0, "#endif", false);
-
-	writeFile(headerPath + "DTNodeHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
 // StringDefineDTNode.h和StringDefineDTNode.cpp
