@@ -394,7 +394,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "\tconst int length = (int)params.length();");
 	line(source, "\tif (length > 0)");
 	line(source, "\t{");
-	line(source, "\t\tparams[length - 1] = \'\\0\';");
+	line(source, "\t\tparams.erase(length - 1);");
 	line(source, "\t}");
 	line(source, "}");
 	line(source, "");
@@ -880,7 +880,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		line(source, "\tbase::lateInit();");
 		for (const string& indexName : mysqlInfo.mIndexList)
 		{
-			line(source, "\tquery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::" + indexName + " + \")\").c_str(), false);");
+			line(source, "\texecuteNonQuery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::" + indexName + " + \")\").c_str(), false);");
 		}
 		line(source, "}");
 		line(source, "");
