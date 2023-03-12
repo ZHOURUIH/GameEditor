@@ -1607,6 +1607,10 @@ void ImageUtility::generateAllIconTo36(const string& filePath)
 		createFolder(getFilePath(newFullPath));
 		generateExpandImage(fileName, newFullPath, Vector2Int(36, 36));
 	}
+	string fullPathNoMedia = removeStartString(filePath, "../media/");
+	string rootFolderName = getFirstFolderName(fullPathNoMedia);
+	string newFullPath = "../media/" + rootFolderName + "_offseted" + "/" + removeFirstPath(fullPathNoMedia);
+	cout << "已输出至:" << newFullPath << endl;
 }
 
 void ImageUtility::trimAllImage(const string& filePath, const int minAlpha)
@@ -1676,6 +1680,10 @@ void ImageUtility::trimAllImage(const string& filePath, const int minAlpha)
 				trimImage(iter1->second, newFullPath, minSize, center);
 			}
 		}
+		string fullPathNoMedia = removeStartString(folders[i], "../media/");
+		string rootFolderName = getFirstFolderName(fullPathNoMedia);
+		string newFullPath = "../media/" + rootFolderName + "_trim" + "/" + removeFirstPath(fullPathNoMedia);
+		cout << "处理完毕,已输出到:" << newFullPath << endl;
 	}
 }
 
@@ -1776,17 +1784,20 @@ void ImageUtility::trimImage(const string& filePath, const string& newFilePath, 
 	int height = FreeImage_GetHeight(oldBitmap);
 	int xInOld = ((width - size.x) >> 1) + (center.x - (width >> 1));
 	int yInOld = ((height - size.y) >> 1) + (center.y - (height >> 1));
-	FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
-	FOR_Y(size.y)
+	if (xInOld >= 0 && yInOld >= 0)
 	{
-		BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
-		// 原始图片的底部在新图片中的y坐标,图片中的坐标是底部为0,向上为正
-		BYTE* oldLine = FreeImage_GetScanLine(oldBitmap, y + yInOld);
-		memcpy(newLine, oldLine + 4 * xInOld, size.x * 4);
+		FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
+		FOR_Y(size.y)
+		{
+			BYTE* newLine = FreeImage_GetScanLine(newBitmap, y);
+			// 原始图片的底部在新图片中的y坐标,图片中的坐标是底部为0,向上为正
+			BYTE* oldLine = FreeImage_GetScanLine(oldBitmap, y + yInOld);
+			memcpy(newLine, oldLine + 4 * xInOld, size.x * 4);
+		}
+		FreeImage_Save(format, newBitmap, newFilePath.c_str());
+		FreeImage_Unload(newBitmap);
 	}
-	FreeImage_Save(format, newBitmap, newFilePath.c_str());
 	FreeImage_Unload(oldBitmap);
-	FreeImage_Unload(newBitmap);
 	FreeImage_DeInitialise();
 }
 
@@ -2178,7 +2189,7 @@ void ImageUtility::writeTileObjectImageSizeSQLite(const string& filePath)
 		TDTileImageObject imageData;
 		imageData.mID = maxID + i + 1;
 		imageData.mFileIndex = firstIndex;
-		imageData.mAtlasName = folderName;
+		imageData.mAtlasName = folderName + ".png";
 		imageData.mImageName = stringToInt(getFileNameNoSuffix(filePath, true));
 		imageData.mImageSizeX = imageSize.x;
 		imageData.mImageSizeY = imageSize.y;
