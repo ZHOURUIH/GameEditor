@@ -1748,7 +1748,7 @@ void ImageUtility::makeAtlasGroup(const string& filePath)
 		int curCount = 0;
 		while (true)
 		{
-			// 每次最多增加100张图片
+			// 每次最多增加300张图片
 			const int batchCount = getMin((int)files.size() - curCount - totalIndex, 300);
 			// 将文件拷贝到临时目录
 			const string tempPath = filePath + "/temp/";
@@ -1762,6 +1762,7 @@ void ImageUtility::makeAtlasGroup(const string& filePath)
 			const string tempFileName = "temp";
 			packAtlas(outputPath, tempFileName, tempPath);
 			bool packResult = isFileExist(outputPath + "/" + tempFileName + ".png");
+			deleteFolder(outputPath);
 			// 本次打包失败,则说明上一次的数量已经达到上限,临时目录就可以直接改成一个可单独打图集的目录
 			// 打包成功,但是已经没有剩余的图片了,则当前图集已经完成,可以跳转分组下一个图集了
 			if (curCount + totalIndex + batchCount >= (int)files.size() || !packResult)
@@ -1774,20 +1775,26 @@ void ImageUtility::makeAtlasGroup(const string& filePath)
 						const string& curFile = files[totalIndex + curCount + i];
 						moveFile(tempPath + getFileName(curFile), curFile);
 					}
+					// 第一次尝试就已经失败,就不再继续处理了
+					if (curCount == 0)
+					{
+						cout << "分组失败,原因可能是图片过大导致无法打出最小数量图片的图集,将跳过,请手动处理" << endl;
+						// 直接跳出外层循环,不再处理
+						totalIndex = (int)files.size();
+						break;
+					}
 				}
 				else
 				{
 					curCount += batchCount;
 				}
 
-				deleteFolder(outputPath);
 				string newPath = filePath + "/" + getFolderName(filePath + "/") + "_" + intToString(groupIndex++);
 				renameFolder(tempPath, newPath);
 				cout << "已分组目录:" << newPath << ",图片数量:" << curCount << endl;
 				totalIndex += curCount;
 				break;
 			}
-			deleteFolder(outputPath);
 			curCount += batchCount;
 		}
 	}
