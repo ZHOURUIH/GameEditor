@@ -1830,7 +1830,7 @@ void ImageUtility::generateAtlasInfoFile(const string& filePath)
 		findFiles(folder, files, ".png", false);
 		// 根据数字进行排序
 		sortByFileNumber(files);
-		writer.writeString(folder.substr(filePath.length() + 1).c_str());
+		writer.writeString((folder.substr(filePath.length() + 1) + ".png").c_str());
 		writer.write((int)files.size());
 		for (const string& file : files)
 		{
@@ -1848,7 +1848,7 @@ void ImageUtility::generateAtlasInfoFile(const string& filePath)
 			writer.write((ushort)imageSize.y);
 		}
 	}
-	writer.writeToFile(filePath + ".AtlasInfo");
+	writer.writeToFile(filePath + "_AtlasInfo.bytes");
 }
 
 void ImageUtility::packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath)
