@@ -24,13 +24,12 @@ void main()
 		cout << "15:解析所有wix和wil文件" << endl;
 		cout << "16:整理NPC文件结构" << endl;
 		cout << "17:将media中全部序列帧数据写入SQLite" << endl;
-		cout << "19:地图:生成所有地图阻挡文件" << endl;
 		cout << "20:处理图片阴影" << endl;
 		cout << "22:更新地图中的特效信息到SQLite" << endl;
 		cout << "25:重新生成包含偏移量的图片" << endl;
 		cout << "26:裁剪序列帧图片到最小尺寸" << endl;
 		cout << "27:将图标调整到统一的36*36" << endl;
-		cout << "29:地图:转换所有地图文件为简化版本" << endl;
+		cout << "29:地图:转换所有地图文件为简化版本并且生成阻挡文件" << endl;
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
 		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << "34:检查所有地图是否有无效地砖下标" << endl;
@@ -184,13 +183,6 @@ void main()
 			}
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 19)
-		{
-			cout << "正在生成阻挡文件,只扫描简化版本的地图文件..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::generateAllUnreachFile("../media");
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 20)
 		{
 			cout << "正在处理图片阴影..." << endl;
@@ -240,9 +232,10 @@ void main()
 		}
 		else if (input == 29)
 		{
-			cout << "开始转换地图..." << endl;
+			cout << "开始转换地图以及生成阻挡文件..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::convertMapFile("../media");
+			ImageUtility::generateAllUnreachFile("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 32)

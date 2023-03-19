@@ -961,14 +961,10 @@ void ImageUtility::getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2
 void ImageUtility::generateAllUnreachFile(const string& path)
 {
 	myVector<string> fileList;
-	findFiles(path, fileList, ".bytes");
+	findFiles(path, fileList, ".map");
 	for (const string& file : fileList)
 	{
-		if (endWith(file, "_unreach.bytes"))
-		{
-			continue;
-		}
-		MapDataSimple mapData;
+		MapData mapData;
 		mapData.readFile(file);
 		mapData.writeUnreachFile();
 		print("完成计算阻挡区域:" + getFileName(file));
