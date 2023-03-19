@@ -604,6 +604,22 @@ bool FileUtility::renameFile(const string& fileName, const string& newName, bool
 	return rename(fileName.c_str(), newName.c_str()) == 0;
 }
 
+bool FileUtility::renameFolder(const string& fileName, const string& newName)
+{
+	// 移除结尾的/
+	string fileName1 = fileName;
+	if (endWith(fileName1, "/"))
+	{
+		fileName1 = fileName1.substr(0, fileName1.length() - 1);
+	}
+	string newName1 = newName;
+	if (endWith(newName1, "/"))
+	{
+		newName1 = newName1.substr(0, newName1.length() - 1);
+	}
+	return rename(fileName1.c_str(), newName1.c_str()) == 0;
+}
+
 uint FileUtility::getFileSize(const string& filePath)
 {
 	struct stat info;

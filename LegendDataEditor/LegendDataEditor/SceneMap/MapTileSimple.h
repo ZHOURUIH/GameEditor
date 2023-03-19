@@ -18,7 +18,6 @@ public:
 	myVector<int> mObjectContainsUnreachableIndexList;   // 如果该坐标包含对象物体,则表示该对象物体所覆盖的所有不可行走的坐标
 	int mUnreachGroupID = -1;
 	int mIndex = 0;				// 地砖下标
-	bool mAroundChecked = false;
 public:
 	void parseTile(char* buffer, int bufferSize, int& offset);
 	void saveTile(txSerializer* serializer);

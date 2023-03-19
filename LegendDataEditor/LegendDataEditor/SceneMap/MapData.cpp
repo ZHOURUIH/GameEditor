@@ -22,11 +22,15 @@ void MapData::destroy()
 	DELETE(mHeader);
 }
 
-void MapData::readFile(const string& fileName)
+bool MapData::readFile(const string& fileName)
 {
 	mFileName = fileName;
 	FileContent file;
 	FileUtility::openBinaryFile(fileName, file);
+	if (file.mBuffer == nullptr || file.mFileSize == 0)
+	{
+		return false;
+	}
 	int offset = 0;
 	mHeader->parseHeader(file.mBuffer, file.mFileSize, offset);
 	mTileCount = mHeader->mWidth * mHeader->mHeight;
@@ -38,6 +42,18 @@ void MapData::readFile(const string& fileName)
 	}
 	// 计算所有的不可行走区域组
 	findAllUnreachGroupNoRecursive();
+	return true;
+}
+
+void MapData::writeFile(const string& fileName)
+{
+	txSerializer serializer;
+	mHeader->saveHeader(&serializer);
+	FOR_I(mTileCount)
+	{
+		mTileList[i].saveTile(&serializer);
+	}
+	serializer.writeToFile(fileName);
 }
 
 void MapData::writeUnreachFile()
@@ -144,8 +160,7 @@ void MapData::findAllUnreachGroupNoRecursive()
 {
 	// 找出所有的不可行走的地砖
 	mySet<int> tileNearList;
-	int tileCount = mHeader->mWidth * mHeader->mHeight;
-	for (int i = 0; i < tileCount; ++i)
+	FOR_I(mTileCount)
 	{
 		MapTile& tile = mTileList[i];
 		if (!tile.mCanWalk)
@@ -153,13 +168,14 @@ void MapData::findAllUnreachGroupNoRecursive()
 			tileNearList.insert(i);
 		}
 	}
+	int idSeed = 0;
 	while (true)
 	{
 		if (tileNearList.size() == 0)
 		{
 			break;
 		}
-		int id = ++mIDSeed;
+		const int id = ++idSeed;
 		UnreachTileGroup* group = NEW(UnreachTileGroup, group, id, this);
 		mUnreachTileGroupList.insert(id, group);
 		myVector<int> waitForList;
@@ -221,8 +237,7 @@ void MapData::convertToSimple(const string& writeFile)
 {
 	txSerializer serializer;
 	mHeader->saveHeader(&serializer);
-	int tileCount = mHeader->mWidth * mHeader->mHeight;
-	for (int i = 0; i < tileCount; ++i)
+	FOR_I(mTileCount)
 	{
 		MapTileSimple simple;
 		mTileList[i].toSimple(&simple);

@@ -47,7 +47,6 @@ public:
 	static void deleteInvalidImage(const string& path);
 	static bool isInvalidImage(const string& fileName);
 	static POINT getImagePosition(const string& imagePath);
-	static void groupAtlas(const string& filePath, int countInAltas);
 	static void texturePacker(const string& texturePath);
 	static void texturePackerAll(const string& texturePath);
 	static void writeAnimFrameSQLite(bool updateOnly);
@@ -63,12 +62,10 @@ public:
 	static Vector2 tileIndexToPixelPos(int index, int mapHeight);
 	static TILE_TRIANGLE pixelPosToTriangleIndex(Vector2 pos);
 	static void getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2& point1, Vector2& point2);
-	static void generateUnreachFile(const string& path);
 	static void generateAllUnreachFile(const string& path);
 	static void processAllShadow(const string& path);
 	static void processShadowHorizontal(const string& filePath);
 	static void processShadowVertical(const string& filePath);
-	static void moveMapObjectTexture(const string& sourcePath);
 	static void updateMapEffect();
 	static void generateAllOffsetedImage(const string& filePath);
 	static void generateAllIconTo36(const string& filePath);
@@ -76,16 +73,19 @@ public:
 	static void generateGroupMonsterImage(const string& filePath);
 	static void trimAllImage(const string& filePath, const int minAlpha);
 	static void removeAllBackground(const string& filePath);
-	static void removeTextureToLastFolder(const string& filePath);
 	static void convertMapFile(const string& filePath);
-	static void writeTileObjectImageSizeSQLite(const string& filePath);
-	static void renameMap(const string& filePath);
+	static void writeTileObjectImageSizeSQLite(const string& filePath, int mapFileID);
 	static void scaleTexture(const string& path, float scale);
 	static void scalePosition(const string& fileName, float scale);
 	static void fullImageToMinimal(const string& path);
 	static void checkMapTile(const string& path);
 	static void autoFillAnimationTable(const string& clothName, int startID);
+	static void dumpMapFile(const string& fileName);
+	static void makeAtlasGroup(const string& filePath);
+	static void makeAtlasGroupAll();
+	static void generateAtlasInfoFile(const string& filePath);
 protected:
+	static void packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath);
 	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset);
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);

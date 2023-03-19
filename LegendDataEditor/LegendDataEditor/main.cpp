@@ -11,7 +11,6 @@ void main()
 	while (true)
 	{
 		cout << "选择功能" << endl;
-		cout << "1:解析wix和wil文件" << endl;
 		cout << "2:自动计算角色,武器,翅膀图片名" << endl;
 		cout << "4:整理怪物文件结构0" << endl;
 		cout << "5:按序号重命名文件并自动计算方向" << endl;
@@ -21,46 +20,31 @@ void main()
 		cout << "9:删除无效图片" << endl;
 		cout << "10:按序号重命名文件,添加数字后缀" << endl;
 		cout << "11:重命名为序列帧格式" << endl;
-		cout << "12:分组图集" << endl;
-		cout << "13:打包图集" << endl;
 		cout << "14:打包全部图集" << endl;
 		cout << "15:解析所有wix和wil文件" << endl;
 		cout << "16:整理NPC文件结构" << endl;
 		cout << "17:将media中全部序列帧数据写入SQLite" << endl;
-		cout << "18:生成地图阻挡文件" << endl;
-		cout << "19:生成所有地图阻挡文件" << endl;
+		cout << "19:地图:生成所有地图阻挡文件" << endl;
 		cout << "20:处理图片阴影" << endl;
-		cout << "21:移动并覆盖地图图片" << endl;
 		cout << "22:更新地图中的特效信息到SQLite" << endl;
 		cout << "25:重新生成包含偏移量的图片" << endl;
 		cout << "26:裁剪序列帧图片到最小尺寸" << endl;
 		cout << "27:将图标调整到统一的36*36" << endl;
-		cout << "28:将图片移动到上一层文件夹" << endl;
-		cout << "29:转换地图文件为简化版本" << endl;
-		cout << "30:将地砖图片信息写入数据库" << endl;
-		cout << "31:地图文件名重命名为bytes" << endl;
+		cout << "29:地图:转换所有地图文件为简化版本" << endl;
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
 		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << "34:检查所有地图是否有无效地砖下标" << endl;
 		cout << "35:将角色动作写入Animation表格" << endl;
+		cout << "36:地图:输出地图解析文本" << endl;
+		cout << "37:图片划分到多个图集" << endl;
+		cout << "38:将所有目录的图片划分到多个图集" << endl;
+		cout << "39:地图:生成地图地砖图片信息文件" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
 		if (input == 0)
 		{
 			break;
-		}
-		else if (input == 1)
-		{
-			cout << "输入文件名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始解析..." << endl;
-			long startTime = timeGetTime();
-			string filePath = "../media/" + fileName;
-			string outputPath = "../media/" + fileName + "/";
-			ImageUtility::wixWilToPNG(filePath + ".wix", filePath + ".wil", outputPath);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 2)
 		{
@@ -159,26 +143,6 @@ void main()
 			ImageUtility::renameImageToAnim("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 12)
-		{
-			cout << "输入文件夹名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始分组图集..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::groupAtlas("../media/" + fileName, 100);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 13)
-		{
-			cout << "输入media下相对路径:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始打包图集..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::texturePacker("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 14)
 		{
 			cout << "输入media下相对路径:";
@@ -220,19 +184,9 @@ void main()
 			}
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 18)
-		{
-			cout << "输入media下相对路径:";
-			string fileName;
-			cin >> fileName;
-			cout << "正在生成阻挡文件..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::generateUnreachFile("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 19)
 		{
-			cout << "正在生成阻挡文件..." << endl;
+			cout << "正在生成阻挡文件,只扫描简化版本的地图文件..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::generateAllUnreachFile("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
@@ -242,16 +196,6 @@ void main()
 			cout << "正在处理图片阴影..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::processAllShadow("../media/");
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 21)
-		{
-			cout << "输入路径:";
-			string fileName;
-			cin >> fileName;
-			cout << "正在移动图片..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::moveMapObjectTexture(fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 22)
@@ -294,39 +238,12 @@ void main()
 			ImageUtility::generateAllIconTo36("../media/" + fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
-		else if (input == 28)
-		{
-			cout << "输入文件夹名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始移动图片..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::removeTextureToLastFolder("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
 		else if (input == 29)
 		{
-			cout << "输入文件夹名:";
-			string fileName;
-			cin >> fileName;
 			cout << "开始转换地图..." << endl;
 			long startTime = timeGetTime();
-			ImageUtility::convertMapFile("../media/" + fileName);
+			ImageUtility::convertMapFile("../media");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 30)
-		{
-			cout << "输入图片所在文件夹名:";
-			string fileName;
-			cin >> fileName;
-			cout << "写入数据库..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::writeTileObjectImageSizeSQLite("../media/" + fileName);
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 31)
-		{
-			ImageUtility::renameMap("../media/Map");
 		}
 		else if (input == 32)
 		{
@@ -358,6 +275,33 @@ void main()
 			int startID;
 			cin >> startID;
 			ImageUtility::autoFillAnimationTable(clothName, startID);
+		}
+		else if (input == 36)
+		{
+			cout << "输入地图文件名,带路径:";
+			string fileName;
+			cin >> fileName;
+			ImageUtility::dumpMapFile("../media/" + fileName);
+		}
+		else if (input == 37)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			ImageUtility::makeAtlasGroup("../media/" + fileName);
+		}
+		else if (input == 38)
+		{
+			const long startTime = timeGetTime();
+			ImageUtility::makeAtlasGroupAll();
+			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
+		}
+		else if (input == 39)
+		{
+			cout << "输入地图文件名:";
+			string fileName;
+			cin >> fileName;
+			ImageUtility::generateAtlasInfoFile("../media/" + fileName);
 		}
 		system("pause");
 		cout << endl;

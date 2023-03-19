@@ -6,3 +6,4 @@ const char* TDTileImageObject::AtlasName = STR(AtlasName);
 const char* TDTileImageObject::ImageName = STR(ImageName);
 const char* TDTileImageObject::ImageSizeX = STR(ImageSizeX);
 const char* TDTileImageObject::ImageSizeY = STR(ImageSizeY);
+const char* TDTileImageObject::MapFileID = STR(MapFileID);

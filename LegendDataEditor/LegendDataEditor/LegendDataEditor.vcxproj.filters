@@ -336,6 +336,9 @@
     <ClCompile Include="Sqlite\Data\TDTileImageBig.cpp">
       <Filter>Sqlite\Data</Filter>
     </ClCompile>
+    <ClCompile Include="Sqlite\Data\TDTileImageMid.cpp">
+      <Filter>Sqlite\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\ServerDefine.h">
@@ -828,6 +831,12 @@
       <Filter>Sqlite\Table</Filter>
     </ClInclude>
     <ClInclude Include="Sqlite\Data\TDTileImageBig.h">
+      <Filter>Sqlite\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Table\SQLiteTileImageMid.h">
+      <Filter>Sqlite\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Sqlite\Data\TDTileImageMid.h">
       <Filter>Sqlite\Data</Filter>
     </ClInclude>
   </ItemGroup>

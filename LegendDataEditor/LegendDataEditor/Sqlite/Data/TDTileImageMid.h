@@ -1,9 +1,9 @@
-﻿#ifndef _TD_TILE_IMAGE_BIG_H_
-#define _TD_TILE_IMAGE_BIG_H_
+﻿#ifndef _TD_TILE_IMAGE_MID_H_
+#define _TD_TILE_IMAGE_MID_H_
 
 #include "SQLiteData.h"
 
-class TDTileImageBig : public SQLiteData
+class TDTileImageMid : public SQLiteData
 {
 public:
 	static const char* ID;
@@ -16,7 +16,7 @@ public:
 	int mImageName;
 	int mMapFileID;
 public:
-	TDTileImageBig()
+	TDTileImageMid()
 	{
 		registeParam(mID, ID);
 		registeParam(mAtlasName, AtlasName);

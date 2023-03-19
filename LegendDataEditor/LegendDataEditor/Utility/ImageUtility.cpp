@@ -661,67 +661,12 @@ POINT ImageUtility::getImagePosition(const string& imageFullPath)
 	return pos;
 }
 
-void ImageUtility::groupAtlas(const string& filePath, int countInAltas)
-{
-	string atlasInfo;
-	txSerializer serializer;
-	myVector<string> fileList;
-	findFiles(filePath, fileList, ".png", false);
-	sortByFileNumber(fileList);
-	FOR_VECTOR(fileList)
-	{
-		int atlasIndex = i / countInAltas;
-		string curFile = getFileNameNoSuffix(fileList[i], true);
-		string folderName = intToString(atlasIndex);
-		string newPath = getFilePath(fileList[i]) + "/" + folderName + "/";
-		moveFile(fileList[i], newPath + curFile + ".png");
-		moveFile(fileList[i] + ".meta", newPath + curFile + ".png.meta");
-		// 每一行需要记录图片在图集中的位置
-		atlasInfo += getFileName(fileList[i]) + ":" + intToString(atlasIndex) + "\n";
-		serializer.write<unsigned short>(stringToInt(getFileNameNoSuffix(fileList[i], true)));
-		serializer.write<unsigned char>(atlasIndex);
-	}
-	END(fileList);
-	writeFile(filePath + "/atlas.txt", atlasInfo);
-	writeFile(filePath + "/atlas.index", serializer.getBuffer(), serializer.getDataSize());
-}
-
 void ImageUtility::texturePacker(const string& texturePath)
 {
 	string fullPathNoMedia = removeStartString(texturePath, "../media/");
 	string rootFolderName = getFirstFolderName(fullPathNoMedia);
 	string newFullPath = "../media/" + rootFolderName + "_atlas" + "/" + removeFirstPath(fullPathNoMedia);
-
-	string outputFileName = getFileName(newFullPath);
-	string outputPath = getFilePath(newFullPath);
-	createFolder(outputPath);
-	string cmdLine;
-	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
-	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
-	cmdLine += "--format unity-texture2d ";
-	cmdLine += "--alpha-handling KeepTransparentPixels ";
-	cmdLine += "--maxrects-heuristics Best ";
-	cmdLine += "--disable-rotation ";
-	cmdLine += "--size-constraints POT ";
-	cmdLine += "--max-size 2048 ";
-	cmdLine += "--trim-mode None ";
-	cmdLine += "--extrude 1 ";
-	cmdLine += "--shape-padding 1 ";
-	cmdLine += "--border-padding 1 ";
-	cmdLine += texturePath;
-
-	SHELLEXECUTEINFOA ShExecInfo = { 0 };
-	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFOA);
-	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	ShExecInfo.hwnd = NULL;
-	ShExecInfo.lpVerb = NULL;
-	ShExecInfo.lpFile = "C:\\Program Files\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
-	ShExecInfo.lpParameters = cmdLine.c_str();
-	ShExecInfo.lpDirectory = NULL;
-	ShExecInfo.nShow = SW_HIDE;
-	ShExecInfo.hInstApp = NULL;
-	BOOL ret = ShellExecuteExA(&ShExecInfo);
-	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+	packAtlas(getFilePath(newFullPath), getFileName(newFullPath), texturePath);
 }
 
 void ImageUtility::texturePackerAll(const string& texturePath)
@@ -1013,24 +958,21 @@ void ImageUtility::getTrianglePoints(TILE_TRIANGLE pos, Vector2& point0, Vector2
 	}
 }
 
-void ImageUtility::generateUnreachFile(const string& path)
-{
-	MapData* mapData = NEW(MapData, mapData);
-	mapData->readFile(path);
-	mapData->writeUnreachFile();
-	DELETE(mapData);
-}
-
 void ImageUtility::generateAllUnreachFile(const string& path)
 {
 	myVector<string> fileList;
-	findFiles(path, fileList, ".map");
-	FOR_VECTOR(fileList)
+	findFiles(path, fileList, ".bytes");
+	for (const string& file : fileList)
 	{
-		generateUnreachFile(fileList[i]);
-		print("完成计算阻挡区域:" + getFileName(fileList[i]));
+		if (endWith(file, "_unreach.bytes"))
+		{
+			continue;
+		}
+		MapDataSimple mapData;
+		mapData.readFile(file);
+		mapData.writeUnreachFile();
+		print("完成计算阻挡区域:" + getFileName(file));
 	}
-	END(fileList);
 }
 
 void ImageUtility::processAllShadow(const string& path)
@@ -1322,32 +1264,6 @@ void ImageUtility::processShadowVertical(const string& filePath)
 	FreeImage_Unload(bitmap);
 	FreeImage_Unload(newBitmap);
 	FreeImage_DeInitialise();
-}
-
-void ImageUtility::moveMapObjectTexture(const string& sourcePath)
-{
-	myVector<string> targetFileList;
-	myVector<string> sourceFileList;
-	findFiles("./", targetFileList);
-	findFiles(sourcePath, sourceFileList);
-	FOR_VECTOR(sourceFileList)
-	{
-		// 找到同名且不同路径的文件
-		string sourceFileName = getFileName(sourceFileList[i]);
-		string sourceFileFolder = getFolderName(sourceFileList[i]);
-		FOR_VECTOR_J(targetFileList)
-		{
-			string targetFileName = getFileName(targetFileList[j]);
-			string targetFileFolder = getFolderName(targetFileList[j]);
-			if (targetFileName == sourceFileName && sourceFileFolder != targetFileFolder)
-			{
-				moveFile(sourceFileList[i], targetFileList[j]);
-				break;
-			}
-		}
-		END(targetFileList);
-	}
-	END(sourceFileList);
 }
 
 void ImageUtility::updateMapEffect()
@@ -1723,12 +1639,20 @@ void ImageUtility::checkMapTile(const string& path)
 	FOR_VECTOR(files)
 	{
 		const string& file = files[i];
+		if (endWith(file, "_unreach.bytes"))
+		{
+			continue;
+		}
 		cout << "开始检查" << file << endl;
 		MapDataSimple data;
 		data.readFile(file);
 		FOR_J(data.mTileCount)
 		{
 			const MapTileSimple& tile = data.mTileList[j];
+			if (tile.mObjImgIdx == 0)
+			{
+				continue;
+			}
 			auto* ptr = tileImageDataList.get(tile.mObjFileIdx);
 			if (ptr == nullptr || !ptr->contains(tile.mObjImgIdx))
 			{
@@ -1773,6 +1697,183 @@ void ImageUtility::autoFillAnimationTable(const string& clothName, int startID)
 		}
 		animationTable.insert(data);
 	}
+}
+
+void ImageUtility::dumpMapFile(const string& fileName)
+{
+	if (endWith(fileName, ".bytes"))
+	{
+		MapDataSimple mapData;
+		mapData.readFile(fileName);
+		string dumpString;
+		FOR_I(mapData.mTileCount)
+		{
+			const MapTileSimple& tile = mapData.mTileList[i];
+			if (tile.mBngImgIdx == 0 && tile.mMidImgIdx == 0 && tile.mObjImgIdx == 0 && tile.mObjFileIdx == 0)
+			{
+				continue;
+			}
+			dumpString += "index:" + intToString(i) + "\tBngImg:" + intToString(tile.mBngImgIdx) + "\tMidImg:" + intToString(tile.mMidImgIdx) + "\tObjImg:" + intToString(tile.mObjImgIdx) + "\tObjFile:" + intToString(tile.mObjFileIdx) + "\n";
+		}
+		writeFile(fileName + ".txt", dumpString);
+	}
+	else if (endWith(fileName, ".map"))
+	{
+		MapData mapData;
+		mapData.readFile(fileName);
+		string dumpString;
+		FOR_I(mapData.mTileCount)
+		{
+			const MapTile& tile = mapData.mTileList[i];
+			if (tile.mBngImgIdx == 0 && tile.mMidImgIdx == 0 && tile.mObjImgIdx == 0 && tile.mObjFileIdx == 0)
+			{
+				continue;
+			}
+			dumpString += "index:" + intToString(i) + "\tBngImg:" + intToString(tile.mBngImgIdx) + "\tMidImg:" + intToString(tile.mMidImgIdx) + "\tObjImg:" + intToString(tile.mObjImgIdx) + "\tObjFile:" + intToString(tile.mObjFileIdx) + "\n";
+		}
+		writeFile(fileName + ".txt", dumpString);
+	}
+}
+
+void ImageUtility::makeAtlasGroup(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".png", false);
+	// 根据数字进行排序
+	sortByFileNumber(files);
+	int groupIndex = 0;
+	int totalIndex = 0;
+	while (totalIndex < (int)files.size())
+	{
+		int curCount = 0;
+		while (true)
+		{
+			// 每次最多增加100张图片
+			const int batchCount = getMin((int)files.size() - curCount - totalIndex, 300);
+			// 将文件拷贝到临时目录
+			const string tempPath = filePath + "/temp/";
+			FOR_I(batchCount)
+			{
+				const string& curFile = files[totalIndex + curCount + i];
+				moveFile(curFile, tempPath + getFileName(curFile));
+			}
+			// 移动后就尝试打包
+			const string outputPath = getFilePath(tempPath) + "/tempAtlas";
+			const string tempFileName = "temp";
+			packAtlas(outputPath, tempFileName, tempPath);
+			bool packResult = isFileExist(outputPath + "/" + tempFileName + ".png");
+			// 本次打包失败,则说明上一次的数量已经达到上限,临时目录就可以直接改成一个可单独打图集的目录
+			// 打包成功,但是已经没有剩余的图片了,则当前图集已经完成,可以跳转分组下一个图集了
+			if (curCount + totalIndex + batchCount >= (int)files.size() || !packResult)
+			{
+				// 打包失败,将多余的这部分图片再移回到原来的位置去
+				if (!packResult)
+				{
+					FOR_I(batchCount)
+					{
+						const string& curFile = files[totalIndex + curCount + i];
+						moveFile(tempPath + getFileName(curFile), curFile);
+					}
+				}
+				else
+				{
+					curCount += batchCount;
+				}
+
+				deleteFolder(outputPath);
+				string newPath = filePath + "/" + getFolderName(filePath + "/") + "_" + intToString(groupIndex++);
+				renameFolder(tempPath, newPath);
+				cout << "已分组目录:" << newPath << ",图片数量:" << curCount << endl;
+				totalIndex += curCount;
+				break;
+			}
+			deleteFolder(outputPath);
+			curCount += batchCount;
+		}
+	}
+}
+
+void ImageUtility::makeAtlasGroupAll()
+{
+	myVector<string> folders;
+	findFolders("../media", folders);
+	int index = 0;
+	for (const string& folder : folders)
+	{
+		myVector<string> files;
+		findFiles(folder, files, ".png", false);
+		if (files.size() > 0)
+		{
+			makeAtlasGroup(folder);
+		}
+		++index;
+		cout << "已处理:" << index << "/" << folders.size() << endl;
+	}
+}
+
+void ImageUtility::generateAtlasInfoFile(const string& filePath)
+{
+	txSerializer writer;
+	myVector<string> folders;
+	findFolders(filePath, folders);
+	writer.write((int)folders.size());
+	for (const string& folder : folders)
+	{
+		myVector<string> files;
+		findFiles(folder, files, ".png", false);
+		// 根据数字进行排序
+		sortByFileNumber(files);
+		writer.writeString(folder.substr(filePath.length() + 1).c_str());
+		writer.write((int)files.size());
+		for (const string& file : files)
+		{
+			string fileNameNoSuffix = getFileNameNoSuffix(file, true);
+			int fileIndex = stringToInt(fileNameNoSuffix);
+			if (fileIndex == 0 && fileNameNoSuffix != "0")
+			{
+				cout << "图片名不是一个整数:" << file << endl;
+				system("pause");
+				continue;
+			}
+			Vector2Int imageSize = getImageSize(file);
+			writer.write(fileIndex);
+			writer.write((ushort)imageSize.x);
+			writer.write((ushort)imageSize.y);
+		}
+	}
+	writer.writeToFile(filePath + ".AtlasInfo");
+}
+
+void ImageUtility::packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath)
+{
+	createFolder(outputPath);
+	string cmdLine;
+	cmdLine += "--data " + outputPath + "/" + outputFileName + ".tpsheet ";
+	cmdLine += "--sheet " + outputPath + "/" + outputFileName + ".png ";
+	cmdLine += "--format unity-texture2d ";
+	cmdLine += "--alpha-handling KeepTransparentPixels ";
+	cmdLine += "--maxrects-heuristics Best ";
+	cmdLine += "--disable-rotation ";
+	cmdLine += "--size-constraints POT ";
+	cmdLine += "--max-size 2048 ";
+	cmdLine += "--trim-mode None ";
+	cmdLine += "--extrude 1 ";
+	cmdLine += "--shape-padding 1 ";
+	cmdLine += "--border-padding 1 ";
+	cmdLine += sourcePath;
+
+	SHELLEXECUTEINFOA ShExecInfo = { 0 };
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFOA);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = NULL;
+	ShExecInfo.lpVerb = NULL;
+	ShExecInfo.lpFile = "C:\\Program Files\\CodeAndWeb\\TexturePacker\\bin\\TexturePacker.exe";
+	ShExecInfo.lpParameters = cmdLine.c_str();
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_HIDE;
+	ShExecInfo.hInstApp = NULL;
+	BOOL ret = ShellExecuteExA(&ShExecInfo);
+	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
 }
 
 void ImageUtility::trimImage(const string& filePath, const string& newFilePath, const Vector2Int size, const Vector2Int center)
@@ -2139,18 +2240,6 @@ void ImageUtility::removeBackground(const string& fileName, const string& newFil
 	FreeImage_DeInitialise();
 }
 
-void ImageUtility::removeTextureToLastFolder(const string& filePath)
-{
-	myVector<string> files;
-	findFiles(filePath, files, ".png");
-	FOR_VECTOR(files)
-	{
-		moveFile(files[i], getFilePath(getFilePath(files[i])) + "/" + getFileName(files[i]));
-	}
-	END(files);
-	deleteEmptyFolder(filePath);
-}
-
 void ImageUtility::convertMapFile(const string& filePath)
 {
 	myVector<string> files;
@@ -2159,63 +2248,108 @@ void ImageUtility::convertMapFile(const string& filePath)
 	{
 		MapData data;
 		data.readFile(files[i]);
-		data.convertToSimple(getFileNameNoSuffix(replaceFolderName(files[i], "SMap"), false) + ".bytes");
+		data.convertToSimple(replaceSuffix(files[i], ".bytes"));
 	}
 	END(files);
 	deleteEmptyFolder(filePath);
 }
 
-void ImageUtility::writeTileObjectImageSizeSQLite(const string& filePath)
+void ImageUtility::writeTileObjectImageSizeSQLite(const string& filePath, int mapFileID)
 {
+	// 物体层图片
 	NEW_SQLITE(SQLiteTileImageObject, objectTileImage, "TileImageObject");
-	int maxID = objectTileImage.getMaxID();
+	int maxIDObj = objectTileImage.getMaxID();
 	myVector<string> fileList;
 	findFiles(filePath, fileList, ".png");
 	objectTileImage.executeNonQuery("BEGIN TRANSACTION");
-	cout << "总共" << fileList.size() << "张图片" << endl;
-	FOR_VECTOR(fileList)
+	const int fileCount = fileList.size();
+	cout << "总共" << fileCount << "张图片" << endl;
+	FOR_I(fileCount)
 	{
 		const string& filePath = fileList[i];
 		string folderName = getFolderName(filePath);
-		myVector<string> elements;
-		split(folderName.c_str(), "_", elements);
-		if (elements.size() != 3)
+		if (!startWith(folderName, "Objects_"))
 		{
-			cout << "图片所在的文件夹名错误:" << filePath << ",正确的文件夹名格式为比如Objects_0_0" << endl;
 			continue;
 		}
-		int firstIndex = stringToInt(elements[1]);
-		Vector2Int imageSize = getImageSize(filePath);
+		myVector<string> elements;
+		split(folderName.c_str(), "_", elements);
 		TDTileImageObject imageData;
-		imageData.mID = maxID + i + 1;
-		imageData.mFileIndex = firstIndex;
-		imageData.mAtlasName = folderName + ".png";
-		imageData.mImageName = stringToInt(getFileNameNoSuffix(filePath, true));
+		imageData.mID = maxIDObj + i + 1;
+		Vector2Int imageSize = getImageSize(filePath);
 		imageData.mImageSizeX = imageSize.x;
 		imageData.mImageSizeY = imageSize.y;
+		imageData.mAtlasName = folderName + ".png";
+		imageData.mImageName = stringToInt(getFileNameNoSuffix(filePath, true));
+		imageData.mMapFileID = mapFileID;
+		if (elements.size() == 3)
+		{
+			imageData.mFileIndex = stringToInt(elements[1]);
+		}
+		else
+		{
+			imageData.mFileIndex = 0;
+		}
 		objectTileImage.insert(imageData);
+		
 		if ((i + 1) % 1000 == 0)
 		{
 			cout << "已写入" << i + 1 << "个数据" << endl;
 		}
 	}
 	objectTileImage.executeNonQuery("COMMIT");
-}
 
-void ImageUtility::renameMap(const string& filePath)
-{
-	myVector<string> fileList;
-	findFiles(filePath, fileList, ".smap");
-	FOR_VECTOR(fileList)
+	// 大地砖图片
+	NEW_SQLITE(SQLiteTileImageBig, bigTileImage, "TileImageBig");
+	int maxIDBig = bigTileImage.getMaxID();
+	bigTileImage.executeNonQuery("BEGIN TRANSACTION");
+	FOR_I(fileCount)
 	{
-		renameFile(fileList[i], replaceSuffix(fileList[i], ".bytes"));
+		const string& filePath = fileList[i];
+		string folderName = getFolderName(filePath);
+		if (!startWith(folderName, "Tiles_"))
+		{
+			continue;
+		}
+		Vector2Int imageSize = getImageSize(filePath);
+		TDTileImageBig imageData;
+		imageData.mID = maxIDBig + i + 1;
+		imageData.mAtlasName = folderName + ".png";
+		imageData.mImageName = stringToInt(getFileNameNoSuffix(filePath, true));
+		imageData.mMapFileID = mapFileID;
+		bigTileImage.insert(imageData);
+		if ((i + 1) % 1000 == 0)
+		{
+			cout << "已写入" << i + 1 << "个数据" << endl;
+		}
 	}
-	myVector<string> fileList1;
-	findFiles(filePath, fileList1, ".unreach");
-	FOR_VECTOR(fileList1)
+	bigTileImage.executeNonQuery("COMMIT");
+
+	// 中间层的小地砖的图片
+	NEW_SQLITE(SQLiteTileImageMid, midTileImage, "TileImageMid");
+	int maxIDMid = midTileImage.getMaxID();
+	midTileImage.executeNonQuery("BEGIN TRANSACTION");
+	FOR_I(fileCount)
 	{
-		renameFile(fileList1[i], replaceSuffix(fileList1[i], "_unreach.bytes"));
+		const string& filePath = fileList[i];
+		string folderName = getFolderName(filePath);
+		if (!startWith(folderName, "SmTiles_"))
+		{
+			continue;
+		}
+		Vector2Int imageSize = getImageSize(filePath);
+		TDTileImageMid imageData;
+		imageData.mID = maxIDMid + i + 1;
+		imageData.mAtlasName = folderName + ".png";
+		imageData.mImageName = stringToInt(getFileNameNoSuffix(filePath, true));
+		imageData.mMapFileID = mapFileID;
+		midTileImage.insert(imageData);
+		if ((i + 1) % 1000 == 0)
+		{
+			cout << "已写入" << i + 1 << "个数据" << endl;
+		}
 	}
+	midTileImage.executeNonQuery("COMMIT");
 }
 
 void ImageUtility::scaleTexture(const string& path, float scale)

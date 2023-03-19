@@ -58,6 +58,7 @@ public:
 	static void openBinaryFile(const string& filePath, FileContent& fileContent);
 	static bool moveFile(const string& fileName, const string& newName, bool forceCover = false);
 	static bool renameFile(const string& fileName, const string& newName, bool forceCover = false);
+	static bool renameFolder(const string& fileName, const string& newName);
 	static uint getFileSize(const string& filePath);
 };
 

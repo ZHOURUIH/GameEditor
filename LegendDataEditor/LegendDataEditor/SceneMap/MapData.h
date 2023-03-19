@@ -13,13 +13,13 @@ public:
 	MapHeader* mHeader = nullptr;
 	MapTile* mTileList = nullptr;
 	myMap<int, UnreachTileGroup*> mUnreachTileGroupList;    // key是组ID,value是该组中所有的地砖
-	int mIDSeed = 0;
 	int mTileCount = 0;
 public:
 	MapData();
 	~MapData() { destroy(); }
 	void destroy();
-	void readFile(const string& fileName);
+	bool readFile(const string& fileName);
+	void writeFile(const string& fileName);
 	void writeUnreachFile();
 	void convertToSimple(const string& writeFile);
 protected:

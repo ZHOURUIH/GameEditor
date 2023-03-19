@@ -12,6 +12,7 @@ public:
 	static const char* ImageName;
 	static const char* ImageSizeX;
 	static const char* ImageSizeY;
+	static const char* MapFileID;
 public:
 	int mID;
 	short mFileIndex;
@@ -19,6 +20,7 @@ public:
 	int mImageName;
 	short mImageSizeX;
 	short mImageSizeY;
+	int mMapFileID;
 public:
 	TDTileImageObject()
 	{
@@ -28,6 +30,7 @@ public:
 		registeParam(mImageName, ImageName);
 		registeParam(mImageSizeX, ImageSizeX);
 		registeParam(mImageSizeY, ImageSizeY);
+		registeParam(mMapFileID, MapFileID);
 	}
 };
 

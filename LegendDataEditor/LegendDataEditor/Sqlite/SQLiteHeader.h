@@ -51,5 +51,6 @@
 #include "SQLiteTimeTask.h"
 #include "SQLiteTileImageObject.h"
 #include "SQLiteTileImageBig.h"
+#include "SQLiteTileImageMid.h"
 
 #endif

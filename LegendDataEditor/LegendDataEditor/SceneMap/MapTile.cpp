@@ -29,6 +29,19 @@ void MapTile::parseTile(char* buffer, int bufferSize, int& offset)
 	SET_HIGHEST_BIT(mAniFrame, 0);
 }
 
+void MapTile::saveTile(txSerializer* serializer)
+{
+	serializer->write(mBngImgIdx);
+	serializer->write(mMidImgIdx);
+	serializer->write(mObjImgIdx);
+	serializer->write(mDoorIdx);
+	serializer->write(mDoorOffset);
+	serializer->write(mAniFrame);
+	serializer->write(mAniTick);
+	serializer->write(mObjFileIdx);
+	serializer->write(mLight);
+}
+
 void MapTile::toSimple(MapTileSimple* simpleTile)
 {
 	simpleTile->mBngImgIdx = mBngImgIdx;
