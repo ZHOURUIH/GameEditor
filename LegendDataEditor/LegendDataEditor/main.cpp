@@ -38,6 +38,7 @@ void main()
 		cout << "37:图片划分到多个图集" << endl;
 		cout << "38:将所有目录的图片划分到多个图集" << endl;
 		cout << "39:地图:生成地图地砖图片信息文件" << endl;
+		cout << "40:地图:查看所有.map地图宽高" << endl;
 		cout << "0:退出" << endl;
 		int input;
 		cin >> input;
@@ -295,6 +296,10 @@ void main()
 			string fileName;
 			cin >> fileName;
 			ImageUtility::generateAtlasInfoFile("../media/" + fileName);
+		}
+		else if (input == 40)
+		{
+			ImageUtility::printMapSize("../media");
 		}
 		system("pause");
 		cout << endl;

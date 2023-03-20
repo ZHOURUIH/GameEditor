@@ -1847,6 +1847,18 @@ void ImageUtility::generateAtlasInfoFile(const string& filePath)
 	writer.writeToFile(filePath + "_AtlasInfo.bytes");
 }
 
+void ImageUtility::printMapSize(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".map");
+	for (const string& file : files)
+	{
+		MapData mapData;
+		mapData.readFile(file);
+		cout << getFileName(file) << ":宽:" << mapData.mHeader->mWidth << ",高:" << mapData.mHeader->mHeight << endl;
+	}
+}
+
 void ImageUtility::packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath)
 {
 	createFolder(outputPath);

@@ -84,6 +84,7 @@ public:
 	static void makeAtlasGroup(const string& filePath);
 	static void makeAtlasGroupAll();
 	static void generateAtlasInfoFile(const string& filePath);
+	static void printMapSize(const string& filePath);
 protected:
 	static void packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath);
 	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset);
