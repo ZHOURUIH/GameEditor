@@ -194,8 +194,14 @@ void main()
 		else if (input == 22)
 		{
 			cout << "正在更新地图中的特效信息到SQLite..." << endl;
+			cout << "输入地图文件名, .map格式:";
+			string fileName;
+			cin >> fileName;
+			cout << "输入地图的SceneMapFile表格ID:";
+			int mapFileID;
+			cin >> mapFileID;
 			long startTime = timeGetTime();
-			ImageUtility::updateMapEffect();
+			ImageUtility::writeMapEffectToSQLite(mapFileID, fileName);
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 25)
@@ -292,7 +298,7 @@ void main()
 		}
 		else if (input == 39)
 		{
-			cout << "输入地图文件名:";
+			cout << "输入地图图片目录,生成之前请先按图集划分好文件夹:";
 			string fileName;
 			cin >> fileName;
 			ImageUtility::generateAtlasInfoFile("../media/" + fileName);

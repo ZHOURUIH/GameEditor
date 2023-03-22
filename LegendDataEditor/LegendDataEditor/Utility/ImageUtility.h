@@ -66,7 +66,7 @@ public:
 	static void processAllShadow(const string& path);
 	static void processShadowHorizontal(const string& filePath);
 	static void processShadowVertical(const string& filePath);
-	static void updateMapEffect();
+	static void writeMapEffectToSQLite(int mapFileID, const string& mapFileName);
 	static void generateAllOffsetedImage(const string& filePath);
 	static void generateAllIconTo36(const string& filePath);
 	static void generateGroupImage(const string& filePath);

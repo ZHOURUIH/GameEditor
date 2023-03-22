@@ -1262,66 +1262,32 @@ void ImageUtility::processShadowVertical(const string& filePath)
 	FreeImage_DeInitialise();
 }
 
-void ImageUtility::updateMapEffect()
+void ImageUtility::writeMapEffectToSQLite(int mapFileID, const string& mapFileName)
 {
 	NEW_SQLITE(SQLiteMapEffect, mapEffectTable, "MapEffect");
-	NEW_SQLITE(SQLiteSceneMapFile, sceneMapFileTable, "SceneMapFile");
-
-	myVector<pair<int, int>> effectImage;
-	// 查找特效序列帧所在目录
-	myVector<string> folders;
-	findFolders("../media/", folders, true);
-	FOR_VECTOR(folders)
-	{
-		myVector<string> files;
-		findFiles(folders[i], files, ".png", false);
-		int fileCount = files.size();
-		if (fileCount == 0)
-		{
-			continue;
-		}
-		string effectIndex = getFolderName(files[0]);
-		string effectFileIndex = getFolderName(getFilePath(files[0]));
-		// 因为只有地图中存储的图片下标是从1开始的,其他所有地方都是从0开始的,所以此处图片下标+1
-		effectImage.push_back(make_pair(stringToInt(effectFileIndex), stringToInt(effectIndex) + 1));
-	}
-	END(folders);
+	int maxID = mapEffectTable.getMaxID();
 
 	// 检查所有地图文件,找出所有用到了特效的地方,然后保存到表格中
 	myVector<TDMapEffect*> mapEffectList;
-	int effectCount = effectImage.size();
-	auto& mapFileDataList = sceneMapFileTable.queryAll();
-	FOREACH_CONST(iter, mapFileDataList)
+	MapData mapData;
+	mapData.readFile("../media/" + mapFileName);
+	int tileCount = mapData.mHeader->mWidth * mapData.mHeader->mHeight;
+	FOR_J(tileCount)
 	{
-		MapData* mapData = NEW(MapData, mapData);
-		mapData->readFile("../media/" + iter->second->mFileName);
-		int tileCount = mapData->mHeader->mWidth * mapData->mHeader->mHeight;
-		FOR_J(tileCount)
+		const MapTile& tile = mapData.mTileList[j];
+		if (tile.mAniFrame > 0 && tile.mObjImgIdx > 0)
 		{
-			MapTile& tile = mapData->mTileList[j];
-			Vector2Int tilePos = tileIndexToTilePos(j, mapData->mHeader->mHeight);
-			FOR_K(effectCount)
-			{
-				if (tile.mObjFileIdx == effectImage[k].first &&
-					tile.mObjImgIdx == effectImage[k].second)
-				{
-					TDMapEffect* effectData = NEW(TDMapEffect, effectData);
-					effectData->mID = mapEffectList.size() + 1;
-					effectData->mMapFileID = iter->second->mID;
-					effectData->mTilePosition = tilePos;
-					effectData->mEffectFileIndex = tile.mObjFileIdx;
-					effectData->mEffectIndex = tile.mObjImgIdx - 1;
-					effectData->mSpeed = 0.5f;
-					effectData->mBlendType = 0;
-					mapEffectList.push_back(effectData);
-					break;
-				}
-			}
+			TDMapEffect* effectData = NEW(TDMapEffect, effectData);
+			effectData->mID = ++maxID;
+			effectData->mMapFileID = mapFileID;
+			effectData->mTilePosition = tileIndexToTilePos(j, mapData.mHeader->mHeight);
+			effectData->mEffectAtlas = intToString(tile.mObjImgIdx - 1) + ".png";
+			effectData->mSpeed = 0.5f;
+			effectData->mBlendType = 0;
+			mapEffectList.push_back(effectData);
 		}
-		DELETE(mapData);
 	}
 
-	mapEffectTable.deleteAll();
 	FOR_VECTOR(mapEffectList)
 	{
 		mapEffectTable.insert(*mapEffectList[i]);
