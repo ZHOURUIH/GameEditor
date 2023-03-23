@@ -22,6 +22,7 @@ public:
 	void writeFile(const string& fileName);
 	void writeUnreachFile();
 	void convertToSimple(const string& writeFile);
+	void createTilesByHeader();
 protected:
 	// 递归方式查找不可行走区域组,但是如果地砖太多,就会因为递归太深而堆栈溢出
 	//void findAllUnreachGroup();

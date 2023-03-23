@@ -8,6 +8,10 @@ class MapTileSimple;
 class MapTile
 {
 public:
+	short mOriginBngImgIdx = 0;		// 背景图索引原始值
+	short mOriginMidImgIdx = 0;		// 补充背景图索引原始值
+	short mOriginObjImgIdx = 0;		// 对象图索引原始值
+	unsigned char mOriginAniFrame = 0; // 动画帧数原始值
 	short mBngImgIdx = 0;			// 背景图索引
 	short mMidImgIdx = 0;			// 补充背景图索引
 	short mObjImgIdx = 0;			// 对象图索引
@@ -29,6 +33,8 @@ public:
 	void parseTile(char* buffer, int bufferSize, int& offset);
 	void saveTile(txSerializer* serializer);
 	void toSimple(MapTileSimple* simpleTile);
+	string toString();
+	void parseString(const string& str);
 };
 
 #endif

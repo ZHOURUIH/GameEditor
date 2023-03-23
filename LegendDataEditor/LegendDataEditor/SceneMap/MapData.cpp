@@ -15,11 +15,11 @@ void MapData::destroy()
 {
 	FOREACH(iter, mUnreachTileGroupList)
 	{
-		DELETE(iter->second);
+		delete iter->second;
 	}
 	END(mUnreachTileGroupList);
-	DELETE_ARRAY(mTileList);
-	DELETE(mHeader);
+	delete[] mTileList;
+	delete mHeader;
 }
 
 bool MapData::readFile(const string& fileName)
@@ -34,7 +34,7 @@ bool MapData::readFile(const string& fileName)
 	int offset = 0;
 	mHeader->parseHeader(file.mBuffer, file.mFileSize, offset);
 	mTileCount = mHeader->mWidth * mHeader->mHeight;
-	NEW_ARRAY(MapTile, mTileCount, mTileList);
+	mTileList = new MapTile[mTileCount];
 	for (int i = 0; i < mTileCount; ++i)
 	{
 		mTileList[i].mIndex = i;
@@ -244,4 +244,18 @@ void MapData::convertToSimple(const string& writeFile)
 		simple.saveTile(&serializer);
 	}
 	serializer.writeToFile(writeFile);
+}
+
+void MapData::createTilesByHeader()
+{
+	if (mTileList != nullptr || mHeader == nullptr || mHeader->mWidth * mHeader->mHeight == 0)
+	{
+		return;
+	}
+	mTileCount = mHeader->mWidth * mHeader->mHeight;
+	mTileList = new MapTile[mTileCount];
+	for (int i = 0; i < mTileCount; ++i)
+	{
+		mTileList[i].mIndex = i;
+	}
 }

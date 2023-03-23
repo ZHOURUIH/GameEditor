@@ -1827,6 +1827,44 @@ void ImageUtility::printMapSize(const string& filePath)
 	}
 }
 
+void ImageUtility::mapFileToTxt(const string& filePath)
+{
+	MapData mapData;
+	mapData.readFile(filePath);
+	string str = mapData.mHeader->toString();
+	str += "\n";
+	FOR_I(mapData.mTileCount)
+	{
+		Vector2Int tilePos = tileIndexToTilePos(i, mapData.mHeader->mHeight);
+		str += intToString(tilePos.x) + "," + intToString(tilePos.y) + ":";
+		str += mapData.mTileList[i].toString();
+		str += "\n";
+	}
+	writeFile(filePath + "_info.txt", str);
+}
+
+void ImageUtility::txtToMapFile(const string& filePath)
+{
+	myVector<string> lines;
+	openTxtFileLines(filePath, lines, false);
+	MapData mapData;
+	mapData.mHeader->parseString(lines[0]);
+	mapData.createTilesByHeader();
+	FOR_I(mapData.mTileCount)
+	{
+		const string& line = lines[i + 1];
+		myVector<string> vec;
+		split(line.c_str(), ":", vec);
+		if (vec.size() != 2)
+		{
+			cout << "错误:文本格式的地图地砖行错误,下标:" << i << endl;
+			continue;
+		}
+		mapData.mTileList[i].parseString(vec[1]);
+	}
+	mapData.writeFile(filePath.substr(0, filePath.length() - strlen("_info.txt")));
+}
+
 void ImageUtility::packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath)
 {
 	createFolder(outputPath);
