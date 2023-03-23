@@ -661,14 +661,6 @@ POINT ImageUtility::getImagePosition(const string& imageFullPath)
 	return pos;
 }
 
-void ImageUtility::texturePacker(const string& texturePath)
-{
-	string fullPathNoMedia = removeStartString(texturePath, "../media/");
-	string rootFolderName = getFirstFolderName(fullPathNoMedia);
-	string newFullPath = "../media/" + rootFolderName + "_atlas" + "/" + removeFirstPath(fullPathNoMedia);
-	packAtlas(getFilePath(newFullPath), getFileName(newFullPath), texturePath);
-}
-
 void ImageUtility::texturePackerAll(const string& texturePath)
 {
 	myVector<string> folderList;
@@ -680,7 +672,10 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 		findFiles(folderList[i], temp, ".png", false);
 		if (temp.size() > 0)
 		{
-			texturePacker(folderList[i]);
+			string fullPathNoMedia = removeStartString(folderList[i], "../media/");
+			string rootFolderName = getFirstFolderName(fullPathNoMedia);
+			string newFullPath = "../media/" + rootFolderName + "_atlas" + "/" + removeFirstPath(fullPathNoMedia);
+			packAtlas(getFilePath(newFullPath), getFileName(newFullPath), folderList[i]);
 			cout << "已打包:" << i + 1 << "/" << folderListCount << endl;
 		}
 		else
@@ -1880,7 +1875,7 @@ void ImageUtility::packAtlas(const string& outputPath, const string& outputFileN
 	cmdLine += "--size-constraints POT ";
 	cmdLine += "--max-size 2048 ";
 	cmdLine += "--trim-mode None ";
-	cmdLine += "--extrude 1 ";
+	cmdLine += "--extrude 0 ";
 	cmdLine += "--shape-padding 1 ";
 	cmdLine += "--border-padding 1 ";
 	cmdLine += sourcePath;

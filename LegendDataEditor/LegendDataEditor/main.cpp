@@ -191,7 +191,7 @@ void main()
 		}
 		else if (input == 20)
 		{
-			cout << "正在处理图片阴影..." << endl;
+			cout << "正在处理图片阴影,请不要直接处理图集的阴影,否则会使其中单个图片的边缘受到影响..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::processAllShadow("../media/");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;

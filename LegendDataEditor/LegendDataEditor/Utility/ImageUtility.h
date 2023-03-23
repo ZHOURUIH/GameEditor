@@ -47,7 +47,6 @@ public:
 	static void deleteInvalidImage(const string& path);
 	static bool isInvalidImage(const string& fileName);
 	static POINT getImagePosition(const string& imagePath);
-	static void texturePacker(const string& texturePath);
 	static void texturePackerAll(const string& texturePath);
 	static void writeAnimFrameSQLite(bool updateOnly);
 	static int tileIndexToTileX(int index, int mapHeight);
