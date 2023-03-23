@@ -676,7 +676,9 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 	findFolders(texturePath, folderList, true);
 	FOR_VECTOR(folderList)
 	{
-		if (!isEmptyFolder(folderList[i]))
+		myVector<string> temp;
+		findFiles(folderList[i], temp, ".png", false);
+		if (temp.size() > 0)
 		{
 			texturePacker(folderList[i]);
 			cout << "已打包:" << i + 1 << "/" << folderListCount << endl;
