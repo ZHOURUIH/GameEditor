@@ -13,7 +13,6 @@ void main()
 		cout << "选择功能" << endl;
 		cout << "2:自动计算角色,武器,翅膀图片名" << endl;
 		cout << "4:整理怪物文件结构0" << endl;
-		cout << "5:按序号重命名文件并自动计算方向" << endl;
 		cout << "6:整理特效文件结构" << endl;
 		cout << "7:自动计算方向" << endl;
 		cout << "8:拆分位置文件" << endl;
@@ -28,6 +27,7 @@ void main()
 		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << "34:检查所有地图是否有无效地砖下标" << endl;
 		cout << "35:将角色动作写入Animation表格" << endl;
+		cout << "43:将怪物动作写入Animation表格" << endl;
 		cout << endl;
 		cout << "14:图集:打包全部图集" << endl;
 		cout << "37:图集:图片划分到多个图集" << endl;
@@ -67,20 +67,9 @@ void main()
 			cout << "输入文件名:";
 			string fileName;
 			cin >> fileName;
-			cout << "开始整理怪物文件结构0..." << endl;
+			cout << "开始整理怪物文件结构..." << endl;
 			long startTime = timeGetTime();
-			ImageUtility::autoGroupMonsterImage0("../media/" + fileName);
-			cout << "请手动为每一个怪物进行动作分组,然后选择整理怪物文件结构1" << endl;
-			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
-		}
-		else if (input == 5)
-		{
-			cout << "输入文件名:";
-			string fileName;
-			cin >> fileName;
-			cout << "开始按序号重命名文件并自动计算方向..." << endl;
-			long startTime = timeGetTime();
-			ImageUtility::autoGroupMonsterImage1("../media/" + fileName);
+			ImageUtility::autoGroupMonsterImage("../media/" + fileName);
 			cout << "文件整理完毕,建议先手动命名后,且确保每个文件夹中的图片打包后不会超出图集大小,再放入指定的目录中,然后再将帧数据写入SQLite" << endl;
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
@@ -179,19 +168,13 @@ void main()
 		else if (input == 17)
 		{
 			cout << "开始将所有序列帧数据写入SQLite..." << endl;
-			char updateOnly = 'y';
-			cout << "是否只更新数据? y(是)/n(否)";
-			cin >> updateOnly;
 			long startTime = timeGetTime();
-			if (updateOnly == 'y' || updateOnly == 'n')
-			{
-				ImageUtility::writeAnimFrameSQLite(updateOnly == 'y');
-			}
+			ImageUtility::writeAnimFrameSQLite();
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
 		}
 		else if (input == 20)
 		{
-			cout << "正在处理图片阴影,请不要直接处理图集的阴影,否则会使其中单个图片的边缘受到影响..." << endl;
+			cout << "正在处理图片阴影,地图的图片请不要直接处理图集的阴影,否则会使其中单个图片的边缘受到影响..." << endl;
 			long startTime = timeGetTime();
 			ImageUtility::processAllShadow("../media/");
 			cout << "耗时 : " << (timeGetTime() - startTime) / 1000.0f << "秒" << endl;
@@ -279,7 +262,7 @@ void main()
 			cout << "输入ImagePositionAnimation中的起始ID:";
 			int startID;
 			cin >> startID;
-			ImageUtility::autoFillAnimationTable(clothName, startID);
+			ImageUtility::autoFillHumanAnimationTable(clothName, startID);
 		}
 		else if (input == 36)
 		{
@@ -325,6 +308,16 @@ void main()
 			string fileName;
 			cin >> fileName;
 			ImageUtility::txtToMapFile("../media/" + fileName);
+		}
+		else if (input == 43)
+		{
+			cout << "输入怪物中文名字:";
+			string monsterName;
+			cin >> monsterName;
+			cout << "输入ImagePositionAnimation中的起始ID:";
+			int startID;
+			cin >> startID;
+			ImageUtility::autoFillMonsterAnimationTable(monsterName, startID);
 		}
 		system("pause");
 		cout << endl;

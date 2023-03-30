@@ -247,30 +247,47 @@ void ImageUtility::autoGroupHumanImage(const string& path)
 		string actionName;
 		int direction;
 		int frameIndex;
-		getHumanActionInfo(i, actionName, direction, frameIndex);
-		string filePath = fileList[i];
-		string fileName = actionName + "_dir" + intToString(direction) + "_" + intToString(frameIndex) + "." + getFileSuffix(filePath);
+		getActionInfo(HUMAN_ACTION, HUMAN_ACTION_COUNT, i, actionName, direction, frameIndex);
+		const string& filePath = fileList[i];
+		const string fileName = actionName + "_dir" + intToString(direction) + "_" + intToString(frameIndex) + "." + getFileSuffix(filePath);
 		moveImageWithPosition(filePath, getFilePath(filePath) + "/" + fileName);
 	}
 	END(fileList);
 }
 
-void ImageUtility::autoGroupMonsterImage0(const string& path)
+void ImageUtility::autoGroupMonsterImage(const string& path)
 {
-	// 拆分位置文件
-	splitPositionFile(path);
-	// 然后按360个文件一组,移动到单独的文件夹
-	autoMoveFile(path, MONSTER_GROUP_SIZE);
-	// 怪物图片不像角色和武器图片那样会有规律排列,所以只能在大致分组后手动对每个文件夹进行动作分组
-}
-
-void ImageUtility::autoGroupMonsterImage1(const string& path)
-{
-	// 手动对动作进行分组后,就可以对每组动作文件进行方向分组
-	// 重命名文件,将每个文件夹中的图片都重命名为该文件夹中的位置序号
-	renameImageToNumber(path);
-	// 自动计算方向并分组
-	renameByDirection(path, DIRECTION_COUNT);
+	myVector<string> pngFiles;
+	findFiles(path, pngFiles, ".png");
+	if (pngFiles.size() != MONSTER_GROUP_SIZE)
+	{
+		cout << "文件夹中的图片数量不是" << MONSTER_GROUP_SIZE << ",不是标准的怪物图片数量" << endl;
+		return;
+	}
+	myVector<string> posFiles;
+	findFiles(path, posFiles, ".txt");
+	if (posFiles.size() != MONSTER_GROUP_SIZE)
+	{
+		cout << "文件夹中的位置文件数量不是" << MONSTER_GROUP_SIZE << ",请确保每个图片都有对应的位置文件" << endl;
+		return;
+	}
+	sortByFileNumber(pngFiles);
+	FOR_VECTOR(pngFiles)
+	{
+		string actionName;
+		int direction;
+		int frameIndex;
+		if (!getActionInfo(MONSTER_ACTION, MONSTER_ACTION_COUNT, i, actionName, direction, frameIndex))
+		{
+			// 无效文件则需要删除
+			deleteImageWithPosition(pngFiles[i]);
+			continue;
+		}
+		const string& filePath = pngFiles[i];
+		const string fileName = actionName + "_dir" + intToString(direction) + "_" + intToString(frameIndex) + "." + getFileSuffix(filePath);
+		moveImageWithPosition(filePath, getFilePath(filePath) + "/" + fileName);
+	}
+	END(pngFiles);
 }
 
 void ImageUtility::autoGroupEffectImage(const string& path)
@@ -303,7 +320,9 @@ void ImageUtility::autoGroupNPCImage(const string& path)
 			string actionName;
 			int direction;
 			int frameIndex;
-			bool isValid = getNPCActionInfo(j, actionName, direction, frameIndex);
+			bool isValid = getActionInfo(NPC_ACTION, NPC_ACTION_COUNT, j, actionName, direction, frameIndex);
+			// 因为一组动作资源包含了3个方向上的所有动作,所以可以根据下标计算出方向和序列帧下标,前提是保留了空图片作为填充位置
+			direction += 3;
 			// 如果是无效图片则需要删除
 			if (!isValid)
 			{
@@ -498,42 +517,27 @@ void ImageUtility::autoMoveFile(const string& path, int groupSize)
 	END(fileList);
 }
 
-void ImageUtility::getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex)
+bool ImageUtility::getActionInfo(ActionInfo* actionInfo, int actionCount, int index, string& actionName, int& dir, int& frameIndex)
 {
 	int actionIndex = 0;
 	while (true)
 	{
-		if (index - HUMAN_ACTION[actionIndex].mMaxFrame * DIRECTION_COUNT < 0)
+		if (index - actionInfo[actionIndex].mActionImageCount < 0)
 		{
 			break;
 		}
-		index -= HUMAN_ACTION[actionIndex].mMaxFrame * DIRECTION_COUNT;
+		index -= actionInfo[actionIndex].mActionImageCount;
 		++actionIndex;
+	}
+	if (actionIndex >= actionCount)
+	{
+		return false;
 	}
 	// 因为一组动作资源包含了8个方向上的所有动作,所以可以根据下标计算出方向和序列帧下标,前提是保留了空图片作为填充位置
-	dir = index / HUMAN_ACTION[actionIndex].mMaxFrame;
-	frameIndex = index % HUMAN_ACTION[actionIndex].mMaxFrame;
-	actionName = HUMAN_ACTION[actionIndex].mName;
-}
-
-bool ImageUtility::getNPCActionInfo(int index, string& actionName, int& dir, int& frameIndex)
-{
-	int actionIndex = 0;
-	while (true)
-	{
-		if (index - NPC_ACTION[actionIndex].mMaxFrame * NPC_DIRECTION_COUNT < 0)
-		{
-			break;
-		}
-		index -= NPC_ACTION[actionIndex].mMaxFrame * NPC_DIRECTION_COUNT;
-		++actionIndex;
-	}
-	// 因为一组动作资源包含了3个方向上的所有动作,所以可以根据下标计算出方向和序列帧下标,前提是保留了空图片作为填充位置
-	// NPC的方向从3开始,并且只有3,4,5这3个方向的动作
-	dir = index / NPC_ACTION[actionIndex].mMaxFrame + 3;
-	frameIndex = index % NPC_ACTION[actionIndex].mMaxFrame;
-	actionName = NPC_ACTION[actionIndex].mName;
-	return frameIndex < NPC_ACTION[actionIndex].mFrameCount;
+	dir = index / actionInfo[actionIndex].mMaxFrame;
+	frameIndex = index % actionInfo[actionIndex].mMaxFrame;
+	actionName = actionInfo[actionIndex].mName;
+	return true;
 }
 
 void ImageUtility::moveImageWithPosition(const string& fullFileName, const string& destFullFileName)
@@ -676,7 +680,14 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 			string rootFolderName = getFirstFolderName(fullPathNoMedia);
 			string newFullPath = "../media/" + rootFolderName + "_atlas" + "/" + removeFirstPath(fullPathNoMedia);
 			packAtlas(getFilePath(newFullPath), getFileName(newFullPath), folderList[i]);
-			cout << "已打包:" << i + 1 << "/" << folderListCount << endl;
+			if (isFileExist(newFullPath + ".png"))
+			{
+				cout << "已打包:" << i + 1 << "/" << folderListCount << ",打包成功" << endl;
+			}
+			else
+			{
+				cout << "已打包:" << i + 1 << "/" << folderListCount << ",打包失败" << endl;
+			}
 		}
 		else
 		{
@@ -686,7 +697,7 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 	END(folderList);
 }
 
-void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
+void ImageUtility::writeAnimFrameSQLite()
 {
 	NEW_SQLITE(SQLiteImagePositionAnimation, imagePosTable, "ImagePositionAnimation");
 	myVector<string> folders;
@@ -750,12 +761,8 @@ void ImageUtility::writeAnimFrameSQLite(bool updateOnly)
 			}
 			else
 			{
-				// 如果只是更新数据,则不进行插入
-				if (!updateOnly)
-				{
-					animationData.mID = imagePosTable.getMaxID() + 1;
-					imagePosTable.insert(animationData);
-				}
+				animationData.mID = imagePosTable.getMaxID() + 1;
+				imagePosTable.insert(animationData);
 			}
 		}
 		END(animationInfo);
@@ -1044,7 +1051,8 @@ bool ImageUtility::isBlack(const RGBQUAD& rgb)
 				rgb.rgbBlue == 8 && rgb.rgbGreen == 8 && rgb.rgbRed == 16 ||
 				rgb.rgbBlue == 0 && rgb.rgbGreen == 0 && rgb.rgbRed == 8 || 
 				rgb.rgbBlue == 16 && rgb.rgbGreen == 24 && rgb.rgbRed == 33 ||
-				rgb.rgbBlue == 24 && rgb.rgbGreen == 24 && rgb.rgbRed == 29);
+				rgb.rgbBlue == 24 && rgb.rgbGreen == 24 && rgb.rgbRed == 29 ||
+				rgb.rgbBlue == 9 && rgb.rgbGreen == 9 && rgb.rgbRed == 15);
 	}
 	return false;
 }
@@ -1632,22 +1640,48 @@ void ImageUtility::checkMapTile(const string& path)
 	END(files);
 }
 
-void ImageUtility::autoFillAnimationTable(const string& clothName, int startID)
+void ImageUtility::autoFillHumanAnimationTable(const string& clothName, int startID)
 {
-	string animationName[11]{"攻击", "释放技能", "跑步", "走路", "死亡", "被击", "站立", "挖矿", "搜寻", "跳跃攻击", "野蛮冲撞"};
-	int frameCount[11]{6, 6, 6, 6, 4, 3, 4, 6, 2, 8, 6};
-	bool loop[11]{false, false, true, true, false, false, true, true, true, false, true};
-	float animationSpeed[11]{0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.7f};
-	int startIDOffset[11]{0 * DIRECTION_COUNT, 8 * DIRECTION_COUNT, 6 * DIRECTION_COUNT, 10 * DIRECTION_COUNT, 
+	string animationName[HUMAN_ACTION_COUNT]{"攻击", "释放技能", "跑步", "走路", "死亡", "被击", "站立", "挖矿", "搜寻", "跳跃攻击", "野蛮冲撞"};
+	int frameCount[HUMAN_ACTION_COUNT]{6, 6, 6, 6, 4, 3, 4, 6, 2, 8, 6};
+	bool loop[HUMAN_ACTION_COUNT]{false, false, true, true, false, false, true, true, true, false, true};
+	float animationSpeed[HUMAN_ACTION_COUNT]{0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.7f};
+	int startIDOffset[HUMAN_ACTION_COUNT]{0 * DIRECTION_COUNT, 8 * DIRECTION_COUNT, 6 * DIRECTION_COUNT, 10 * DIRECTION_COUNT,
 						  1 * DIRECTION_COUNT, 3 * DIRECTION_COUNT, 9 * DIRECTION_COUNT, 2 * DIRECTION_COUNT,
 						  7 * DIRECTION_COUNT, 4 * DIRECTION_COUNT, 10 * DIRECTION_COUNT };
 	NEW_SQLITE(SQLiteAnimation, animationTable, "Animation");
 	int curAnimationID = animationTable.getMaxID();
-	FOR_I(11)
+	FOR_I(HUMAN_ACTION_COUNT)
 	{
 		TDAnimation data;
 		data.mID = ++curAnimationID;
 		data.mDescription = clothName + "的" + animationName[i];
+		data.mFrameCount = frameCount[i];
+		data.mLoop = loop[i] ? 1 : 0;
+		data.mAnimationSpeed = animationSpeed[i];
+		data.mDirectionCount = DIRECTION_COUNT;
+		FOR_J(DIRECTION_COUNT)
+		{
+			data.mAnimationPosition.push_back(startID + startIDOffset[i] + j);
+		}
+		animationTable.insert(data);
+	}
+}
+
+void ImageUtility::autoFillMonsterAnimationTable(const string& monsterName, int startID)
+{
+	string animationName[MONSTER_ACTION_COUNT]{ "攻击", "死亡", "被击", "站立", "走路" };
+	int frameCount[MONSTER_ACTION_COUNT]{ 6, 10, 2, 4, 6 };
+	bool loop[MONSTER_ACTION_COUNT]{ false, false, false, true, true };
+	float animationSpeed[MONSTER_ACTION_COUNT]{ 0.2f, 0.3f, 0.08f, 0.08f, 0.16f };
+	int startIDOffset[MONSTER_ACTION_COUNT]{ 0 * DIRECTION_COUNT, 1 * DIRECTION_COUNT, 2 * DIRECTION_COUNT, 3 * DIRECTION_COUNT, 4 * DIRECTION_COUNT };
+	NEW_SQLITE(SQLiteAnimation, animationTable, "Animation");
+	int curAnimationID = animationTable.getMaxID();
+	FOR_I(MONSTER_ACTION_COUNT)
+	{
+		TDAnimation data;
+		data.mID = ++curAnimationID;
+		data.mDescription = monsterName + "的" + animationName[i];
 		data.mFrameCount = frameCount[i];
 		data.mLoop = loop[i] ? 1 : 0;
 		data.mAnimationSpeed = animationSpeed[i];

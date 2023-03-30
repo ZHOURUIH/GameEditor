@@ -36,10 +36,12 @@ struct WILFileImageInfo
 };
 const int ImageHeaderLength = 8;
 
-struct HumanActionInfo
+struct ActionInfo
 {
-	string mName;		// 动作名称
-	int mMaxFrame;		// 该动作最大帧数,指资源中该动作的所有帧数,可能包含无效帧
+	string mName;			// 动作名
+	int mActionImageCount;	// 该动作的总文件数量,包含无效帧的数量
+	int mMaxFrame;			// 该动作最大帧数,指资源中该动作的所有帧数,可能包含无效帧
+	int mFrameCount;		// 有效帧数
 };
 
 const int DIRECTION_COUNT = 8;
@@ -48,51 +50,38 @@ const int HUMAN_ACTION_COUNT = 11;
 const int HUMAN_GROUP_SIZE = 600;
 const int EFFECT_GROUP_SIZE = 10;
 // 角色,武器,翅膀的格式一致
-static HumanActionInfo HUMAN_ACTION[HUMAN_ACTION_COUNT] =
+static ActionInfo HUMAN_ACTION[HUMAN_ACTION_COUNT] =
 {
-	{ "stand", 8 },
-	{ "walk", 8 },
-	{ "run", 8 },
-	{ "noname", 1 },
-	{ "attack", 8 },
-	{ "dig", 8 },
-	{ "jumpAttack", 8 },
-	{ "skill", 8 },
-	{ "search", 2 },
-	{ "hit", 8 },
-	{ "die", 8 },
-};
-
-struct MonsterActionInfo 
-{
-	string mName;
-	int mFrameCount;
+	{ "stand", 64, 8, 8 },
+	{ "walk", 64, 8, 8 },
+	{ "run", 64, 8, 8 },
+	{ "noname", 8, 1, 1 },
+	{ "attack", 64, 8, 8 },
+	{ "dig", 64, 8, 8 },
+	{ "jumpAttack", 64, 8, 8 },
+	{ "skill", 64, 8, 8 },
+	{ "search", 16, 2, 2 },
+	{ "hit", 64, 8, 8 },
+	{ "die", 64, 8, 8 },
 };
 
 const int MONSTER_ACTION_COUNT = 5;
 const int MONSTER_GROUP_SIZE = 360;
-static MonsterActionInfo MONSTER_ACTION[MONSTER_ACTION_COUNT] =
+static ActionInfo MONSTER_ACTION[MONSTER_ACTION_COUNT] =
 {
-	{ "stand", 4 },
-	{ "walk", 6 },
-	{ "attack", 6 },
-	{ "die", 10 },
-	{ "hit", 2 },
-};
-
-struct NPCActionInfo
-{
-	string mName;	// 动作名称
-	int mMaxFrame;		// 该动作最大帧数,指资源中该动作的所有帧数,可能包含无效帧
-	int mFrameCount;	// 动作的有效帧数
+	{ "stand", 80, 10, 4 },
+	{ "walk", 80, 10, 6 },
+	{ "attack", 80, 10, 6 },
+	{ "hit", 20, 2, 2 },
+	{ "die", 80, 10, 10 },
 };
 
 const int NPC_ACTION_COUNT = 2;
 const int NPC_GROUP_SIZE = 60;
-static NPCActionInfo NPC_ACTION[NPC_ACTION_COUNT] =
+static ActionInfo NPC_ACTION[NPC_ACTION_COUNT] =
 {
-	{ "stand0", 10, 4 },
-	{ "stand1", 10, 10 },
+	{ "stand0", 30, 10, 4 },
+	{ "stand1", 30, 10, 10 },
 };
 
 enum IMAGE_TYPE

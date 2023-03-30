@@ -32,12 +32,9 @@ public:
 	static void sortByFileNumber(myVector<string>& fileList, bool fileNameIsNumber = true);
 	static void autoMoveFile(const string& path, int groupSize);
 	static void autoGroupHumanImage(const string& path);
-	static void autoGroupMonsterImage0(const string& path);
-	static void autoGroupMonsterImage1(const string& path);
+	static void autoGroupMonsterImage(const string& path);
 	static void autoGroupEffectImage(const string& path);
 	static void autoGroupNPCImage(const string& path);
-	static void getHumanActionInfo(int index, string& actionName, int& dir, int& frameIndex);
-	static bool getNPCActionInfo(int index, string& actionName, int& dir, int& frameIndex);
 	static void moveImageWithPosition(const string& fullFileName, const string& destFullFileName);
 	static void renameImageWithPosition(const string& fullFileName, const string& destFullFileName);
 	static void deleteImageWithPosition(const string& fullFileName);
@@ -48,7 +45,7 @@ public:
 	static bool isInvalidImage(const string& fileName);
 	static POINT getImagePosition(const string& imagePath);
 	static void texturePackerAll(const string& texturePath);
-	static void writeAnimFrameSQLite(bool updateOnly);
+	static void writeAnimFrameSQLite();
 	static int tileIndexToTileX(int index, int mapHeight);
 	static int tileIndexToTileY(int index, int mapHeight);
 	static Vector2Int tileIndexToTilePos(int index, int mapHeight);
@@ -78,7 +75,8 @@ public:
 	static void scalePosition(const string& fileName, float scale);
 	static void fullImageToMinimal(const string& path);
 	static void checkMapTile(const string& path);
-	static void autoFillAnimationTable(const string& clothName, int startID);
+	static void autoFillHumanAnimationTable(const string& clothName, int startID);
+	static void autoFillMonsterAnimationTable(const string& monsterName, int startID);
 	static void dumpMapFile(const string& fileName);
 	static void makeAtlasGroup(const string& filePath);
 	static void makeAtlasGroupAll();
@@ -103,6 +101,7 @@ protected:
 	static bool isEmpty(const RGBQUAD& rgb);
 	static RGBQUAD getColor(FIBITMAP* bitmap, int x, int y);
 	static void setColor(FIBITMAP* bitmap, int x, int y, const RGBQUAD& rgb);
+	static bool getActionInfo(ActionInfo* actionInfo, int actionCount, int index, string& actionName, int& dir, int& frameIndex);
 };
 
 #endif
