@@ -1,5 +1,6 @@
 #include "SQLiteTableBase.h"
 #include "Serializer.h"
+#include "FileContent.h"
 
 string START_FALG = "#start";
 
@@ -26,6 +27,7 @@ struct SQLiteInfo
 	string mSQLiteName;
 	string mComment;
 	bool mHotFix;
+	bool mClientSQLite;
 };
 
 SQLiteMember parseSQLiteMemberLine(const string& line, bool ignoreClientServer)
@@ -165,15 +167,12 @@ void parseSQLiteTemplate(const string& filePath, Map<string, SQLiteInfo>& sqlite
 			{
 				tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
 			}
-			else if (tagList.contains("[None]"))
-			{
-				tempInfo.mOwner = SQLITE_OWNER::NONE;
-			}
 			else
 			{
 				tempInfo.mOwner = SQLITE_OWNER::BOTH;
 			}
 			tempInfo.mHotFix = tagList.contains("[HotFix]");
+			tempInfo.mClientSQLite = tagList.contains("[ClientSQLite]");
 
 			// 获取原始的表格名称
 			int firstTagPos = -1;
@@ -216,13 +215,14 @@ int main()
 {
 	string dataBasePath;
 	string destPath;
+	string destSQLitePath;
 	string typeDefinePath;
 	Vector<string> lines;
 	FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true);
-	FOR_VECTOR(lines)
+	for (const string& line : lines)
 	{
 		Vector<string> params;
-		StringUtility::split(lines[i], "=", params);
+		StringUtility::split(line, "=", params);
 		if (params.size() != 2)
 		{
 			continue;
@@ -236,12 +236,15 @@ int main()
 		{
 			destPath = params[1];
 		}
+		else if (paramName == "DestSQLitePath")
+		{
+			destSQLitePath = params[1];
+		}
 		else if (paramName == "TypeDefPath")
 		{
 			typeDefinePath = params[1];
 		}
 	}
-	END(lines);
 
 	Map<string, SQLiteInfo> sqliteInfoList;
 	parseSQLiteTemplate(typeDefinePath, sqliteInfoList);
@@ -252,14 +255,42 @@ int main()
 
 	Vector<string> files;
 	FileUtility::findFiles(dataBasePath, files, ".db");
-	FOR_VECTOR(files)
+	for(const string& file : files)
 	{
+		string tableName = StringUtility::getFileNameNoSuffix(file, true);
+		const SQLiteInfo& sqliteTableInfo = sqliteInfoList[tableName];
+		// 仅服务器使用的表格不需要转换或者拷贝到客户端
+		if (sqliteTableInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
+		{
+			continue;
+		}
+		// 如果在客户端也是使用sqlite表格,则直接加密拷贝到客户端
+		if (sqliteTableInfo.mClientSQLite)
+		{
+			FileContent content;
+			if (!FileUtility::openBinaryFile(file, &content))
+			{
+				cout << "打开文件失败:" << file << endl;
+				system("pause");
+			}
+			// 加密
+			string key = "ASLD" + tableName;
+			key = FileUtility::generateFileMD5(key.c_str(), key.length()) + "23y35y9832635872349862365274732047chsudhgkshgwshfoweh238c42384fync9388v45982nc3484";
+			FOR_I(content.mFileSize)
+			{
+				content.mBuffer[i] ^= key[i % key.length()];
+			}
+			string sqliteFilePath = destSQLitePath + "/" + StringUtility::getFileName(file);
+			FileUtility::writeFile(sqliteFilePath, content.mBuffer, content.mFileSize);
+			cout << "加密并拷贝文件:" << sqliteFilePath << endl;
+			continue;
+		}
+
 		Serializer serializer;
-		SQLiteTableBase* table = new SQLiteTableBase();
-		table->setTableName(StringUtility::getFileNameNoSuffix(files[i], true));
-		table->init(files[i]);
-		const SQLiteInfo& sqliteTableInfo = sqliteInfoList[table->getTableName()];
-		SQLiteDataReader* reader = table->doSelect();
+		SQLiteTableBase table;
+		table.setTableName(tableName);
+		table.init(file);
+		SQLiteDataReader* reader = table.doSelect();
 		while (reader->read())
 		{
 			const auto& memberList = sqliteTableInfo.mMemberList;
@@ -381,7 +412,7 @@ int main()
 					if (shorts.size() == 0)
 					{
 						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -397,7 +428,7 @@ int main()
 					if (ushorts.size() == 0)
 					{
 						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
+						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -413,7 +444,7 @@ int main()
 					if (ints.size() == 0)
 					{
 						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -429,7 +460,7 @@ int main()
 					if (uints.size() == 0)
 					{
 						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << table->getTableName() + ",ID:" + StringUtility::llongToString(id) << endl;
+						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
 						system("pause");
 						return 0;
 					}
@@ -445,9 +476,9 @@ int main()
 			}
 			END_CONST();
 		}
-		table->releaseReader(reader);
+		table.releaseReader(reader);
 		// 重新计算密钥
-		string key = "ASLD" + table->getTableName();
+		string key = "ASLD" + tableName;
 		key = FileUtility::generateFileMD5(key.c_str(), key.length()) + "23y35y983";
 		char* buffer = serializer.getWriteableBuffer();
 		uint bufferSize = serializer.getBufferSize();
@@ -456,10 +487,9 @@ int main()
 			buffer[j] = (buffer[j] - ((j << 1) & 0xFF)) ^ key[j % key.length()];
 		}
 
-		string fullPath = destPath + "/" + table->getTableName() + ".bytes";
+		string fullPath = destPath + "/" + tableName + ".bytes";
 		serializer.writeToFile(fullPath);
 		cout << "生成文件:" << fullPath << endl;
 	}
-	END(files);
 	return 0;
 }
