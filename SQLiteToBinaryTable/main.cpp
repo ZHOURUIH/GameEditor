@@ -215,7 +215,7 @@ int main()
 {
 	string dataBasePath;
 	string destPath;
-	string destSQLitePath;
+	Vector<string> destSQLitePath;
 	string typeDefinePath;
 	Vector<string> lines;
 	FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true);
@@ -236,9 +236,9 @@ int main()
 		{
 			destPath = params[1];
 		}
-		else if (paramName == "DestSQLitePath")
+		else if (StringUtility::startWith(paramName, "DestSQLitePath"))
 		{
-			destSQLitePath = params[1];
+			destSQLitePath.push_back(params[1]);
 		}
 		else if (paramName == "TypeDefPath")
 		{
@@ -280,9 +280,12 @@ int main()
 			{
 				content.mBuffer[i] ^= key[i % key.length()];
 			}
-			string sqliteFilePath = destSQLitePath + "/" + StringUtility::getFileName(file);
-			FileUtility::writeFile(sqliteFilePath, content.mBuffer, content.mFileSize);
-			cout << "加密并拷贝文件:" << sqliteFilePath << endl;
+			for (const string& path : destSQLitePath)
+			{
+				string sqliteFilePath = path + "/" + StringUtility::getFileName(file);
+				FileUtility::writeFile(sqliteFilePath, content.mBuffer, content.mFileSize);
+				cout << "加密并拷贝文件:" << sqliteFilePath << endl;
+			}
 			continue;
 		}
 
