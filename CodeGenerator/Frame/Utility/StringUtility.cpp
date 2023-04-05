@@ -92,7 +92,7 @@ void StringUtility::removeLastComma(string& stream)
 int StringUtility::findCharCount(const string& str, char key)
 {
 	int count = 0;
-	uint length = str.length();
+	uint length = (uint)str.length();
 	FOR_I(length)
 	{
 		if (str[i] == key)
@@ -2074,7 +2074,7 @@ uint StringUtility::getCharCount(const string& str, char key)
 
 uint StringUtility::getStringWidth(const string& str)
 {
-	return str.length() + getCharCount(str, '\t') * 3;
+	return (uint)str.length() + getCharCount(str, '\t') * 3;
 }
 
 uint StringUtility::generateAlignTableCount(const string& str, int alignWidth)

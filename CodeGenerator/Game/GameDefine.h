@@ -45,6 +45,7 @@ struct SQLiteInfo
 	string mSQLiteName;
 	string mComment;
 	bool mHotFix;
+	bool mClientSQLite;
 };
 
 struct MySQLMember
