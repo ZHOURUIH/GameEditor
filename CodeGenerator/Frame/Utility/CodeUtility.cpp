@@ -344,3 +344,24 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 		packetInfo.mPacketName = line;
 	}
 }
+
+string CodeUtility::convertToCSharpType(const string& cppType)
+{
+	// 因为模板文件是按照C++来写的,但是有些类型在C#中是没有的,所以要转换为C#中对应的类型
+	// Vector替换为List,char替换为sbyte,llong替换为long
+	if (startWith(cppType, "Vector<"))
+	{
+		string newType = cppType;
+		strReplaceAll(newType, "Vector<", "List<");
+		return newType;
+	}
+	if (cppType == "char")
+	{
+		return "sbyte";
+	}
+	if (cppType == "llong")
+	{
+		return "long";
+	}
+	return cppType;
+}

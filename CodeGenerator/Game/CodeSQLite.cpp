@@ -474,40 +474,19 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		{
 			continue;
 		}
-		string typeName = member.mTypeName;
-		// 因为模板文件是按照C++来写的,但是有些类型在C#中是没有的,所以要转换为C#中对应的类型
-		// myVector替换为List,char替换为sbyte
-		if (startWith(typeName, "Vector<"))
+		// 不在客户端使用的则不定义成员变量
+		if (member.mOwner != SQLITE_OWNER::CLIENT_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
 		{
-			strReplaceAll(typeName, "Vector<", "List<");
+			continue;
 		}
-		else if (typeName == "char")
-		{
-			typeName = "sbyte";
-		}
-		else if (typeName == "llong")
-		{
-			typeName = "long";
-		}
-
+		string typeName = convertToCSharpType(member.mTypeName);
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
 		if (findString(typeName.c_str(), "List", NULL))
 		{
 			listMemberList.push_back(make_pair(typeName, member.mMemberName));
 			listMemberSet.insert(member.mMemberName);
 		}
-
-		string publicType;
-		if (member.mOwner == SQLITE_OWNER::CLIENT_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
-		{
-			publicType = "public";
-		}
-		else
-		{
-			publicType = "protected";
-		}
-
-		string memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
+		string memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
 		uint tabCount = generateAlignTableCount(memberLine, 44);
 		FOR_I(tabCount)
 		{
@@ -537,7 +516,13 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		{
 			continue;
 		}
-		if (memberInfo.mTypeName == "string")
+		string typeName = convertToCSharpType(memberInfo.mTypeName);
+		// 不在客户端使用的则不读取,仅仅使用占位符
+		if (memberInfo.mOwner != SQLITE_OWNER::CLIENT_ONLY && memberInfo.mOwner != SQLITE_OWNER::BOTH)
+		{
+			continue;
+		}
+		if (typeName == "string")
 		{
 			line(file, "\t\treader.readString(out m" + memberInfo.mMemberName + ");");
 		}
