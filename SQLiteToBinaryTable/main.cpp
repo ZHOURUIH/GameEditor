@@ -300,6 +300,10 @@ int main()
 			FOR_CONST_J(memberList)
 			{
 				const string& typeName = memberList[j].mTypeName;
+				if (memberList[j].mOwner != SQLITE_OWNER::CLIENT_ONLY && memberList[j].mOwner != SQLITE_OWNER::BOTH)
+				{
+					continue;
+				}
 				if (typeName == "bool")
 				{
 					serializer.write(reader->getInt(j) != 0);
