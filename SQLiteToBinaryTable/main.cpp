@@ -282,7 +282,7 @@ int main()
 			}
 			for (const string& path : destSQLitePath)
 			{
-				string sqliteFilePath = path + "/" + StringUtility::getFileName(file);
+				string sqliteFilePath = path + "/" + StringUtility::getFileNameNoSuffix(file, true) + ".bytes";
 				FileUtility::writeFile(sqliteFilePath, content.mBuffer, content.mFileSize);
 				cout << "加密并拷贝文件:" << sqliteFilePath << endl;
 			}
