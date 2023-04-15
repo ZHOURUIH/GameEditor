@@ -143,6 +143,26 @@ void CodeSQLite::generate()
 	{
 		// 删除C++的代码文件
 		deleteFolder(cppDataPath);
+		// SQLite的Table文件选择性删除,只删除非服务器使用的文件
+		string patterns[2]{ ".cpp", ".h" };
+		myVector<string> cppTableList;
+		findFiles(cppTablePath, cppTableList, patterns, 2);
+		for (const string& str : cppTableList)
+		{
+			bool isUsedInServer = false;
+			for (const SQLiteInfo& info : sqliteInfoList)
+			{
+				if ("SQLite" + info.mSQLiteName == getFileNameNoSuffix(str, true))
+				{
+					isUsedInServer = info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY;
+					break;
+				}
+			}
+			if (!isUsedInServer)
+			{
+				deleteFile(str);
+			}
+		}
 	}
 	
 	if (csGamePath.length() > 0)
