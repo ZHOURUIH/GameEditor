@@ -124,10 +124,8 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 	if (!isFileExist(headerFullPath))
 	{
 		string header;
-		string marcoName = nameToUpper(conditionName) + "_H_";
 		string typeStr = nameToUpper(conditionName.substr(strlen("Condition")), false);
-		line(header, "#ifndef " + marcoName);
-		line(header, "#define " + marcoName);
+		line(header, "#pragma once");
 		line(header, "");
 		line(header, "#include \"Condition.h\"");
 		line(header, "");
@@ -147,9 +145,7 @@ void CodeCondition::generateCppConditionFile(const string& conditionName, const 
 		line(header, "\t{");
 		line(header, "\t}");
 		line(header, "protected:");
-		line(header, "};");
-		line(header, "");
-		line(header, "#endif", false);
+		line(header, "};", false);
 
 		writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 	}

@@ -119,9 +119,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	// 头文件
 	string header;
 	string className = "MD" + mysqlInfo.mMySQLClassName;
-	string headerMacro = "_MD" + nameToUpper(mysqlInfo.mMySQLClassName) + "_H_";
-	line(header, "#ifndef " + headerMacro);
-	line(header, "#define " + headerMacro);
+	line(header, "#pragma once");
 	line(header, "");
 	line(header, "#include \"MySQLData.h\"");
 	line(header, "");
@@ -188,9 +186,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "\tfloat getFloat(int index) override;");
 	line(header, "\tllong getLLong(int index) override;");
 	line(header, "\tconst string& getString(int index) override;");
-	line(header, "};");
-	line(header, "");
-	line(header, "#endif", false);
+	line(header, "};", false);
 
 	// 源文件
 	string source;
@@ -834,9 +830,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 
 	// 头文件
 	string header;
-	string headerMacro = "_MYSQL" + nameToUpper(mysqlInfo.mMySQLClassName) + "_H_";
-	line(header, "#ifndef " + headerMacro);
-	line(header, "#define " + headerMacro);
+	line(header, "#pragma once");
 	line(header, "");
 	line(header, "#include \"MySQLTable.h\"");
 	line(header, "");
@@ -853,9 +847,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(header, "\tMySQLData* createData() override;");
 	line(header, "\tvoid createDataList(Vector<MySQLData*>& dataList, const int count) override;");
 	line(header, "protected:");
-	line(header, "};");
-	line(header, "");
-	line(header, "#endif", false);
+	line(header, "};", false);
 
 	// 源文件
 	string source;
@@ -903,8 +895,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 {
 	// MySQLRegiste.h
 	string str0;
-	line(str0, "#ifndef _MYSQL_REGISTER_H_");
-	line(str0, "#define _MYSQL_REGISTER_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
@@ -912,9 +903,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
-	line(str0, "};");
-	line(str0, "");
-	line(str0, "#endif", false);
+	line(str0, "};", false);
 	writeFile(filePath + "MySQLRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;

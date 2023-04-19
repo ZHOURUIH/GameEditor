@@ -228,8 +228,7 @@ void CodeNetPacket::generate()
 void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
 	string str;
-	line(str, "#ifndef _PACKET_DEFINE_H_");
-	line(str, "#define _PACKET_DEFINE_H_");
+	line(str, "#pragma once");
 	line(str, "");
 	line(str, "#include \"FrameDefine.h\"");
 	line(str, "");
@@ -269,9 +268,7 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
 		}
 	}
-	line(str, "};");
-	line(str, "");
-	line(str, "#endif", false);
+	line(str, "};", false);
 
 	writeFile(filePath + "PacketDefine.h", ANSIToUTF8(str.c_str(), true));
 }
@@ -373,9 +370,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	myVector<string> customList;
 	findCppIncludeCustomCode(packetName, headerFullPath, includeList, customList);
 	string header;
-	string marco = nameToUpper(packetName.substr(2));
-	line(header, "#ifndef _CS" + marco + "_H_");
-	line(header, "#define _CS" + marco + "_H_");
+	line(header, "#pragma once");
 	line(header, "");
 	// #include部分
 	FOR_VECTOR(includeList)
@@ -410,9 +405,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		line(header, customList[i]);
 	}
 	END(customList);
-	line(header, "};");
-	line(header, "");
-	line(header, "#endif", false);
+	line(header, "};", false);
 
 	writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 }
@@ -568,9 +561,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	findCppIncludeCustomCode(packetName, headerFullPath, includeList, customList);
 
 	string header;
-	string marco = nameToUpper(packetName.substr(2));
-	line(header, "#ifndef _SC" + marco + "_H_");
-	line(header, "#define _SC" + marco + "_H_");
+	line(header, "#pragma once");
 	line(header, "");
 	// #include部分
 	FOR_VECTOR(includeList)
@@ -603,9 +594,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		line(header, customList[i]);
 	}
 	END(customList);
-	line(header, "};");
-	line(header, "");
-	line(header, "#endif", false);
+	line(header, "};", false);
 
 	writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 }

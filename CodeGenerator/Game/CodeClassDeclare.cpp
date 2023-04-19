@@ -102,16 +102,13 @@ void CodeClassDeclare::generate()
 void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& classList, const string& filePath)
 {
 	string str0;
-	line(str0, "#ifndef _FRAME_CLASS_DECLARE_H_");
-	line(str0, "#define _FRAME_CLASS_DECLARE_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	uint count = classList.size();
 	FOR_I(count)
 	{
 		line(str0, "class " + classList[i] + ";");
 	}
-	line(str0, "");
-	line(str0, "#endif", false);
 
 	writeFile(filePath + "FrameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -120,16 +117,13 @@ void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& clas
 void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& classList, const string& filePath)
 {
 	string str0;
-	line(str0, "#ifndef _GAME_CLASS_DECLARE_H_");
-	line(str0, "#define _GAME_CLASS_DECLARE_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	uint count = classList.size();
 	FOR_I(count)
 	{
 		line(str0, "class " + classList[i] + ";");
 	}
-	line(str0, "");
-	line(str0, "#endif", false);
 
 	writeFile(filePath + "GameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -138,16 +132,13 @@ void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& class
 void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList, const string& filePath)
 {
 	string str0;
-	line(str0, "#ifndef _FRAME_HEADER_H_");
-	line(str0, "#define _FRAME_HEADER_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	uint count = headerList.size();
 	FOR_I(count)
 	{
 		line(str0, "#include \"" + headerList[i] + ".h\"");
 	}
-	line(str0, "");
-	line(str0, "#endif", false);
 
 	writeFile(filePath + "FrameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -156,8 +147,7 @@ void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList
 void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList, const string& filePath)
 {
 	string str0;
-	line(str0, "#ifndef _GAME_HEADER_H_");
-	line(str0, "#define _GAME_HEADER_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	line(str0, "#include \"FrameHeader.h\"");
 	uint count = headerList.size();
@@ -165,8 +155,6 @@ void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList,
 	{
 		line(str0, "#include \"" + headerList[i] + ".h\"");
 	}
-	line(str0, "");
-	line(str0, "#endif", false);
 
 	writeFile(filePath + "GameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }

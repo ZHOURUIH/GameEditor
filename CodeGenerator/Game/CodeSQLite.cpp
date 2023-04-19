@@ -241,9 +241,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	// TDSQLite.h
 	string header;
 	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
-	string headerMacro = "_TD" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
-	line(header, "#ifndef " + headerMacro);
-	line(header, "#define " + headerMacro);
+	line(header, "#pragma once");
 	line(header, "");
 	line(header, "#include \"SQLiteData.h\"");
 	line(header, "");
@@ -298,9 +296,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		}
 	}
 	line(header, "\t}");
-	line(header, "};");
-	line(header, "");
-	line(header, "#endif", false);
+	line(header, "};", false);
 
 	// TDSQLite.cpp
 	string source;
@@ -333,9 +329,7 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 	if (!isFileExist(tableFileName))
 	{
 		string table;
-		string tableHeaderMarco = "_SQLITE" + nameToUpper(sqliteInfo.mSQLiteName) + "_H_";
-		line(table, "#ifndef " + tableHeaderMarco);
-		line(table, "#define " + tableHeaderMarco);
+		line(table, "#pragma once");
 		line(table, "");
 		line(table, "#include \"" + dataClassName + ".h\"");
 		line(table, "#include \"SQLiteTable.h\"");
@@ -343,9 +337,7 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
 		line(table, "{");
 		line(table, "public:");
-		line(table, "};");
-		line(table, "");
-		line(table, "#endif", false);
+		line(table, "};", false);
 
 		writeFile(tableFileName, ANSIToUTF8(table.c_str(), true));
 	}
@@ -356,8 +348,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 {
 	// SQLiteRegister.h
 	string str0;
-	line(str0, "#ifndef _SQLITE_REGISTER_H_");
-	line(str0, "#define _SQLITE_REGISTER_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
@@ -365,9 +356,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
-	line(str0, "};");
-	line(str0, "");
-	line(str0, "#endif", false);
+	line(str0, "};", false);
 	writeFile(filePath + "SQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;

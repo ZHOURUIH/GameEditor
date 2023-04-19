@@ -66,8 +66,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventList, const string& headerPath)
 {
 	string str0;
-	line(str0, "#ifndef _EVENT_TYPE_H_");
-	line(str0, "#define _EVENT_TYPE_H_");
+	line(str0, "#pragma once");
 	line(str0, "");
 	line(str0, "// 游戏事件定义");
 	line(str0, "class EVENT_TYPE");
@@ -90,9 +89,7 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 		}
 		line(str0, str + newList[i].second);
 	}
-	line(str0, "};");
-	line(str0, "");
-	line(str0, "#endif", false);
+	line(str0, "};", false);
 
 	writeFile(headerPath + "EventType.h", ANSIToUTF8(str0.c_str(), true));
 }
@@ -105,10 +102,8 @@ void CodeEvent::generateEventFile(const string& eventName, const string& eventPa
 		return;
 	}
 	string header;
-	string marcoName = nameToUpper(eventName) + "_H_";
 	string typeStr = nameToUpper(eventName.substr(strlen("Event")), false);
-	line(header, "#ifndef " + marcoName);
-	line(header, "#define " + marcoName);
+	line(header, "#pragma once");
 	line(header, "");
 	line(header, "#include \"GameEvent.h\"");
 	line(header, "");
@@ -120,9 +115,7 @@ void CodeEvent::generateEventFile(const string& eventName, const string& eventPa
 	line(header, "\t\tmType = EVENT_TYPE::" + typeStr + ";");
 	line(header, "\t}");
 	line(header, "public:");
-	line(header, "};");
-	line(header, "");
-	line(header, "#endif", false);
+	line(header, "};", false);
 
 	writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 }

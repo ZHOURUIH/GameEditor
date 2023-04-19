@@ -57,9 +57,7 @@ void CodeAchivement::generateAchivementFile(const string& achivement, const stri
 	if (!isFileExist(headerFullPath))
 	{
 		string header;
-		string macro = nameToUpper(achivement) + "_H_";
-		line(header, "#ifndef " + macro);
-		line(header, "#define " + macro);
+		line(header, "#pragma once");
 		line(header, "");
 		line(header, "#include \"Achivement.h\"");
 		line(header, "");
@@ -83,9 +81,7 @@ void CodeAchivement::generateAchivementFile(const string& achivement, const stri
 		line(header, "\tstatic void (GameEvent* event, IEventListener* listener);");
 		line(header, "protected:");
 		line(header, "\tint mTargetValue;");
-		line(header, "};");
-		line(header, "");
-		line(header, "#endif", false);
+		line(header, "};", false);
 
 		writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 	}
