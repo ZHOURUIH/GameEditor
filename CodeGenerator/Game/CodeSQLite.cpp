@@ -251,15 +251,21 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "class " + dataClassName + " : public SQLiteData");
 	line(header, "{");
 	line(header, "public:");
-	uint memberCount = sqliteInfo.mMemberList.size();
-	FOR_I(memberCount)
+	for (const SQLiteMember& member : sqliteInfo.mMemberList)
 	{
-		line(header, "\tstatic constexpr const char* " + sqliteInfo.mMemberList[i].mMemberName + " = STR(" + sqliteInfo.mMemberList[i].mMemberName + ");");
+		if (member.mMemberName == "ID")
+		{
+			continue;
+		}
+		line(header, "\tstatic constexpr const char* " + member.mMemberName + " = STR(" + member.mMemberName + ");");
 	}
 	line(header, "public:");
-	FOR_I(memberCount)
+	for (const SQLiteMember& member : sqliteInfo.mMemberList)
 	{
-		const SQLiteMember& member = sqliteInfo.mMemberList[i];
+		if (member.mMemberName == "ID")
+		{
+			continue;
+		}
 		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
 		{
 			string memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + ";";
@@ -275,9 +281,12 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "public:");
 	line(header, "\t" + dataClassName + "()");
 	line(header, "\t{");
-	FOR_I(memberCount)
+	for (const SQLiteMember& member : sqliteInfo.mMemberList)
 	{
-		const SQLiteMember& member = sqliteInfo.mMemberList[i];
+		if (member.mMemberName == "ID")
+		{
+			continue;
+		}
 		const string& name = member.mMemberName;
 		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
 		{
@@ -297,9 +306,13 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	string source;
 	line(source, "#include \"" + dataClassName + ".h\"");
 	line(source, "");
-	FOR_I(memberCount)
+	for (const SQLiteMember& member : sqliteInfo.mMemberList)
 	{
-		line(source, "constexpr const char* " + dataClassName + "::" + sqliteInfo.mMemberList[i].mMemberName + ";");
+		if (member.mMemberName == "ID")
+		{
+			continue;
+		}
+		line(source, "constexpr const char* " + dataClassName + "::" + member.mMemberName + ";");
 	}
 
 	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
