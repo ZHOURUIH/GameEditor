@@ -352,7 +352,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
-	line(str0, "class SQLiteRegister : public GameBase");
+	line(str0, "class SQLiteRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
@@ -372,7 +372,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 			continue;
 		}
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tmSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
+		line(str1, "\tGameBase::mSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
 	}
 	line(str1, "");
 	FOR_I(count)
@@ -382,7 +382,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 			continue;
 		}
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tmSQLiteManager->addSQLiteTable(mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
+		line(str1, "\tFrameBase::mSQLiteManager->addSQLiteTable(GameBase::mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
@@ -441,7 +441,7 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 		{
 			continue;
 		}
-		line(header, "mVectorPoolManager->registeVectorPool<TD" + sqliteList[i].mSQLiteName + "*>();");
+		line(header, "FrameBase::mVectorPoolManager->registeVectorPool<TD" + sqliteList[i].mSQLiteName + "*>();");
 	}
 	line(header, "");
 	line(header, "#endif", false);

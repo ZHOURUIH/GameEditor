@@ -291,7 +291,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		{
 			continue;
 		}
-		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", NAME(" + packetName + "));");
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", NAME(" + packetName + "));");
 		if (packetList[i].mUDP)
 		{
 			udpCSList.push_back(packetList[i]);
@@ -306,7 +306,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		{
 			continue;
 		}
-		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", NAME(" + packetName + "));");
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", NAME(" + packetName + "));");
 		if (packetList[i].mUDP)
 		{
 			udpSCList.push_back(packetList[i]);
@@ -317,7 +317,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		line(str, "");
 		FOR_VECTOR(udpCSList)
 		{
-			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + packetNameToUpper(udpCSList[i].mPacketName) + "); ");
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + packetNameToUpper(udpCSList[i].mPacketName) + "); ");
 		}
 		END(udpCSList);
 	}
@@ -326,7 +326,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		line(str, "");
 		FOR_VECTOR(udpSCList)
 		{
-			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + packetNameToUpper(udpSCList[i].mPacketName) + "); ");
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + packetNameToUpper(udpSCList[i].mPacketName) + "); ");
 		}
 		END(udpSCList);
 	}

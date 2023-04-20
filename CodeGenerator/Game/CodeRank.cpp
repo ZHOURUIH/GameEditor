@@ -32,7 +32,7 @@ void CodeRank::generateRegister(const myVector<string>& list, const string& head
 	FOR_VECTOR_CONST(list)
 	{
 		string type = nameToUpper(list[i]).substr(strlen("_RANK_"));
-		line(source, "\tmRankFactoryManager->addFactory<" + list[i] + ">(RANK_TYPE::" + type + ");");
+		line(source, "\tGameBase::mRankFactoryManager->addFactory<" + list[i] + ">(RANK_TYPE::" + type + ");");
 	}
 	line(source, "}", false);
 

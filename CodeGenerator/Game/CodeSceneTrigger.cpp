@@ -101,13 +101,13 @@ void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, 
 	{
 		string enumName = nameToUpper(triggerList[i].substr(strlen("SceneTrigger")));
 		enumName.erase(0, 1);
-		line(str0, "\tmSceneTriggerFactoryManager->addFactory<" + triggerList[i] + ">(SCENE_TRIGGER::" + enumName + ");");
+		line(str0, "\tGameBase::mSceneTriggerFactoryManager->addFactory<" + triggerList[i] + ">(SCENE_TRIGGER::" + enumName + ");");
 	}
 	line(str0, "");
 	// ´¥·¢Æ÷µÄÐÞ¸ÄÆ÷
 	FOR_VECTOR_CONST(modifierList)
 	{
-		line(str0, "\tmTriggerModifierFactoryManager->addFactory<" + modifierList[i] + ">(" + intToString(getLastNumber(modifierList[i])) + ");");
+		line(str0, "\tGameBase::mTriggerModifierFactoryManager->addFactory<" + modifierList[i] + ">(" + intToString(getLastNumber(modifierList[i])) + ");");
 	}
 	line(str0, "}", false);
 

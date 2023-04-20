@@ -55,7 +55,7 @@ void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, const st
 	const uint count = nodeList.size();
 	FOR_I(count)
 	{
-		line(source, "\tmDTNodeFactoryManager->addFactory<" + nodeList[i] + ">(NAME(" + nodeList[i] + "));");
+		line(source, "\tGameBase::mDTNodeFactoryManager->addFactory<" + nodeList[i] + ">(NAME(" + nodeList[i] + "));");
 	}
 	line(source, "}", false);
 

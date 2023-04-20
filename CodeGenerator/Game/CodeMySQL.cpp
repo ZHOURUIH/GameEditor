@@ -269,7 +269,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	// paramListº¯Êý
 	line(source, "void " + className + "::paramList(string& params) const");
 	line(source, "{");
-	line(source, "\tsqlAddLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
+	line(source, "\tUtility::sqlAddLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
@@ -280,48 +280,48 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\tsqlAddStringUTF8(params, m" + memberName + ", " + addComma + ");");
+				line(source, "\tUtility::sqlAddStringUTF8(params, m" + memberName + ", " + addComma + ");");
 			}
 			else
 			{
-				line(source, "\tsqlAddString(params, m" + memberName + ", " + addComma + ");");
+				line(source, "\tUtility::sqlAddString(params, m" + memberName + ", " + addComma + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tsqlAddFloat(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddFloat(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tsqlAddLLong(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tUtility::sqlAddLLong(params, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
@@ -335,54 +335,54 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
 		const string& typeName = memberInfo.mTypeName;
 		const string& memberName = memberInfo.mMemberName;
-		line(source, "\tif (hasBit(flag, " + intToString(i + 1) + "))");
+		line(source, "\tif (Utility::hasBit(flag, " + intToString(i + 1) + "))");
 		line(source, "\t{");
 		if (typeName == "string")
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\t\tsqlUpdateStringUTF8(params, " + memberName + ", m" + memberName + ");");
+				line(source, "\t\tUtility::sqlUpdateStringUTF8(params, " + memberName + ", m" + memberName + ");");
 			}
 			else
 			{
-				line(source, "\t\tsqlUpdateString(params, " + memberName + ", m" + memberName + ");");
+				line(source, "\t\tUtility::sqlUpdateString(params, " + memberName + ", m" + memberName + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\t\tsqlUpdateBool(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateBool(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\t\tsqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\t\tsqlUpdateFloat(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateFloat(params, " + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\t\tsqlUpdateLLong(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateLLong(params, " + memberName + ", m" + memberName + ");");
 		}
 		line(source, "\t}");
 	}
@@ -421,7 +421,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
-			line(source, "\tif (hasBit(flag, " + intToString(i + 1) + "))");
+			line(source, "\tif (Utility::hasBit(flag, " + intToString(i + 1) + "))");
 			line(source, "\t{");
 			line(source, "\t\ttargetData->m" + memberName + " = m" + memberName + ";");
 			line(source, "\t}");
@@ -811,11 +811,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return EMPTY;");
+			line(source, "\tcase " + intToString(i + 1) + ": return FrameDefine::EMPTY;");
 		}
 	}
 	line(source, "\t}");
-	line(source, "\treturn EMPTY;");
+	line(source, "\treturn FrameDefine::EMPTY;");
 	line(source, "}", false);
 
 	writeFile(filePath + className + ".h", ANSIToUTF8(header.c_str(), true));
@@ -879,11 +879,11 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
-	line(source, "\treturn mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
+	line(source, "\treturn FrameBase::mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
 	line(source, "}");
 	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
-	line(source, "\treturn mMySQLDataBase->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count); ");
+	line(source, "\treturn FrameBase::mMySQLDataBase->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count);");
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
@@ -899,7 +899,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
-	line(str0, "class MySQLRegister : public GameBase");
+	line(str0, "class MySQLRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
@@ -915,7 +915,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	FOR_I(count)
 	{
 		const string& mysqlClassName = mysqlList[i].mMySQLClassName;
-		line(str1, "\tmMySQL" + mysqlClassName + " = mMySQLDataBase->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
+		line(str1, "\tGameBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLDataBase->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));

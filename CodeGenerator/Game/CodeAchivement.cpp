@@ -42,7 +42,7 @@ void CodeAchivement::generateRegister(const myVector<string>& list, const string
 	FOR_VECTOR_CONST(list)
 	{
 		string type = nameToUpper(list[i]).substr(strlen("_ACHIVEMENT_"));
-		line(source, "\tmAchivementFactoryManager->addFactory<" + list[i] + ">(ACHIVEMENT_TYPE::" + type + ");");
+		line(source, "\tGameBase::mAchivementFactoryManager->addFactory<" + list[i] + ">(ACHIVEMENT_TYPE::" + type + ");");
 	}
 	line(source, "}", false);
 

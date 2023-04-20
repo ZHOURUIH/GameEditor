@@ -146,15 +146,15 @@ void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSyst
 	line(getAllSystem, "");
 	for (const string& item : frameSystemList)
 	{
-		line(getAllSystem, "mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		line(getAllSystem, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
 	for (const string& item : factoryManagerList)
 	{
-		line(getAllSystem, "mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		line(getAllSystem, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
 	for (const string& item : classPoolList)
 	{
-		line(getAllSystem, "mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		line(getAllSystem, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
 	line(getAllSystem, "");
 	line(getAllSystem, "#endif", false);

@@ -54,7 +54,7 @@ void CodeComponent::generateComponentRegister(const myVector<string>& componentL
 	line(source, "{");
 	FOR_VECTOR_CONST(componentList)
 	{
-		line(source, "\tmGameComponentFactoryManager->addFactory<" + componentList[i] + ">(NAME(" + componentList[i] + "));");
+		line(source, "\tFrameBase::mGameComponentFactoryManager->addFactory<" + componentList[i] + ">(NAME(" + componentList[i] + "));");
 	}
 	line(source, "}", false);
 	writeFile(filePath + "ComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));

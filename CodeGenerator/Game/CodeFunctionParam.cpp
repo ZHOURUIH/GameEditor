@@ -34,7 +34,7 @@ void CodeFunctionParam::generateCppRegister(const myVector<string>& list, const 
 	line(str0, "{");
 	for (const string& item : list)
 	{
-		line(str0, "\tmFunctionParamFactoryManager->addFactory<" + item + ">(NAME(" + item + "));");
+		line(str0, "\tGameBase::mFunctionParamFactoryManager->addFactory<" + item + ">(NAME(" + item + "));");
 	}
 	line(str0, "}", false);
 
