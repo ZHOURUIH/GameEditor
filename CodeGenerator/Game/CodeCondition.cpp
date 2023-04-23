@@ -182,12 +182,12 @@ void CodeCondition::generateCSRegisterFile(const myVector<pair<string, string>>&
 		line(str0, "\t\tregiste<" + conditionName + ">(CONDITION." + conditionEnum + ");");
 	}
 	line(str0, "");
-	line(str0, "\t\tGameBase::mConditionManager.checkConditionTypeCount((int)CONDITION.MAX - 1);");
+	line(str0, "\t\tmConditionManager.checkConditionTypeCount((int)CONDITION.MAX - 1);");
 	line(str0, "\t}");
 	line(str0, "\t//------------------------------------------------------------------------------------------------------------------------------");
 	line(str0, "\tprotected static void registe<T>(CONDITION type) where T : Condition");
 	line(str0, "\t{");
-	line(str0, "\t\tGameBase::mConditionManager.registe(typeof(T), type);");
+	line(str0, "\t\tmConditionManager.registe(typeof(T), type);");
 	line(str0, "\t}");
 	line(str0, "}", false);
 
