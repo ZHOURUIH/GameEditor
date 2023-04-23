@@ -36,6 +36,7 @@ struct SQLiteMember
 	string mTypeName;
 	string mMemberName;
 	string mComment;
+	bool mIsList;
 };
 
 struct SQLiteInfo

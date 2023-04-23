@@ -248,6 +248,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "// " + sqliteInfo.mComment);
 	line(header, "class " + dataClassName + " : public SQLiteData");
 	line(header, "{");
+	line(header, "\tBASE(SQLiteData);");
 	line(header, "public:");
 	for (const SQLiteMember& member : sqliteInfo.mMemberList)
 	{
@@ -296,7 +297,9 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		}
 	}
 	line(header, "\t}");
+	line(header, "\tvoid clone(SQLiteData* target) override;");
 	line(header, "};", false);
+	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
 
 	// TDSQLite.cpp
 	string source;
@@ -310,8 +313,32 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		}
 		line(source, "constexpr const char* " + dataClassName + "::" + member.mMemberName + ";");
 	}
-
-	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
+	line(source, "");
+	line(source, "void " + dataClassName + "::clone(SQLiteData* target)");
+	line(source, "{");
+	line(source, "\tbase::clone(target);");
+	line(source, "\tauto* targetData = static_cast<" + dataClassName + "*>(target);");
+	for (const SQLiteMember& member : sqliteInfo.mMemberList)
+	{
+		if (member.mMemberName == "ID")
+		{
+			continue;
+		}
+		if (member.mOwner != SQLITE_OWNER::SERVER_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
+		{
+			continue;
+		}
+		// 如果是列表则调用列表的clone
+		if (startWith(member.mTypeName, "Vector<"))
+		{
+			line(source, "\tm" + member.mMemberName + ".clone(targetData->m" + member.mMemberName + ");");
+		}
+		else
+		{
+			line(source, "\ttargetData->m" + member.mMemberName + " = m" + member.mMemberName + ";");
+		}
+	}
+	line(source, "}", false);
 	writeFile(dataFilePath + dataClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
 }
 
@@ -407,7 +434,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		line(header, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
 	}
 	line(header, "");
-	line(header, "#endif");
+	line(header, "#endif", false);
 	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
 	string source;
