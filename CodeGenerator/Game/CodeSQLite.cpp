@@ -317,7 +317,8 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(source, "void " + dataClassName + "::clone(SQLiteData* target)");
 	line(source, "{");
 	line(source, "\tbase::clone(target);");
-	line(source, "\tauto* targetData = static_cast<" + dataClassName + "*>(target);");
+	// 先检查一下有没有需要拷贝的属性
+	myVector<SQLiteMember> needCopyMemberList;
 	for (const SQLiteMember& member : sqliteInfo.mMemberList)
 	{
 		if (member.mMemberName == "ID")
@@ -328,14 +329,22 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		{
 			continue;
 		}
-		// 如果是列表则调用列表的clone
-		if (startWith(member.mTypeName, "Vector<"))
+		needCopyMemberList.push_back(member);
+	}
+	if (needCopyMemberList.size() > 0)
+	{
+		line(source, "\tauto* targetData = static_cast<" + dataClassName + "*>(target);");
+		for (const SQLiteMember& member : needCopyMemberList)
 		{
-			line(source, "\tm" + member.mMemberName + ".clone(targetData->m" + member.mMemberName + ");");
-		}
-		else
-		{
-			line(source, "\ttargetData->m" + member.mMemberName + " = m" + member.mMemberName + ";");
+			// 如果是列表则调用列表的clone
+			if (startWith(member.mTypeName, "Vector<"))
+			{
+				line(source, "\tm" + member.mMemberName + ".clone(targetData->m" + member.mMemberName + ");");
+			}
+			else
+			{
+				line(source, "\ttargetData->m" + member.mMemberName + " = m" + member.mMemberName + ";");
+			}
 		}
 	}
 	line(source, "}", false);
