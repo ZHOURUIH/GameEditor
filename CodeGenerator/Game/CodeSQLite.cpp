@@ -238,6 +238,27 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	{
 		return;
 	}
+	// 不含ID的成员字段列表
+	myVector<SQLiteMember> memberNoIDList;
+	for (const SQLiteMember& member : sqliteInfo.mMemberList)
+	{
+		if (member.mMemberName == "ID")
+		{
+			continue;
+		}
+		memberNoIDList.push_back(member);
+	}
+	// 不含ID以及非服务器字段的成员字段列表
+	myVector<SQLiteMember> memberUsedInServerNoIDList;
+	for (const SQLiteMember& member : memberNoIDList)
+	{
+		if (member.mOwner != SQLITE_OWNER::SERVER_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
+		{
+			continue;
+		}
+		memberUsedInServerNoIDList.push_back(member);
+	}
+
 	// TDSQLite.h
 	string header;
 	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
@@ -250,24 +271,39 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "{");
 	line(header, "\tBASE(SQLiteData);");
 	line(header, "public:");
-	for (const SQLiteMember& member : sqliteInfo.mMemberList)
+	for (const SQLiteMember& member : memberNoIDList)
 	{
-		if (member.mMemberName == "ID")
-		{
-			continue;
-		}
 		line(header, "\tstatic constexpr const char* " + member.mMemberName + " = STR(" + member.mMemberName + ");");
 	}
-	line(header, "public:");
-	for (const SQLiteMember& member : sqliteInfo.mMemberList)
+	if (memberUsedInServerNoIDList.size() > 0)
 	{
-		if (member.mMemberName == "ID")
+		line(header, "public:");
+		for (const SQLiteMember& member : memberUsedInServerNoIDList)
 		{
-			continue;
-		}
-		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
-		{
-			string memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + ";";
+			string memberLine;
+			if (member.mTypeName == "byte" ||
+				member.mTypeName == "char" ||
+				member.mTypeName == "ushort" ||
+				member.mTypeName == "short" ||
+				member.mTypeName == "int" ||
+				member.mTypeName == "uint" ||
+				member.mTypeName == "llong" ||
+				member.mTypeName == "ullong")
+			{
+				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = 0;";
+			}
+			else if (member.mTypeName == "bool")
+			{
+				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = false;";
+			}
+			else if (member.mTypeName == "float")
+			{
+				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = 0.0f;";
+			}
+			else
+			{
+				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + ";";
+			}
 			uint tabCount = generateAlignTableCount(memberLine, 40);
 			FOR_I(tabCount)
 			{
@@ -280,12 +316,8 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "public:");
 	line(header, "\t" + dataClassName + "()");
 	line(header, "\t{");
-	for (const SQLiteMember& member : sqliteInfo.mMemberList)
+	for (const SQLiteMember& member : memberNoIDList)
 	{
-		if (member.mMemberName == "ID")
-		{
-			continue;
-		}
 		const string& name = member.mMemberName;
 		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
 		{
@@ -305,12 +337,8 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	string source;
 	line(source, "#include \"" + dataClassName + ".h\"");
 	line(source, "");
-	for (const SQLiteMember& member : sqliteInfo.mMemberList)
+	for (const SQLiteMember& member : memberNoIDList)
 	{
-		if (member.mMemberName == "ID")
-		{
-			continue;
-		}
 		line(source, "constexpr const char* " + dataClassName + "::" + member.mMemberName + ";");
 	}
 	line(source, "");
@@ -318,23 +346,10 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(source, "{");
 	line(source, "\tbase::clone(target);");
 	// 先检查一下有没有需要拷贝的属性
-	myVector<SQLiteMember> needCopyMemberList;
-	for (const SQLiteMember& member : sqliteInfo.mMemberList)
-	{
-		if (member.mMemberName == "ID")
-		{
-			continue;
-		}
-		if (member.mOwner != SQLITE_OWNER::SERVER_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
-		needCopyMemberList.push_back(member);
-	}
-	if (needCopyMemberList.size() > 0)
+	if (memberUsedInServerNoIDList.size() > 0)
 	{
 		line(source, "\tauto* targetData = static_cast<" + dataClassName + "*>(target);");
-		for (const SQLiteMember& member : needCopyMemberList)
+		for (const SQLiteMember& member : memberUsedInServerNoIDList)
 		{
 			// 如果是列表则调用列表的clone
 			if (startWith(member.mTypeName, "Vector<"))
@@ -574,12 +589,12 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		{
 			continue;
 		}
-		string typeName = convertToCSharpType(memberInfo.mTypeName);
-		// 不在客户端使用的则不读取,仅仅使用占位符
+		// 不在客户端使用的则不读取
 		if (memberInfo.mOwner != SQLITE_OWNER::CLIENT_ONLY && memberInfo.mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
+		string typeName = convertToCSharpType(memberInfo.mTypeName);
 		if (typeName == "string")
 		{
 			line(file, "\t\treader.readString(out m" + memberInfo.mMemberName + ");");
