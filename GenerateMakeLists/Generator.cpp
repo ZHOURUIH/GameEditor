@@ -1,34 +1,30 @@
 #include "Generator.h"
 
-myMap<string, string> Generator::readConfig(const string& configPath)
+myMap<string, myMap<string, string>> Generator::readConfig(const string& configPath)
 {
 	myVector<string> lines;
 	openTxtFileLines(configPath, lines, false);
-	myMap<string, string> configList;
+	myMap<string, myMap<string, string>> configList;
+	string curCMakeFile;
 	FOR_VECTOR(lines)
 	{
 		myVector<string> params;
 		split(lines[i].c_str(), "=", params);
-		if (params.size() == 2)
+		if (params.size() != 2)
 		{
-			configList.insert(params[0], params[1]);
+			continue;
 		}
+		if (params[0] == "CMakeListsPath")
+		{
+			curCMakeFile = params[1];
+			configList.insert(curCMakeFile, myMap<string, string>());
+			continue;
+		}
+
+		configList[curCMakeFile].insert(params[0], params[1]);
 	}
 	END(lines);
 	return configList;
-}
-
-myVector<string> Generator::generateDirectory(const string& path, const myVector<string>& exceptList)
-{
-	myVector<string> newExceptList;
-	FOR_VECTOR_CONST(exceptList)
-	{
-		newExceptList.push_back(path + "/" + exceptList[i]);
-	}
-	myVector<string> pathList;
-	findFolders(path, pathList, true);
-	removeIgnorePath(pathList, newExceptList);
-	return pathList;
 }
 
 void Generator::removeIgnorePath(myVector<string>& pathList, const myVector<string>& ignoreList)

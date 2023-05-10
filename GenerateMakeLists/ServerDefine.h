@@ -33,6 +33,7 @@ using namespace std;
 // Á´½Ó¾²Ì¬¿â
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "shlwapi.lib")
 #ifdef _MYSQL
 #pragma comment(lib, "libmysql.lib")
 #endif
@@ -52,6 +53,7 @@ using namespace std;
 #include <winsock.h>
 #include <tlhelp32.h>
 #include <dbghelp.h>
+#include <shlwapi.h>
 #endif
 #if RUN_PLATFORM == PLATFORM_LINUX
 #include <netinet/in.h>

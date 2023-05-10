@@ -6,9 +6,7 @@
 class Generator : public FrameUtility
 {
 public:
-	static myMap<string, string> readConfig(const string& configPath);
-	static myVector<string> generateDirectory(const string& path, const myVector<string>& exceptList);
-protected:
+	static myMap<string, myMap<string, string>> readConfig(const string& configPath);
 	static void removeIgnorePath(myVector<string>& pathList, const myVector<string>& ignoreList);
 };
 

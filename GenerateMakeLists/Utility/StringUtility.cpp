@@ -26,6 +26,38 @@ void StringUtility::removeLastComma(string& stream)
 	}
 }
 
+string StringUtility::toFullPath(const string& relativePath)
+{
+	char absPath[_MAX_PATH];
+	_fullpath(absPath, relativePath.c_str(), _MAX_PATH);
+	return absPath;
+}
+
+string StringUtility::toRelativePath(const string& fullPath, const string& relativeTo)
+{
+	if (relativeTo.length() == 0)
+	{
+		return fullPath;
+	}
+	string newFullPath = fullPath;
+	string newRelativeTo = relativeTo;
+	leftToRight(newFullPath);
+	leftToRight(newRelativeTo);
+	if (newRelativeTo[newRelativeTo.length() - 1] != '\\')
+	{
+		newRelativeTo += "\\";
+	}
+	char relativePath[MAX_PATH];
+	PathRelativePathToA(relativePath, newRelativeTo.c_str(), FILE_ATTRIBUTE_DIRECTORY, newFullPath.c_str(), FILE_ATTRIBUTE_NORMAL);
+	string finalPath = relativePath;
+	rightToLeft(finalPath);
+	if (finalPath.length() >= strlen("./") && finalPath.substr(0, strlen("./")) == "./")
+	{
+		finalPath = finalPath.substr(strlen("./"));
+	}
+	return finalPath;
+}
+
 string StringUtility::getFileName(string str)
 {
 	rightToLeft(str);

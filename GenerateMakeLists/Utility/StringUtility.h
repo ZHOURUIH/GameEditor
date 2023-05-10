@@ -9,6 +9,8 @@ public:
 	static string removeSuffix(const string& str);
 	// 去掉最后一个逗号
 	static void removeLastComma(string& stream);
+	static string toFullPath(const string& relativePath);
+	static string toRelativePath(const string& fullPath, const string& relativeTo);
 	static string getFileName(string str);
 	static string getFileNameNoSuffix(string str, bool removePath);
 	static string getFilePath(const string& dir);
@@ -903,7 +905,9 @@ public:
 		}
 		return value;
 	}
+	// 将\\转换为/
 	static void rightToLeft(string& str);
+	// 将/转换为反斜杠
 	static void leftToRight(string& str);
 	// 将字符串全部转为小写再查找
 	static bool findStringLower(const string& res, const string& sub, int* pos = NULL, uint startIndex = 0, bool direction = true);
