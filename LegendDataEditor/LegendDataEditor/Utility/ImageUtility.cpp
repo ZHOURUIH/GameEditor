@@ -750,7 +750,6 @@ void ImageUtility::writeAnimFrameSQLite()
 			// 此处多一层目录是因为一般一个图集都会在单独的目录中,且此目录与图集同名
 			animationData.mAtlas = folders[i].substr(strlen("../media/")) + ".png";
 			animationData.mAnimation = iter->first;
-			animationData.mFrameCount = iter->second.first.size();
 			valueToList(iter->second.first, animationData.mPosX);
 			valueToList(iter->second.second, animationData.mPosY);
 			TDImagePositionAnimation existData;
@@ -1861,7 +1860,14 @@ void ImageUtility::printMapSize(const string& filePath)
 void ImageUtility::mapFileToTxt(const string& filePath)
 {
 	MapData mapData;
-	mapData.readFile(filePath);
+	if (endWith(filePath, ".map"))
+	{
+		mapData.readFile(filePath);
+	}
+	else
+	{
+		mapData.readFile(filePath + ".map");
+	}
 	string str = mapData.mHeader->toString();
 	str += "\n";
 	FOR_I(mapData.mTileCount)
@@ -1877,7 +1883,19 @@ void ImageUtility::mapFileToTxt(const string& filePath)
 void ImageUtility::txtToMapFile(const string& filePath)
 {
 	myVector<string> lines;
-	openTxtFileLines(filePath, lines, false);
+	if (endWith(filePath, ".txt"))
+	{
+		openTxtFileLines(filePath, lines, false);
+	}
+	else
+	{
+		openTxtFileLines(filePath + ".txt", lines, false);
+	}
+	if (lines.size() == 0)
+	{
+		cout << "找不到文件:" << filePath << endl;
+		return;
+	}
 	MapData mapData;
 	mapData.mHeader->parseString(lines[0]);
 	mapData.createTilesByHeader();

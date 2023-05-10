@@ -33,6 +33,7 @@ bool SQLiteTableBase::executeNonQuery(const char* queryString)
 	sqlite3_stmt* stmt = NULL;
 	if (sqlite3_prepare_v2(mSQlite3, queryString, -1, &stmt, NULL) != SQLITE_OK)
 	{
+		cout << "错误信息:" << sqlite3_errmsg(mSQlite3) << endl;
 		return false;
 	}
 	sqlite3_step(stmt);
