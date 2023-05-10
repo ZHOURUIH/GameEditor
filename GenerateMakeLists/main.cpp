@@ -75,6 +75,5 @@ int main()
 		finalFile = StringUtility::ANSIToUTF8(finalFile.c_str(), true);
 		FileUtility::writeFileSimple(cmakeListsPath, finalFile);
 	}
-	system("pause");
 	return 0;
 }
