@@ -9,8 +9,7 @@ void CodeRank::generate()
 
 	string cppHeaderPath = cppGamePath + "RankSystem/";
 
-	string file;
-	openTxtFile("Rank.txt", file);
+	string file = openTxtFile("Rank.txt");
 	if (file.length() == 0)
 	{
 		ERROR("н╢урнд╪ЧRank.txt");

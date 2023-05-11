@@ -9,8 +9,7 @@ void CodeCondition::generate()
 	string csConditionFilePath = csRegisterPath + "Condition/";
 	string csConditionEnumPath = csHotfixGamePath + "Common/";
 
-	string conditionFile;
-	openTxtFile("Condition.txt", conditionFile);
+	string conditionFile = openTxtFile("Condition.txt");
 	if (conditionFile.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þCondition.txt");

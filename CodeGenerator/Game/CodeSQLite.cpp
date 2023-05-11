@@ -17,8 +17,7 @@ void CodeSQLite::generate()
 	string csTableDeclareHotFixPath = csHotfixGamePath + "Common/";
 
 	// 解析模板文件
-	string fileContent;
-	openTxtFile("SQLite.txt", fileContent);
+	string fileContent = openTxtFile("SQLite.txt");
 	if (fileContent.length() == 0)
 	{
 		ERROR("未找到表格格式文件SQLite.txt");

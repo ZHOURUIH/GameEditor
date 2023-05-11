@@ -9,8 +9,7 @@ void CodeFunctionParam::generate()
 
 	string cppHeaderPath = cppGamePath + "FunctionParam/";
 
-	string file;
-	openTxtFile("FunctionParam.txt", file);
+	string file = openTxtFile("FunctionParam.txt");
 	if (file.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þFunctionParam.txt");

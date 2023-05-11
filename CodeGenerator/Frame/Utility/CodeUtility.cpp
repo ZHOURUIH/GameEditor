@@ -2,8 +2,9 @@
 #include "Utility.h"
 
 string CodeUtility::ServerProjectPath;
-string CodeUtility::GameProjectPath;
-string CodeUtility::cppProjectPath;
+string CodeUtility::ClientProjectPath;
+string CodeUtility::cppGameProjectPath;
+string CodeUtility::cppFrameProjectPath;
 string CodeUtility::cppGamePath;
 string CodeUtility::cppFramePath;
 string CodeUtility::cppStringDefinePath;
@@ -35,12 +36,12 @@ bool CodeUtility::initPath()
 		}
 		else if (params[0] == "GAME_PROJECT_PATH")
 		{
-			GameProjectPath = params[1];
+			ClientProjectPath = params[1];
 		}
 	}
 	END(configLines);
 
-	if (ServerProjectPath == "" && GameProjectPath == "")
+	if (ServerProjectPath == "" && ClientProjectPath == "")
 	{
 		return false;
 	}
@@ -49,17 +50,18 @@ bool CodeUtility::initPath()
 	{
 		rightToLeft(ServerProjectPath);
 		validPath(ServerProjectPath);
-		cppProjectPath = ServerProjectPath + getFileName(ServerProjectPath.substr(0, ServerProjectPath.length() - 1)) + "/";
-		cppGamePath = cppProjectPath + "Game/";
-		cppFramePath = cppProjectPath + "Frame/";
+		cppGameProjectPath = ServerProjectPath + "MicroLegend_Server/";
+		cppFrameProjectPath = ServerProjectPath + "MicroLegend_Server_Frame/";
+		cppGamePath = cppGameProjectPath + "Game/";
+		cppFramePath = cppFrameProjectPath + "Frame/";
 		cppStringDefinePath = cppGamePath + "StringDefine/";
 	}
-	if (GameProjectPath.length() > 0)
+	if (ClientProjectPath.length() > 0)
 	{
-		rightToLeft(GameProjectPath);
-		validPath(GameProjectPath);
-		csGamePath = GameProjectPath + "Assets/Scripts/Game/";
-		csHotfixGamePath = GameProjectPath + "HotFix/Game/";
+		rightToLeft(ClientProjectPath);
+		validPath(ClientProjectPath);
+		csGamePath = ClientProjectPath + "Assets/Scripts/Game/";
+		csHotfixGamePath = ClientProjectPath + "HotFix/Game/";
 	}
 	return true;
 }

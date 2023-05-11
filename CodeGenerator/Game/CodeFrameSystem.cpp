@@ -9,8 +9,7 @@ void CodeFrameSystem::generate()
 
 	string cppHeaderPath = cppGamePath + "Common/";
 
-	string frameSystemFile;
-	openTxtFile("FrameSystem.txt", frameSystemFile);
+	string frameSystemFile = openTxtFile("FrameSystem.txt");
 	if (frameSystemFile.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þFrameSystem.txt");

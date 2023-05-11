@@ -8,8 +8,9 @@ class CodeUtility : public SystemUtility
 {
 protected:
 	static string ServerProjectPath;
-	static string GameProjectPath;
-	static string cppProjectPath;
+	static string ClientProjectPath;
+	static string cppGameProjectPath;
+	static string cppFrameProjectPath;
 	static string cppGamePath;
 	static string cppFramePath;
 	static string cppStringDefinePath;

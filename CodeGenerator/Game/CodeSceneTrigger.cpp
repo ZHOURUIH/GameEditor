@@ -9,8 +9,7 @@ void CodeSceneTrigger::generate()
 
 	string cppHeaderPath = cppGamePath + "SceneTriggerManager/";
 
-	string file;
-	openTxtFile("SceneTrigger.txt", file);
+	string file = openTxtFile("SceneTrigger.txt");
 	if (file.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼şSceneTrigger.txt");

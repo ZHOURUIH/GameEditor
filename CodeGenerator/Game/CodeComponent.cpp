@@ -9,8 +9,7 @@ void CodeComponent::generate()
 
 	const string cppRegisterPath = cppGamePath + "/Component/";
 
-	string stateFile;
-	openTxtFile("Component.txt", stateFile);
+	string stateFile = openTxtFile("Component.txt");
 	if (stateFile.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þComponent.txt");
