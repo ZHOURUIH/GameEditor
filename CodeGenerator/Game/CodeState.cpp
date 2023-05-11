@@ -9,8 +9,7 @@ void CodeState::generate()
 
 	string cppHeaderPath = cppGamePath + "Character/Component/StateMachine/";
 
-	string stateFile;
-	openTxtFile("State.txt", stateFile);
+	string stateFile = openTxtFile("State.txt");
 	if (stateFile.length() == 0)
 	{
 		ERROR("未找文件State.txt");
@@ -105,9 +104,14 @@ void CodeState::findCustomCode(const string& fullPath, myVector<string>& preCode
 		}
 	}
 	END(fileLines);
-	if (preCodeEnd < 0 || endCodeStart < 0)
+	if (preCodeEnd < 0)
 	{
-		ERROR("状态注册代码文件解析错误");
+		ERROR("状态注册代码文件解析错误,// buff状态关键字未找到,文件行数:" + intToString(fileLines.size()) + ":" + fullPath);
+		return;
+	}
+	if (endCodeStart < 0)
+	{
+		ERROR("状态注册代码文件解析错误,// 行为状态关键字未找到,文件行数:" + intToString(fileLines.size()) + ":" + fullPath);
 		return;
 	}
 	FOR_I(fileLinesCount)

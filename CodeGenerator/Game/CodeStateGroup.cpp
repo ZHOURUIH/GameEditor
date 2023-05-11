@@ -7,8 +7,7 @@ void CodeStateGroup::generate()
 		return;
 	}
 
-	string stateFile;
-	openTxtFile("StateGroup.txt", stateFile);
+	string stateFile = openTxtFile("StateGroup.txt");
 	if (stateFile.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼şStateGroup.txt");

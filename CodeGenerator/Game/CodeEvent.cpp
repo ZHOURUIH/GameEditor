@@ -10,8 +10,7 @@ void CodeEvent::generate()
 	string cppHeaderPath = cppGamePath + "EventSystem/";
 	string cppEventFilePath = cppHeaderPath + "Event/";
 
-	string cmdFile;
-	openTxtFile("Event.txt", cmdFile);
+	string cmdFile = openTxtFile("Event.txt");
 	if (cmdFile.length() == 0)
 	{
 		ERROR("未找文件Event.txt");
@@ -20,7 +19,7 @@ void CodeEvent::generate()
 	myVector<string> eventLineList;
 	split(cmdFile.c_str(), "\r\n", eventLineList);
 	myVector<pair<string, string>> eventList;
-	FOR_VECTOR(eventLineList)
+	FOR_VECTOR_CONST(eventLineList)
 	{
 		myVector<string> splitResult;
 		split(eventLineList[i].c_str(), "\t", splitResult);
@@ -30,16 +29,14 @@ void CodeEvent::generate()
 		}
 		eventList.push_back(make_pair(splitResult[0], splitResult[1]));
 	}
-	END(eventLineList);
 	// 生成StringDefineEvent文件
 	generateStringDefineEvent(eventList, cppStringDefinePath);
 	// 生成EventType.h文件
 	generateEventType(eventList, cppHeaderPath);
-	FOR_VECTOR(eventList)
+	FOR_VECTOR_CONST(eventList)
 	{
 		generateEventFile(eventList[i].first, cppEventFilePath);
 	}
-	END(eventList);
 }
 
 // StringDefineEvent.h和StringDefineEvent.cpp

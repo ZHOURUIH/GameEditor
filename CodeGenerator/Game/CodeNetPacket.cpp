@@ -12,15 +12,13 @@ void CodeNetPacket::generate()
 	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
 
 	// 解析模板文件
-	string csFileContent;
-	openTxtFile("PacketCS.txt", csFileContent);
+	string csFileContent = openTxtFile("PacketCS.txt");
 	if (csFileContent.length() == 0)
 	{
 		ERROR("未找到协议文件PacketCS.txt");
 		return;
 	}
-	string scFileContent;
-	openTxtFile("PacketSC.txt", scFileContent);
+	string scFileContent = openTxtFile("PacketSC.txt");
 	if (scFileContent.length() == 0)
 	{
 		ERROR("未找到协议文件PacketSC.txt");
@@ -232,40 +230,43 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "");
 	line(str, "#include \"FrameDefine.h\"");
 	line(str, "");
-	line(str, "enum class PACKET_TYPE : ushort");
+	line(str, "class PACKET_TYPE");
 	line(str, "{");
-	line(str, "\tMIN,");
+	line(str, "public:");
+	line(str, "\tconstexpr static ushort MIN = 0;");
 	line(str, "");
-	line(str, "\tGATE_CS_MIN = 1000,");
-	line(str, "\tGATE_CS_HEART_BEAT,");
-	line(str, "\tGATE_CS_SERVER_INFO,");
+	line(str, "\tconstexpr static ushort GATE_CS_MIN = 1000;");
+	line(str, "\tconstexpr static ushort GATE_CS_HEART_BEAT = 1001;");
+	line(str, "\tconstexpr static ushort GATE_CS_SERVER_INFO = 1002;");
 	line(str, "");
-	line(str, "\tGATE_SC_MIN = 1200,");
-	line(str, "\tGATE_SC_HEART_BEAT,");
+	line(str, "\tconstexpr static ushort GATE_SC_MIN = 1200;");
+	line(str, "\tconstexpr static ushort GATE_SC_HEART_BEAT = 1201;");
 	line(str, "");
-	line(str, "\tMAIL_CS_MIN = 1500,");
-	line(str, "\tMAIL_CS_HEART_BEAT,");
-	line(str, "\tMAIL_CS_SEND_MAIL,");
+	line(str, "\tconstexpr static ushort MAIL_CS_MIN = 1500;");
+	line(str, "\tconstexpr static ushort MAIL_CS_HEART_BEAT = 1501;");
+	line(str, "\tconstexpr static ushort MAIL_CS_SEND_MAIL = 1502;");
 	line(str, "");
-	line(str, "\tMAIL_SC_MIN = 2000,");
-	line(str, "\tMAIL_SC_HEART_BEAT,");
+	line(str, "\tconstexpr static ushort MAIL_SC_MIN = 2000;");
+	line(str, "\tconstexpr static ushort MAIL_SC_HEART_BEAT = 2001;");
 	line(str, "");
-	line(str, "\tCS_MIN = 3000,");
+	int csMinValue = 3000;
+	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
+			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++csMinValue) + ";");
 		}
 	}
 	line(str, "");
-	line(str, "\tSC_MIN = 6000,");
+	int scMinValue = 6000;
+	line(str, "\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\t" + packetNameToUpper(packetList[i].mPacketName) + ",");
+			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++scMinValue) + ";");
 		}
 	}
 	line(str, "};", false);
@@ -497,8 +498,7 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 int CodeNetPacket::findPacketVersion(const string& filePath)
 {
 	int packetVersion = 0;
-	string fileContent;
-	openTxtFile(filePath, fileContent);
+	string fileContent = openTxtFile(filePath);
 	myVector<string> lines;
 	split(fileContent.c_str(), "\r\n", lines);
 	FOR_VECTOR(lines)

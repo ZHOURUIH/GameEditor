@@ -7,8 +7,7 @@ void CodeObjectItem::generate()
 		return;
 	}
 
-	string stateFile;
-	openTxtFile("ObjectItem.txt", stateFile);
+	string stateFile = openTxtFile("ObjectItem.txt");
 	if (stateFile.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼şObjectItem.txt");

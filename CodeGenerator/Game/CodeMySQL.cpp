@@ -11,8 +11,7 @@ void CodeMySQL::generate()
 	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
 
 	// 解析模板文件
-	string fileContent;
-	openTxtFile("MySQL.txt", fileContent);
+	string fileContent = openTxtFile("MySQL.txt");
 	if (fileContent.length() == 0)
 	{
 		ERROR("未找到表格格式文件MySQL.txt");

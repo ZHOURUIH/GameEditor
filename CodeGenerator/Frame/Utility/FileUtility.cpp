@@ -506,27 +506,27 @@ void FileUtility::openFile(const string& filePath, FileContent& fileContent, boo
 	}
 }
 
-void FileUtility::openTxtFile(const string& filePath, string& fileContent, bool utf8ToANSI)
+string FileUtility::openTxtFile(const string& filePath, bool utf8ToANSI)
 {
 	FileContent file;
 	openFile(filePath, file, true);
-	if (file.mBuffer == NULL)
+	if (file.mBuffer == nullptr)
 	{
-		return;
+		return "";
 	}
-	fileContent.clear();
-	fileContent.append(file.mBuffer);
 	if (utf8ToANSI)
 	{
-		fileContent = UTF8ToANSI(fileContent.c_str(), true);
+		return UTF8ToANSI(file.mBuffer, true);
+	}
+	else
+	{
+		return file.mBuffer;
 	}
 }
 
 void FileUtility::openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool utf8ToANSI)
 {
-	string fileContent;
-	openTxtFile(filePath, fileContent, utf8ToANSI);
-	split(fileContent.c_str(), "\n", fileLines);
+	split(openTxtFile(filePath, utf8ToANSI).c_str(), "\n", fileLines);
 	FOR_VECTOR(fileLines)
 	{
 		removeAll(fileLines[i], '\r');

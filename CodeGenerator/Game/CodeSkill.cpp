@@ -9,8 +9,7 @@ void CodeSkill::generate()
 
 	string cppHeaderPath = cppGamePath + "Character/Component/Skill/";
 
-	string skillFile;
-	openTxtFile("Skill.txt", skillFile);
+	string skillFile = openTxtFile("Skill.txt");
 	if (skillFile.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þSkill.txt");

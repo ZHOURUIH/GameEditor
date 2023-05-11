@@ -10,8 +10,7 @@ void CodeAchivement::generate()
 	string cppHeaderPath = cppGamePath + "Achivement/";
 	string cppAchivementFilePath = cppHeaderPath + "Achivement/";
 
-	string file;
-	openTxtFile("Achivement.txt", file);
+	string file = openTxtFile("Achivement.txt");
 	if (file.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þAchivement.txt");

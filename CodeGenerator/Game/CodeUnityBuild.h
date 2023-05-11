@@ -9,7 +9,7 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppUnityBuild(const myVector<string>& fileList, const string& filePath);
+	static void generateCppUnityBuild(const string& filePath, const string& unityBuildFileName);
 protected:
 };
 

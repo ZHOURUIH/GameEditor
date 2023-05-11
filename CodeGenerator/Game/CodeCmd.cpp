@@ -9,8 +9,7 @@ void CodeCmd::generate()
 
 	string cppHeaderPath = cppGamePath + "CommandSystem/";
 
-	string cmdFile;
-	openTxtFile("Cmd.txt", cmdFile);
+	string cmdFile = openTxtFile("Cmd.txt");
 	if (cmdFile.length() == 0)
 	{
 		ERROR("н╢урнд╪ЧCmd.txt");

@@ -9,8 +9,7 @@ void CodeDTNode::generate()
 
 	const string cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
 
-	string file;
-	openTxtFile("DTNode.txt", file);
+	string file = openTxtFile("DTNode.txt");
 	if (file.length() == 0)
 	{
 		ERROR("Î´ÕÒÎÄ¼þDTNode.txt");

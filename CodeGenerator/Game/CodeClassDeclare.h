@@ -9,11 +9,10 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppFrameClassDeclare(const myVector<string>& classList, const string& filePath);
-	static void generateCppGameClassDeclare(const myVector<string>& classList, const string& filePath);
-	static void generateCppFrameHeader(const myVector<string>& headerList, const string& filePath);
-	static void generateCppGameHeader(const myVector<string>& headerList, const string& filePath);
+	static void generateCppFrameClassAndHeader(const string& path, const string& targetFilePath);
+	static void generateCppGameClassAndHeader(const string& path, const string& targetFilePath);
 protected:
+	static string findClassName(const string& line, const string& lastLine);
 };
 
 #endif

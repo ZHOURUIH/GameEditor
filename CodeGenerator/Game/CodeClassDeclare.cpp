@@ -7,16 +7,16 @@ void CodeClassDeclare::generate()
 		return;
 	}
 
-	string cppFrameDeclarePath = cppFramePath + "Common/";
-	string cppGameDeclarePath = cppGamePath + "Common/";
+	generateCppFrameClassAndHeader(cppFrameProjectPath, cppFramePath + "Common/");
+	generateCppGameClassAndHeader(cppGameProjectPath, cppGamePath + "Common/");
+}
 
+void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const string& targetFilePath)
+{
 	myVector<string> frameClassList;
-	myVector<string> gameClassList;
 	myVector<string> frameHeaderList;
-	myVector<string> gameHeaderList;
 	myVector<string> fileList;
-	myVector<string> patterns{".h"};
-	findFiles(cppProjectPath, fileList, patterns.data(), patterns.size());
+	findFiles(path, fileList, ".h");
 	FOR_VECTOR(fileList)
 	{
 		const string& fileName = fileList[i];
@@ -25,136 +25,142 @@ void CodeClassDeclare::generate()
 		{
 			continue;
 		}
-		bool isFrameOrGame = true;
-		if (findSubstr(fileName, "/Frame/") != NULL)
-		{
-			isFrameOrGame = true;
-		}
-		else if (findSubstr(fileName, "/Game/") != NULL)
-		{
-			isFrameOrGame = false;
-		}
-		else
-		{
-			continue;
-		}
 		string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
-		if (isFrameOrGame)
+		if (fileNameNoSuffix != "FrameHeader")
 		{
-			if (fileNameNoSuffix != "FrameHeader")
-			{
-				frameHeaderList.push_back(fileNameNoSuffix);
-			}
+			frameHeaderList.push_back(getFileName(fileName));
 		}
-		else
-		{
-			// StringDefine的各个头文件是仅在StringDefine.h中包含的,所以不能在其他地方再次包含,否则linux下编译会报大量警告,相当于所有的源文件都定义了大量的未使用变量
-			if (fileNameNoSuffix != "GameHeader" && 
-				(!startWith(fileNameNoSuffix, "StringDefine") || fileNameNoSuffix == "StringDefine") && 
-				fileNameNoSuffix != "MySQLInstanceDeclare" && 
-				fileNameNoSuffix != "MySQLInstanceClear" &&
-				fileNameNoSuffix != "SQLiteInstanceDeclare" && 
-				fileNameNoSuffix != "SQLiteInstanceClear" &&
-				fileNameNoSuffix != "FrameSystemDeclare" &&
-				fileNameNoSuffix != "SQLiteSTLPoolRegister" &&
-				fileNameNoSuffix != "FrameSystemGet" &&
-				fileNameNoSuffix != "FrameSystemClear" &&
-				fileNameNoSuffix != "FrameSystemRegiste")
-			{
-				gameHeaderList.push_back(fileNameNoSuffix);
-			}
-		}
-		string fileContent;
-		openTxtFile(fileName, fileContent);
 		myVector<string> fileLines;
-		split(fileContent.c_str(), "\r\n", fileLines);
+		split(openTxtFile(fileName).c_str(), "\r\n", fileLines);
 		uint lineCount = fileLines.size();
 		FOR_J(lineCount)
 		{
-			if (startWith(fileLines[j], "class ") && 
-				findSubstr(fileLines[j], ";") == NULL && 
-				j > 0 && 
-				findSubstr(fileLines[j - 1], "template") == NULL)
+			string className = findClassName(fileLines[j], j > 0 ? fileLines[j - 1] : EMPTY_STRING);
+			if (!className.empty())
 			{
-				int nameStartIndex = (int)strlen("class ");
-				int index = 0;
-				findSubstr(fileLines[j], " ", &index, nameStartIndex);
-				if (isFrameOrGame)
-				{
-					frameClassList.push_back(fileLines[j].substr(nameStartIndex, index - nameStartIndex));
-				}
-				else
-				{
-					gameClassList.push_back(fileLines[j].substr(nameStartIndex, index - nameStartIndex));
-				}
+				frameClassList.push_back(className);
 			}
 		}
 	}
 	END(fileList);
 
-	generateCppFrameClassDeclare(frameClassList, cppFrameDeclarePath);
-	generateCppGameClassDeclare(gameClassList, cppGameDeclarePath);
-	generateCppFrameHeader(frameHeaderList, cppFrameDeclarePath);
-	generateCppGameHeader(gameHeaderList, cppGameDeclarePath);
-}
+	// FrameClassDeclare.cpp
+	string str1;
+	line(str1, "#pragma once");
+	line(str1, "");
+	uint count0 = frameClassList.size();
+	FOR_I(count0)
+	{
+		line(str1, "class " + frameClassList[i] + ";", i != count0 - 1);
+	}
+	writeFile(targetFilePath + "FrameClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
 
-// FrameClassDeclare.cpp
-void CodeClassDeclare::generateCppFrameClassDeclare(const myVector<string>& classList, const string& filePath)
-{
+	// FrameHeader.h
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
-	uint count = classList.size();
-	FOR_I(count)
+	uint count1 = frameHeaderList.size();
+	FOR_I(count1)
 	{
-		line(str0, "class " + classList[i] + ";");
+		line(str0, "#include \"" + frameHeaderList[i] + "\"", i != count1 - 1);
 	}
-
-	writeFile(filePath + "FrameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
+	writeFile(targetFilePath + "FrameHeader.h", ANSIToUTF8(str0.c_str(), true));
 }
 
-// GameClassDeclare.cpp
-void CodeClassDeclare::generateCppGameClassDeclare(const myVector<string>& classList, const string& filePath)
+void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const string& targetFilePath)
 {
-	string str0;
-	line(str0, "#pragma once");
-	line(str0, "");
-	uint count = classList.size();
-	FOR_I(count)
+	myVector<string> gameClassList;
+	myVector<string> gameHeaderList;
+	myVector<string> fileList;
+	findFiles(path, fileList, ".h");
+	FOR_VECTOR(fileList)
 	{
-		line(str0, "class " + classList[i] + ";");
+		const string& fileName = fileList[i];
+		string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
+
+		// StringDefine的各个头文件是仅在StringDefine.h中包含的,所以不能在其他地方再次包含,否则linux下编译会报大量警告,相当于所有的源文件都定义了大量的未使用变量
+		if (fileNameNoSuffix != "GameHeader" &&
+			(!startWith(fileNameNoSuffix, "StringDefine") || fileNameNoSuffix == "StringDefine") &&
+			fileNameNoSuffix != "MySQLInstanceDeclare" &&
+			fileNameNoSuffix != "MySQLInstanceClear" &&
+			fileNameNoSuffix != "SQLiteInstanceDeclare" &&
+			fileNameNoSuffix != "SQLiteInstanceClear" &&
+			fileNameNoSuffix != "FrameSystemDeclare" &&
+			fileNameNoSuffix != "SQLiteSTLPoolRegister" &&
+			fileNameNoSuffix != "FrameSystemGet" &&
+			fileNameNoSuffix != "FrameSystemClear" &&
+			fileNameNoSuffix != "FrameSystemRegiste")
+		{
+			gameHeaderList.push_back(getFileName(fileName));
+		}
+		myVector<string> fileLines;
+		split(openTxtFile(fileName).c_str(), "\r\n", fileLines);
+		uint lineCount = fileLines.size();
+		FOR_J(lineCount)
+		{
+			string className = findClassName(fileLines[j], j > 0 ? fileLines[j - 1] : EMPTY_STRING);
+			if (!className.empty())
+			{
+				gameClassList.push_back(className);
+			}
+		}
 	}
+	END(fileList);
 
-	writeFile(filePath + "GameClassDeclare.h", ANSIToUTF8(str0.c_str(), true));
-}
-
-// FrameHeader.h
-void CodeClassDeclare::generateCppFrameHeader(const myVector<string>& headerList, const string& filePath)
-{
-	string str0;
-	line(str0, "#pragma once");
-	line(str0, "");
-	uint count = headerList.size();
-	FOR_I(count)
+	// GameClassDeclare.cpp
+	string str1;
+	line(str1, "#pragma once");
+	line(str1, "");
+	uint count0 = gameClassList.size();
+	FOR_I(count0)
 	{
-		line(str0, "#include \"" + headerList[i] + ".h\"");
+		line(str1, "class " + gameClassList[i] + ";", i != count0 - 1);
 	}
+	writeFile(targetFilePath + "GameClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
 
-	writeFile(filePath + "FrameHeader.h", ANSIToUTF8(str0.c_str(), true));
-}
-
-// GameHeader.h
-void CodeClassDeclare::generateCppGameHeader(const myVector<string>& headerList, const string& filePath)
-{
+	// GameHeader.h
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
 	line(str0, "#include \"FrameHeader.h\"");
-	uint count = headerList.size();
-	FOR_I(count)
+	uint count1 = gameHeaderList.size();
+	FOR_I(count1)
 	{
-		line(str0, "#include \"" + headerList[i] + ".h\"");
+		line(str0, "#include \"" + gameHeaderList[i] + "\"", i != count1 - 1);
 	}
+	writeFile(targetFilePath + "GameHeader.h", ANSIToUTF8(str0.c_str(), true));
+}
 
-	writeFile(filePath + "GameHeader.h", ANSIToUTF8(str0.c_str(), true));
+string CodeClassDeclare::findClassName(const string& line, const string& lastLine)
+{
+	if (startWith(line, "class ") &&
+		!findSubstr(line, ";") &&
+		!findSubstr(lastLine, "template"))
+	{
+		// 截取出:前面的字符串
+		int colonPos = (int)line.find(':');
+		// 有:,最靠近:的才是类名
+		if (colonPos != -1)
+		{
+			myVector<string> elements;
+			split(line.substr(0, colonPos).c_str(), " ", elements);
+			if (elements.size() == 0)
+			{
+				return "";
+			}
+			return elements[elements.size() - 1];
+		}
+		// 没有:,则最后一个元素是类名
+		else
+		{
+			myVector<string> elements;
+			split(line.c_str(), " ", elements);
+			if (elements.size() == 0)
+			{
+				return "";
+			}
+			return elements[elements.size() - 1];
+		}
+	}
+	return "";
 }
