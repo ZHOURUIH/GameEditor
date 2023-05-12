@@ -2089,7 +2089,8 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 	}
 
 	offset.x = left - (oldWidth >> 1);
-	offset.y = top - ((oldHeight >> 1) - newHeight);
+	// 由于坐标系的原因,y轴需要取反
+	offset.y = -(top - ((oldHeight >> 1) - newHeight));
 	FreeImage_Save(format, newBitmap, newFileName.c_str());
 	FreeImage_Unload(newBitmap);
 	FreeImage_Unload(oldBitmap);
