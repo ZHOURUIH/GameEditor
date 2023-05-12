@@ -130,10 +130,6 @@ class Program
 				findFolders(thisPath, folders);
 				foreach (string folder in folders)
 				{
-					if (folder.Contains("libevent"))
-					{
-						int a = 0;
-					}
 					if (excludePath.Contains(folder))
 					{
 						continue;
