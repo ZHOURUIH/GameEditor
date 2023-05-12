@@ -3,6 +3,7 @@
 
 string CodeUtility::ServerProjectPath;
 string CodeUtility::ClientProjectPath;
+myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::cppGameProjectPath;
 string CodeUtility::cppFrameProjectPath;
 string CodeUtility::cppGamePath;
@@ -37,6 +38,11 @@ bool CodeUtility::initPath()
 		else if (params[0] == "GAME_PROJECT_PATH")
 		{
 			ClientProjectPath = params[1];
+		}
+		else if (params[0] == "SERVER_EXCLUDE_INCLUDE_PATH")
+		{
+			rightToLeft(params[1]);
+			split(params[1].c_str(), ",", ServerExcludeIncludePath);
 		}
 	}
 	END(configLines);

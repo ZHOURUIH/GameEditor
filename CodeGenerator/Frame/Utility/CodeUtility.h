@@ -9,6 +9,7 @@ class CodeUtility : public SystemUtility
 protected:
 	static string ServerProjectPath;
 	static string ClientProjectPath;
+	static myVector<string> ServerExcludeIncludePath;
 	static string cppGameProjectPath;
 	static string cppFrameProjectPath;
 	static string cppGamePath;
