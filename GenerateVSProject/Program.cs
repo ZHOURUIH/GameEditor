@@ -25,31 +25,47 @@ class Program
 			return;
 		}
 		string[] lines = removeAll(Encoding.UTF8.GetString(bytes), '\r').Split('\n');
-		Dictionary<string, string> paramMap = new Dictionary<string, string>();
+		Dictionary<string, Dictionary<string, string>> paramMap = new Dictionary<string, Dictionary<string, string>>();
+		string curFlag = null;
 		foreach (string line in lines)
 		{
+			if (line == null || line.Length == 0)
+			{
+				continue;
+			}
+			if (line[0] == '[' && line[line.Length - 1] == ']')
+			{
+				curFlag = line;
+				paramMap.Add(curFlag, new Dictionary<string, string>());
+				continue;
+			}
+			if (curFlag == null)
+			{
+				continue;
+			}
 			string[] paramPair = line.Split('=');
 			if (paramPair.Length != 2)
 			{
 				continue;
 			}
-			paramMap.Add(paramPair[0], paramPair[1]);
+			paramMap[curFlag].Add(paramPair[0], paramPair[1]);
 		}
-		if (!paramMap.TryGetValue("ProjectFilePath", out string projectFilePath))
+		foreach (var item in paramMap)
 		{
-			Console.WriteLine("配置文件错误");
-			Console.Read();
-			return;
-		}
-		string[] projectFileList = projectFilePath.Split(',');
-		foreach (string file in projectFileList)
-		{
-			generateVCXProject(file);
-			generateVCXProjectFilters(file + ".filters");
+			if (!item.Value.TryGetValue("ProjectFilePath", out string projectFilePath))
+			{
+				Console.WriteLine("配置文件错误");
+				Console.Read();
+				return;
+			}
+			item.Value.TryGetValue("ProjectIncludePath", out string includePath);
+			item.Value.TryGetValue("ExcludePath", out string excludePath);
+			generateVCXProject(projectFilePath, includePath, new List<string>(excludePath.Split(',')));
+			generateVCXProjectFilters(projectFilePath + ".filters");
 		}
 	}
 	// projectPath需要是绝对路径
-	protected static void generateVCXProject(string fileName)
+	protected static void generateVCXProject(string fileName, string includePath, List<string> excludePath)
 	{
 		if (!fileName.EndsWith(".vcxproj"))
 		{
@@ -101,7 +117,75 @@ class Program
 			itemGroupNode.AppendChild(newNode);
 		}
 
+		// 解析附加包含目录
+		string allIncludePath = "";
+		foreach (string item in includePath.Split(','))
+		{
+			if (item[item.Length - 1] == '*')
+			{
+				// 去除/*
+				string thisPath = item.Substring(0, item.Length - 1);
+				allIncludePath += getRelativePath(projectPath, thisPath) + ";";
+				List<string> folders = new List<string>();
+				findFolders(thisPath, folders);
+				foreach (string folder in folders)
+				{
+					if (folder.Contains("libevent"))
+					{
+						int a = 0;
+					}
+					if (excludePath.Contains(folder))
+					{
+						continue;
+					}
+					List<string> tempFileList = new List<string>();
+					findFiles(folder, tempFileList, new List<string>() { ".h", ".cpp", ".c", ".inl" });
+					if (tempFileList.Count == 0)
+					{
+						continue;
+					}
+					allIncludePath += getRelativePath(projectPath, folder) + ";";
+				}
+			}
+			else
+			{
+				allIncludePath += item + ";";
+			}
+		}
+		allIncludePath = allIncludePath.Replace('\\', '/');
+		for (int i = 0; i < itemGroupNode.ChildNodes.Count; ++i)
+		{
+			XmlNode child = itemGroupNode.ChildNodes[i];
+			if (child.Name != "ItemDefinitionGroup")
+			{
+				continue;
+			}
+			XmlNode nodeCompile = child.SelectSingleNode("ns:ClCompile", nsMgr);
+			if (nodeCompile == null)
+			{
+				continue;
+			}
+			XmlNode nodeInclude = nodeCompile.SelectSingleNode("ns:AdditionalIncludeDirectories", nsMgr);
+			if (nodeInclude == null)
+			{
+				nodeInclude = doc.CreateElement("AdditionalIncludeDirectories", doc.DocumentElement.NamespaceURI);
+				nodeCompile.AppendChild(nodeInclude);
+			}
+			nodeInclude.InnerText = allIncludePath;
+		}
 		doc.Save(fileName);
+	}
+	protected static XmlNode findChild(XmlNode node, string name)
+	{
+		for (int i = 0; i < node.ChildNodes.Count; ++i)
+		{
+			XmlNode child = node.ChildNodes[i];
+			if (child.Name == name)
+			{
+				return child;
+			}
+		}
+		return null;
 	}
 	protected static void generateVCXProjectFilters(string fileName)
 	{
@@ -110,6 +194,27 @@ class Program
 		nsMgr.AddNamespace("ns", "http://schemas.microsoft.com/developer/msbuild/2003");
 
 		XmlNode itemGroupNode = doc.SelectSingleNode("/ns:Project", nsMgr);
+		Dictionary<string, string> filterGuid = new Dictionary<string, string>();
+		// 找到原来的filter的Guid
+		for (int i = 0; i < itemGroupNode.ChildNodes.Count; ++i)
+		{
+			var child = itemGroupNode.ChildNodes[i] as XmlElement;
+			if (child.Name != "ItemGroup")
+			{
+				continue;
+			}
+			int countInChild = child.ChildNodes.Count;
+			for (int j = 0; j < countInChild; ++j)
+			{
+				var innerChild = child.ChildNodes[j] as XmlElement;
+				if (innerChild.Name == "Filter")
+				{
+					XmlNode id = innerChild.SelectSingleNode("ns:UniqueIdentifier", nsMgr);
+					filterGuid.Add(innerChild.GetAttribute("Include"), id.InnerText);
+				}
+			}
+		}
+
 		// 删除有ClInclude或者Filter的ItemGroup
 		DeleteChildWithInnerChild(itemGroupNode, "ItemGroup", new List<string>() { "ClInclude", "Filter", "ClCompile" });
 
@@ -126,9 +231,17 @@ class Program
 				continue;
 			}
 			XmlElement filterNode = doc.CreateElement("Filter", doc.DocumentElement.NamespaceURI);
-			filterNode.SetAttribute("Include", dir.Remove(0, projectPath.Length).Replace('/', '\\'));
+			string filterPath = dir.Remove(0, projectPath.Length).Replace('/', '\\');
+			filterNode.SetAttribute("Include", filterPath);
 			XmlElement identifierNode = doc.CreateElement("UniqueIdentifier", doc.DocumentElement.NamespaceURI);
-			identifierNode.InnerText = Guid.NewGuid().ToString();
+			if (filterGuid.TryGetValue(filterPath, out string guid))
+			{
+				identifierNode.InnerText = guid;
+			}
+			else
+			{
+				identifierNode.InnerText = Guid.NewGuid().ToString();
+			}
 			filterNode.AppendChild(identifierNode);
 			filterItemGroup.AppendChild(filterNode);
 		}

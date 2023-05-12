@@ -1,12 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
 
 class Utility
 {
+	public static string getRelativePath(string basePath, string absolutePath)
+	{
+		if (string.IsNullOrEmpty(basePath))
+		{
+			return absolutePath;
+		}
+		if (string.IsNullOrEmpty(absolutePath))
+		{
+			return absolutePath;
+		}
+		if (basePath == absolutePath)
+		{
+			return "./";
+		}
+
+		Uri baseUri = new Uri(basePath);
+		Uri absoluteUri = new Uri(absolutePath);
+		Uri relativeUri = baseUri.MakeRelativeUri(absoluteUri);
+		string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+		return relativePath.Replace('/', Path.DirectorySeparatorChar);
+	}
 	// 目录是否存在,dir是绝对路径
 	public static bool isDirExist(string dir)
 	{
@@ -163,12 +184,19 @@ class Utility
 	}
 	public static XmlDocument openXML(string fileName)
 	{
+		if (!File.Exists(fileName))
+		{
+			Console.WriteLine("文件不存在:" + fileName);
+			Console.Read();
+			return null;
+		}
 		XmlDocument doc = new XmlDocument();
 		XmlReaderSettings settings = new XmlReaderSettings();
 		settings.IgnoreComments = true;
-		XmlReader reader = XmlReader.Create(fileName, settings);
-		doc.Load(reader);
-		reader.Close();
+		using (XmlReader reader = XmlReader.Create(fileName, settings))
+		{
+			doc.Load(reader);
+		}
 		return doc;
 	}
 	// 从node中删除指定的deleteChildName,不过只删除有子节点的名字为childWithInnerChild的deleteChildName
