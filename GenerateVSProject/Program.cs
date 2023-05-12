@@ -101,8 +101,7 @@ class Program
 			itemGroupNode.AppendChild(newNode);
 		}
 
-		string newFileName = projectPath + "new_" + getFileName(fileName);
-		doc.Save(newFileName);
+		doc.Save(fileName);
 	}
 	protected static void generateVCXProjectFilters(string fileName)
 	{
@@ -190,7 +189,6 @@ class Program
 			itemGroupNode.AppendChild(compileItemGroup);
 		}
 
-		string newFileName = projectPath + "new_" + getFileName(fileName);
-		doc.Save(newFileName);
+		doc.Save(fileName);
 	}
 }
