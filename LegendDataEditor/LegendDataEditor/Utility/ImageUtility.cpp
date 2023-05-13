@@ -1642,7 +1642,6 @@ void ImageUtility::checkMapTile(const string& path)
 void ImageUtility::autoFillHumanAnimationTable(const string& clothName, int startID)
 {
 	string animationName[HUMAN_ACTION_COUNT]{"攻击", "释放技能", "跑步", "走路", "死亡", "被击", "站立", "挖矿", "搜寻", "跳跃攻击", "野蛮冲撞"};
-	int frameCount[HUMAN_ACTION_COUNT]{6, 6, 6, 6, 4, 3, 4, 6, 2, 8, 6};
 	bool loop[HUMAN_ACTION_COUNT]{false, false, true, true, false, false, true, true, true, false, true};
 	float animationSpeed[HUMAN_ACTION_COUNT]{0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.35f, 0.7f};
 	int startIDOffset[HUMAN_ACTION_COUNT]{0 * DIRECTION_COUNT, 8 * DIRECTION_COUNT, 6 * DIRECTION_COUNT, 10 * DIRECTION_COUNT,
@@ -1655,10 +1654,8 @@ void ImageUtility::autoFillHumanAnimationTable(const string& clothName, int star
 		TDAnimation data;
 		data.mID = ++curAnimationID;
 		data.mDescription = clothName + "的" + animationName[i];
-		data.mFrameCount = frameCount[i];
 		data.mLoop = loop[i] ? 1 : 0;
 		data.mAnimationSpeed = animationSpeed[i];
-		data.mDirectionCount = DIRECTION_COUNT;
 		FOR_J(DIRECTION_COUNT)
 		{
 			data.mAnimationPosition.push_back(startID + startIDOffset[i] + j);
@@ -1670,7 +1667,6 @@ void ImageUtility::autoFillHumanAnimationTable(const string& clothName, int star
 void ImageUtility::autoFillMonsterAnimationTable(const string& monsterName, int startID)
 {
 	string animationName[MONSTER_ACTION_COUNT]{ "攻击", "死亡", "被击", "站立", "走路" };
-	int frameCount[MONSTER_ACTION_COUNT]{ 6, 10, 2, 4, 6 };
 	bool loop[MONSTER_ACTION_COUNT]{ false, false, false, true, true };
 	float animationSpeed[MONSTER_ACTION_COUNT]{ 0.2f, 0.3f, 0.08f, 0.08f, 0.16f };
 	int startIDOffset[MONSTER_ACTION_COUNT]{ 0 * DIRECTION_COUNT, 1 * DIRECTION_COUNT, 2 * DIRECTION_COUNT, 3 * DIRECTION_COUNT, 4 * DIRECTION_COUNT };
@@ -1681,10 +1677,8 @@ void ImageUtility::autoFillMonsterAnimationTable(const string& monsterName, int 
 		TDAnimation data;
 		data.mID = ++curAnimationID;
 		data.mDescription = monsterName + "的" + animationName[i];
-		data.mFrameCount = frameCount[i];
 		data.mLoop = loop[i] ? 1 : 0;
 		data.mAnimationSpeed = animationSpeed[i];
-		data.mDirectionCount = DIRECTION_COUNT;
 		FOR_J(DIRECTION_COUNT)
 		{
 			data.mAnimationPosition.push_back(startID + startIDOffset[i] + j);
