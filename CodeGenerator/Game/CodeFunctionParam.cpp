@@ -18,20 +18,20 @@ void CodeFunctionParam::generate()
 	myVector<string> list;
 	split(file.c_str(), "\r\n", list);
 	// 生成StringDefineFunctionParam文件
-	generateStringDefine(list, cppStringDefinePath);
+	generateStringDefine(list, cppGameStringDefineFile);
 	// 生成FunctionParamRegister文件
 	generateCppRegister(list, cppHeaderPath);
 }
 
 // FunctionParamRegister文件
-void CodeFunctionParam::generateCppRegister(const myVector<string>& list, const string& filePath)
+void CodeFunctionParam::generateCppRegister(const myVector<string>& paramList, const string& filePath)
 {
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
 	line(str0, "");
 	line(str0, "void FunctionParamRegister::registeAll()");
 	line(str0, "{");
-	for (const string& item : list)
+	for (const string& item : paramList)
 	{
 		line(str0, "\tGameBase::mFunctionParamFactoryManager->addFactory<" + item + ">(NAME(" + item + "));");
 	}
@@ -40,22 +40,21 @@ void CodeFunctionParam::generateCppRegister(const myVector<string>& list, const 
 	writeFile(filePath + "FunctionParamRegister.cpp", ANSIToUTF8(str0.c_str(), true));
 }
 
-// StringDefineFunctionParam.h和StringDefineFunctionParam.cpp
-void CodeFunctionParam::generateStringDefine(const myVector<string>& list, const string& filePath)
+void CodeFunctionParam::generateStringDefine(const myVector<string>& paramList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_FUNCTION_PARAM_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_FUNCTION_PARAM_H_");
-	line(header, "");
-	uint count = list.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// Event"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(list[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineFunctionParam.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : paramList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

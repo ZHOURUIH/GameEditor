@@ -30,7 +30,7 @@ void CodeEvent::generate()
 		eventList.push_back(make_pair(splitResult[0], splitResult[1]));
 	}
 	// 生成StringDefineEvent文件
-	generateStringDefineEvent(eventList, cppStringDefinePath);
+	generateStringDefineEvent(eventList, cppGameStringDefineFile);
 	// 生成EventType.h文件
 	generateEventType(eventList, cppHeaderPath);
 	FOR_VECTOR_CONST(eventList)
@@ -39,24 +39,23 @@ void CodeEvent::generate()
 	}
 }
 
-// StringDefineEvent.h和StringDefineEvent.cpp
-void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& eventList, const string& stringDefinePath)
+void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& eventList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_EVENT_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_EVENT_H_");
-	line(header, "");
-	uint cmdCount = eventList.size();
-	FOR_I(cmdCount)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// Event"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(eventList[i].first));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(stringDefinePath + "StringDefineEvent.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const auto& item : eventList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item.first));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // EventType.h

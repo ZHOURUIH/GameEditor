@@ -9,6 +9,7 @@ void CodeUnityBuild::generate()
 
 	// 生成UnityBuild.cpp文件
 	generateCppUnityBuild(cppGameProjectPath, "UnityBuild.cpp");
+	//generateCppUnityBuild(cppBattleCoreProjectPath, "UnityBuildBattleCore.cpp");
 	generateCppUnityBuild(cppFrameProjectPath, "UnityBuildFrame.cpp");
 }
 

@@ -106,10 +106,13 @@ void CodeMySQL::generate()
 		totalHeaderPath = totalHeaderPath.substr(0, totalHeaderPath.length() - 1);
 	}
 	totalHeaderPath = getFilePath(totalHeaderPath) + "/";
+	const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
+	const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
 	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
-	generateStringDefineMySQL(mysqlInfoList, cppStringDefinePath);
-	generateMySQLInstanceDeclare(mysqlInfoList, totalHeaderPath);
-	generateMySQLInstanceClear(mysqlInfoList, totalHeaderPath);
+	generateStringDefineMySQL(mysqlInfoList, cppGameStringDefineFile);
+	generateMySQLInstanceDeclare(mysqlInfoList, gameBaseHeaderPath);
+	generateMySQLInstanceDefine(mysqlInfoList, gameBaseSourcePath);
+	generateMySQLInstanceClear(mysqlInfoList, gameBaseSourcePath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -920,71 +923,76 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
-// StringDefineMySQL.h和StringDefineMySQL.cpp
-void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& filePath)
+void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_MYSQL_H_");
-	line(header, "#error \"特殊头文件,只能在StringDefine.h中被包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_MYSQL_H_");
-	line(header, "");
-	uint count = mysqlList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare("MD" + mysqlList[i].mMySQLClassName));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineMySQL.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const MySQLInfo& item : mysqlList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item.mMySQLClassName));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-// MySQLInstanceDeclare.h和MySQLInstanceDeclare.cpp
-void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& filePath)
+void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& gameBaseHeaderFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _MYSQL_INSTANCE_DECLARE_H_");
-	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
-	line(header, "#else");
-	line(header, "#define _MYSQL_INSTANCE_DECLARE_H_");
-	line(header, "");
-	uint count = mysqlList.size();
-	FOR_I(count)
+	// 更新GameBase.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
-		line(header, "static MySQL" + mysqlList[i].mMySQLClassName + "* mMySQL" + mysqlList[i].mMySQLClassName + ";");
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "MySQLInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
-
-	string cpp;
-	line(cpp, "");
-	line(cpp, "#include \"GameBase.h\"");
-	line(cpp, "");
-	FOR_I(count)
+	for (const MySQLInfo& info : mysqlList)
 	{
-		line(cpp, "MySQL" + mysqlList[i].mMySQLClassName + "* GameBase::mMySQL" + mysqlList[i].mMySQLClassName + ";");
+		codeList.insert(++lineStart, "static MySQL" + info.mMySQLClassName + "* mMySQL" + info.mMySQLClassName + ";");
 	}
-	writeFile(filePath + "MySQLInstanceDeclare.cpp", ANSIToUTF8(cpp.c_str(), true));
+	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-// MySQLInstanceClear.h
-void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, const string& filePath)
+void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList, const string& gameBaseSourceFile)
 {
-	string header;
-	line(header, "#ifdef _MYSQL_INSTANCE_CLEAR_H_");
-	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
-	line(header, "#else");
-	line(header, "#define _MYSQL_INSTANCE_CLEAR_H_");
-	line(header, "");
-	uint count = mysqlList.size();
-	FOR_I(count)
+	// 更新GameBase.cpp的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL Define"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
-		line(header, "mMySQL" + mysqlList[i].mMySQLClassName + " = nullptr;");
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "MySQLInstanceClear.h", ANSIToUTF8(header.c_str(), true));
+	for (const MySQLInfo& info : mysqlList)
+	{
+		codeList.insert(++lineStart, "MySQL" + info.mMySQLClassName + "* GameBase::mMySQL" + info.mMySQLClassName + ";");
+	}
+	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+}
+
+void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, const string& gameBaseSourceFile)
+{
+	// 更新GameBase.cpp的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL Clear"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
+	{
+		return;
+	}
+
+	for (const MySQLInfo& info : mysqlList)
+	{
+		codeList.insert(++lineStart, "mMySQL" + info.mMySQLClassName + " = nullptr;");
+	}
+	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

@@ -82,6 +82,7 @@
 #include <fcntl.h>
 #include <atomic>
 #include <array>
+#include <functional>
 // 部分平台未安装mysql,所以需要使用宏来判断是否需要编译mysql相关代码
 #ifdef _MYSQL
 #include <mysql.h>

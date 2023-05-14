@@ -18,29 +18,28 @@ void CodeDTNode::generate()
 	myVector<string> nodeLineList;
 	split(file.c_str(), "\r\n", nodeLineList);
 	// 生成StringDefineDTNode文件
-	generateStringDefine(nodeLineList, cppStringDefinePath);
+	generateStringDefine(nodeLineList, cppGameStringDefineFile);
 	// 生成DTNodeRegister.cpp文件
 	generateRegisterFile(nodeLineList, cppHeaderPath);
 }
 
-// StringDefineDTNode.h和StringDefineDTNode.cpp
-void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const string& stringDefinePath)
+void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_DTNODE_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_DTNODE_H_");
-	line(header, "");
-	uint count = nodeList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// DTNode"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(nodeList[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(stringDefinePath + "StringDefineDTNode.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : nodeList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // DTNodeRegister.h和DTNodeRegister.cpp

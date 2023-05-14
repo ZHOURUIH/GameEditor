@@ -18,25 +18,24 @@ void CodeSkill::generate()
 	myVector<string> skillList;
 	split(skillFile.c_str(), "\r\n", skillList);
 	// 生成StringDefineSkill文件
-	generateStringDefineSkill(skillList, cppStringDefinePath);
+	generateStringDefineSkill(skillList, cppGameStringDefineFile);
 }
 
-// StringDefineSkill.h和StringDefineSkill.cpp
-void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, const string& filePath)
+void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_SKILL_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_SKILL_H_");
-	line(header, "");
-	uint count = skillList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return findSubstr(codeLine, "// Skill"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(skillList[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineSkill.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : skillList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
