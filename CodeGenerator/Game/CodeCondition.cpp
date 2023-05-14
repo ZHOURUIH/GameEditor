@@ -17,8 +17,8 @@ void CodeCondition::generate()
 	}
 	myVector<string> conditionLineList;
 	split(conditionFile.c_str(), "\r\n", conditionLineList);
-	myVector<pair<string, string>> conditionList;
-	FOR_VECTOR(conditionLineList)
+	myVector<pair<string, string>> conditionPairList;
+	FOR_VECTOR_CONST(conditionLineList)
 	{
 		myVector<string> splitResult;
 		split(conditionLineList[i].c_str(), "\t", splitResult);
@@ -26,36 +26,33 @@ void CodeCondition::generate()
 		{
 			ERROR("条件文件解析错误:" + conditionLineList[i]);
 		}
-		conditionList.push_back(make_pair(splitResult[0], splitResult[1]));
+		conditionPairList.push_back(make_pair(splitResult[0], splitResult[1]));
 	}
-	END(conditionLineList);
 
 	if (cppGamePath.length() > 0)
 	{
 		// c++
 		// 生成ConditionRegister.h文件
-		generateCppRegisterFile(conditionList, cppHeaderPath);
+		generateCppRegisterFile(conditionPairList, cppHeaderPath);
 		// 生成CONDITION枚举
-		generateCppConditionEnum(conditionList, cppConditionEnumPath);
-		FOR_VECTOR(conditionList)
+		generateCppConditionEnum(conditionPairList, cppConditionEnumPath);
+		FOR_VECTOR_CONST(conditionPairList)
 		{
-			generateCppConditionFile(conditionList[i].first, cppConditionFilePath);
+			generateCppConditionFile(conditionPairList[i].first, cppConditionFilePath);
 		}
-		END(conditionList);
 	}
 
 	if (csHotfixGamePath.length() > 0)
 	{
 		// cs
 		// 生成ConditionRegister.cs文件
-		generateCSRegisterFile(conditionList, csRegisterPath);
+		generateCSRegisterFile(conditionPairList, csRegisterPath);
 		// 生成CONDITION枚举
-		generateCSConditionEnum(conditionList, csConditionEnumPath);
-		FOR_VECTOR(conditionList)
+		generateCSConditionEnum(conditionPairList, csConditionEnumPath);
+		FOR_VECTOR_CONST(conditionPairList)
 		{
-			generateCSConditionFile(conditionList[i].first, csConditionFilePath);
+			generateCSConditionFile(conditionPairList[i].first, csConditionFilePath);
 		}
-		END(conditionList);
 	}
 }
 

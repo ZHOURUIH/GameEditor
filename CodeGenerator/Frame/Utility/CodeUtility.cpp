@@ -5,10 +5,12 @@ string CodeUtility::ServerProjectPath;
 string CodeUtility::ClientProjectPath;
 myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::cppGameProjectPath;
+string CodeUtility::cppBattleCoreProjectPath;
 string CodeUtility::cppFrameProjectPath;
 string CodeUtility::cppGamePath;
+string CodeUtility::cppBattleCorePath;
 string CodeUtility::cppFramePath;
-string CodeUtility::cppStringDefinePath;
+string CodeUtility::cppGameStringDefineFile;
 string CodeUtility::csGamePath;
 string CodeUtility::csHotfixGamePath;
 string CodeUtility::START_FALG = "#start";
@@ -57,10 +59,12 @@ bool CodeUtility::initPath()
 		rightToLeft(ServerProjectPath);
 		validPath(ServerProjectPath);
 		cppGameProjectPath = ServerProjectPath + "MicroLegend_Server/";
+		cppBattleCoreProjectPath = ServerProjectPath + "MicroLegend_Server_BattleCore/";
 		cppFrameProjectPath = ServerProjectPath + "MicroLegend_Server_Frame/";
 		cppGamePath = cppGameProjectPath + "Game/";
+		cppBattleCorePath = cppBattleCoreProjectPath + "BattleCore/";
 		cppFramePath = cppFrameProjectPath + "Frame/";
-		cppStringDefinePath = cppGamePath + "StringDefine/";
+		cppGameStringDefineFile = cppGamePath + "StringDefine/StringDefine.h";
 	}
 	if (ClientProjectPath.length() > 0)
 	{
@@ -372,4 +376,79 @@ string CodeUtility::convertToCSharpType(const string& cppType)
 		return "long";
 	}
 	return cppType;
+}
+
+bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, 
+								const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch)
+{
+	openTxtFileLines(fullPath, codeList);
+	lineStart = -1;
+	int endCode = -1;
+	for (int i = 0; i < codeList.size(); ++i)
+	{
+		if (lineStart < 0 && startLineMatch(codeList[i]))
+		{
+			lineStart = i;
+			continue;
+		}
+		if (lineStart >= 0)
+		{
+			if (endLineMatch(codeList[i]))
+			{
+				endCode = i;
+				break;
+			}
+		}
+	}
+	if (lineStart < 0)
+	{
+		cout << "找不到代码特定起始段,文件名:" << fullPath << endl;
+		return false;
+	}
+	if (endCode < 0)
+	{
+		cout << "找不到代码特定结束段,文件名:" << fullPath << endl;
+		return false;
+	}
+	int removeLineCount = endCode - lineStart - 1;
+	for (int i = 0; i < removeLineCount; ++i)
+	{
+		codeList.erase(lineStart + 1);
+	}
+	return true;
+}
+
+myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const string& filePrefix, const LineMatchCallback& lineMatch)
+{
+	myVector<string> needDefineCmds;
+	myVector<string> cmdFiles;
+	findFiles(path, cmdFiles, ".h");
+	for (const string& fileName : cmdFiles)
+	{
+		if (!startWith(getFileName(fileName), filePrefix))
+		{
+			continue;
+		}
+		myVector<string> lines;
+		openTxtFileLines(fileName, lines);
+		for (const string& line : lines)
+		{
+			if (lineMatch(line))
+			{
+				needDefineCmds.push_back(getFileNameNoSuffix(fileName, true));
+				break;
+			}
+		}
+	}
+	return needDefineCmds;
+}
+
+string CodeUtility::codeListToString(const myVector<string>& codeList)
+{
+	string str;
+	for (int i = 0; i < codeList.size(); ++i)
+	{
+		line(str, codeList[i], i != codeList.size() - 1);
+	}
+	return str;
 }

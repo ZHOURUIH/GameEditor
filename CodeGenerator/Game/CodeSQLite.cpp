@@ -213,12 +213,14 @@ void CodeSQLite::generate()
 
 	if (cppGamePath.length() > 0)
 	{
-		// 在上一层目录生成SQLiteHeader.h文件
-		const string headerPath = getFilePath(cppDataPath) + "/";
-		generateCppSQLiteRegisteFile(sqliteInfoList, headerPath);
-		generateCppSQLiteInstanceDeclare(sqliteInfoList, headerPath);
-		generateCppSQLiteSTLPoolRegister(sqliteInfoList, headerPath);
-		generateCppSQLiteInstanceClear(sqliteInfoList, headerPath);
+		const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
+		const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
+		const string gameSTLPoolSourcePath = cppGamePath + "Common/GameSTLPoolRegister.cpp";
+		generateCppSQLiteRegisteFile(sqliteInfoList, getFilePath(cppDataPath) + "/");
+		generateCppSQLiteInstanceDeclare(sqliteInfoList, gameBaseHeaderPath);
+		generateCppSQLiteInstanceDefine(sqliteInfoList, gameBaseSourcePath);
+		generateCppSQLiteSTLPoolRegister(sqliteInfoList, gameSTLPoolSourcePath);
+		generateCppSQLiteInstanceClear(sqliteInfoList, gameBaseSourcePath);
 	}
 
 	if (csGamePath.length() > 0)
@@ -438,86 +440,95 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
-// SQLiteInstanceDeclare.h和SQLiteInstanceDeclare.cpp
-void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
+void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseHeaderFileName)
 {
-	string header;
-	line(header, "#ifdef _SQLITE_INSTANCE_DECLARE_H_");
-	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
-	line(header, "#else");
-	line(header, "#define _SQLITE_INSTANCE_DECLARE_H_");
-	line(header, "");
-	uint count = sqliteList.size();
-	FOR_I(count)
+	// 更新GameBase.h的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseHeaderFileName, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
-		line(header, "static SQLite" + sqliteList[i].mSQLiteName + "* mSQLite" + sqliteList[i].mSQLiteName + ";");
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "SQLiteInstanceDeclare.h", ANSIToUTF8(header.c_str(), true));
 
-	string source;
-	line(source, "");
-	line(source, "#include \"GameBase.h\"");
-	line(source, "");
-	FOR_I(count)
+	for (const SQLiteInfo& info : sqliteList)
 	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
+		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
-		line(source, "SQLite" + sqliteList[i].mSQLiteName + "* GameBase::mSQLite" + sqliteList[i].mSQLiteName + ";");
+		codeList.insert(++lineStart, "\tstatic SQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
 	}
-	writeFile(filePath + "SQLiteInstanceDeclare.cpp", ANSIToUTF8(source.c_str(), true));
+	writeFile(gameBaseHeaderFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+}
+
+void CodeSQLite::generateCppSQLiteInstanceDefine(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseCppFileName)
+{
+	// 更新GameBase.cpp的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseCppFileName, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite Define"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+	{
+		return;
+	}
+	for (const SQLiteInfo& info : sqliteList)
+	{
+		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
+		{
+			continue;
+		}
+		codeList.insert(++lineStart, "SQLite" + info.mSQLiteName + "* GameBase::mSQLite" + info.mSQLiteName + ";");
+	}
+	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // SQLiteSTLPoolRegister.h
-void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
+void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sqliteList, const string& gameSTLPoolFile)
 {
-	string header;
-	line(header, "#ifdef _SQLITE_STL_POOL_REGISTER_H_");
-	line(header, "#error \"特殊头文件,只能被GameSTLPoolRegister.cpp所包含\"");
-	line(header, "#else");
-	line(header, "#define _SQLITE_STL_POOL_REGISTER_H_");
-	line(header, "");
-	uint count = sqliteList.size();
-	FOR_I(count)
+	// 更新GameBase.h的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameSTLPoolFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite数据类型"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
+		return;
+	}
+	for (const SQLiteInfo& info : sqliteList)
+	{
+		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
-		line(header, "FrameBase::mVectorPoolManager->registeVectorPool<TD" + sqliteList[i].mSQLiteName + "*>();");
+		codeList.insert(++lineStart, "\tFrameBase::mVectorPoolManager->registeVectorPool<TD" + info.mSQLiteName + "*>();");
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "SQLiteSTLPoolRegister.h", ANSIToUTF8(header.c_str(), true));
+	writeFile(gameSTLPoolFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
+void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseCppFileName)
 {
-	string header;
-	line(header, "#ifdef _SQLITE_INSTANCE_CLEAR_H_");
-	line(header, "#error \"特殊头文件,只能被GameBase所包含\"");
-	line(header, "#else");
-	line(header, "#define _SQLITE_INSTANCE_CLEAR_H_");
-	line(header, "");
-	uint count = sqliteList.size();
-	FOR_I(count)
+	// 更新GameBase.cpp的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseCppFileName, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite Clear"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
+		return;
+	}
+
+	for (const SQLiteInfo& info : sqliteList)
+	{
+		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
 		{
 			continue;
 		}
-		line(header, "mSQLite" + sqliteList[i].mSQLiteName + " = nullptr;");
+		codeList.insert(++lineStart, "\tmSQLite" + info.mSQLiteName + " = nullptr;");
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "SQLiteInstanceClear.h", ANSIToUTF8(header.c_str(), true));
+	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // ExcelData.cs文件

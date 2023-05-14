@@ -82,7 +82,7 @@ void CodeSceneTrigger::generate()
 		modifierList.push_back(lineList[modifierStart + i]);
 	}
 	// 生成StringDefineSceneTrigger文件
-	generateStringDefine(triggerList, cppStringDefinePath);
+	generateStringDefine(triggerList, cppGameStringDefineFile);
 	// 生成SceneTriggerRegister文件
 	generateCppRegister(triggerList, modifierList, cppHeaderPath);
 }
@@ -113,21 +113,21 @@ void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, 
 	writeFile(filePath + "SceneTriggerRegister.cpp", ANSIToUTF8(str0.c_str(), true));
 }
 
-// StringDefineSceneTrigger.h和StringDefineSceneTrigger.cpp
-void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, const string& filePath)
+void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_SCENE_TRIGGER_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_SCENE_TRIGGER_H_");
-	line(header, "");
-	FOR_VECTOR_CONST(list)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// SceneTrigger"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(list[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineSceneTrigger.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : list)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

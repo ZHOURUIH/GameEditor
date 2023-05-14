@@ -4,6 +4,8 @@
 #include "SystemUtility.h"
 #include "GameDefine.h"
 
+typedef std::function<bool(const string& line)> LineMatchCallback;
+
 class CodeUtility : public SystemUtility
 {
 protected:
@@ -11,10 +13,12 @@ protected:
 	static string ClientProjectPath;
 	static myVector<string> ServerExcludeIncludePath;
 	static string cppGameProjectPath;
+	static string cppBattleCoreProjectPath;
 	static string cppFrameProjectPath;
 	static string cppGamePath;
+	static string cppBattleCorePath;
 	static string cppFramePath;
-	static string cppStringDefinePath;
+	static string cppGameStringDefineFile;
 	static string csGamePath;
 	static string csHotfixGamePath;
 	static string START_FALG;
@@ -26,7 +30,7 @@ public:
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
-	static string stringDeclare(const string& name) { return "static constexpr const char* NAME_DEF(" + name + ") = STR(" + name + ");"; }
+	static string stringDeclare(const string& name) { return "\tstatic constexpr const char* NAME_DEF(" + name + ") = STR(" + name + ");"; }
 	static string cppPushParamString(const PacketMember& memberInfo);
 	static string cppMemberDeclareString(const PacketMember& memberInfo);
 	static string cSharpPushParamString(const PacketMember& memberInfo);
@@ -34,6 +38,9 @@ public:
 	static string cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix);
 	static void parsePacketName(const string& line, PacketInfo& packetInfo);
 	static string convertToCSharpType(const string& cppType);
+	static bool findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch);
+	static string codeListToString(const myVector<string>& codeList);
+	static myVector<string> findTargetHeaderFile(const string& path, const string& filePrefix, const LineMatchCallback& lineMatch);
 	static void line(string& str, const string& line, bool returnLine = true) 
 	{
 		str += line;

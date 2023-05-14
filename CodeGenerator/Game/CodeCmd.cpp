@@ -7,36 +7,26 @@ void CodeCmd::generate()
 		return;
 	}
 
-	string cppHeaderPath = cppGamePath + "CommandSystem/";
-
-	string cmdFile = openTxtFile("Cmd.txt");
-	if (cmdFile.length() == 0)
-	{
-		ERROR("未找文件Cmd.txt");
-		return;
-	}
-	myVector<string> cmdList;
-	split(cmdFile.c_str(), "\r\n", cmdList);
-	// 生成StringDefineCmd文件
-	generateStringDefineCmd(cmdList, cppStringDefinePath);
+	myVector<string> needDefineCmds = findTargetHeaderFile(cppGameProjectPath, "Cmd", 
+									[](const string& line) { return findSubstr(line, " : public GameCommand"); });
+	generateStringDefineCmd(needDefineCmds, cppGameStringDefineFile);
 }
 
-// StringDefineCmd.h和StringDefineCmd.cpp
-void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, const string& filePath)
+void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_CMD_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_CMD_H_");
-	line(header, "");
-	uint count = cmdList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// Cmd"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(cmdList[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineCmd.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : cmdList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

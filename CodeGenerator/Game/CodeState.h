@@ -8,10 +8,8 @@ class CodeState : public CodeUtility
 public:
 	static void generate();
 protected:
-	static void generateStringDefineState(const myVector<string>& stateList, const string& filePath);
+	static void generateStringDefineState(const myVector<string>& stateList, const string& stringDefineFile);
 	static void generateStateRegister(const myVector<string>& stateList, const string& filePath);
-protected:
-	static void findCustomCode(const string& fullPath, myVector<string>& preCodeList, myVector<string>& endCodeList);
 };
 
 #endif

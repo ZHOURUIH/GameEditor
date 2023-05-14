@@ -134,7 +134,7 @@ void CodeNetPacket::generate()
 	{
 		generateCppPacketDefineFile(packetInfoList, cppPacketDefinePath);
 		generateCppPacketRegisteFile(packetInfoList, cppPacketDefinePath, packetVersion);
-		generateStringDefinePacket(packetList, cppStringDefinePath);
+		generateStringDefinePacket(packetList, cppGameStringDefineFile);
 
 		// 删除无用的消息
 		// c++ CS
@@ -336,24 +336,23 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	writeFile(filePath + "PacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
 }
 
-// StringDefinePacket.h和StringDefinePacket.cpp
-void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetList, const string& filePath)
+void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_PACKET_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_PACKET_H_");
-	line(header, "");
-	uint count = packetList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// MySQL"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(packetList[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefinePacket.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : packetList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // CSPacket.h和CSPacket.cpp

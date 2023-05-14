@@ -16,25 +16,24 @@ void CodeStateGroup::generate()
 	myVector<string> stateList;
 	split(stateFile.c_str(), "\r\n", stateList);
 	// 生成StringDefine文件
-	generateStringDefineStateGroup(stateList, cppStringDefinePath);
+	generateStringDefineStateGroup(stateList, cppGameStringDefineFile);
 }
 
-// StringDefineStateGroup.h和StringDefineStateGroup.cpp
-void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stateList, const string& filePath)
+void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stateList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_STATE_GROUP_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_STATE_GROUP_H_");
-	line(header, "");
-	uint count = stateList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// StateGroup"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(stateList[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineStateGroup.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : stateList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

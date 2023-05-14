@@ -16,25 +16,24 @@ void CodeObjectItem::generate()
 	myVector<string> stateList;
 	split(stateFile.c_str(), "\r\n", stateList);
 	// 生成StringDefine文件
-	generateStringDefineObjectItem(stateList, cppStringDefinePath);
+	generateStringDefineObjectItem(stateList, cppGameStringDefineFile);
 }
 
-// StringDefineObjectItem.h和StringDefineObjectItem.cpp
-void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& filePath)
+void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& stringDefineFile)
 {
-	// 头文件
-	string header;
-	line(header, "#ifdef _STRING_DEFINE_OBJECT_ITEM_H_");
-	line(header, "#error \"特殊头文件,只能被StringDefine.h所包含\"");
-	line(header, "#else");
-	line(header, "#define _STRING_DEFINE_OBJECT_ITEM_H_");
-	line(header, "");
-	uint count = objectItemList.size();
-	FOR_I(count)
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(stringDefineFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// ObjectItem"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(header, stringDeclare(objectItemList[i]));
+		return;
 	}
-	line(header, "");
-	line(header, "#endif", false);
-	writeFile(filePath + "StringDefineObjectItem.h", ANSIToUTF8(header.c_str(), true));
+
+	for (const string& item : objectItemList)
+	{
+		codeList.insert(++lineStart, stringDeclare(item));
+	}
+	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

@@ -9,8 +9,7 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& filePath);
-protected:
+	static void generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& stringDefineFile);
 };
 
 #endif

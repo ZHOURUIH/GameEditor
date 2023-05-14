@@ -63,122 +63,117 @@ void CodeFrameSystem::generate()
 		}
 	}
 	END(lineList);
-	generateSystemDefineFile(frameSystemList, factoryManagerList, classPoolList, cppHeaderPath);
+	myVector<string> allList;
+	for (const string& item : frameSystemList)
+	{
+		allList.push_back(item);
+	}
+	for (const string& item : factoryManagerList)
+	{
+		allList.push_back(item);
+	}
+	for (const string& item : classPoolList)
+	{
+		allList.push_back(item);
+	}
+	generateFrameSystemRegister(allList, cppGamePath + "Game/Game.cpp");
+	const string gameBaseHeader = cppHeaderPath + "GameBase.h";
+	const string gameBaseSource = cppHeaderPath + "GameBase.cpp";
+	generateFrameSystemDeclare(allList, gameBaseHeader);
+	generateFrameSystemDefine(allList, gameBaseSource);
+	generateFrameSystemGet(allList, gameBaseSource);
+	generateFrameSystemClear(allList, gameBaseSource);
 }
 
-// FrameSystemRegiste.h, FrameSystemDeclare.h, FrameSystemDefine.cpp, FrameSystemGet.h, FrameSystemClear.h
-void CodeFrameSystem::generateSystemDefineFile(const myVector<string>& frameSystemList,
-												const myVector<string>& factoryManagerList,
-												const myVector<string>& classPoolList,
-												const string& filePath)
+void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameSystemList, const string& gameCppPath)
 {
-	// FrameSystemRegiste.h
-	string registeAllSystem;
-	line(registeAllSystem, "#ifdef _FRAME_SYSTEM_REGISTE_H_");
-	line(registeAllSystem, "#error \"特殊头文件,只能在Game.cpp中的指定位置被包含\"");
-	line(registeAllSystem, "#else");
-	line(registeAllSystem, "#define _FRAME_SYSTEM_REGISTE_H_");
-	line(registeAllSystem, "");
-	for (const string& item : frameSystemList)
+	// 更新Game.cpp的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameCppPath, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Register"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(registeAllSystem, "registeSystem<" + item + ">(STR(" + item + "));");
+		return;
 	}
-	for (const string& item : factoryManagerList)
-	{
-		line(registeAllSystem, "registeSystem<" + item + ">(STR(" + item + "));");
-	}
-	for (const string& item : classPoolList)
-	{
-		line(registeAllSystem, "registeSystem<" + item + ">(STR(" + item + "));");
-	}
-	line(registeAllSystem, "");
-	line(registeAllSystem, "#endif", false);
-	writeFile(filePath + "FrameSystemRegiste.h", ANSIToUTF8(registeAllSystem.c_str(), true));
 
-	// FrameSystemDeclare.h
-	string declareAllSystem;
-	line(declareAllSystem, "#ifdef _FRAME_SYSTEM_DECLARE_H_");
-	line(declareAllSystem, "#error \"特殊头文件,只能在GameBase.h中被包含\"");
-	line(declareAllSystem, "#else");
-	line(declareAllSystem, "#define _FRAME_SYSTEM_DECLARE_H_");
-	line(declareAllSystem, "");
 	for (const string& item : frameSystemList)
 	{
-		line(declareAllSystem, "static " + item + "* m" + item + ";");
+		codeList.insert(++lineStart, "\tregisteSystem<" + item + ">(STR(" + item + "));");
 	}
-	for (const string& item : factoryManagerList)
-	{
-		line(declareAllSystem, "static " + item + "* m" + item + ";");
-	}
-	for (const string& item : classPoolList)
-	{
-		line(declareAllSystem, "static " + item + "* m" + item + ";");
-	}
-	line(declareAllSystem, "");
-	line(declareAllSystem, "#endif", false);
-	writeFile(filePath + "FrameSystemDeclare.h", ANSIToUTF8(declareAllSystem.c_str(), true));
+	writeFile(gameCppPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+}
 
-	// FrameSystemDefine.cpp
-	string defineAllSystem;
-	line(defineAllSystem, "#include \"GameHeader.h\"");
-	line(defineAllSystem, "");
+void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
+{
+	// 更新GameBase.cpp的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Clear"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+	{
+		return;
+	}
 	for (const string& item : frameSystemList)
 	{
-		line(defineAllSystem, item + "* GameBase::m" + item + ";");
+		codeList.insert(++lineStart, "\tm" + item + " = nullptr;");
 	}
-	for (const string& item : factoryManagerList)
-	{
-		line(defineAllSystem, item + "* GameBase::m" + item + ";");
-	}
-	for (const string& item : classPoolList)
-	{
-		line(defineAllSystem, item + "* GameBase::m" + item + ";");
-	}
-	writeFile(filePath + "FrameSystemDefine.cpp", ANSIToUTF8(defineAllSystem.c_str(), true));
+	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+}
 
-	// FrameSystemGet.h
-	string getAllSystem;
-	line(getAllSystem, "#ifdef _FRAME_SYSTEM_GET_H_");
-	line(getAllSystem, "#error \"特殊头文件,只能在GameBase.cpp中被包含\"");
-	line(getAllSystem, "#else");
-	line(getAllSystem, "#define _FRAME_SYSTEM_GET_H_");
-	line(getAllSystem, "");
+void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSystemList, const string& gameBaseHeaderFile)
+{
+	// 更新GameBase.h的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem"); },
+		[](const string& codeLine) { return codeLine.length() == 0; }))
+	{
+		return;
+	}
 	for (const string& item : frameSystemList)
 	{
-		line(getAllSystem, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		codeList.insert(++lineStart, "\tstatic " + item + "* m" + item + ";");
 	}
-	for (const string& item : factoryManagerList)
-	{
-		line(getAllSystem, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
-	}
-	for (const string& item : classPoolList)
-	{
-		line(getAllSystem, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
-	}
-	line(getAllSystem, "");
-	line(getAllSystem, "#endif", false);
-	writeFile(filePath + "FrameSystemGet.h", ANSIToUTF8(getAllSystem.c_str(), true));
+	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+}
 
-	// FrameSystemClear.h
-	string clearAllSystem;
-	line(clearAllSystem, "#ifdef _FRAME_SYSTEM_CLEAR_H_");
-	line(clearAllSystem, "#error \"特殊头文件,只能在GameBase.cpp中被包含\"");
-	line(clearAllSystem, "#else");
-	line(clearAllSystem, "#define _FRAME_SYSTEM_CLEAR_H_");
-	line(clearAllSystem, "");
+void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
+{
+	// 更新GameBase.cpp的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Define"); },
+		[](const string& codeLine) { return codeLine.length() == 0; }))
+	{
+		return;
+	}
+
 	for (const string& item : frameSystemList)
 	{
-		line(clearAllSystem, "m" + item + " = nullptr;");
+		codeList.insert(++lineStart, item + "* GameBase::m" + item + ";");
 	}
-	for (const string& item : factoryManagerList)
+	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+}
+
+void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
+{
+	// 更新GameBase.cpp的特定部分代码
+	myVector<string> codeList;
+	int lineStart = -1;
+	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Get"); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
-		line(clearAllSystem, "m" + item + " = nullptr;");
+		return;
 	}
-	for (const string& item : classPoolList)
+
+	for (const string& item : frameSystemList)
 	{
-		line(clearAllSystem, "m" + item + " = nullptr;");
+		codeList.insert(++lineStart, "\tFrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
-	line(clearAllSystem, "");
-	line(clearAllSystem, "#endif", false);
-	writeFile(filePath + "FrameSystemClear.h", ANSIToUTF8(clearAllSystem.c_str(), true));
+	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
