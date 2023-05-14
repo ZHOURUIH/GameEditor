@@ -7,16 +7,9 @@ void CodeCmd::generate()
 		return;
 	}
 
-	string cmdFile = openTxtFile("Cmd.txt");
-	if (cmdFile.length() == 0)
-	{
-		ERROR("未找文件Cmd.txt");
-		return;
-	}
-	// 此处可直接扫描代码文件
-	myVector<string> cmdList;
-	split(cmdFile.c_str(), "\r\n", cmdList);
-	generateStringDefineCmd(cmdList, cppGameStringDefineFile);
+	myVector<string> needDefineCmds = findTargetHeaderFile(cppGameProjectPath, "Cmd", 
+									[](const string& line) { return findSubstr(line, " : public GameCommand"); });
+	generateStringDefineCmd(needDefineCmds, cppGameStringDefineFile);
 }
 
 void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, const string& stringDefineFile)
@@ -25,7 +18,7 @@ void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, const str
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// Cmd"); },
+		[](const string& codeLine) { return endWith(codeLine, "// Cmd"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

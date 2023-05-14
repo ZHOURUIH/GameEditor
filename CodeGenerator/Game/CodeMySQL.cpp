@@ -929,7 +929,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL"); },
+		[](const string& codeLine) { return endWith(codeLine, "// MySQL"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
@@ -937,7 +937,7 @@ void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, 
 
 	for (const MySQLInfo& item : mysqlList)
 	{
-		codeList.insert(++lineStart, stringDeclare(item.mMySQLClassName));
+		codeList.insert(++lineStart, stringDeclare("MD" + item.mMySQLClassName));
 	}
 	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -948,14 +948,14 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL"); },
+		[](const string& codeLine) { return endWith(codeLine, "// MySQL"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
 		return;
 	}
 	for (const MySQLInfo& info : mysqlList)
 	{
-		codeList.insert(++lineStart, "static MySQL" + info.mMySQLClassName + "* mMySQL" + info.mMySQLClassName + ";");
+		codeList.insert(++lineStart, "\tstatic MySQL" + info.mMySQLClassName + "* mMySQL" + info.mMySQLClassName + ";");
 	}
 	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -966,7 +966,7 @@ void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL Define"); },
+		[](const string& codeLine) { return endWith(codeLine, "// MySQL Define"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
 		return;
@@ -984,7 +984,7 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL Clear"); },
+		[](const string& codeLine) { return endWith(codeLine, "// MySQL Clear"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
 		return;
@@ -992,7 +992,7 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 
 	for (const MySQLInfo& info : mysqlList)
 	{
-		codeList.insert(++lineStart, "mMySQL" + info.mMySQLClassName + " = nullptr;");
+		codeList.insert(++lineStart, "\tmMySQL" + info.mMySQLClassName + " = nullptr;");
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

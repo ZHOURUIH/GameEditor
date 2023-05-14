@@ -91,7 +91,7 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameCppPath, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// FrameSystem Register"); },
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Register"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
@@ -99,7 +99,7 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 
 	for (const string& item : frameSystemList)
 	{
-		codeList.insert(++lineStart, "registeSystem<" + item + ">(STR(" + item + "));");
+		codeList.insert(++lineStart, "\tregisteSystem<" + item + ">(STR(" + item + "));");
 	}
 	writeFile(gameCppPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -110,14 +110,14 @@ void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSyst
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// FrameSystem Clear"); },
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Clear"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
 	}
 	for (const string& item : frameSystemList)
 	{
-		codeList.insert(++lineStart, "m" + item + " = nullptr;");
+		codeList.insert(++lineStart, "\tm" + item + " = nullptr;");
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -128,14 +128,14 @@ void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSy
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// FrameSystem Declare"); },
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem"); },
 		[](const string& codeLine) { return codeLine.length() == 0; }))
 	{
 		return;
 	}
 	for (const string& item : frameSystemList)
 	{
-		codeList.insert(++lineStart, "static " + item + "* m" + item + ";");
+		codeList.insert(++lineStart, "\tstatic " + item + "* m" + item + ";");
 	}
 	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -146,7 +146,7 @@ void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSys
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// FrameSystem Define"); },
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Define"); },
 		[](const string& codeLine) { return codeLine.length() == 0; }))
 	{
 		return;
@@ -165,7 +165,7 @@ void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystem
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// FrameSystem Get"); },
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Get"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
@@ -173,7 +173,7 @@ void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystem
 
 	for (const string& item : frameSystemList)
 	{
-		codeList.insert(++lineStart, "FrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		codeList.insert(++lineStart, "\tFrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

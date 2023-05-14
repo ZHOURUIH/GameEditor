@@ -29,7 +29,7 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const st
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// DTNode"); },
+		[](const string& codeLine) { return endWith(codeLine, "// DTNode"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

@@ -342,7 +342,7 @@ void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetLis
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// MySQL"); },
+		[](const string& codeLine) { return endWith(codeLine, "// MySQL"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

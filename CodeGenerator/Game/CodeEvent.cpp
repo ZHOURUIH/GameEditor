@@ -45,7 +45,7 @@ void CodeEvent::generateStringDefineEvent(const myVector<pair<string, string>>& 
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// Event"); },
+		[](const string& codeLine) { return endWith(codeLine, "// Event"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

@@ -30,7 +30,7 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& compon
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// Component"); },
+		[](const string& codeLine) { return endWith(codeLine, "// Component"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

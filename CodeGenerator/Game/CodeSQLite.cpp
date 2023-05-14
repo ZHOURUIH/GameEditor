@@ -446,7 +446,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseHeaderFileName, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// SQLite"); },
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
 		return;
@@ -458,7 +458,7 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 		{
 			continue;
 		}
-		codeList.insert(++lineStart, "static SQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
+		codeList.insert(++lineStart, "\tstatic SQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
 	}
 	writeFile(gameBaseHeaderFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -469,7 +469,7 @@ void CodeSQLite::generateCppSQLiteInstanceDefine(const myVector<SQLiteInfo>& sql
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseCppFileName, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// SQLite Define"); },
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite Define"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
@@ -492,7 +492,7 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameSTLPoolFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// SQLite数据类型"); },
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite数据类型"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
@@ -514,7 +514,7 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseCppFileName, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// SQLite Clear"); },
+		[](const string& codeLine) { return endWith(codeLine, "// SQLite Clear"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;
@@ -526,7 +526,7 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 		{
 			continue;
 		}
-		codeList.insert(++lineStart, "mSQLite" + info.mSQLiteName + " = nullptr;");
+		codeList.insert(++lineStart, "\tmSQLite" + info.mSQLiteName + " = nullptr;");
 	}
 	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

@@ -25,7 +25,7 @@ void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stat
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// StateGroup"); },
+		[](const string& codeLine) { return endWith(codeLine, "// StateGroup"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

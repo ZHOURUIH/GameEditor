@@ -405,19 +405,44 @@ bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeL
 		return false;
 	}
 	int removeLineCount = endCode - lineStart - 1;
-	for (int i = 0; i < codeList.size(); ++i)
+	for (int i = 0; i < removeLineCount; ++i)
 	{
-		codeList.erase(lineStart + 1 + i);
+		codeList.erase(lineStart + 1);
 	}
 	return true;
+}
+
+myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const string& filePrefix, const LineMatchCallback& lineMatch)
+{
+	myVector<string> needDefineCmds;
+	myVector<string> cmdFiles;
+	findFiles(path, cmdFiles, ".h");
+	for (const string& fileName : cmdFiles)
+	{
+		if (!startWith(getFileName(fileName), filePrefix))
+		{
+			continue;
+		}
+		myVector<string> lines;
+		openTxtFileLines(fileName, lines);
+		for (const string& line : lines)
+		{
+			if (lineMatch(line))
+			{
+				needDefineCmds.push_back(getFileNameNoSuffix(fileName, true));
+				break;
+			}
+		}
+	}
+	return needDefineCmds;
 }
 
 string CodeUtility::codeListToString(const myVector<string>& codeList)
 {
 	string str;
-	for (const string& code : codeList)
+	for (int i = 0; i < codeList.size(); ++i)
 	{
-		line(str, code);
+		line(str, codeList[i], i != codeList.size() - 1);
 	}
 	return str;
 }

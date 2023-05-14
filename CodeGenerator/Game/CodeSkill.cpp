@@ -27,7 +27,7 @@ void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, con
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// Skill"); },
+		[](const string& codeLine) { return endWith(codeLine, "// Skill"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

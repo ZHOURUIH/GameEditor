@@ -119,7 +119,7 @@ void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, const 
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return findSubstr(codeLine, "// SceneTrigger"); },
+		[](const string& codeLine) { return endWith(codeLine, "// SceneTrigger"); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

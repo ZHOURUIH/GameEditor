@@ -9,7 +9,7 @@ void CodeClassDeclare::generate()
 
 	generateCppFrameClassAndHeader(cppFrameProjectPath, cppFramePath + "Common/");
 	generateCppGameClassAndHeader(cppGameProjectPath, cppGamePath + "Common/");
-	generateCppBattleCoreClassAndHeader(cppBattleCoreProjectPath, cppBattleCorePath + "Common/");
+	//generateCppBattleCoreClassAndHeader(cppBattleCoreProjectPath, cppBattleCorePath + "Common/");
 }
 
 void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const string& targetFilePath)
@@ -125,7 +125,7 @@ void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const s
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
-	line(str0, "#include \"BattleCoreHeader.h\"");
+	line(str0, "#include \"FrameHeader.h\"");
 	uint count1 = gameHeaderList.size();
 	FOR_I(count1)
 	{
