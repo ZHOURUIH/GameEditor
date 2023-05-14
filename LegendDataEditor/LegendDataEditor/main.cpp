@@ -24,8 +24,6 @@ void main()
 		cout << "25:重新生成包含偏移量的图片" << endl;
 		cout << "27:将图标调整到统一的36*36" << endl;
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
-		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
-		cout << "34:检查所有地图是否有无效地砖下标" << endl;
 		cout << "35:将角色动作写入Animation表格" << endl;
 		cout << "43:将怪物动作写入Animation表格" << endl;
 		cout << endl;
@@ -36,9 +34,11 @@ void main()
 		cout << "11:序列帧:重命名为序列帧格式" << endl;
 		cout << "17:序列帧:将media中全部序列帧数据写入SQLite" << endl;
 		cout << "26:序列帧:裁剪序列帧图片到最小尺寸" << endl;
+		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << endl;
 		cout << "22:地图:更新地图中的特效信息到SQLite" << endl;
 		cout << "29:地图:转换所有地图文件为简化版本并且生成阻挡文件" << endl;
+		cout << "34:检查所有地图是否有无效地砖下标" << endl;
 		cout << "36:地图:输出地图解析文本" << endl;
 		cout << "39:地图:生成地图地砖图片信息文件" << endl;
 		cout << "40:地图:查看所有.map地图宽高" << endl;
