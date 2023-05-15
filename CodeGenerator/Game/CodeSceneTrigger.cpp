@@ -9,78 +9,10 @@ void CodeSceneTrigger::generate()
 
 	string cppHeaderPath = cppGamePath + "SceneTriggerManager/";
 
-	string file = openTxtFile("SceneTrigger.txt");
-	if (file.length() == 0)
-	{
-		ERROR("未找文件SceneTrigger.txt");
-		return;
-	}
-	myVector<string> lineList;
-	split(file.c_str(), "\r\n", lineList);
-	bool findTriggerFlag = false;
-	int triggerStart = -1;
-	int triggerEnd = -1;
-	FOR_VECTOR(lineList)
-	{
-		if (lineList[i] == "Trigger")
-		{
-			findTriggerFlag = true;
-			continue;
-		}
-		if (!findTriggerFlag)
-		{
-			continue;
-		}
-		removeAll(lineList[i], '\t');
-		if (lineList[i] == "{")
-		{
-			triggerStart = i + 1;
-		}
-		else if (lineList[i] == "}")
-		{
-			triggerEnd = i - 1;
-			break;
-		}
-	}
-	END(lineList);
-
-	bool findModifierFlag = false;
-	int modifierStart = -1;
-	int modifierEnd = -1;
-	FOR_I(lineListCount)
-	{
-		if (lineList[i] == "Modifier")
-		{
-			findModifierFlag = true;
-			continue;
-		}
-		if (!findModifierFlag)
-		{
-			continue;
-		}
-		removeAll(lineList[i], '\t');
-		if (lineList[i] == "{")
-		{
-			modifierStart = i + 1;
-		}
-		else if (lineList[i] == "}")
-		{
-			modifierEnd = i - 1;
-			break;
-		}
-	}
-	int triggerCount = triggerEnd - triggerStart + 1;
-	myVector<string> triggerList;
-	FOR_I((uint)triggerCount)
-	{
-		triggerList.push_back(lineList[triggerStart + i]);
-	}
-	int modifierCount = modifierEnd - modifierStart + 1;
-	myVector<string> modifierList;
-	FOR_I((uint)modifierCount)
-	{
-		modifierList.push_back(lineList[modifierStart + i]);
-	}
+	myVector<string> triggerList = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "SceneTrigger"); },
+																	 [](const string& line) { return findSubstr(line, " : public SceneTrigger"); });
+	myVector<string> modifierList = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "TriggerModifier"); },
+																	  [](const string& line) { return findSubstr(line, " : public TriggerModifier"); });
 	// 生成StringDefineSceneTrigger文件
 	generateStringDefine(triggerList, cppGameStringDefineFile);
 	// 生成SceneTriggerRegister文件

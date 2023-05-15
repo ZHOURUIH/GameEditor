@@ -17,14 +17,13 @@ string CodeUtility::START_FALG = "#start";
 
 bool CodeUtility::initPath()
 {
-	myVector<string> configLines;
-	openTxtFileLines("./CodeGenerator_Config.txt", configLines);
+	myVector<string> configLines = openTxtFileLines("./CodeGenerator_Config.txt");
 	if (configLines.size() == 0)
 	{
 		cout << "未找到配置文件CodeGenerator_Config.txt" << endl;
 		return false;
 	}
-	FOR_VECTOR(configLines)
+	FOR_VECTOR_CONST(configLines)
 	{
 		myVector<string> params;
 		removeAll(configLines[i], ' ', '\t');
@@ -47,7 +46,6 @@ bool CodeUtility::initPath()
 			split(params[1].c_str(), ",", ServerExcludeIncludePath);
 		}
 	}
-	END(configLines);
 
 	if (ServerProjectPath == "" && ClientProjectPath == "")
 	{
@@ -381,7 +379,7 @@ string CodeUtility::convertToCSharpType(const string& cppType)
 bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, 
 								const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch)
 {
-	openTxtFileLines(fullPath, codeList);
+	codeList = openTxtFileLines(fullPath);
 	lineStart = -1;
 	int endCode = -1;
 	for (int i = 0; i < codeList.size(); ++i)
@@ -418,24 +416,27 @@ bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeL
 	return true;
 }
 
-myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const string& filePrefix, const LineMatchCallback& lineMatch)
+myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch, myMap<string, myVector<string>>* fileContentList)
 {
 	myVector<string> needDefineCmds;
 	myVector<string> cmdFiles;
 	findFiles(path, cmdFiles, ".h");
 	for (const string& fileName : cmdFiles)
 	{
-		if (!startWith(getFileName(fileName), filePrefix))
+		if (!fileNameMatch(getFileNameNoSuffix(fileName, true)))
 		{
 			continue;
 		}
-		myVector<string> lines;
-		openTxtFileLines(fileName, lines);
+		myVector<string> lines = openTxtFileLines(fileName);
 		for (const string& line : lines)
 		{
 			if (lineMatch(line))
 			{
 				needDefineCmds.push_back(getFileNameNoSuffix(fileName, true));
+				if (fileContentList != nullptr)
+				{
+					fileContentList->insert(getFileNameNoSuffix(fileName, true), lines);
+				}
 				break;
 			}
 		}

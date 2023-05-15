@@ -9,26 +9,29 @@ void CodeCondition::generate()
 	string csConditionFilePath = csRegisterPath + "Condition/";
 	string csConditionEnumPath = csHotfixGamePath + "Common/";
 
-	string conditionFile = openTxtFile("Condition.txt");
-	if (conditionFile.length() == 0)
-	{
-		ERROR("未找文件Condition.txt");
-		return;
-	}
-	myVector<string> conditionLineList;
-	split(conditionFile.c_str(), "\r\n", conditionLineList);
-	myVector<pair<string, string>> conditionPairList;
-	FOR_VECTOR_CONST(conditionLineList)
-	{
-		myVector<string> splitResult;
-		split(conditionLineList[i].c_str(), "\t", splitResult);
-		if (splitResult.size() != 2)
-		{
-			ERROR("条件文件解析错误:" + conditionLineList[i]);
-		}
-		conditionPairList.push_back(make_pair(splitResult[0], splitResult[1]));
-	}
+	myMap<string, myVector<string>> fileContentMap;
+	myVector<string> conditionFileList = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) { return startWith(fileName, "Condition"); },
+		[](const string& line) { return findSubstr(line, " : public Condition"); }, &fileContentMap);
 
+	myVector<pair<string, string>> conditionPairList;
+	for (const string& fileName : conditionFileList)
+	{
+		if (!fileContentMap.contains(fileName))
+		{
+			cout << "找不到条件文件内容:" << fileName << endl;
+			return;
+		}
+		const myVector<string>& lines = fileContentMap[fileName];
+		FOR_VECTOR_CONST(lines)
+		{
+			if (findSubstr(lines[i], " : public Condition") && i > 0)
+			{
+				conditionPairList.push_back(make_pair(fileName, lines[i - 1]));
+				break;
+			}
+		}
+	}
 	if (cppGamePath.length() > 0)
 	{
 		// c++
@@ -36,10 +39,6 @@ void CodeCondition::generate()
 		generateCppRegisterFile(conditionPairList, cppHeaderPath);
 		// 生成CONDITION枚举
 		generateCppConditionEnum(conditionPairList, cppConditionEnumPath);
-		FOR_VECTOR_CONST(conditionPairList)
-		{
-			generateCppConditionFile(conditionPairList[i].first, cppConditionFilePath);
-		}
 	}
 
 	if (csHotfixGamePath.length() > 0)
@@ -49,10 +48,6 @@ void CodeCondition::generate()
 		generateCSRegisterFile(conditionPairList, csRegisterPath);
 		// 生成CONDITION枚举
 		generateCSConditionEnum(conditionPairList, csConditionEnumPath);
-		FOR_VECTOR_CONST(conditionPairList)
-		{
-			generateCSConditionFile(conditionPairList[i].first, csConditionFilePath);
-		}
 	}
 }
 
@@ -111,53 +106,6 @@ void CodeCondition::generateCppConditionEnum(const myVector<pair<string, string>
 	END(endContent);
 
 	writeFile(filePath + "GameEnum.h", ANSIToUTF8(str0.c_str(), true));
-}
-
-// Condition.h和Condition.cpp
-void CodeCondition::generateCppConditionFile(const string& conditionName, const string& conditionPath)
-{
-	string headerFullPath = conditionPath + conditionName + ".h";
-	if (!isFileExist(headerFullPath))
-	{
-		string header;
-		string typeStr = nameToUpper(conditionName.substr(strlen("Condition")), false);
-		line(header, "#pragma once");
-		line(header, "");
-		line(header, "#include \"Condition.h\"");
-		line(header, "");
-		line(header, "class " + conditionName + " : public Condition");
-		line(header, "{");
-		line(header, "\tBASE_CLASS(Condition);");
-		line(header, "public:");
-		line(header, "\t" + conditionName + "()");
-		line(header, "\t{");
-		line(header, "\t}");
-		line(header, "\tvoid setCharacter(CharacterGame* character) override;");
-		line(header, "\tvoid resetProperty() override");
-		line(header, "\t{");
-		line(header, "\t\tbase::resetProperty();");
-		line(header, "\t}");
-		line(header, "\tvoid setParam0(const string& param) override");
-		line(header, "\t{");
-		line(header, "\t}");
-		line(header, "protected:");
-		line(header, "};", false);
-
-		writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
-	}
-
-	string sourceFullPath = conditionPath + conditionName + ".cpp";
-	if (!isFileExist(sourceFullPath))
-	{
-		string source;
-		line(source, "#include \"GameHeader.h\"");
-		line(source, "");
-		line(source, "void " + conditionName + "::setCharacter(CharacterGame* character)");
-		line(source, "{");
-		line(source, "\tbase::setCharacter(character);");
-		line(source, "}", false);
-		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
-	}
 }
 
 void CodeCondition::generateCSRegisterFile(const myVector<pair<string, string>>& conditionList, const string& filePath)
@@ -226,42 +174,14 @@ void CodeCondition::generateCSConditionEnum(const myVector<pair<string, string>>
 	writeFile(filePath + "GameEnum.cs", ANSIToUTF8(str0.c_str(), true));
 }
 
-void CodeCondition::generateCSConditionFile(const string& conditionName, const string& conditionPath)
-{
-	string csFullPath = conditionPath + conditionName + ".cs";
-	if (!isFileExist(csFullPath))
-	{
-		string str;
-		line(str, "using UnityEngine;");
-		line(str, "using System;");
-		line(str, "using System.Collections.Generic;");
-		line(str, "");
-		line(str, "public class " + conditionName + " : Condition");
-		line(str, "{");
-		line(str, "\tpublic override void init(TDConditionDetail data, CharacterGame character)");
-		line(str, "\t{");
-		line(str, "\t\tbase.init(data, character);");
-		line(str, "\t}");
-		line(str, "\tpublic override void resetProperty()");
-		line(str, "\t{");
-		line(str, "\t\tbase.resetProperty();");
-		line(str, "\t}");
-		line(str, "\tpublic override void setParam0(string param) {}");
-		line(str, "\tpublic override void setValue(int value){}");
-		line(str, "}", false);
-		writeFile(csFullPath, ANSIToUTF8(str.c_str(), true));
-	}
-}
-
 void CodeCondition::findCppPreAndEndContent(const string& fullPath, myVector<string>& preContent, myVector<string>& endContent)
 {
 	// 0表示正在查找前段部分的代码
 	// 1表示正在查找条件枚举的代码
 	// 2表示正在查找后段部分的代码
 	int state = 0;
-	myVector<string> allLines;
-	openTxtFileLines(fullPath, allLines);
-	FOR_VECTOR(allLines)
+	myVector<string> allLines = openTxtFileLines(fullPath);
+	FOR_VECTOR_CONST(allLines)
 	{
 		if (state == 0)
 		{
@@ -282,7 +202,6 @@ void CodeCondition::findCppPreAndEndContent(const string& fullPath, myVector<str
 			continue;
 		}
 	}
-	END(allLines);
 }
 
 void CodeCondition::findCSPreAndEndContent(const string& fullPath, myVector<string>& preContent, myVector<string>& endContent)
@@ -291,9 +210,8 @@ void CodeCondition::findCSPreAndEndContent(const string& fullPath, myVector<stri
 	// 1表示正在查找条件枚举的代码
 	// 2表示正在查找后段部分的代码
 	int state = 0;
-	myVector<string> allLines;
-	openTxtFileLines(fullPath, allLines);
-	FOR_VECTOR(allLines)
+	myVector<string> allLines = openTxtFileLines(fullPath);
+	FOR_VECTOR_CONST(allLines)
 	{
 		if (state == 0)
 		{
@@ -314,5 +232,4 @@ void CodeCondition::findCSPreAndEndContent(const string& fullPath, myVector<stri
 			continue;
 		}
 	}
-	END(allLines);
 }

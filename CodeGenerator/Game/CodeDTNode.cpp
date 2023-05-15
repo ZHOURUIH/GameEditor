@@ -7,20 +7,19 @@ void CodeDTNode::generate()
 		return;
 	}
 
-	const string cppHeaderPath = cppGamePath + "/Character/Component/DecisionTree/";
-
-	string file = openTxtFile("DTNode.txt");
-	if (file.length() == 0)
+	myVector<string> files = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) { return startWith(fileName, "DT"); }, 
+		[](const string& line)
 	{
-		ERROR("未找文件DTNode.txt");
-		return;
-	}
-	myVector<string> nodeLineList;
-	split(file.c_str(), "\r\n", nodeLineList);
+		return findSubstr(line, " : public DTAction") || 
+				findSubstr(line, " : public DTCondition") || 
+				findSubstr(line, " : public DTControl") || 
+				findSubstr(line, " : public DTDecorate");
+	});
 	// 生成StringDefineDTNode文件
-	generateStringDefine(nodeLineList, cppGameStringDefineFile);
+	generateStringDefine(files, cppGameStringDefineFile);
 	// 生成DTNodeRegister.cpp文件
-	generateRegisterFile(nodeLineList, cppHeaderPath);
+	generateRegisterFile(files, cppGamePath + "/Character/Component/DecisionTree/");
 }
 
 void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const string& stringDefineFile)

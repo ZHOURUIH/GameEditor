@@ -7,16 +7,10 @@ void CodeObjectItem::generate()
 		return;
 	}
 
-	string stateFile = openTxtFile("ObjectItem.txt");
-	if (stateFile.length() == 0)
-	{
-		ERROR("未找文件ObjectItem.txt");
-		return;
-	}
-	myVector<string> stateList;
-	split(stateFile.c_str(), "\r\n", stateList);
+	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "ObjectItem"); },
+															  [](const string& line) { return findSubstr(line, " : public ObjectItem"); });
 	// 生成StringDefine文件
-	generateStringDefineObjectItem(stateList, cppGameStringDefineFile);
+	generateStringDefineObjectItem(list, cppGameStringDefineFile);
 }
 
 void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& stringDefineFile)

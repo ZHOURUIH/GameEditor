@@ -17,72 +17,26 @@ void CodeFrameSystem::generate()
 	}
 	myVector<string> lineList;
 	split(frameSystemFile.c_str(), "\r\n", lineList);
-	myVector<string> frameSystemList;
-	myVector<string> factoryManagerList;
-	myVector<string> classPoolList;
-	int typeIndex = -1;
-	FOR_VECTOR(lineList)
-	{
-		removeAll(lineList[i], '\t');
-		if (lineList[i].length() == 0)
+	myVector<string> classPoolList = findTargetHeaderFile(cppGamePath,
+		[](const string& fileName) { return endWith(fileName, "Pool"); },
+		[](const string& line) 
 		{
-			continue;
-		}
-		if (lineList[i] == "{")
-		{
-			if (lineList[i - 1] == "FrameSystem")
-			{
-				typeIndex = 0;
-			}
-			else if (lineList[i - 1] == "FactoryManager")
-			{
-				typeIndex = 1;
-			}
-			else if (lineList[i - 1] == "ClassPool")
-			{
-				typeIndex = 2;
-			}
-			continue;
-		}
-		if (lineList[i] == "}")
-		{
-			typeIndex = -1;
-			continue;
-		}
-		if (typeIndex == 0)
-		{
-			frameSystemList.push_back(lineList[i]);
-		}
-		else if (typeIndex == 1)
-		{
-			factoryManagerList.push_back(lineList[i]);
-		}
-		else if (typeIndex == 2)
-		{
-			classPoolList.push_back(lineList[i]);
-		}
-	}
-	END(lineList);
-	myVector<string> allList;
-	for (const string& item : frameSystemList)
-	{
-		allList.push_back(item);
-	}
-	for (const string& item : factoryManagerList)
-	{
-		allList.push_back(item);
-	}
-	for (const string& item : classPoolList)
-	{
-		allList.push_back(item);
-	}
-	generateFrameSystemRegister(allList, cppGamePath + "Game/Game.cpp");
+			return findSubstr(line, " : public ClassPool<") || 
+					findSubstr(line, " : public ClassTypePool<") || 
+					findSubstr(line, " : public ClassKeyPool<");
+		});
+	myVector<string> factoryList = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) { return endWith(fileName, "FactoryManager"); }, 
+		[](const string& line) { return findSubstr(line, " : public FactoryManager<"); });
+	lineList.addRange(classPoolList);
+	lineList.addRange(factoryList);
+	generateFrameSystemRegister(lineList, cppGamePath + "Game/Game.cpp");
 	const string gameBaseHeader = cppHeaderPath + "GameBase.h";
 	const string gameBaseSource = cppHeaderPath + "GameBase.cpp";
-	generateFrameSystemDeclare(allList, gameBaseHeader);
-	generateFrameSystemDefine(allList, gameBaseSource);
-	generateFrameSystemGet(allList, gameBaseSource);
-	generateFrameSystemClear(allList, gameBaseSource);
+	generateFrameSystemDeclare(lineList, gameBaseHeader);
+	generateFrameSystemDefine(lineList, gameBaseSource);
+	generateFrameSystemGet(lineList, gameBaseSource);
+	generateFrameSystemClear(lineList, gameBaseSource);
 }
 
 void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameSystemList, const string& gameCppPath)

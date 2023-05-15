@@ -10,23 +10,19 @@ void CodeAchivement::generate()
 	string cppHeaderPath = cppGamePath + "Achivement/";
 	string cppAchivementFilePath = cppHeaderPath + "Achivement/";
 
-	string file = openTxtFile("Achivement.txt");
-	if (file.length() == 0)
+	myVector<string> files = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) { return startWith(fileName, "Achivement"); }, 
+		[](const string& line)
 	{
-		ERROR("未找文件Achivement.txt");
-		return;
-	}
-
-	myVector<string> lineList;
-	split(file.c_str(), "\r\n", lineList);
+		return findSubstr(line, " : public Achivement");
+	});
 	// 生成AcvehimentRegister.cpp文件
-	generateRegister(lineList, cppHeaderPath);
+	generateRegister(files, cppHeaderPath);
 
-	FOR_VECTOR(lineList)
+	FOR_VECTOR_CONST(files)
 	{
-		generateAchivementFile(lineList[i], cppAchivementFilePath);
+		generateAchivementFile(files[i], cppAchivementFilePath);
 	}
-	END(lineList);
 }
 
 // AcvehimentRegister.cpp

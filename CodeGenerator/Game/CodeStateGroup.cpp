@@ -7,16 +7,10 @@ void CodeStateGroup::generate()
 		return;
 	}
 
-	string stateFile = openTxtFile("StateGroup.txt");
-	if (stateFile.length() == 0)
-	{
-		ERROR("未找文件StateGroup.txt");
-		return;
-	}
-	myVector<string> stateList;
-	split(stateFile.c_str(), "\r\n", stateList);
+	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "StateGroup"); },
+															  [](const string& line) { return findSubstr(line, " : public StateGroup"); });
 	// 生成StringDefine文件
-	generateStringDefineStateGroup(stateList, cppGameStringDefineFile);
+	generateStringDefineStateGroup(list, cppGameStringDefineFile);
 }
 
 void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stateList, const string& stringDefineFile)
