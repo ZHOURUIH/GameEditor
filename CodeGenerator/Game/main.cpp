@@ -6,7 +6,6 @@
 #include "CodeSQLite.h"
 #include "CodeNetPacket.h"
 #include "CodeAchivement.h"
-#include "CodeEvent.h"
 #include "CodeDTNode.h"
 #include "CodeUnityBuild.h"
 #include "CodeFrameSystem.h"
@@ -35,7 +34,6 @@ void main()
 	cout << "5.技能代码" << endl;
 	cout << "6.状态代码" << endl;
 	cout << "7.成就代码" << endl;
-	cout << "8.事件代码" << endl;
 	cout << "9.行为树节点代码" << endl;
 	cout << "10.UnityBuild文件" << endl;
 	cout << "11.FrameSystem文件" << endl;
@@ -54,7 +52,6 @@ void main()
 		CodeSkill::generate();
 		CodeState::generate();
 		CodeAchivement::generate();
-		CodeEvent::generate();
 		CodeDTNode::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
@@ -76,7 +73,6 @@ void main()
 		CodeSkill::generate();
 		CodeState::generate();
 		CodeAchivement::generate();
-		CodeEvent::generate();
 		CodeDTNode::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
@@ -112,10 +108,6 @@ void main()
 	else if (input == 7)
 	{
 		CodeAchivement::generate();
-	}
-	else if (input == 8)
-	{
-		CodeEvent::generate();
 	}
 	else if (input == 9)
 	{
