@@ -416,7 +416,7 @@ bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeL
 	return true;
 }
 
-myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch)
+myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch, myMap<string, myVector<string>>* fileContentList)
 {
 	myVector<string> needDefineCmds;
 	myVector<string> cmdFiles;
@@ -427,11 +427,16 @@ myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const Lin
 		{
 			continue;
 		}
-		for (const string& line : openTxtFileLines(fileName))
+		myVector<string> lines = openTxtFileLines(fileName);
+		for (const string& line : lines)
 		{
 			if (lineMatch(line))
 			{
 				needDefineCmds.push_back(getFileNameNoSuffix(fileName, true));
+				if (fileContentList != nullptr)
+				{
+					fileContentList->insert(getFileNameNoSuffix(fileName, true), lines);
+				}
 				break;
 			}
 		}
