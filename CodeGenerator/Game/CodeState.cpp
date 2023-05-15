@@ -2,14 +2,28 @@
 
 void CodeState::generate()
 {
-	string stateFile = openTxtFile("State.txt");
-	if (stateFile.length() == 0)
-	{
-		ERROR("未找文件State.txt");
-		return;
-	}
+	myVector<string> buffList = findTargetHeaderFile(cppGamePath,
+		[](const string& fileName) { return startWith(fileName, "Buff"); },
+		[](const string& line) 
+		{
+			return findSubstr(line, " : public CharacterBuff") || 
+				   findSubstr(line, " : public StrengthIncreaseBuff") || 
+				   findSubstr(line, " : public EquipStrengthLevelActiveBuff") || 
+				   findSubstr(line, " : public PlayerLevelIncreaseBuff") || 
+				   findSubstr(line, " : public RangeCharacterBuff") || 
+				   findSubstr(line, " : public RangePlayerCountMakeProperty") || 
+				   findSubstr(line, " : public CharacterBuffTrigger");
+		});
+	myVector<string> stateActionList = findTargetHeaderFile(cppGamePath,
+		[](const string& fileName) { return startWith(fileName, "StateAction"); },
+		[](const string& line) { return findSubstr(line, " : public CharacterStateAction"); });
+	myVector<string> stateBehaviourList = findTargetHeaderFile(cppGamePath,
+		[](const string& fileName) { return startWith(fileName, "StateBehaviour"); },
+		[](const string& line) { return findSubstr(line, " : public CharacterGameState"); });
 	myVector<string> stateList;
-	split(stateFile.c_str(), "\r\n", stateList);
+	stateList.addRange(buffList);
+	stateList.addRange(stateActionList);
+	stateList.addRange(stateBehaviourList);
 	// 生成StringDefineState文件
 	generateStringDefineState(stateList, cppGameStringDefineFile);
 	// 生成StateRegister.cpp文件
