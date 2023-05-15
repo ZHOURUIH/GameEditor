@@ -7,7 +7,8 @@ void CodeCmd::generate()
 		return;
 	}
 
-	myVector<string> needDefineCmds = findTargetHeaderFile(cppGameProjectPath, "Cmd", 
+	myVector<string> needDefineCmds = findTargetHeaderFile(cppGameProjectPath, 
+									[](const string& fileName) { return startWith(fileName, "Cmd"); },
 									[](const string& line) { return findSubstr(line, " : public GameCommand"); });
 	generateStringDefineCmd(needDefineCmds, cppGameStringDefineFile);
 }

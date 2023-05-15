@@ -7,7 +7,9 @@ void CodeDTNode::generate()
 		return;
 	}
 
-	myVector<string> files = findTargetHeaderFile(cppGamePath, "DT", [](const string& line) 
+	myVector<string> files = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) { return startWith(fileName, "DT"); }, 
+		[](const string& line)
 	{
 		return findSubstr(line, " : public DTAction") || 
 				findSubstr(line, " : public DTCondition") || 

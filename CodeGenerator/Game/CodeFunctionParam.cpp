@@ -8,15 +8,8 @@ void CodeFunctionParam::generate()
 	}
 
 	string cppHeaderPath = cppGamePath + "FunctionParam/";
-
-	string file = openTxtFile("FunctionParam.txt");
-	if (file.length() == 0)
-	{
-		ERROR("未找文件FunctionParam.txt");
-		return;
-	}
-	myVector<string> list;
-	split(file.c_str(), "\r\n", list);
+	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "Param"); },
+															  [](const string& line) { return findSubstr(line, " : public FunctionParam"); });
 	// 生成StringDefineFunctionParam文件
 	generateStringDefine(list, cppGameStringDefineFile);
 	// 生成FunctionParamRegister文件

@@ -68,7 +68,7 @@ public:
 #endif
 		mVector.clear();
 	}
-	void merge(const myVector<T>& other)
+	void addRange(const myVector<T>& other)
 	{
 		uint count = (uint)other.mVector.size();
 		FOR_I(count)

@@ -9,15 +9,9 @@ void CodeRank::generate()
 
 	string cppHeaderPath = cppGamePath + "RankSystem/";
 
-	string file = openTxtFile("Rank.txt");
-	if (file.length() == 0)
-	{
-		ERROR("Î´ÕÒÎÄ¼şRank.txt");
-		return;
-	}
-	myVector<string> lineList;
-	split(file.c_str(), "\r\n", lineList);
-	generateRegister(lineList, cppHeaderPath);
+	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "Rank"); },
+		[](const string& line) { return findSubstr(line, " : public Rank"); });
+	generateRegister(list, cppHeaderPath);
 }
 
 void CodeRank::generateRegister(const myVector<string>& list, const string& headerPath)

@@ -24,13 +24,9 @@ void CodeNetPacket::generate()
 		ERROR("未找到协议文件PacketSC.txt");
 		return;
 	}
-	myVector<string> csLines;
-	myVector<string> scLines;
-	split(csFileContent.c_str(), "\r\n", csLines);
-	split(scFileContent.c_str(), "\r\n", scLines);
 	myVector<string> lines;
-	lines.merge(csLines);
-	lines.merge(scLines);
+	split(csFileContent.c_str(), "\r\n", lines);
+	split(scFileContent.c_str(), "\r\n", lines);
 	bool packetStart = false;
 	myVector<PacketInfo> packetInfoList;
 	myVector<PacketMember> tempMemberList;
@@ -414,8 +410,7 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 {
 	if (isFileExist(fullPath))
 	{
-		myVector<string> fileLines;
-		openTxtFileLines(fullPath, fileLines);
+		myVector<string> fileLines = openTxtFileLines(fullPath);
 		uint lineCount = fileLines.size();
 		int customStart = -1;
 		int customEnd = -1;
@@ -773,8 +768,7 @@ void CodeNetPacket::findCSharpUsingListCustomCode(const string& packetName, cons
 {
 	if (isFileExist(fullPath))
 	{
-		myVector<string> fileLists;
-		openTxtFileLines(fullPath, fileLists);
+		myVector<string> fileLists = openTxtFileLines(fullPath);
 		// 命名空间部分
 		uint lines = fileLists.size();
 		FOR_I(lines)

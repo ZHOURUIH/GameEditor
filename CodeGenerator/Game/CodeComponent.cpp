@@ -9,19 +9,25 @@ void CodeComponent::generate()
 
 	const string cppRegisterPath = cppGamePath + "/Component/";
 
-	string stateFile = openTxtFile("Component.txt");
-	if (stateFile.length() == 0)
+	myVector<string> files = findTargetHeaderFile(cppGameProjectPath, 
+	[](const string& fileName) 
+	{ 
+		return startWith(fileName, "COM") && 
+			   fileName != "COMCharacterGame" && 
+			   fileName != "COMPlayer"; 
+	},
+	[](const string& line)
 	{
-		ERROR("未找文件Component.txt");
-		return;
-	}
+		return findSubstr(line, " : public GameComponent") || 
+			   findSubstr(line, " : public COMCharacterGame") || 
+			   findSubstr(line, " : public COMPlayer") || 
+			   findSubstr(line, " : public GameComponent");
+	});
 
-	myVector<string> stateList;
-	split(stateFile.c_str(), "\r\n", stateList);
 	// 生成StringDefine文件
-	generateStringDefineComponent(stateList, cppGameStringDefineFile);
+	generateStringDefineComponent(files, cppGameStringDefineFile);
 	// ComponentRegister.cpp
-	generateComponentRegister(stateList, cppRegisterPath);
+	generateComponentRegister(files, cppRegisterPath);
 }
 
 void CodeComponent::generateStringDefineComponent(const myVector<string>& componentList, const string& stringDefineFile)

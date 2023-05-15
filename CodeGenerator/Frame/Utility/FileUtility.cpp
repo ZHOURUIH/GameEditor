@@ -524,14 +524,15 @@ string FileUtility::openTxtFile(const string& filePath, bool utf8ToANSI)
 	}
 }
 
-void FileUtility::openTxtFileLines(const string& filePath, myVector<string>& fileLines, bool utf8ToANSI)
+myVector<string> FileUtility::openTxtFileLines(const string& filePath, bool utf8ToANSI)
 {
+	myVector<string> fileLines;
 	split(openTxtFile(filePath, utf8ToANSI).c_str(), "\n", fileLines);
-	FOR_VECTOR(fileLines)
+	FOR_VECTOR_CONST(fileLines)
 	{
 		removeAll(fileLines[i], '\r');
 	}
-	END(fileLines);
+	return fileLines;
 }
 
 void FileUtility::openBinaryFile(const string& filePath, FileContent& fileContent)

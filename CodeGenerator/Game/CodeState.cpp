@@ -56,7 +56,8 @@ void CodeState::generateStateRegister(const myVector<string>& stateList, const s
 		{
 			continue;
 		}
-		codeList.insert(++lineStart, "\tSTATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + nameToUpper(stateList[i], false) + ");");
+		string enumTypeStr = nameToUpper(removeStartString(stateList[i], "Buff"), false);
+		codeList.insert(++lineStart, "\tSTATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + enumTypeStr + ");");
 	}
 	codeList.insert(++lineStart, "");
 

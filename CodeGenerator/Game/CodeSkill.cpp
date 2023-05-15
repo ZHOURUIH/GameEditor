@@ -9,16 +9,21 @@ void CodeSkill::generate()
 
 	string cppHeaderPath = cppGamePath + "Character/Component/Skill/";
 
-	string skillFile = openTxtFile("Skill.txt");
-	if (skillFile.length() == 0)
-	{
-		ERROR("未找文件Skill.txt");
-		return;
-	}
-	myVector<string> skillList;
-	split(skillFile.c_str(), "\r\n", skillList);
+	myVector<string> list = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) 
+		{
+			return startWith(fileName, "PlayerSkill_") || 
+				   startWith(fileName, "MonsterSkill_") || 
+				   startWith(fileName, "EnvironmentSkill_"); 
+		},
+		[](const string& line) 
+		{
+			return findSubstr(line, " : public PlayerSkill") || 
+				   findSubstr(line, " : public MonsterSkill") || 
+				   findSubstr(line, " : public EnvironmentSkill");
+		});
 	// 生成StringDefineSkill文件
-	generateStringDefineSkill(skillList, cppGameStringDefineFile);
+	generateStringDefineSkill(list, cppGameStringDefineFile);
 }
 
 void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, const string& stringDefineFile)

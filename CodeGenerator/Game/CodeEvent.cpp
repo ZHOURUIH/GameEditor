@@ -71,7 +71,7 @@ void CodeEvent::generateEventType(const myVector<pair<string, string>>& eventLis
 	// 由于需要添加默认的无效值,所以复制一份列表
 	myVector<pair<string, string>> newList;
 	newList.push_back(make_pair("None", "// 无效值"));
-	newList.merge(eventList);
+	newList.addRange(eventList);
 	FOR_VECTOR_CONST(newList)
 	{
 		string type = removeStartString(nameToUpper(newList[i].first), "_EVENT_");

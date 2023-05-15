@@ -259,9 +259,8 @@ void CodeCondition::findCppPreAndEndContent(const string& fullPath, myVector<str
 	// 1表示正在查找条件枚举的代码
 	// 2表示正在查找后段部分的代码
 	int state = 0;
-	myVector<string> allLines;
-	openTxtFileLines(fullPath, allLines);
-	FOR_VECTOR(allLines)
+	myVector<string> allLines = openTxtFileLines(fullPath);
+	FOR_VECTOR_CONST(allLines)
 	{
 		if (state == 0)
 		{
@@ -282,7 +281,6 @@ void CodeCondition::findCppPreAndEndContent(const string& fullPath, myVector<str
 			continue;
 		}
 	}
-	END(allLines);
 }
 
 void CodeCondition::findCSPreAndEndContent(const string& fullPath, myVector<string>& preContent, myVector<string>& endContent)
@@ -291,9 +289,8 @@ void CodeCondition::findCSPreAndEndContent(const string& fullPath, myVector<stri
 	// 1表示正在查找条件枚举的代码
 	// 2表示正在查找后段部分的代码
 	int state = 0;
-	myVector<string> allLines;
-	openTxtFileLines(fullPath, allLines);
-	FOR_VECTOR(allLines)
+	myVector<string> allLines = openTxtFileLines(fullPath);
+	FOR_VECTOR_CONST(allLines)
 	{
 		if (state == 0)
 		{
@@ -314,5 +311,4 @@ void CodeCondition::findCSPreAndEndContent(const string& fullPath, myVector<stri
 			continue;
 		}
 	}
-	END(allLines);
 }
