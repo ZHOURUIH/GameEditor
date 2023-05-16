@@ -46,6 +46,7 @@ public:
 	static bool copyFile(const string& sourceFile, const string& destFile, bool overWrite = true);
 	// 创建一个文件夹,path是一个不以/结尾的可直接访问的相对或者绝对的文件夹名
 	static bool createFolder(const string& path);
+	static bool writeFileIfChanged(const string& filePath, const string& text);
 	static bool writeFile(string filePath, const char* buffer, uint length, bool append = false);
 	static bool writeFile(string filePath, const string& text, bool append = false);
 	static bool writeFileSimple(const string& fileName, const char* buffer, uint writeCount, bool append = false);

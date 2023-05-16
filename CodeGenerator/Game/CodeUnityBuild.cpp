@@ -49,10 +49,5 @@ void CodeUnityBuild::generateCppUnityBuild(const string& filePath, const string&
 	{
 		line(str0, "#include \"" + fileList[i] + "\"", i != count - 1);
 	}
-	const string unityBuildFilePath = filePath + unityBuildFileName;
-	const string unityBuildFileContent = ANSIToUTF8(str0.c_str(), true);
-	if (openTxtFile(unityBuildFilePath, false) != unityBuildFileContent)
-	{
-		writeFile(unityBuildFilePath, unityBuildFileContent);
-	}
+	writeFileIfChanged(filePath + unityBuildFileName, ANSIToUTF8(str0.c_str(), true));
 }

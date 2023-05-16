@@ -28,20 +28,6 @@ void main()
 
 	cout << "0.全部生成(除了网络通信协议代码)" << endl;
 	cout << "1.全部生成(包括网络通信协议代码)" << endl;
-	cout << "2.SQLite数据代码" << endl;
-	cout << "3.MySQL数据代码" << endl;
-	cout << "4.命令代码" << endl;
-	cout << "5.技能代码" << endl;
-	cout << "6.状态代码" << endl;
-	cout << "7.成就代码" << endl;
-	cout << "9.行为树节点代码" << endl;
-	cout << "10.UnityBuild文件" << endl;
-	cout << "11.FrameSystem文件" << endl;
-	cout << "12.类声明文件" << endl;
-	cout << "13.场景触发器代码" << endl;
-	cout << "14.函数参数代码" << endl;
-	cout << "15.排行榜代码" << endl;
-	cout << "16.条件代码" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -83,62 +69,6 @@ void main()
 		CodeSceneTrigger::generate();
 		CodeFunctionParam::generate();
 		CodeRank::generate();
-		CodeCondition::generate();
-	}
-	else if (input == 2)
-	{
-		CodeSQLite::generate();
-	}
-	else if (input == 3)
-	{
-		CodeMySQL::generate();
-	}
-	else if (input == 4)
-	{
-		CodeCmd::generate();
-	}
-	else if (input == 5)
-	{
-		CodeSkill::generate();
-	}
-	else if (input == 6)
-	{
-		CodeState::generate();
-	}
-	else if (input == 7)
-	{
-		CodeAchivement::generate();
-	}
-	else if (input == 9)
-	{
-		CodeDTNode::generate();
-	}
-	else if (input == 10)
-	{
-		CodeUnityBuild::generate();
-	}
-	else if (input == 11)
-	{
-		CodeFrameSystem::generate();
-	}
-	else if (input == 12)
-	{
-		CodeClassDeclare::generate();
-	}
-	else if (input == 13)
-	{
-		CodeSceneTrigger::generate();
-	}
-	else if (input == 14)
-	{
-		CodeFunctionParam::generate();
-	}
-	else if (input == 15)
-	{
-		CodeRank::generate();
-	}
-	else if (input == 16)
-	{
 		CodeCondition::generate();
 	}
 	system("pause");

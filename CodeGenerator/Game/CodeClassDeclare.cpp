@@ -58,12 +58,7 @@ void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const 
 	{
 		line(str1, "class " + frameClassList[i] + ";", i != count0 - 1);
 	}
-	const string delcareFilePath = targetFilePath + "FrameClassDeclare.h";
-	const string delcareFileContent = ANSIToUTF8(str1.c_str(), true);
-	if (openTxtFile(delcareFilePath, false) != delcareFileContent)
-	{
-		writeFile(delcareFilePath, delcareFileContent);
-	}
+	writeFileIfChanged(targetFilePath + "FrameClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
 
 	// FrameHeader.h
 	string str0;
@@ -75,12 +70,7 @@ void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const 
 		line(str0, "#include \"" + frameHeaderList[i] + "\"", i != count1 - 1);
 	}
 
-	const string headerFilePath = targetFilePath + headerFileName + ".h";
-	const string headerFileContent = ANSIToUTF8(str0.c_str(), true);
-	if (openTxtFile(headerFilePath, false) != headerFileContent)
-	{
-		writeFile(headerFilePath, headerFileContent);
-	}
+	writeFileIfChanged(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
 }
 
 void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const string& targetFilePath)
@@ -136,7 +126,7 @@ void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const s
 	{
 		line(str1, "class " + gameClassList[i] + ";", i != count0 - 1);
 	}
-	writeFile(targetFilePath + "GameClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
+	writeFileIfChanged(targetFilePath + "GameClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
 
 	// GameHeader.h
 	string str0;
@@ -148,7 +138,7 @@ void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const s
 	{
 		line(str0, "#include \"" + gameHeaderList[i] + "\"", i != count1 - 1);
 	}
-	writeFile(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
+	writeFileIfChanged(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
 }
 
 void CodeClassDeclare::generateCppBattleCoreClassAndHeader(const string& path, const string& targetFilePath)
@@ -204,12 +194,7 @@ void CodeClassDeclare::generateCppBattleCoreClassAndHeader(const string& path, c
 	{
 		line(str1, "class " + battleCoreClassList[i] + ";", i != count0 - 1);
 	}
-	const string delcareFilePath = targetFilePath + "BattleCoreClassDeclare.h";
-	const string delcareFileContent = ANSIToUTF8(str1.c_str(), true);
-	if (openTxtFile(delcareFilePath, false) != delcareFileContent)
-	{
-		writeFile(delcareFilePath, ANSIToUTF8(str1.c_str(), true));
-	}
+	writeFileIfChanged(targetFilePath + "BattleCoreClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
 
 	// BattleCoreHeader.h
 	string str0;
@@ -221,10 +206,5 @@ void CodeClassDeclare::generateCppBattleCoreClassAndHeader(const string& path, c
 	{
 		line(str0, "#include \"" + battleCoreHeaderList[i] + "\"", i != count1 - 1);
 	}
-	const string headerFilePath = targetFilePath + headerFileName + ".h";
-	const string headerFileContent = ANSIToUTF8(str0.c_str(), true);
-	if (openTxtFile(headerFilePath, false) != headerFileContent)
-	{
-		writeFile(headerFilePath, headerFileContent);
-	}
+	writeFileIfChanged(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
 }

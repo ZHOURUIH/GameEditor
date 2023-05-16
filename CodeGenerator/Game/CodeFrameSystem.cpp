@@ -63,6 +63,10 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 
 	for (const string& item : frameSystemList)
 	{
+		if (item == "ServerFramework")
+		{
+			continue;
+		}
 		if (startWith(item, "MySQL"))
 		{
 			codeList.insert(++lineStart, "#ifdef _MYSQL");
@@ -73,7 +77,7 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 			codeList.insert(++lineStart, "#endif");
 		}
 	}
-	writeFile(gameCppPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	writeFileIfChanged(gameCppPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
@@ -99,7 +103,7 @@ void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSyst
 			codeList.insert(++lineStart, "#endif");
 		}
 	}
-	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSystemList, const string& gameBaseHeaderFile)
@@ -125,7 +129,7 @@ void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSy
 			codeList.insert(++lineStart, "#endif");
 		}
 	}
-	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	writeFileIfChanged(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile, const string& baseClassName)
@@ -152,7 +156,7 @@ void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSys
 			codeList.insert(++lineStart, "#endif");
 		}
 	}
-	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
@@ -173,11 +177,18 @@ void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystem
 		{
 			codeList.insert(++lineStart, "#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\tFrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		if (item == "ServerFramework")
+		{
+			codeList.insert(++lineStart, "\tmServerFramework = ServerFramework::getSingleton();");
+		}
+		else
+		{
+			codeList.insert(++lineStart, "\tFrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		}
 		if (startWith(item, "MySQL"))
 		{
 			codeList.insert(++lineStart, "#endif");
 		}
 	}
-	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
