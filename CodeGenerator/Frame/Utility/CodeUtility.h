@@ -41,6 +41,7 @@ public:
 	static bool findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch);
 	static string codeListToString(const myVector<string>& codeList);
 	static myVector<string> findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch, myMap<string, myVector<string>>* fileContentList = nullptr);
+	static string findClassName(const string& line);
 	static void line(string& str, const string& line, bool returnLine = true) 
 	{
 		str += line;

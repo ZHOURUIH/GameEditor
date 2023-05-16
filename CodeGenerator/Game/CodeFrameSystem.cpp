@@ -2,36 +2,49 @@
 
 void CodeFrameSystem::generate()
 {
-	if (cppGamePath.length() == 0)
+	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase");
+	//generateBattleCoreFrameSystem(cppBattleCorePath);
+	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase");
+}
+
+void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& baseFilePathNoSuffix, const string& gameFilePath, const string& baseClassName)
+{
+	if (cppPath.length() == 0)
 	{
 		return;
 	}
-
-	string cppHeaderPath = cppGamePath + "Common/";
-
-	myVector<string> frameSystemList = findTargetHeaderFile(cppGamePath,
+	myVector<string> frameSystemList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "System") || endWith(fileName, "Manager"); },
 		[](const string& line)
 		{
-			return findSubstr(line, " : public FrameComponent");
+			return findSubstr(line, " : public FrameComponent") && 
+				   findClassName(line) != "FactoryManager" && 
+				   findClassName(line) != "ClassPool"&&
+				   findClassName(line) != "ClassTypePool"&&
+				   findClassName(line) != "ClassKeyPool";
 		});
-	myVector<string> classPoolList = findTargetHeaderFile(cppGamePath,
+	myVector<string> classPoolList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "Pool"); },
-		[](const string& line) 
+		[](const string& line)
 		{
-			return findSubstr(line, " : public ClassPool<") || 
-					findSubstr(line, " : public ClassTypePool<") || 
-					findSubstr(line, " : public ClassKeyPool<");
+			return findSubstr(line, " : public ClassPool<") ||
+				   findSubstr(line, " : public ClassTypePool<") ||
+				   findSubstr(line, " : public ClassKeyPool<");
 		});
-	myVector<string> factoryList = findTargetHeaderFile(cppGamePath, 
-		[](const string& fileName) { return endWith(fileName, "FactoryManager"); }, 
+	myVector<string> factoryList = findTargetHeaderFile(cppPath,
+		[](const string& fileName) { return endWith(fileName, "FactoryManager"); },
 		[](const string& line) { return findSubstr(line, " : public FactoryManager<"); });
+	// 暂时只能特殊判断,把ServerFramework加上
+	if (baseClassName == "FrameBase")
+	{
+		frameSystemList.insert(0, "ServerFramework");
+	}
 	frameSystemList.addRange(classPoolList);
 	frameSystemList.addRange(factoryList);
-	generateFrameSystemRegister(frameSystemList, cppGamePath + "Game/Game.cpp");
-	generateFrameSystemDeclare(frameSystemList, cppHeaderPath + "GameBase.h");
-	const string gameBaseSource = cppHeaderPath + "GameBase.cpp";
-	generateFrameSystemDefine(frameSystemList, gameBaseSource);
+	generateFrameSystemRegister(frameSystemList, cppPath + gameFilePath);
+	generateFrameSystemDeclare(frameSystemList, cppPath + baseFilePathNoSuffix);
+	const string gameBaseSource = cppPath + replaceSuffix(baseFilePathNoSuffix, ".cpp");
+	generateFrameSystemDefine(frameSystemList, gameBaseSource, baseClassName);
 	generateFrameSystemGet(frameSystemList, gameBaseSource);
 	generateFrameSystemClear(frameSystemList, gameBaseSource);
 }
@@ -50,7 +63,15 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 
 	for (const string& item : frameSystemList)
 	{
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#ifdef _MYSQL");
+		}
 		codeList.insert(++lineStart, "\tregisteSystem<" + item + ">(STR(" + item + "));");
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#endif");
+		}
 	}
 	writeFile(gameCppPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -68,7 +89,15 @@ void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSyst
 	}
 	for (const string& item : frameSystemList)
 	{
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#ifdef _MYSQL");
+		}
 		codeList.insert(++lineStart, "\tm" + item + " = nullptr;");
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#endif");
+		}
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -80,18 +109,26 @@ void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSy
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem"); },
-		[](const string& codeLine) { return codeLine.length() == 0; }))
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
 	{
 		return;
 	}
 	for (const string& item : frameSystemList)
 	{
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#ifdef _MYSQL");
+		}
 		codeList.insert(++lineStart, "\tstatic " + item + "* m" + item + ";");
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#endif");
+		}
 	}
 	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
+void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile, const string& baseClassName)
 {
 	// 更新GameBase.cpp的特定部分代码
 	myVector<string> codeList;
@@ -105,7 +142,15 @@ void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSys
 
 	for (const string& item : frameSystemList)
 	{
-		codeList.insert(++lineStart, item + "* GameBase::m" + item + ";");
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#ifdef _MYSQL");
+		}
+		codeList.insert(++lineStart, item + "* " + baseClassName + "::m" + item + ";");
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#endif");
+		}
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -124,7 +169,15 @@ void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystem
 
 	for (const string& item : frameSystemList)
 	{
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#ifdef _MYSQL");
+		}
 		codeList.insert(++lineStart, "\tFrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+		if (startWith(item, "MySQL"))
+		{
+			codeList.insert(++lineStart, "#endif");
+		}
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
