@@ -32,8 +32,7 @@ void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const 
 		{
 			frameHeaderList.push_back(getFileName(fileName));
 		}
-		myVector<string> fileLines;
-		split(openTxtFile(fileName).c_str(), "\r\n", fileLines);
+		myVector<string> fileLines = openTxtFileLines(fileName);
 		uint lineCount = fileLines.size();
 		FOR_J(lineCount)
 		{
@@ -55,7 +54,12 @@ void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const 
 	{
 		line(str1, "class " + frameClassList[i] + ";", i != count0 - 1);
 	}
-	writeFile(targetFilePath + "FrameClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
+	const string delcareFilePath = targetFilePath + "FrameClassDeclare.h";
+	const string delcareFileContent = ANSIToUTF8(str1.c_str(), true);
+	if (openTxtFile(delcareFilePath, false) != delcareFileContent)
+	{
+		writeFile(delcareFilePath, delcareFileContent);
+	}
 
 	// FrameHeader.h
 	string str0;
@@ -66,7 +70,13 @@ void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const 
 	{
 		line(str0, "#include \"" + frameHeaderList[i] + "\"", i != count1 - 1);
 	}
-	writeFile(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
+
+	const string headerFilePath = targetFilePath + headerFileName + ".h";
+	const string headerFileContent = ANSIToUTF8(str0.c_str(), true);
+	if (openTxtFile(headerFilePath, false) != headerFileContent)
+	{
+		writeFile(headerFilePath, headerFileContent);
+	}
 }
 
 void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const string& targetFilePath)
@@ -96,8 +106,7 @@ void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const s
 		{
 			gameHeaderList.push_back(getFileName(fileName));
 		}
-		myVector<string> fileLines;
-		split(openTxtFile(fileName).c_str(), "\r\n", fileLines);
+		myVector<string> fileLines = openTxtFileLines(fileName);
 		uint lineCount = fileLines.size();
 		FOR_J(lineCount)
 		{
@@ -161,8 +170,7 @@ void CodeClassDeclare::generateCppBattleCoreClassAndHeader(const string& path, c
 		{
 			battleCoreHeaderList.push_back(getFileName(fileName));
 		}
-		myVector<string> fileLines;
-		split(openTxtFile(fileName).c_str(), "\r\n", fileLines);
+		myVector<string> fileLines = openTxtFileLines(fileName);
 		uint lineCount = fileLines.size();
 		FOR_J(lineCount)
 		{
@@ -184,7 +192,12 @@ void CodeClassDeclare::generateCppBattleCoreClassAndHeader(const string& path, c
 	{
 		line(str1, "class " + battleCoreClassList[i] + ";", i != count0 - 1);
 	}
-	writeFile(targetFilePath + "BattleCoreClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
+	const string delcareFilePath = targetFilePath + "BattleCoreClassDeclare.h";
+	const string delcareFileContent = ANSIToUTF8(str1.c_str(), true);
+	if (openTxtFile(delcareFilePath, false) != delcareFileContent)
+	{
+		writeFile(delcareFilePath, ANSIToUTF8(str1.c_str(), true));
+	}
 
 	// BattleCoreHeader.h
 	string str0;
@@ -196,7 +209,12 @@ void CodeClassDeclare::generateCppBattleCoreClassAndHeader(const string& path, c
 	{
 		line(str0, "#include \"" + battleCoreHeaderList[i] + "\"", i != count1 - 1);
 	}
-	writeFile(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
+	const string headerFilePath = targetFilePath + headerFileName + ".h";
+	const string headerFileContent = ANSIToUTF8(str0.c_str(), true);
+	if (openTxtFile(headerFilePath, false) != headerFileContent)
+	{
+		writeFile(headerFilePath, headerFileContent);
+	}
 }
 
 string CodeClassDeclare::findClassName(const string& line, const string& lastLine)

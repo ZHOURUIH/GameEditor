@@ -17,16 +17,10 @@ void CodeSQLite::generate()
 	string csTableDeclareHotFixPath = csHotfixGamePath + "Common/";
 
 	// 解析模板文件
-	string fileContent = openTxtFile("SQLite.txt");
-	if (fileContent.length() == 0)
-	{
-		ERROR("未找到表格格式文件SQLite.txt");
-		return;
-	}
-	myVector<string> lines;
-	split(fileContent.c_str(), "\r\n", lines);
+	myVector<string> lines = openTxtFileLines("SQLite.txt");
 	if (lines.size() == 0)
 	{
+		ERROR("未找到表格格式文件SQLite.txt");
 		return;
 	}
 	bool ignoreClientServer = false;
@@ -104,7 +98,7 @@ void CodeSQLite::generate()
 			tempInfo.mHotFix = tagList.contains("[HotFix]");
 			tempInfo.mClientSQLite = tagList.contains("[ClientSQLite]");
 
-			// 获取原始的表格名称
+			// 去除名字中的标签,获取原始的表格名称
 			int firstTagPos = -1;
 			if (findString(lastLine.c_str(), "[", &firstTagPos))
 			{

@@ -9,14 +9,12 @@ void CodeFrameSystem::generate()
 
 	string cppHeaderPath = cppGamePath + "Common/";
 
-	string frameSystemFile = openTxtFile("FrameSystem.txt");
-	if (frameSystemFile.length() == 0)
-	{
-		ERROR("Î´ÕÒÎÄ¼þFrameSystem.txt");
-		return;
-	}
-	myVector<string> lineList;
-	split(frameSystemFile.c_str(), "\r\n", lineList);
+	myVector<string> frameSystemList = findTargetHeaderFile(cppGamePath,
+		[](const string& fileName) { return endWith(fileName, "System") || endWith(fileName, "Manager"); },
+		[](const string& line)
+		{
+			return findSubstr(line, " : public FrameComponent");
+		});
 	myVector<string> classPoolList = findTargetHeaderFile(cppGamePath,
 		[](const string& fileName) { return endWith(fileName, "Pool"); },
 		[](const string& line) 
@@ -28,15 +26,14 @@ void CodeFrameSystem::generate()
 	myVector<string> factoryList = findTargetHeaderFile(cppGamePath, 
 		[](const string& fileName) { return endWith(fileName, "FactoryManager"); }, 
 		[](const string& line) { return findSubstr(line, " : public FactoryManager<"); });
-	lineList.addRange(classPoolList);
-	lineList.addRange(factoryList);
-	generateFrameSystemRegister(lineList, cppGamePath + "Game/Game.cpp");
-	const string gameBaseHeader = cppHeaderPath + "GameBase.h";
+	frameSystemList.addRange(classPoolList);
+	frameSystemList.addRange(factoryList);
+	generateFrameSystemRegister(frameSystemList, cppGamePath + "Game/Game.cpp");
+	generateFrameSystemDeclare(frameSystemList, cppHeaderPath + "GameBase.h");
 	const string gameBaseSource = cppHeaderPath + "GameBase.cpp";
-	generateFrameSystemDeclare(lineList, gameBaseHeader);
-	generateFrameSystemDefine(lineList, gameBaseSource);
-	generateFrameSystemGet(lineList, gameBaseSource);
-	generateFrameSystemClear(lineList, gameBaseSource);
+	generateFrameSystemDefine(frameSystemList, gameBaseSource);
+	generateFrameSystemGet(frameSystemList, gameBaseSource);
+	generateFrameSystemClear(frameSystemList, gameBaseSource);
 }
 
 void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameSystemList, const string& gameCppPath)
