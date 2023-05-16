@@ -13,7 +13,6 @@ protected:
 	static void generateCppGameClassAndHeader(const string& path, const string& targetFilePath);
 	static void generateCppBattleCoreClassAndHeader(const string& path, const string& targetFilePath);
 protected:
-	static string findClassName(const string& line, const string& lastLine);
 };
 
 #endif

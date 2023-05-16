@@ -12,28 +12,28 @@ void CodeNetPacket::generate()
 	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
 
 	// 解析模板文件
-	string csFileContent = openTxtFile("PacketCS.txt");
-	if (csFileContent.length() == 0)
+	myVector<string> csLines = openTxtFileLines("PacketCS.txt");
+	myVector<string> scLines = openTxtFileLines("PacketSC.txt");
+	if (csLines.size() == 0)
 	{
 		ERROR("未找到协议文件PacketCS.txt");
 		return;
 	}
-	string scFileContent = openTxtFile("PacketSC.txt");
-	if (scFileContent.length() == 0)
+	if (scLines.size() == 0)
 	{
 		ERROR("未找到协议文件PacketSC.txt");
 		return;
 	}
-	myVector<string> lines;
-	split(csFileContent.c_str(), "\r\n", lines);
-	split(scFileContent.c_str(), "\r\n", lines);
+	myVector<string> allLines;
+	allLines.addRange(csLines);
+	allLines.addRange(scLines);
 	bool packetStart = false;
 	myVector<PacketInfo> packetInfoList;
 	myVector<PacketMember> tempMemberList;
 	int tempPacketNameLine;
-	FOR_VECTOR_CONST(lines)
+	FOR_VECTOR_CONST(allLines)
 	{
-		string line = lines[i];
+		string line = allLines[i];
 		// 忽略注释
 		if (startWith(line, "//"))
 		{
@@ -51,8 +51,8 @@ void CodeNetPacket::generate()
 		if (line == "{}")
 		{
 			PacketInfo info;
-			parsePacketName(lines[i - 1], info);
-			info.mComment = lines[i - 2];
+			parsePacketName(allLines[i - 1], info);
+			info.mComment = allLines[i - 2];
 			packetInfoList.push_back(info);
 			continue;
 		}
@@ -74,13 +74,13 @@ void CodeNetPacket::generate()
 				clampMin(printStartLine, 0);
 				for (int j = printStartLine; j <= (int)i; ++j)
 				{
-					cout << lines[j] << endl;
+					cout << allLines[j] << endl;
 				}
 			}
 			PacketInfo info;
-			parsePacketName(lines[tempPacketNameLine], info);
+			parsePacketName(allLines[tempPacketNameLine], info);
 			info.mMemberList = tempMemberList;
-			info.mComment = lines[tempPacketNameLine - 1];
+			info.mComment = allLines[tempPacketNameLine - 1];
 			packetInfoList.push_back(info);
 			packetStart = false;
 			tempMemberList.clear();
@@ -492,12 +492,8 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 int CodeNetPacket::findPacketVersion(const string& filePath)
 {
 	int packetVersion = 0;
-	string fileContent = openTxtFile(filePath);
-	myVector<string> lines;
-	split(fileContent.c_str(), "\r\n", lines);
-	FOR_VECTOR(lines)
+	for (const string& line : openTxtFileLines(filePath))
 	{
-		const string& line = lines[i];
 		int index = 0;
 		if (findString(line.c_str(), "PACKET_VERSION = ", &index))
 		{
@@ -507,7 +503,6 @@ int CodeNetPacket::findPacketVersion(const string& filePath)
 			break;
 		}
 	}
-	END(lines);
 	return packetVersion;
 }
 

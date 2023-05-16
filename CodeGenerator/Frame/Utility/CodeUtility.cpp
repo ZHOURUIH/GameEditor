@@ -453,3 +453,35 @@ string CodeUtility::codeListToString(const myVector<string>& codeList)
 	}
 	return str;
 }
+
+string CodeUtility::findClassName(const string& line)
+{
+	if (startWith(line, "class ") && !findSubstr(line, ";"))
+	{
+		// 截取出:前面的字符串
+		int colonPos = (int)line.find(':');
+		// 有:,最靠近:的才是类名
+		if (colonPos != -1)
+		{
+			myVector<string> elements;
+			split(line.substr(0, colonPos).c_str(), " ", elements);
+			if (elements.size() == 0)
+			{
+				return "";
+			}
+			return elements[elements.size() - 1];
+		}
+		// 没有:,则最后一个元素是类名
+		else
+		{
+			myVector<string> elements;
+			split(line.c_str(), " ", elements);
+			if (elements.size() == 0)
+			{
+				return "";
+			}
+			return elements[elements.size() - 1];
+		}
+	}
+	return "";
+}

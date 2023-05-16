@@ -11,21 +11,18 @@ void CodeMySQL::generate()
 	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
 
 	// 解析模板文件
-	string fileContent = openTxtFile("MySQL.txt");
-	if (fileContent.length() == 0)
-	{
-		ERROR("未找到表格格式文件MySQL.txt");
-		return;
-	}
-
 	// 整个文件是否已经开始解析
 	bool fileStart = false;
 	// 是否已经开始解析一个表格的数据体
 	bool packetStart = false;
 	// 是否已经开始解析一个表格中的索引
 	bool indexStart = false;
-	myVector<string> lines;
-	split(fileContent.c_str(), "\r\n", lines);
+	myVector<string> lines = openTxtFileLines("MySQL.txt");
+	if (lines.size() == 0)
+	{
+		ERROR("未找到表格格式文件MySQL.txt");
+		return;
+	}
 	myVector<MySQLInfo> mysqlInfoList;
 	MySQLInfo tempInfo;
 	FOR_VECTOR_CONST(lines)
@@ -881,11 +878,11 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
-	line(source, "\treturn FrameBase::mMySQLDataBase->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
+	line(source, "\treturn FrameBase::mMySQLManager->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
 	line(source, "}");
 	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
-	line(source, "\treturn FrameBase::mMySQLDataBase->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count);");
+	line(source, "\treturn FrameBase::mMySQLManager->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count);");
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
@@ -917,7 +914,7 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	FOR_I(count)
 	{
 		const string& mysqlClassName = mysqlList[i].mMySQLClassName;
-		line(str1, "\tGameBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLDataBase->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
+		line(str1, "\tGameBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));

@@ -420,6 +420,15 @@ bool FileUtility::createFolder(const string& path)
 	return true;
 }
 
+bool FileUtility::writeFileIfChanged(const string& filePath, const string& text)
+{
+	if (openTxtFile(filePath, false) != text)
+	{
+		return writeFile(filePath, text);
+	}
+	return true;
+}
+
 bool FileUtility::writeFile(string filePath, const string& text, bool append)
 {
 	return writeFile(filePath, text.c_str(), (uint)text.length(), append);
