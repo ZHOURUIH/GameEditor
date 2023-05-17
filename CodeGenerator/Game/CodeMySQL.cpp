@@ -838,7 +838,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(header, "\ttypedef MySQLTable base;");
 	line(header, "public:");
 	line(header, "\texplicit " + tableClassName + "(const char* tableName);");
-	line(header, "\tvoid init(MYSQL * mysql) override;");
+	line(header, "\tvoid init() override;");
 	if (mysqlInfo.mIndexList.size() > 0)
 	{
 		line(header, "\tvoid lateInit() override;");
@@ -858,9 +858,9 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(source, "\tmDataType = NAME(" + dataClassName + ");");
 	line(source, "}");
 	line(source, "");
-	line(source, "void " + tableClassName + "::init(MYSQL* mysql)");
+	line(source, "void " + tableClassName + "::init()");
 	line(source, "{");
-	line(source, "\tbase::init(mysql);");
+	line(source, "\tbase::init();");
 	line(source, "\t" + dataClassName + "::fillColName(this);");
 	line(source, "}");
 	line(source, "");
