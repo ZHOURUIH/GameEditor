@@ -2,15 +2,15 @@
 
 void CodeCmd::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
+	myVector<string> needDefineGameCmds = findTargetHeaderFile(cppGamePath,
+		[](const string& fileName) { return startWith(fileName, "Cmd"); },
+		[](const string& line) { return findSubstr(line, " : public GameCommand"); });
+	generateStringDefineCmd(needDefineGameCmds, cppGameStringDefineFile);
 
-	myVector<string> needDefineCmds = findTargetHeaderFile(cppGameProjectPath, 
-									[](const string& fileName) { return startWith(fileName, "Cmd"); },
-									[](const string& line) { return findSubstr(line, " : public GameCommand"); });
-	generateStringDefineCmd(needDefineCmds, cppGameStringDefineFile);
+	myVector<string> needDefineGameCoreCmds = findTargetHeaderFile(cppGameCorePath,
+		[](const string& fileName) { return startWith(fileName, "Cmd"); },
+		[](const string& line) { return findSubstr(line, " : public GameCommand"); });
+	generateStringDefineCmd(needDefineGameCoreCmds, cppGameCoreStringDefineFile);
 }
 
 void CodeCmd::generateStringDefineCmd(const myVector<string>& cmdList, const string& stringDefineFile)

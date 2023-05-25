@@ -8,16 +8,18 @@ class StringUtility : public BinaryUtility
 public:
 	static string removeStartString(const string& fileName, const string& startStr);
 	static string removeSuffix(const string& str);
-	// 去掉最后一个出现的指定字符
+	// 去掉从开始出现的连续指定字符
 	static void removeStartAll(string& stream, char key);
-	// 去掉最后一个出现的指定字符
+	// 去掉第一个出现的指定字符
 	static void removeStart(string& stream, char key);
-	// 去掉最后一个出现的指定字符
+	// 去掉最后出现的连续指定字符
 	static void removeLastAll(string& stream, char key);
 	// 去掉最后一个出现的指定字符
 	static void removeLast(string& stream, char key);
 	// 去掉最后一个逗号
 	static void removeLastComma(string& stream);
+	// 如果以key结尾,则移除此字符
+	static void removeEnd(string& str, char key);
 	// 查找str中指定key的数量
 	static int findCharCount(const string& str, char key);
 	static string getFileName(string str);

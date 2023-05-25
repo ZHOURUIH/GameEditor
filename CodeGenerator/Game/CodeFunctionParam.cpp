@@ -2,35 +2,56 @@
 
 void CodeFunctionParam::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
-	string cppHeaderPath = cppGamePath + "FunctionParam/";
-	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "Param"); },
-															  [](const string& line) { return findSubstr(line, " : public FunctionParam"); });
+	// Game
+	myVector<string> listGame = findTargetHeaderFile(cppGamePath, 
+		[](const string& fileName) { return startWith(fileName, "Param"); },
+		[](const string& line) { return findSubstr(line, " : public FunctionParam"); });
 	// 生成StringDefineFunctionParam文件
-	generateStringDefine(list, cppGameStringDefineFile);
+	generateStringDefine(listGame, cppGameStringDefineFile);
 	// 生成FunctionParamRegister文件
-	generateCppRegister(list, cppHeaderPath);
+	generateCppGameRegister(listGame, cppGamePath + "FunctionParam/");
+
+	// GameCore
+	myVector<string> listGameCore = findTargetHeaderFile(cppGameCorePath, 
+		[](const string& fileName) { return startWith(fileName, "Param"); },
+		[](const string& line) { return findSubstr(line, " : public FunctionParam"); });
+	// 生成StringDefineFunctionParam文件
+	generateStringDefine(listGameCore, cppGameCoreStringDefineFile);
+	// 生成FunctionParamRegister文件
+	generateCppGameCoreRegister(listGameCore, cppGameCorePath + "FunctionParam/");
 }
 
 // FunctionParamRegister文件
-void CodeFunctionParam::generateCppRegister(const myVector<string>& paramList, const string& filePath)
+void CodeFunctionParam::generateCppGameRegister(const myVector<string>& paramList, const string& filePath)
 {
 	string str0;
 	line(str0, "#include \"GameHeader.h\"");
 	line(str0, "");
-	line(str0, "void FunctionParamRegister::registeAll()");
+	line(str0, "void GameFunctionParamRegister::registeAll()");
 	line(str0, "{");
 	for (const string& item : paramList)
 	{
-		line(str0, "\tGameBase::mFunctionParamFactoryManager->addFactory<" + item + ">(NAME(" + item + "));");
+		line(str0, "\tGameCoreBase::mFunctionParamFactoryManager->addFactory<" + item + ">(GAME_NAME(" + item + "));");
 	}
 	line(str0, "}", false);
 
-	writeFile(filePath + "FunctionParamRegister.cpp", ANSIToUTF8(str0.c_str(), true));
+	writeFile(filePath + "GameFunctionParamRegister.cpp", ANSIToUTF8(str0.c_str(), true));
+}
+
+void CodeFunctionParam::generateCppGameCoreRegister(const myVector<string>& paramList, const string& filePath)
+{
+	string str0;
+	line(str0, "#include \"GameCoreHeader.h\"");
+	line(str0, "");
+	line(str0, "void GameCoreFunctionParamRegister::registeAll()");
+	line(str0, "{");
+	for (const string& item : paramList)
+	{
+		line(str0, "\tGameCoreBase::mFunctionParamFactoryManager->addFactory<" + item + ">(GAME_CORE_NAME(" + item + "));");
+	}
+	line(str0, "}", false);
+
+	writeFile(filePath + "GameCoreFunctionParamRegister.cpp", ANSIToUTF8(str0.c_str(), true));
 }
 
 void CodeFunctionParam::generateStringDefine(const myVector<string>& paramList, const string& stringDefineFile)

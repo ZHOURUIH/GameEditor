@@ -8,8 +8,8 @@ void CodeUnityBuild::generate()
 	}
 
 	// 生成UnityBuild.cpp文件
-	generateCppUnityBuild(cppGameProjectPath, "UnityBuild.cpp");
-	//generateCppUnityBuild(cppBattleCoreProjectPath, "UnityBuildBattleCore.cpp");
+	generateCppUnityBuild(cppGamePath, "UnityBuildGame.cpp");
+	generateCppUnityBuild(cppGameCorePath, "UnityBuildGameCore.cpp");
 	generateCppUnityBuild(cppFrameProjectPath, "UnityBuildFrame.cpp");
 }
 
@@ -43,6 +43,10 @@ void CodeUnityBuild::generateCppUnityBuild(const string& filePath, const string&
 	}
 	fileList.remove(unityBuildFileName);
 
+	if (filePath == cppGamePath)
+	{
+		fileList.push_back("main.cpp");
+	}
 	string str0;
 	uint count = fileList.size();
 	FOR_I(count)

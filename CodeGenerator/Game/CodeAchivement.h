@@ -8,8 +8,8 @@ class CodeAchivement : public CodeUtility
 public:
 	static void generate();
 protected:
+	static void generateAchivement(const string& path, const string& cppHeaderPath);
 	static void generateRegister(const myVector<string>& list, const string& headerPath);
-	static void generateAchivementFile(const string& achivement, const string& achivementPath);
 protected:
 };
 

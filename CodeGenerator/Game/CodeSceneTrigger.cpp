@@ -2,19 +2,16 @@
 
 void CodeSceneTrigger::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
+	string cppHeaderPath = cppGameCorePath + "SceneTriggerManager/";
 
-	string cppHeaderPath = cppGamePath + "SceneTriggerManager/";
-
-	myVector<string> triggerList = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "SceneTrigger"); },
-																	 [](const string& line) { return findSubstr(line, " : public SceneTrigger"); });
-	myVector<string> modifierList = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "TriggerModifier"); },
-																	  [](const string& line) { return findSubstr(line, " : public TriggerModifier"); });
+	myVector<string> triggerList = findTargetHeaderFile(cppGameCorePath, 
+		[](const string& fileName) { return startWith(fileName, "SceneTrigger"); },
+		[](const string& line) { return findSubstr(line, " : public SceneTrigger"); });
+	myVector<string> modifierList = findTargetHeaderFile(cppGameCorePath, 
+		[](const string& fileName) { return startWith(fileName, "TriggerModifier"); },
+		[](const string& line) { return findSubstr(line, " : public TriggerModifier"); });
 	// 生成StringDefineSceneTrigger文件
-	generateStringDefine(triggerList, cppGameStringDefineFile);
+	generateStringDefine(triggerList, cppGameCoreStringDefineFile);
 	// 生成SceneTriggerRegister文件
 	generateCppRegister(triggerList, modifierList, cppHeaderPath);
 }
@@ -23,7 +20,7 @@ void CodeSceneTrigger::generate()
 void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, const myVector<string>& modifierList, const string& filePath)
 {
 	string str0;
-	line(str0, "#include \"GameHeader.h\"");
+	line(str0, "#include \"GameCoreHeader.h\"");
 	line(str0, "");
 	line(str0, "void SceneTriggerRegister::registeAll()");
 	line(str0, "{");
@@ -32,13 +29,13 @@ void CodeSceneTrigger::generateCppRegister(const myVector<string>& triggerList, 
 	{
 		string enumName = nameToUpper(triggerList[i].substr(strlen("SceneTrigger")));
 		enumName.erase(0, 1);
-		line(str0, "\tGameBase::mSceneTriggerFactoryManager->addFactory<" + triggerList[i] + ">(SCENE_TRIGGER::" + enumName + ");");
+		line(str0, "\tGameCoreBase::mSceneTriggerFactoryManager->addFactory<" + triggerList[i] + ">(SCENE_TRIGGER::" + enumName + ");");
 	}
 	line(str0, "");
 	// 触发器的修改器
 	FOR_VECTOR_CONST(modifierList)
 	{
-		line(str0, "\tGameBase::mTriggerModifierFactoryManager->addFactory<" + modifierList[i] + ">(" + intToString(getLastNumber(modifierList[i])) + ");");
+		line(str0, "\tGameCoreBase::mTriggerModifierFactoryManager->addFactory<" + modifierList[i] + ">(" + intToString(getLastNumber(modifierList[i])) + ");");
 	}
 	line(str0, "}", false);
 

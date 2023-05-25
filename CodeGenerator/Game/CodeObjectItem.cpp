@@ -2,15 +2,10 @@
 
 void CodeObjectItem::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
-	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "ObjectItem"); },
+	myVector<string> list = findTargetHeaderFile(cppGameCorePath, [](const string& fileName) { return startWith(fileName, "ObjectItem"); },
 															  [](const string& line) { return findSubstr(line, " : public ObjectItem"); });
 	// 生成StringDefine文件
-	generateStringDefineObjectItem(list, cppGameStringDefineFile);
+	generateStringDefineObjectItem(list, cppGameCoreStringDefineFile);
 }
 
 void CodeObjectItem::generateStringDefineObjectItem(const myVector<string>& objectItemList, const string& stringDefineFile)

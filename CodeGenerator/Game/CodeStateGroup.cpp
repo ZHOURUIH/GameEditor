@@ -2,15 +2,10 @@
 
 void CodeStateGroup::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
-	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "StateGroup"); },
+	myVector<string> list = findTargetHeaderFile(cppGameCorePath, [](const string& fileName) { return startWith(fileName, "StateGroup"); },
 															  [](const string& line) { return findSubstr(line, " : public StateGroup"); });
 	// 生成StringDefine文件
-	generateStringDefineStateGroup(list, cppGameStringDefineFile);
+	generateStringDefineStateGroup(list, cppGameCoreStringDefineFile);
 }
 
 void CodeStateGroup::generateStringDefineStateGroup(const myVector<string>& stateList, const string& stringDefineFile)

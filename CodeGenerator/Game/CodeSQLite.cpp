@@ -2,20 +2,6 @@
 
 void CodeSQLite::generate()
 {
-	string cppDataPath = cppGamePath + "DataBase/SQLite/Data/";
-	string cppTablePath = cppGamePath + "DataBase/SQLite/Table/";
-	string csExcelDataGamePath = csGamePath + "DataBase/Excel/Data/";
-	string csExcelDataHotFixPath = csHotfixGamePath + "DataBase/Excel/Data/";
-	string csExcelTableGamePath = csGamePath + "DataBase/Excel/Table/";
-	string csExcelTableHotFixPath = csHotfixGamePath + "DataBase/Excel/Table/";
-
-	string csSQLiteDataGamePath = csGamePath + "DataBase/SQLite/Data/";
-	string csSQLiteDataHotFixPath = csHotfixGamePath + "DataBase/SQLite/Data/";
-	string csSQLiteTableGamePath = csGamePath + "DataBase/SQLite/Table/";
-	string csSQLiteTableHotFixPath = csHotfixGamePath + "DataBase/SQLite/Table/";
-	string csTableDeclareGamePath = csGamePath + "Common/";
-	string csTableDeclareHotFixPath = csHotfixGamePath + "Common/";
-
 	// 解析模板文件
 	myVector<string> lines = openTxtFileLines("SQLite.txt");
 	if (lines.size() == 0)
@@ -95,8 +81,34 @@ void CodeSQLite::generate()
 			{
 				tempInfo.mOwner = SQLITE_OWNER::BOTH;
 			}
+			// 如果是服务器会用到的表格,需要指定是Game层还是GameCore层
+			SQLITE_SERVER_OWNER serverOwner = SQLITE_SERVER_OWNER::NONE;
+			if (tempInfo.mOwner == SQLITE_OWNER::BOTH || tempInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
+			{
+				if (tagList.contains("[Game]"))
+				{
+					if (serverOwner != SQLITE_SERVER_OWNER::NONE)
+					{
+						ERROR("不能重复设置标签," + lastLine);
+					}
+					serverOwner = SQLITE_SERVER_OWNER::GAME;
+				}
+				else if (tagList.contains("[GameCore]"))
+				{
+					if (serverOwner != SQLITE_SERVER_OWNER::NONE)
+					{
+						ERROR("不能重复设置标签," + lastLine);
+					}
+					serverOwner = SQLITE_SERVER_OWNER::GAME_CORE;
+				}
+				if (serverOwner == SQLITE_SERVER_OWNER::NONE)
+				{
+					ERROR("服务器用到的SQLite表格必须设置所属层标签," + lastLine);
+				}
+			}
 			tempInfo.mHotFix = tagList.contains("[HotFix]");
 			tempInfo.mClientSQLite = tagList.contains("[ClientSQLite]");
+			tempInfo.mServerOwner = serverOwner;
 
 			// 去除名字中的标签,获取原始的表格名称
 			int firstTagPos = -1;
@@ -132,107 +144,175 @@ void CodeSQLite::generate()
 			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line, ignoreClientServer));
 		}
 	}
-	if (cppGamePath.length() > 0)
+	
+	// cpp
+	string cppGameDataPath = cppGamePath + "DataBase/SQLite/Data/";
+	string cppGameTablePath = cppGamePath + "DataBase/SQLite/Table/";
+	// 筛选出Server的Game层表格
+	myVector<SQLiteInfo> serverGameSQLiteList;
+	for (const SQLiteInfo& info : sqliteInfoList)
 	{
-		// 删除C++的代码文件
-		deleteFolder(cppDataPath);
-		// SQLite的Table文件选择性删除,只删除非服务器使用的文件
-		string patterns[2]{ ".cpp", ".h" };
-		myVector<string> cppTableList;
-		findFiles(cppTablePath, cppTableList, patterns, 2);
-		for (const string& str : cppTableList)
+		if ((info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY) && info.mServerOwner == SQLITE_SERVER_OWNER::GAME)
 		{
-			bool isUsedInServer = false;
-			for (const SQLiteInfo& info : sqliteInfoList)
-			{
-				if ("SQLite" + info.mSQLiteName == getFileNameNoSuffix(str, true))
-				{
-					isUsedInServer = info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY;
-					break;
-				}
-			}
-			if (!isUsedInServer)
-			{
-				deleteFile(str);
-			}
+			serverGameSQLiteList.push_back(info);
 		}
 	}
-	
-	if (csGamePath.length() > 0)
+	// 删除C++的代码文件
+	deleteFolder(cppGameDataPath);
+	// SQLite的Table文件选择性删除,只删除非服务器使用的文件
+	string patterns[2]{ ".cpp", ".h" };
+	myVector<string> cppGameTableList;
+	findFiles(cppGameTablePath, cppGameTableList, patterns, 2);
+	for (const string& str : cppGameTableList)
 	{
-		// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
-		myVector<string> csDataFileList;
-		findFiles(csExcelDataGamePath, csDataFileList, ".cs");
-		findFiles(csExcelDataHotFixPath, csDataFileList, ".cs");
-		findFiles(csSQLiteDataGamePath, csDataFileList, ".cs");
-		findFiles(csSQLiteDataHotFixPath, csDataFileList, ".cs");
-		for (const string& str : csDataFileList)
+		bool needDelete = true;
+		for (const SQLiteInfo& info : serverGameSQLiteList)
 		{
-			deleteFile(str);
+			if ("SQLite" + info.mSQLiteName == getFileNameNoSuffix(str, true))
+			{
+				needDelete = false;
+				break;
+			}
 		}
-		myVector<string> csTableFileList;
-		findFiles(csExcelTableGamePath, csTableFileList, ".cs");
-		findFiles(csExcelTableHotFixPath, csTableFileList, ".cs");
-		for (const string& str : csTableFileList)
+		if (needDelete)
 		{
 			deleteFile(str);
 		}
 	}
 
 	// 生成代码文件
+	for (const SQLiteInfo& info : serverGameSQLiteList)
+	{
+		// .h代码
+		generateCppSQLiteDataFile(info, cppGameDataPath);
+		generateCppSQLiteTableFile(info, cppGameTablePath);
+	}
+
+	const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
+	const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
+	const string gameSTLPoolSourcePath = cppGamePath + "Common/GameSTLPoolRegister.cpp";
+	generateCppGameSQLiteRegisteFile(serverGameSQLiteList, getFilePath(cppGameDataPath) + "/");
+	generateCppSQLiteInstanceDeclare(serverGameSQLiteList, gameBaseHeaderPath);
+	generateCppSQLiteInstanceDefine(serverGameSQLiteList, gameBaseSourcePath);
+	generateCppSQLiteSTLPoolRegister(serverGameSQLiteList, gameSTLPoolSourcePath);
+	generateCppSQLiteInstanceClear(serverGameSQLiteList, gameBaseSourcePath);
+
+	string cppGameCoreDataPath = cppGameCorePath + "DataBase/SQLite/Data/";
+	string cppGameCoreTablePath = cppGameCorePath + "DataBase/SQLite/Table/";
+	// 筛选出Server的GameCore层表格
+	myVector<SQLiteInfo> serverGameCoreSQLiteList;
 	for (const SQLiteInfo& info : sqliteInfoList)
 	{
-		if (cppGamePath.length() > 0)
+		if ((info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY) && info.mServerOwner == SQLITE_SERVER_OWNER::GAME_CORE)
 		{
-			// .h代码
-			generateCppSQLiteDataFile(info, cppDataPath);
-			generateCppSQLiteTableFile(info, cppTablePath);
+			serverGameCoreSQLiteList.push_back(info);
 		}
-		if (csGamePath.length() > 0)
+	}
+	// 删除C++的代码文件
+	deleteFolder(cppGameCoreDataPath);
+	// SQLite的Table文件选择性删除,只删除非服务器使用的文件
+	myVector<string> cppGameCoreTableList;
+	findFiles(cppGameCoreTablePath, cppGameCoreTableList, patterns, 2);
+	for (const string& str : cppGameCoreTableList)
+	{
+		bool needDelete = true;
+		for (const SQLiteInfo& info : serverGameCoreSQLiteList)
 		{
-			// .cs代码的SQLite格式
-			if (info.mClientSQLite)
+			if ("SQLite" + info.mSQLiteName == getFileNameNoSuffix(str, true))
 			{
-				generateCSharpSQLiteDataFile(info, csSQLiteDataGamePath, csSQLiteDataHotFixPath);
-				generateCSharpSQLiteTableFile(info, csSQLiteTableGamePath, csSQLiteTableHotFixPath);
+				needDelete = false;
+				break;
 			}
-			// .cs代码的Excel格式
-			else
-			{
-				generateCSharpExcelDataFile(info, csExcelDataGamePath, csExcelDataHotFixPath);
-				generateCSharpExcelTableFile(info, csExcelTableGamePath, csExcelTableHotFixPath);
-			}
+		}
+		if (needDelete)
+		{
+			deleteFile(str);
 		}
 	}
 
-	if (cppGamePath.length() > 0)
+	// 生成代码文件
+	for (const SQLiteInfo& info : serverGameCoreSQLiteList)
 	{
-		const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
-		const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
-		const string gameSTLPoolSourcePath = cppGamePath + "Common/GameSTLPoolRegister.cpp";
-		generateCppSQLiteRegisteFile(sqliteInfoList, getFilePath(cppDataPath) + "/");
-		generateCppSQLiteInstanceDeclare(sqliteInfoList, gameBaseHeaderPath);
-		generateCppSQLiteInstanceDefine(sqliteInfoList, gameBaseSourcePath);
-		generateCppSQLiteSTLPoolRegister(sqliteInfoList, gameSTLPoolSourcePath);
-		generateCppSQLiteInstanceClear(sqliteInfoList, gameBaseSourcePath);
+		// .h代码
+		generateCppSQLiteDataFile(info, cppGameCoreDataPath);
+		generateCppSQLiteTableFile(info, cppGameCoreTablePath);
 	}
 
-	if (csGamePath.length() > 0)
+	const string gameCoreBaseHeaderPath = cppGameCorePath + "Common/GameCoreBase.h";
+	const string gameCoreBaseSourcePath = cppGameCorePath + "Common/GameCoreBase.cpp";
+	const string gameCoreSTLPoolSourcePath = cppGameCorePath + "Common/GameCoreSTLPoolRegister.cpp";
+	generateCppGameCoreSQLiteRegisteFile(serverGameCoreSQLiteList, getFilePath(cppGameCoreDataPath) + "/");
+	generateCppSQLiteInstanceDeclare(serverGameCoreSQLiteList, gameCoreBaseHeaderPath);
+	generateCppSQLiteInstanceDefine(serverGameCoreSQLiteList, gameCoreBaseSourcePath);
+	generateCppSQLiteSTLPoolRegister(serverGameCoreSQLiteList, gameCoreSTLPoolSourcePath);
+	generateCppSQLiteInstanceClear(serverGameCoreSQLiteList, gameCoreBaseSourcePath);
+
+	//------------------------------------------------------------------------------------------------------------------------------
+	// csharp
+	string csExcelDataGamePath = csGamePath + "DataBase/Excel/Data/";
+	string csExcelDataHotFixPath = csHotfixGamePath + "DataBase/Excel/Data/";
+	string csExcelTableGamePath = csGamePath + "DataBase/Excel/Table/";
+	string csExcelTableHotFixPath = csHotfixGamePath + "DataBase/Excel/Table/";
+	string csExcelTableDeclareGamePath = csGamePath + "Common/";
+	string csExcelTableDeclareHotFixPath = csHotfixGamePath + "Common/";
+
+	string csSQLiteDataGamePath = csGamePath + "DataBase/SQLite/Data/";
+	string csSQLiteDataHotFixPath = csHotfixGamePath + "DataBase/SQLite/Data/";
+	string csSQLiteTableGamePath = csGamePath + "DataBase/SQLite/Table/";
+	string csSQLiteTableHotFixPath = csHotfixGamePath + "DataBase/SQLite/Table/";
+	// 筛选出Client的表格
+	myVector<SQLiteInfo> clientSQLiteList;
+	for (const SQLiteInfo& info : sqliteInfoList)
 	{
-		// 在上一层目录生成SQLiteRegister.cs和SQLiteRegister.cs文件
-		generateCSharpExcelRegisteFileFile(sqliteInfoList, getFilePath(csExcelDataHotFixPath) + "/", getFilePath(csExcelDataGamePath) + "/");
-		generateCSharpSQLiteRegisteFileFile(sqliteInfoList, getFilePath(csSQLiteDataHotFixPath) + "/", getFilePath(csSQLiteDataGamePath) + "/");
-		generateCSharpExcelDeclare(sqliteInfoList, csTableDeclareHotFixPath, csTableDeclareGamePath);
+		if (info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		{
+			clientSQLiteList.push_back(info);
+		}
 	}
+	// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
+	myVector<string> csDataFileList;
+	findFiles(csExcelDataGamePath, csDataFileList, ".cs");
+	findFiles(csExcelDataHotFixPath, csDataFileList, ".cs");
+	findFiles(csSQLiteDataGamePath, csDataFileList, ".cs");
+	findFiles(csSQLiteDataHotFixPath, csDataFileList, ".cs");
+	for (const string& str : csDataFileList)
+	{
+		deleteFile(str);
+	}
+	myVector<string> csTableFileList;
+	findFiles(csExcelTableGamePath, csTableFileList, ".cs");
+	findFiles(csExcelTableHotFixPath, csTableFileList, ".cs");
+	for (const string& str : csTableFileList)
+	{
+		deleteFile(str);
+	}
+
+	// 生成代码文件
+	for (const SQLiteInfo& info : clientSQLiteList)
+	{
+		// .cs代码的SQLite格式
+		if (info.mClientSQLite)
+		{
+			generateCSharpSQLiteDataFile(info, csSQLiteDataGamePath, csSQLiteDataHotFixPath);
+			generateCSharpSQLiteTableFile(info, csSQLiteTableGamePath, csSQLiteTableHotFixPath);
+		}
+		// .cs代码的Excel格式
+		else
+		{
+			generateCSharpExcelDataFile(info, csExcelDataGamePath, csExcelDataHotFixPath);
+			generateCSharpExcelTableFile(info, csExcelTableGamePath, csExcelTableHotFixPath);
+		}
+	}
+
+	// 在上一层目录生成SQLiteRegister.cs和SQLiteRegister.cs文件
+	generateCSharpExcelRegisteFileFile(clientSQLiteList, getFilePath(csExcelDataHotFixPath) + "/", getFilePath(csExcelDataGamePath) + "/");
+	generateCSharpSQLiteRegisteFileFile(clientSQLiteList, getFilePath(csSQLiteDataHotFixPath) + "/", getFilePath(csSQLiteDataGamePath) + "/");
+	generateCSharpExcelDeclare(clientSQLiteList, csExcelTableDeclareHotFixPath, csExcelTableDeclareGamePath);
 }
 
 // TDSQLite.h和TDSQLite.cpp文件
 void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const string& dataFilePath)
 {
-	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY || sqliteInfo.mOwner == SQLITE_OWNER::NONE)
-	{
-		return;
-	}
 	// 不含ID的成员字段列表
 	myVector<SQLiteMember> memberNoIDList;
 	for (const SQLiteMember& member : sqliteInfo.mMemberList)
@@ -364,10 +444,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 // SQLiteTable.h文件
 void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const string& tableFilePath)
 {
-	if (sqliteInfo.mOwner == SQLITE_OWNER::CLIENT_ONLY || sqliteInfo.mOwner == SQLITE_OWNER::NONE)
-	{
-		return;
-	}
 	// SQLiteTable.h
 	string dataClassName = "TD" + sqliteInfo.mSQLiteName;
 	string tableClassName = "SQLite" + sqliteInfo.mSQLiteName;
@@ -390,7 +466,7 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 }
 
 // SQLiteRegister.h和SQLiteRegister.cpp文件
-void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
+void CodeSQLite::generateCppGameSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
 {
 	// SQLiteRegister.h
 	string str0;
@@ -398,17 +474,54 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
-	line(str0, "class SQLiteRegister");
+	line(str0, "class GameSQLiteRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
 	line(str0, "};", false);
-	writeFile(filePath + "SQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
+	writeFile(filePath + "GameSQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
-	line(str1, "void SQLiteRegister::registeAll()");
+	line(str1, "void GameSQLiteRegister::registeAll()");
+	line(str1, "{");
+	uint count = sqliteList.size();
+	FOR_I(count)
+	{
+		const string& sqliteName = sqliteList[i].mSQLiteName;
+		line(str1, "\tGameBase::mSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
+	}
+	line(str1, "");
+	FOR_I(count)
+	{
+		const string& sqliteName = sqliteList[i].mSQLiteName;
+		line(str1, "\tFrameBase::mSQLiteManager->addSQLiteTable(GameBase::mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
+	}
+	line(str1, "}", false);
+	writeFile(filePath + "GameSQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
+}
+
+// SQLiteRegister.h和SQLiteRegister.cpp文件
+void CodeSQLite::generateCppGameCoreSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
+{
+	// SQLiteRegister.h
+	string str0;
+	line(str0, "#pragma once");
+	line(str0, "");
+	line(str0, "#include \"GameCoreBase.h\"");
+	line(str0, "");
+	line(str0, "class GameCoreSQLiteRegister");
+	line(str0, "{");
+	line(str0, "public:");
+	line(str0, "\tstatic void registeAll();");
+	line(str0, "};", false);
+	writeFile(filePath + "GameCoreSQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
+
+	string str1;
+	line(str1, "#include \"GameHeader.h\"");
+	line(str1, "");
+	line(str1, "void GameCoreSQLiteRegister::registeAll()");
 	line(str1, "{");
 	uint count = sqliteList.size();
 	FOR_I(count)
@@ -418,7 +531,7 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 			continue;
 		}
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tGameBase::mSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
+		line(str1, "\tGameCoreBase::mSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
 	}
 	line(str1, "");
 	FOR_I(count)
@@ -428,10 +541,10 @@ void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqlite
 			continue;
 		}
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tFrameBase::mSQLiteManager->addSQLiteTable(GameBase::mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
+		line(str1, "\tFrameBase::mSQLiteManager->addSQLiteTable(GameCoreBase::mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
 	}
 	line(str1, "}", false);
-	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
+	writeFile(filePath + "GameCoreSQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseHeaderFileName)
@@ -448,10 +561,6 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
 		codeList.insert(++lineStart, "\tstatic SQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
 	}
 	writeFile(gameBaseHeaderFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
@@ -459,6 +568,8 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 
 void CodeSQLite::generateCppSQLiteInstanceDefine(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseCppFileName)
 {
+	// GameBase的类名与文件名一致
+	const string gameBaseClassName = getFileNameNoSuffix(gameBaseCppFileName, true);
 	// 更新GameBase.cpp的特定部分代码
 	myVector<string> codeList;
 	int lineStart = -1;
@@ -470,11 +581,7 @@ void CodeSQLite::generateCppSQLiteInstanceDefine(const myVector<SQLiteInfo>& sql
 	}
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
-		codeList.insert(++lineStart, "SQLite" + info.mSQLiteName + "* GameBase::mSQLite" + info.mSQLiteName + ";");
+		codeList.insert(++lineStart, "SQLite" + info.mSQLiteName + "* " + gameBaseClassName + "::mSQLite" + info.mSQLiteName + ";");
 	}
 	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -493,10 +600,6 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 	}
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
 		codeList.insert(++lineStart, "\tFrameBase::mVectorPoolManager->registeVectorPool<TD" + info.mSQLiteName + "*>();");
 	}
 	writeFile(gameSTLPoolFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
@@ -516,10 +619,6 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		if (info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
 		codeList.insert(++lineStart, "\tmSQLite" + info.mSQLiteName + " = nullptr;");
 	}
 	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));

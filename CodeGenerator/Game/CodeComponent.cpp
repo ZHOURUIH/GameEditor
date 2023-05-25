@@ -2,32 +2,51 @@
 
 void CodeComponent::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
-	const string cppRegisterPath = cppGamePath + "/Component/";
-
-	myVector<string> files = findTargetHeaderFile(cppGameProjectPath, 
+	// Game
+	const string cppGameRegisterPath = cppGamePath + "/Component/";
+	myVector<string> gameComFiles = findTargetHeaderFile(cppGamePath, 
 	[](const string& fileName) 
 	{ 
 		return startWith(fileName, "COM") && 
 			   fileName != "COMCharacterGame" && 
-			   fileName != "COMPlayer"; 
+			   fileName != "COMPlayer" && 
+			   fileName != "COMNPC"; 
 	},
 	[](const string& line)
 	{
 		return findSubstr(line, " : public GameComponent") || 
 			   findSubstr(line, " : public COMCharacterGame") || 
 			   findSubstr(line, " : public COMPlayer") || 
+			   findSubstr(line, " : public COMNPC") || 
 			   findSubstr(line, " : public GameComponent");
 	});
-
 	// 生成StringDefine文件
-	generateStringDefineComponent(files, cppGameStringDefineFile);
+	generateStringDefineComponent(gameComFiles, cppGameStringDefineFile);
 	// ComponentRegister.cpp
-	generateComponentRegister(files, cppRegisterPath);
+	generateGameComponentRegister(gameComFiles, cppGameRegisterPath);
+
+	// GameCore
+	const string cppGameCoreRegisterPath = cppGameCorePath + "/Component/";
+	myVector<string> gameCoreComFiles = findTargetHeaderFile(cppGameCorePath,
+	[](const string& fileName)
+	{
+		return startWith(fileName, "COM") &&
+			fileName != "COMCharacterGame" &&
+			fileName != "COMPlayer" &&
+			fileName != "COMNPC";
+	},
+	[](const string& line)
+	{
+		return findSubstr(line, " : public GameComponent") ||
+			findSubstr(line, " : public COMCharacterGame") ||
+			findSubstr(line, " : public COMPlayer") ||
+			findSubstr(line, " : public COMNPC") ||
+			findSubstr(line, " : public GameComponent");
+	});
+	// 生成StringDefine文件
+	generateStringDefineComponent(gameCoreComFiles, cppGameCoreStringDefineFile);
+	// ComponentRegister.cpp
+	generateGameCoreComponentRegister(gameCoreComFiles, cppGameCoreRegisterPath);
 }
 
 void CodeComponent::generateStringDefineComponent(const myVector<string>& componentList, const string& stringDefineFile)
@@ -49,18 +68,34 @@ void CodeComponent::generateStringDefineComponent(const myVector<string>& compon
 	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-// ComponentRegister.cpp
-void CodeComponent::generateComponentRegister(const myVector<string>& componentList, const string& filePath)
+// GameComponentRegister.cpp
+void CodeComponent::generateGameComponentRegister(const myVector<string>& componentList, const string& filePath)
 {
 	string source;
 	line(source, "#include \"GameHeader.h\"");
 	line(source, "");
-	line(source, "void ComponentRegister::registeAll()");
+	line(source, "void GameComponentRegister::registeAll()");
 	line(source, "{");
 	FOR_VECTOR_CONST(componentList)
 	{
-		line(source, "\tFrameBase::mGameComponentFactoryManager->addFactory<" + componentList[i] + ">(NAME(" + componentList[i] + "));");
+		line(source, "\tFrameBase::mGameComponentFactoryManager->addFactory<" + componentList[i] + ">(GAME_NAME(" + componentList[i] + "));");
 	}
 	line(source, "}", false);
-	writeFile(filePath + "ComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));
+	writeFile(filePath + "GameComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));
+}
+
+// GameCoreComponentRegister.cpp
+void CodeComponent::generateGameCoreComponentRegister(const myVector<string>& componentList, const string& filePath)
+{
+	string source;
+	line(source, "#include \"GameCoreHeader.h\"");
+	line(source, "");
+	line(source, "void GameCoreComponentRegister::registeAll()");
+	line(source, "{");
+	FOR_VECTOR_CONST(componentList)
+	{
+		line(source, "\tFrameBase::mGameComponentFactoryManager->addFactory<" + componentList[i] + ">(GAME_CORE_NAME(" + componentList[i] + "));");
+	}
+	line(source, "}", false);
+	writeFile(filePath + "GameCoreComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));
 }

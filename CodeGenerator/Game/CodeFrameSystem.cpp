@@ -3,16 +3,12 @@
 void CodeFrameSystem::generate()
 {
 	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase");
-	//generateBattleCoreFrameSystem(cppBattleCorePath);
+	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "Game/GameCore.cpp", "GameCoreBase");
 	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase");
 }
 
 void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& baseFilePathNoSuffix, const string& gameFilePath, const string& baseClassName)
 {
-	if (cppPath.length() == 0)
-	{
-		return;
-	}
 	myVector<string> frameSystemList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "System") || endWith(fileName, "Manager"); },
 		[](const string& line)

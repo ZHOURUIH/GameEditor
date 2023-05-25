@@ -2,14 +2,9 @@
 
 void CodeSkill::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
+	string cppHeaderPath = cppGameCorePath + "Character/Component/Skill/";
 
-	string cppHeaderPath = cppGamePath + "Character/Component/Skill/";
-
-	myVector<string> list = findTargetHeaderFile(cppGamePath, 
+	myVector<string> list = findTargetHeaderFile(cppGameCorePath,
 		[](const string& fileName) 
 		{
 			return startWith(fileName, "PlayerSkill_") || 
@@ -23,7 +18,7 @@ void CodeSkill::generate()
 				   findSubstr(line, " : public EnvironmentSkill");
 		});
 	// 生成StringDefineSkill文件
-	generateStringDefineSkill(list, cppGameStringDefineFile);
+	generateStringDefineSkill(list, cppGameCoreStringDefineFile);
 }
 
 void CodeSkill::generateStringDefineSkill(const myVector<string>& skillList, const string& stringDefineFile)

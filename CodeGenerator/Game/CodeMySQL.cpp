@@ -2,14 +2,6 @@
 
 void CodeMySQL::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
-	string cppDataPath = cppGamePath + "DataBase/MySQL/Data/";
-	string cppTablePath = cppGamePath + "DataBase/MySQL/Table/";
-
 	// 解析模板文件
 	// 整个文件是否已经开始解析
 	bool fileStart = false;
@@ -23,7 +15,8 @@ void CodeMySQL::generate()
 		ERROR("未找到表格格式文件MySQL.txt");
 		return;
 	}
-	myVector<MySQLInfo> mysqlInfoList;
+	myVector<MySQLInfo> gameMySQLInfoList;
+	myVector<MySQLInfo> gameCoreMySQLInfoList;
 	MySQLInfo tempInfo;
 	FOR_VECTOR_CONST(lines)
 	{
@@ -60,13 +53,45 @@ void CodeMySQL::generate()
 				ERROR("mysql表格的格式错误: " + lines[i - 1]);
 				return;
 			}
-			tempInfo.init(titleVector[0], titleVector[1], comment);
+			string mysqlName = titleVector[1];
+			MYSQL_SERVER_OWNER owner = MYSQL_SERVER_OWNER::NONE;
+			if (findSubstr(mysqlName, "[Game]"))
+			{
+				if (owner != MYSQL_SERVER_OWNER::NONE)
+				{
+					ERROR("不能重复设置MySQL标签," + mysqlName);
+				}
+				owner = MYSQL_SERVER_OWNER::GAME;
+			}
+			if (findSubstr(mysqlName, "[GameCore]"))
+			{
+				if (owner != MYSQL_SERVER_OWNER::NONE)
+				{
+					ERROR("不能重复设置MySQL标签," + mysqlName);
+				}
+				owner = MYSQL_SERVER_OWNER::GAME_CORE;
+			}
+			if (owner == MYSQL_SERVER_OWNER::NONE)
+			{
+				ERROR("标签缺失," + mysqlName);
+			}
+			// 移除标签
+			replaceAll(mysqlName, "[Game]", "");
+			replaceAll(mysqlName, "[GameCore]", "");
+			tempInfo.init(titleVector[0], mysqlName, comment, owner);
 			continue;
 		}
 		// 成员变量列表结束
 		if (line == "}")
 		{
-			mysqlInfoList.push_back(tempInfo);
+			if (tempInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+			{
+				gameMySQLInfoList.push_back(tempInfo);
+			}
+			else if (tempInfo.mOwner == MYSQL_SERVER_OWNER::GAME_CORE)
+			{
+				gameCoreMySQLInfoList.push_back(tempInfo);
+			}
 			packetStart = false;
 			continue;
 		}
@@ -89,27 +114,49 @@ void CodeMySQL::generate()
 			}
 		}
 	}
-	deleteFolder(cppDataPath);
-	FOR_VECTOR_CONST(mysqlInfoList)
+	// Game
+	string cppGameDataPath = cppGamePath + "DataBase/MySQL/Data/";
+	string cppGameTablePath = cppGamePath + "DataBase/MySQL/Table/";
+	deleteFolder(cppGameDataPath);
+	for (const MySQLInfo& info : gameMySQLInfoList)
 	{
 		// 生成代码文件
-		generateCppMySQLDataFile(mysqlInfoList[i], cppDataPath);
-		generateCppMySQLTableFile(mysqlInfoList[i], cppTablePath);
+		generateCppMySQLDataFile(info, cppGameDataPath);
+		generateCppMySQLTableFile(info, cppGameTablePath);
 	}
 	// 上一层目录生成MySQLHeader.h
-	string totalHeaderPath = cppDataPath;
-	if (endWith(totalHeaderPath, "/") || endWith(totalHeaderPath, "\\"))
-	{
-		totalHeaderPath = totalHeaderPath.substr(0, totalHeaderPath.length() - 1);
-	}
-	totalHeaderPath = getFilePath(totalHeaderPath) + "/";
+	string totalHeaderGamePath = cppGameDataPath;
+	removeEnd(totalHeaderGamePath, '/');
+	totalHeaderGamePath = getFilePath(totalHeaderGamePath) + "/";
 	const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
 	const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
-	generateCppMySQLRegisteFile(mysqlInfoList, totalHeaderPath);
-	generateStringDefineMySQL(mysqlInfoList, cppGameStringDefineFile);
-	generateMySQLInstanceDeclare(mysqlInfoList, gameBaseHeaderPath);
-	generateMySQLInstanceDefine(mysqlInfoList, gameBaseSourcePath);
-	generateMySQLInstanceClear(mysqlInfoList, gameBaseSourcePath);
+	generateCppMySQLGameRegisteFile(gameMySQLInfoList, totalHeaderGamePath);
+	generateStringDefineMySQL(gameMySQLInfoList, cppGameStringDefineFile);
+	generateMySQLInstanceDeclare(gameMySQLInfoList, gameBaseHeaderPath);
+	generateMySQLInstanceDefine(gameMySQLInfoList, gameBaseSourcePath);
+	generateMySQLInstanceClear(gameMySQLInfoList, gameBaseSourcePath);
+
+	// GameCore
+	string cppGameCoreDataPath = cppGameCorePath + "DataBase/MySQL/Data/";
+	string cppGameCoreTablePath = cppGameCorePath + "DataBase/MySQL/Table/";
+	deleteFolder(cppGameCoreDataPath);
+	for (const MySQLInfo& info : gameCoreMySQLInfoList)
+	{
+		// 生成代码文件
+		generateCppMySQLDataFile(info, cppGameCoreDataPath);
+		generateCppMySQLTableFile(info, cppGameCoreTablePath);
+	}
+	// 上一层目录生成MySQLHeader.h
+	string totalHeaderGameCorePath = cppGameCoreDataPath;
+	removeEnd(totalHeaderGameCorePath, '/');
+	totalHeaderGameCorePath = getFilePath(totalHeaderGameCorePath) + "/";
+	const string gameCoreBaseHeaderPath = cppGameCorePath + "Common/GameCoreBase.h";
+	const string gameCoreBaseSourcePath = cppGameCorePath + "Common/GameCoreBase.cpp";
+	generateCppMySQLGameCoreRegisteFile(gameCoreMySQLInfoList, totalHeaderGameCorePath);
+	generateStringDefineMySQL(gameCoreMySQLInfoList, cppGameCoreStringDefineFile);
+	generateMySQLInstanceDeclare(gameCoreMySQLInfoList, gameCoreBaseHeaderPath);
+	generateMySQLInstanceDefine(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
+	generateMySQLInstanceClear(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -189,7 +236,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 
 	// 源文件
 	string source;
-	line(source, "#include \"GameHeader.h\"");
+	line(source, "#include \"GameCoreHeader.h\"");
 	line(source, "");
 	// 字段静态变量定义
 	FOR_I(memberCount)
@@ -200,7 +247,14 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "");
 	line(source, className + "::" + className + "()");
 	line(source, "{");
-	line(source, "\tmDataType = NAME(" + className + ");");
+	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+	{
+		line(source, "\tmDataType = GAME_NAME(" + className + ");");
+	}
+	else
+	{
+		line(source, "\tmDataType = GAME_CORE_NAME(" + className + ");");
+	}
 	line(source, "}");
 	// fillColName函数
 	line(source, "");
@@ -850,12 +904,19 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 
 	// 源文件
 	string source;
-	line(source, "#include \"GameHeader.h\"");
+	line(source, "#include \"GameCoreHeader.h\"");
 	line(source, "");
 	line(source, tableClassName + "::" + tableClassName + "(const char* tableName):");
 	line(source, "\tMySQLTable(tableName)");
 	line(source, "{");
-	line(source, "\tmDataType = NAME(" + dataClassName + ");");
+	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+	{
+		line(source, "\tmDataType = GAME_NAME(" + dataClassName + ");");
+	}
+	else
+	{
+		line(source, "\tmDataType = GAME_CORE_NAME(" + dataClassName + ");");
+	}
 	line(source, "}");
 	line(source, "");
 	line(source, "void " + tableClassName + "::init()");
@@ -878,11 +939,25 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
-	line(source, "\treturn FrameBase::mMySQLManager->createData<" + dataClassName + ">(NAME(" + dataClassName + "));");
+	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+	{
+		line(source, "\treturn FrameBase::mMySQLManager->createData<" + dataClassName + ">(GAME_NAME(" + dataClassName + "));");
+	}
+	else
+	{
+		line(source, "\treturn FrameBase::mMySQLManager->createData<" + dataClassName + ">(GAME_CORE_NAME(" + dataClassName + "));");
+	}
 	line(source, "}");
 	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
-	line(source, "\treturn FrameBase::mMySQLManager->createDataList<" + dataClassName + ">(NAME(" + dataClassName + "), dataList, count);");
+	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+	{
+		line(source, "\treturn FrameBase::mMySQLManager->createDataList<" + dataClassName + ">(GAME_NAME(" + dataClassName + "), dataList, count);");
+	}
+	else
+	{
+		line(source, "\treturn FrameBase::mMySQLManager->createDataList<" + dataClassName + ">(GAME_CORE_NAME(" + dataClassName + "), dataList, count);");
+	}
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
@@ -890,7 +965,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 }
 
 // MySQLRegiste.h和MySQLRegiste.cpp文件
-void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath)
+void CodeMySQL::generateCppMySQLGameRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath)
 {
 	// MySQLRegiste.h
 	string str0;
@@ -898,17 +973,17 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
-	line(str0, "class MySQLRegister");
+	line(str0, "class GameMySQLRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
 	line(str0, "};", false);
-	writeFile(filePath + "MySQLRegister.h", ANSIToUTF8(str0.c_str(), true));
+	writeFile(filePath + "GameMySQLRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
-	line(str1, "void MySQLRegister::registeAll()");
+	line(str1, "void GameMySQLRegister::registeAll()");
 	line(str1, "{");
 	uint count = mysqlList.size();
 	FOR_I(count)
@@ -917,7 +992,37 @@ void CodeMySQL::generateCppMySQLRegisteFile(const myVector<MySQLInfo>& mysqlList
 		line(str1, "\tGameBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
-	writeFile(filePath + "MySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
+	writeFile(filePath + "GameMySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
+}
+
+void CodeMySQL::generateCppMySQLGameCoreRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath)
+{
+	// MySQLRegiste.h
+	string str0;
+	line(str0, "#pragma once");
+	line(str0, "");
+	line(str0, "#include \"GameCoreBase.h\"");
+	line(str0, "");
+	line(str0, "class GameCoreMySQLRegister");
+	line(str0, "{");
+	line(str0, "public:");
+	line(str0, "\tstatic void registeAll();");
+	line(str0, "};", false);
+	writeFile(filePath + "GameCoreMySQLRegister.h", ANSIToUTF8(str0.c_str(), true));
+
+	string str1;
+	line(str1, "#include \"GameCoreHeader.h\"");
+	line(str1, "");
+	line(str1, "void GameCoreMySQLRegister::registeAll()");
+	line(str1, "{");
+	uint count = mysqlList.size();
+	FOR_I(count)
+	{
+		const string& mysqlClassName = mysqlList[i].mMySQLClassName;
+		line(str1, "\tGameCoreBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
+	}
+	line(str1, "}", false);
+	writeFile(filePath + "GameCoreMySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 void CodeMySQL::generateStringDefineMySQL(const myVector<MySQLInfo>& mysqlList, const string& stringDefineFile)
@@ -959,6 +1064,8 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 
 void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList, const string& gameBaseSourceFile)
 {
+	// GameBase的类名与文件名一致
+	const string gameBaseClassName = getFileNameNoSuffix(gameBaseSourceFile, true);
 	// 更新GameBase.cpp的特定部分
 	myVector<string> codeList;
 	int lineStart = -1;
@@ -970,7 +1077,7 @@ void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList
 	}
 	for (const MySQLInfo& info : mysqlList)
 	{
-		codeList.insert(++lineStart, "MySQL" + info.mMySQLClassName + "* GameBase::mMySQL" + info.mMySQLClassName + ";");
+		codeList.insert(++lineStart, "MySQL" + info.mMySQLClassName + "* " + gameBaseClassName + "::mMySQL" + info.mMySQLClassName + ";");
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

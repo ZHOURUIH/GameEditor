@@ -9,7 +9,8 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppRegister(const myVector<string>& paramList, const string& stringDefineFile);
+	static void generateCppGameRegister(const myVector<string>& paramList, const string& stringDefineFile);
+	static void generateCppGameCoreRegister(const myVector<string>& paramList, const string& stringDefineFile);
 	static void generateStringDefine(const myVector<string>& paramList, const string& filePath);
 protected:
 };

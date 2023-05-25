@@ -2,12 +2,7 @@
 
 void CodeDTNode::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
-	myVector<string> files = findTargetHeaderFile(cppGamePath, 
+	myVector<string> files = findTargetHeaderFile(cppGameCorePath,
 		[](const string& fileName) { return startWith(fileName, "DT"); }, 
 		[](const string& line)
 	{
@@ -17,9 +12,9 @@ void CodeDTNode::generate()
 				findSubstr(line, " : public DTDecorate");
 	});
 	// 生成StringDefineDTNode文件
-	generateStringDefine(files, cppGameStringDefineFile);
+	generateStringDefine(files, cppGameCoreStringDefineFile);
 	// 生成DTNodeRegister.cpp文件
-	generateRegisterFile(files, cppGamePath + "/Character/Component/DecisionTree/");
+	generateRegisterFile(files, cppGameCorePath + "/Character/Component/DecisionTree/");
 }
 
 void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const string& stringDefineFile)
@@ -45,14 +40,14 @@ void CodeDTNode::generateStringDefine(const myVector<string>& nodeList, const st
 void CodeDTNode::generateRegisterFile(const myVector<string>& nodeList, const string& headerPath)
 {
 	string source;
-	line(source, "#include \"GameHeader.h\"");
+	line(source, "#include \"GameCoreHeader.h\"");
 	line(source, "");
 	line(source, "void DTNodeRegister::registeAll()");
 	line(source, "{");
 	const uint count = nodeList.size();
 	FOR_I(count)
 	{
-		line(source, "\tGameBase::mDTNodeFactoryManager->addFactory<" + nodeList[i] + ">(NAME(" + nodeList[i] + "));");
+		line(source, "\tGameCoreBase::mDTNodeFactoryManager->addFactory<" + nodeList[i] + ">(GAME_NAME(" + nodeList[i] + "));");
 	}
 	line(source, "}", false);
 

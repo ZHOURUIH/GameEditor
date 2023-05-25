@@ -22,12 +22,29 @@ struct PacketInfo
 	bool mUDP;							// 是否通过UDP传输
 };
 
+// SQLite表格所属的端
 enum class SQLITE_OWNER : byte
 {
 	NONE,				// 不属于客户端或者服务器,仅表格辅助作用
 	BOTH,				// 客户端和服务器都会用到
 	CLIENT_ONLY,		// 仅客户端用
 	SERVER_ONLY,		// 仅服务器用
+};
+
+// SQLite表格在Server所属的层
+enum class SQLITE_SERVER_OWNER : byte
+{
+	NONE,				// 无效值
+	GAME,				// Game层使用的表格
+	GAME_CORE,			// GameCore层使用的表格
+};
+
+// MySQL表格所属的层
+enum class MYSQL_SERVER_OWNER : byte
+{
+	NONE,				// 无效值
+	GAME,				// Game层使用的表格
+	GAME_CORE,			// GameCore层使用的表格
 };
 
 struct SQLiteMember
@@ -47,6 +64,7 @@ struct SQLiteInfo
 	string mComment;
 	bool mHotFix;
 	bool mClientSQLite;
+	SQLITE_SERVER_OWNER mServerOwner;
 };
 
 struct MySQLMember
@@ -64,13 +82,15 @@ struct MySQLInfo
 	string mMySQLClassName;
 	string mMySQLTableName;
 	string mComment;
-	void init(const string& className, const string& tableName, const string& comment)
+	MYSQL_SERVER_OWNER mOwner;
+	void init(const string& className, const string& tableName, const string& comment, MYSQL_SERVER_OWNER owner)
 	{
 		mMemberList.clear();
 		mIndexList.clear();
 		mMySQLClassName = className;
 		mMySQLTableName = tableName;
 		mComment = comment;
+		mOwner = owner;
 	}
 };
 

@@ -2,11 +2,6 @@
 
 void CodeRank::generate()
 {
-	if (cppGamePath.length() == 0)
-	{
-		return;
-	}
-
 	string cppHeaderPath = cppGamePath + "RankSystem/";
 
 	myVector<string> list = findTargetHeaderFile(cppGamePath, [](const string& fileName) { return startWith(fileName, "Rank"); },

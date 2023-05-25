@@ -5,12 +5,12 @@ string CodeUtility::ServerProjectPath;
 string CodeUtility::ClientProjectPath;
 myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::cppGameProjectPath;
-string CodeUtility::cppBattleCoreProjectPath;
 string CodeUtility::cppFrameProjectPath;
 string CodeUtility::cppGamePath;
-string CodeUtility::cppBattleCorePath;
+string CodeUtility::cppGameCorePath;
 string CodeUtility::cppFramePath;
 string CodeUtility::cppGameStringDefineFile;
+string CodeUtility::cppGameCoreStringDefineFile;
 string CodeUtility::csGamePath;
 string CodeUtility::csHotfixGamePath;
 string CodeUtility::START_FALG = "#start";
@@ -57,12 +57,12 @@ bool CodeUtility::initPath()
 		rightToLeft(ServerProjectPath);
 		validPath(ServerProjectPath);
 		cppGameProjectPath = ServerProjectPath + "MicroLegend_Server/";
-		cppBattleCoreProjectPath = ServerProjectPath + "MicroLegend_Server_BattleCore/";
 		cppFrameProjectPath = ServerProjectPath + "MicroLegend_Server_Frame/";
 		cppGamePath = cppGameProjectPath + "Game/";
-		cppBattleCorePath = cppBattleCoreProjectPath + "BattleCore/";
+		cppGameCorePath = cppGameProjectPath + "GameCore/";
 		cppFramePath = cppFrameProjectPath + "Frame/";
-		cppGameStringDefineFile = cppGamePath + "StringDefine/StringDefine.h";
+		cppGameCoreStringDefineFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
+		cppGameStringDefineFile = cppGamePath + "Common/GameStringDefine.h";
 	}
 	if (ClientProjectPath.length() > 0)
 	{

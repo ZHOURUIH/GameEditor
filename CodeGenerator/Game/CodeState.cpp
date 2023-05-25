@@ -2,7 +2,7 @@
 
 void CodeState::generate()
 {
-	myVector<string> buffList = findTargetHeaderFile(cppGamePath,
+	myVector<string> buffList = findTargetHeaderFile(cppGameCorePath,
 		[](const string& fileName) { return startWith(fileName, "Buff"); },
 		[](const string& line) 
 		{
@@ -14,10 +14,10 @@ void CodeState::generate()
 				   findSubstr(line, " : public RangePlayerCountMakeProperty") || 
 				   findSubstr(line, " : public CharacterBuffTrigger");
 		});
-	myVector<string> stateActionList = findTargetHeaderFile(cppGamePath,
+	myVector<string> stateActionList = findTargetHeaderFile(cppGameCorePath,
 		[](const string& fileName) { return startWith(fileName, "StateAction"); },
 		[](const string& line) { return findSubstr(line, " : public CharacterStateAction"); });
-	myVector<string> stateBehaviourList = findTargetHeaderFile(cppGamePath,
+	myVector<string> stateBehaviourList = findTargetHeaderFile(cppGameCorePath,
 		[](const string& fileName) { return startWith(fileName, "StateBehaviour"); },
 		[](const string& line) { return findSubstr(line, " : public CharacterGameState"); });
 	myVector<string> stateList;
@@ -25,9 +25,9 @@ void CodeState::generate()
 	stateList.addRange(stateActionList);
 	stateList.addRange(stateBehaviourList);
 	// 生成StringDefineState文件
-	generateStringDefineState(stateList, cppGameStringDefineFile);
+	generateStringDefineState(stateList, cppGameCoreStringDefineFile);
 	// 生成StateRegister.cpp文件
-	generateStateRegister(stateList, cppGamePath + "Character/Component/StateMachine/StateRegister.cpp");
+	generateStateRegister(stateList, cppGameCorePath + "Character/Component/StateMachine/StateRegister.cpp");
 }
 
 void CodeState::generateStringDefineState(const myVector<string>& stateList, const string& stringDefineFile)

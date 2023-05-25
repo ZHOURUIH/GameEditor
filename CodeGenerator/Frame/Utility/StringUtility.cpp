@@ -89,6 +89,14 @@ void StringUtility::removeLastComma(string& stream)
 	removeLast(stream, ',');
 }
 
+void StringUtility::removeEnd(string& str, char key)
+{
+	if (str[str.length() - 1] == key)
+	{
+		str.erase(str.length() - 1, 1);
+	}
+}
+
 int StringUtility::findCharCount(const string& str, char key)
 {
 	int count = 0;
