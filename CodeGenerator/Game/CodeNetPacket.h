@@ -10,7 +10,7 @@ public:
 protected:
 	//c++
 	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
-	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);
+	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion, bool isGameCore);
 	static void generateStringDefinePacket(const myVector<string>& packetList, const string& stringDefineFile);
 	static void generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath);
 	static void generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath);

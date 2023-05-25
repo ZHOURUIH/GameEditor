@@ -3,25 +3,6 @@
 
 #include "Utility.h"
 
-struct PacketMember
-{
-	bool mIsArray;
-	myVector<string> mArrayLengthMacro;	// 多个常量只能相乘
-	string mTypeName;
-	string mMemberName;
-};
-
-struct PacketInfo
-{
-	myVector<PacketMember> mMemberList;
-	string mPacketName;					// 消息包名
-	string mComment;					// 消息注释
-	bool mShowInfo;						// 是否显示调试信息
-	bool mServerExecuteInMain;			// 服务器接收的CS消息是否在子线程执行
-	bool mHotFix;						// 消息在客户端是否可热更
-	bool mUDP;							// 是否通过UDP传输
-};
-
 // SQLite表格所属的端
 enum class SQLITE_OWNER : byte
 {
@@ -45,6 +26,35 @@ enum class MYSQL_SERVER_OWNER : byte
 	NONE,				// 无效值
 	GAME,				// Game层使用的表格
 	GAME_CORE,			// GameCore层使用的表格
+};
+
+// 消息包在Server所属的层
+enum class PACKET_OWNER : byte
+{
+	NONE,				// 无效值
+	GAME,				// Game层使用的消息
+	GAME_CORE,			// GameCore层使用的消息
+};
+
+struct PacketMember
+{
+	bool mIsArray;
+	myVector<string> mArrayLengthSpace;	// 是GameCoreDefine还是GD中的常量
+	myVector<string> mArrayLengthMacro;	// 多个常量只能相乘
+	string mTypeName;
+	string mMemberName;
+};
+
+struct PacketInfo
+{
+	myVector<PacketMember> mMemberList;
+	string mPacketName;					// 消息包名
+	string mComment;					// 消息注释
+	bool mShowInfo;						// 是否显示调试信息
+	bool mServerExecuteInMain;			// 服务器接收的CS消息是否在子线程执行
+	bool mHotFix;						// 消息在客户端是否可热更
+	bool mUDP;							// 是否通过UDP传输
+	PACKET_OWNER mOwner;				// 属于Game层还是GameCore层
 };
 
 struct SQLiteMember

@@ -172,6 +172,19 @@ PacketMember CodeUtility::parseMemberLine(const string& line)
 		string lengthMacro = line.substr(lengthMarcoStart + 1, lengthMarcoEnd - lengthMarcoStart - 1);
 		strReplaceAll(lengthMacro, " ", "");
 		split(lengthMacro.c_str(), "*", memberInfo.mArrayLengthMacro);
+		for (string& item : memberInfo.mArrayLengthMacro)
+		{
+			int pos = -1;
+			if (findSubstr(item, "::", &pos))
+			{
+				memberInfo.mArrayLengthSpace.push_back(item.substr(0, pos));
+				item = item.substr(pos + strlen("::"));
+			}
+			else
+			{
+				memberInfo.mArrayLengthSpace.push_back("");
+			}
+		}
 		// 常量处理完了,再判断变量类型和变量名
 		string memberLine = line.substr(0, lengthMarcoStart);
 		myVector<string> memberStrList;
@@ -261,7 +274,15 @@ string CodeUtility::cppMemberDeclareString(const PacketMember& memberInfo)
 		uint macroCount = memberInfo.mArrayLengthMacro.size();
 		FOR_I(macroCount)
 		{
-			lengthMacro += "GD::" + memberInfo.mArrayLengthMacro[i];
+			if (memberInfo.mArrayLengthSpace[i].empty())
+			{
+				lengthMacro += memberInfo.mArrayLengthMacro[i];
+			}
+			else
+			{
+				lengthMacro += memberInfo.mArrayLengthSpace[i] + "::" + memberInfo.mArrayLengthMacro[i];
+			}
+			
 			if (i != macroCount - 1)
 			{
 				lengthMacro += " * ";
@@ -343,6 +364,20 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 	packetInfo.mUDP = tagList.contains("[UDP]");
 	packetInfo.mShowInfo = !tagList.contains("[NoLog]");
 	packetInfo.mServerExecuteInMain = !tagList.contains("[ServerInThread]");
+	bool isGame = tagList.contains("[Game]");
+	bool isGameCore = tagList.contains("[GameCore]");
+	if (isGame == isGameCore)
+	{
+		if (isGame)
+		{
+			ERROR("消息只能有一个Game或GameCore标签," + line);
+		}
+		else
+		{
+			ERROR("消息缺少一个Game或GameCore标签," + line);
+		}
+	}
+	packetInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
 	// 获取原始的表格名称
 	int firstTagPos = -1;
 	if (findString(line.c_str(), "[", &firstTagPos))
