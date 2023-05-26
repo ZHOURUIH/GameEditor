@@ -46,7 +46,8 @@ int main()
 		}
 		myVector<string> searchPathList;
 		StringUtility::split(config.get("Path", "").c_str(), ",", searchPathList);
-		myVector<string> dirList;
+		// 当前路径也要加进去
+		myVector<string> dirList{"."};
 		for (const string& item : searchPathList)
 		{
 			Generator::findFolders(StringUtility::toFullPath(item), dirList, true);
@@ -68,6 +69,10 @@ int main()
 		FOR_VECTOR(dirList)
 		{
 			string relativePath = StringUtility::toRelativePath(dirList[i], curFullPath);
+			if (relativePath.empty())
+			{
+				relativePath = ".";
+			}
 			makeLists.insert(dirStart + i, relativePath + ";");
 		}
 		END(dirList);
