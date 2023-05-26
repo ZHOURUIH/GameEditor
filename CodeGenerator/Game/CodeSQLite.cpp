@@ -519,7 +519,7 @@ void CodeSQLite::generateCppGameCoreSQLiteRegisteFile(const myVector<SQLiteInfo>
 	writeFile(filePath + "GameCoreSQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
-	line(str1, "#include \"GameHeader.h\"");
+	line(str1, "#include \"GameCoreHeader.h\"");
 	line(str1, "");
 	line(str1, "void GameCoreSQLiteRegister::registeAll()");
 	line(str1, "{");
