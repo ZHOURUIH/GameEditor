@@ -210,13 +210,13 @@ auto iter##End = stl.cend();\
 for(; iter != iter##End; ++iter)
 
 // 需要在循环结束后添加END
-#define FOR_VECTOR(stl) uint stl##Count = stl.size(); FOR(stl, uint i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR(stl) int stl##Count = stl.size(); FOR(stl, int i = 0; i < stl##Count; ++i)
 // 不需要在循环结束后添加END
-#define FOR_VECTOR_CONST(stl) uint stl##Count = stl.size(); for(uint i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR_CONST(stl) int stl##Count = stl.size(); for(int i = 0; i < stl##Count; ++i)
 // 简单的for循环
-#define FOR_I(count) for (uint i = 0; i < count; ++i)
-#define FOR_J(count) for (uint j = 0; j < count; ++j)
-#define FOR_K(count) for (uint k = 0; k < count; ++k)
+#define FOR_I(count) for (int i = 0; i < (int)count; ++i)
+#define FOR_J(count) for (int j = 0; j < (int)count; ++j)
+#define FOR_K(count) for (int k = 0; k < (int)count; ++k)
 
 // 基础数据类型转字符串
 #define INT_TO_STRING(strBuffer, value)\

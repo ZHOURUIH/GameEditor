@@ -162,7 +162,8 @@ void CodeNetPacket::generate()
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
 		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
 	}
-	generateCppPacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion, false);
+	generateCppGamePacketDefineFile(gamePacketList, cppGamePacketDefinePath);
+	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
 	generateStringDefinePacket(gamePacketNameList, cppGameStringDefineFile);
 
 	//GameCore层的消息
@@ -222,9 +223,8 @@ void CodeNetPacket::generate()
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
 		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
 	}
-	// 暂时只生成一个PacketDefine文件
-	generateCppPacketDefineFile(packetInfoList, cppGameCorePacketDefinePath);
-	generateCppPacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath, packetVersion, true);
+	generateCppGameCorePacketDefineFile(gameCorePacketList, cppGameCorePacketDefinePath);
+	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
 	generateStringDefinePacket(gameCorePacketNameList, cppGameCoreStringDefineFile);
 
 	// c#
@@ -303,7 +303,7 @@ void CodeNetPacket::generate()
 }
 
 // PacketDefine.h文件
-void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
+void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
 	string str;
 	line(str, "#pragma once");
@@ -315,19 +315,56 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	line(str, "public:");
 	line(str, "\tconstexpr static ushort MIN = 0;");
 	line(str, "");
-	line(str, "\tconstexpr static ushort GATE_CS_MIN = 1000;");
-	line(str, "\tconstexpr static ushort GATE_CS_HEART_BEAT = 1001;");
-	line(str, "\tconstexpr static ushort GATE_CS_SERVER_INFO = 1002;");
-	line(str, "");
-	line(str, "\tconstexpr static ushort GATE_SC_MIN = 1200;");
-	line(str, "\tconstexpr static ushort GATE_SC_HEART_BEAT = 1201;");
-	line(str, "");
 	line(str, "\tconstexpr static ushort MAIL_CS_MIN = 1500;");
 	line(str, "\tconstexpr static ushort MAIL_CS_HEART_BEAT = 1501;");
 	line(str, "\tconstexpr static ushort MAIL_CS_SEND_MAIL = 1502;");
 	line(str, "");
 	line(str, "\tconstexpr static ushort MAIL_SC_MIN = 2000;");
 	line(str, "\tconstexpr static ushort MAIL_SC_HEART_BEAT = 2001;");
+	line(str, "");
+	int csMinValue = 10000;
+	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
+	uint packetCount = packetList.size();
+	FOR_I(packetCount)
+	{
+		if (startWith(packetList[i].mPacketName, "CS"))
+		{
+			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++csMinValue) + ";");
+		}
+	}
+	line(str, "");
+	int scMinValue = 20000;
+	line(str, "\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
+	FOR_I(packetCount)
+	{
+		if (startWith(packetList[i].mPacketName, "SC"))
+		{
+			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++scMinValue) + ";");
+		}
+	}
+	line(str, "};", false);
+
+	writeFile(filePath + "GamePacketDefine.h", ANSIToUTF8(str.c_str(), true));
+}
+
+void CodeNetPacket::generateCppGameCorePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
+{
+	string str;
+	line(str, "#pragma once");
+	line(str, "");
+	line(str, "#include \"FrameDefine.h\"");
+	line(str, "");
+	line(str, "class PACKET_TYPE_CORE");
+	line(str, "{");
+	line(str, "public:");
+	line(str, "\tconstexpr static ushort MIN = 0;");
+	line(str, "");
+	line(str, "\tconstexpr static ushort GATE_CS_MIN = 1000;");
+	line(str, "\tconstexpr static ushort GATE_CS_HEART_BEAT = 1001;");
+	line(str, "\tconstexpr static ushort GATE_CS_SERVER_INFO = 1002;");
+	line(str, "");
+	line(str, "\tconstexpr static ushort GATE_SC_MIN = 1200;");
+	line(str, "\tconstexpr static ushort GATE_SC_HEART_BEAT = 1201;");
 	line(str, "");
 	int csMinValue = 3000;
 	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
@@ -351,33 +388,18 @@ void CodeNetPacket::generateCppPacketDefineFile(const myVector<PacketInfo>& pack
 	}
 	line(str, "};", false);
 
-	writeFile(filePath + "PacketDefine.h", ANSIToUTF8(str.c_str(), true));
+	writeFile(filePath + "GameCorePacketDefine.h", ANSIToUTF8(str.c_str(), true));
 }
 
 // PacketRegister.cpp文件
-void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion, bool isGameCore)
+void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion)
 {
-	string registerName = isGameCore ? "GameCorePacketRegister" : "GamePacketRegister";
 	string str;
-	if (isGameCore)
-	{
-		line(str, "#include \"GameCoreHeader.h\"");
-	}
-	else
-	{
-		line(str, "#include \"GameHeader.h\"");
-	}
+	line(str, "#include \"GameHeader.h\"");
 	
 	line(str, "");
-	if (isGameCore)
-	{
-		line(str, "void " + registerName + "::registeAll()");
-	}
-	else
-	{
-		line(str, "int " + registerName + "::PACKET_VERSION = " + intToString(packetVersion) + ";");
-		line(str, "void " + registerName + "::registeAll()");
-	}
+	line(str, "int GamePacketRegister::PACKET_VERSION = " + intToString(packetVersion) + ";");
+	line(str, "void GamePacketRegister::registeAll()");
 	
 	line(str, "{");
 	myVector<PacketInfo> udpCSList;
@@ -395,14 +417,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		{
 			continue;
 		}
-		if (isGameCore)
-		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_CORE_NAME(" + packetName + "));");
-		}
-		else
-		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_NAME(" + packetName + "));");
-		}
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_NAME(" + packetName + "));");
 	}
 	line(str, "");
 	myVector<PacketInfo> udpSCList;
@@ -424,14 +439,7 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 		{
 			continue;
 		}
-		if (isGameCore)
-		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_CORE_NAME(" + packetName + "));");
-		}
-		else
-		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_NAME(" + packetName + "));");
-		}
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_NAME(" + packetName + "));");
 	}
 	if (udpCSList.size() > 0)
 	{
@@ -451,7 +459,76 @@ void CodeNetPacket::generateCppPacketRegisteFile(const myVector<PacketInfo>& pac
 	}
 	line(str, "};", false);
 
-	writeFile(filePath + registerName + ".cpp", ANSIToUTF8(str.c_str(), true));
+	writeFile(filePath + "GamePacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
+}
+
+void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath)
+{
+	string str;
+	line(str, "#include \"GameCoreHeader.h\"");
+
+	line(str, "");
+	line(str, "void GameCorePacketRegister::registeAll()");
+
+	line(str, "{");
+	myVector<PacketInfo> udpCSList;
+	for (const auto& info : packetList)
+	{
+		if (startWith(info.mPacketName, "CS") && info.mUDP)
+		{
+			udpCSList.push_back(info);
+		}
+	}
+	for (const auto& info : packetList)
+	{
+		const string& packetName = info.mPacketName;
+		if (!startWith(packetName, "CS"))
+		{
+			continue;
+		}
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetNameToUpper(packetName) + ", GAME_CORE_NAME(" + packetName + "));");
+	}
+	line(str, "");
+	myVector<PacketInfo> udpSCList;
+	for (const auto& info : packetList)
+	{
+		if (!startWith(info.mPacketName, "SC"))
+		{
+			continue;
+		}
+		if (info.mUDP)
+		{
+			udpSCList.push_back(info);
+		}
+	}
+	for (const auto& info : packetList)
+	{
+		const string& packetName = info.mPacketName;
+		if (!startWith(packetName, "SC"))
+		{
+			continue;
+		}
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetNameToUpper(packetName) + ", GAME_CORE_NAME(" + packetName + "));");
+	}
+	if (udpCSList.size() > 0)
+	{
+		line(str, "");
+		for (const auto& info : udpCSList)
+		{
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + packetNameToUpper(info.mPacketName) + "); ");
+		}
+	}
+	if (udpSCList.size() > 0)
+	{
+		line(str, "");
+		for (const auto& info : udpSCList)
+		{
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + packetNameToUpper(info.mPacketName) + "); ");
+		}
+	}
+	line(str, "};", false);
+
+	writeFile(filePath + "GameCorePacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
 }
 
 void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetList, const string& stringDefineFile)

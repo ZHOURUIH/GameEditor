@@ -48,7 +48,7 @@ bool SerializedData::writeToBuffer(char* pBuffer, uint bufferSize)
 	return ret;
 }
 
-bool SerializedData::writeData(const string& dataString, uint paramIndex)
+bool SerializedData::writeData(const string& dataString, int paramIndex)
 {
 	if (paramIndex >= mDataParameterList.size())
 	{
@@ -151,7 +151,7 @@ bool SerializedData::writeData(const string& dataString, uint paramIndex)
 	return true;
 }
 
-bool SerializedData::writeData(char* buffer, uint bufferSize, uint paramIndex)
+bool SerializedData::writeData(char* buffer, uint bufferSize, int paramIndex)
 {
 	if (buffer == NULL || paramIndex >= mDataParameterList.size())
 	{
@@ -282,7 +282,7 @@ void SerializedData::zeroParams()
 bool SerializedData::readStringList(const myVector<string>& dataList)
 {
 	bool result = true;
-	uint curIndex = 0;
+	int curIndex = 0;
 	FOR_VECTOR(mDataParameterList)
 	{
 		if (curIndex >= dataList.size())

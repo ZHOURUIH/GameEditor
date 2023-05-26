@@ -45,8 +45,8 @@ public:
 	virtual ~SerializedData() { mDataParameterList.clear(); }
 	virtual bool readFromBuffer(char* pBuffer, uint bufferSize);
 	virtual bool writeToBuffer(char* pBuffer, uint bufferSize);
-	virtual bool writeData(const string& dataString, uint paramIndex);
-	virtual bool writeData(char* buffer, uint bufferSize, uint paramIndex);
+	virtual bool writeData(const string& dataString, int paramIndex);
+	virtual bool writeData(char* buffer, uint bufferSize, int paramIndex);
 	string getValueString(uint paramIndex);
 	bool readStringList(const myVector<string>& dataList);
 	uint getMaxSize() { return mMaxDataSize; }

@@ -9,8 +9,10 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateCppPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
-	static void generateCppPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion, bool isGameCore);
+	static void generateCppGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
+	static void generateCppGameCorePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
+	static void generateCppGamePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);
+	static void generateCppGameCorePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath);
 	static void generateStringDefinePacket(const myVector<string>& packetList, const string& stringDefineFile);
 	static void generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath);
 	static void generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath);

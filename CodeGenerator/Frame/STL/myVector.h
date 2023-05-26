@@ -19,7 +19,7 @@ public:
 	}
 	virtual ~myVector(){ clear(); }
 	T* data() const { return (T*)mVector.data(); }
-	uint size() const { return (uint)mVector.size(); }
+	int size() const { return (int)mVector.size(); }
 	iterator begin() { return mVector.begin(); }
 	iterator end() { return mVector.end(); }
 	const_iterator begin() const { return mVector.begin(); }
