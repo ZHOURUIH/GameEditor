@@ -298,7 +298,7 @@ void CodeNetPacket::generate()
 	{
 		generateCSharpPacketFile(packetInfo, csharpCSHotfixPath, csharpCSGamePath, csharpSCHotfixPath, csharpSCGamePath);
 	}
-	generateCSharpPacketDefineFile(packetInfoList, csharpPacketDefinePath);
+	generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
 }
 
@@ -788,7 +788,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 }
 
 // PacketDefine.csÎÄ¼þ
-void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
+void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& gamePacketList, const myVector<PacketInfo>& gameCorePacketList, const string& filePath)
 {
 	string str;
 	line(str, "using System;");
@@ -798,28 +798,41 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 	line(str, "{");
 	line(str, "\tpublic static ushort MIN = 0;");
 	line(str, "");
-	int csPacketNumber = 3000;
-	uint packetCount = packetList.size();
-	FOR_I(packetCount)
+	int csGameCorePacketNumber = 3000;
+	for (const auto& item : gameCorePacketList)
 	{
-		if (startWith(packetList[i].mPacketName, "CS"))
+		if (startWith(item.mPacketName, "CS"))
 		{
-			++csPacketNumber;
-			line(str, "\tpublic static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(csPacketNumber) + ";");
+			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++csGameCorePacketNumber) + ";");
 		}
 	}
-	++csPacketNumber;
 	line(str, "");
-	int scPacketNumber = 6000;
-	FOR_I(packetCount)
+	int scGameCorePacketNumber = 6000;
+	for (const auto& item : gameCorePacketList)
 	{
-		if (startWith(packetList[i].mPacketName, "SC"))
+		if (startWith(item.mPacketName, "SC"))
 		{
-			++scPacketNumber;
-			line(str, "\tpublic static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(scPacketNumber) + ";");
+			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++scGameCorePacketNumber) + ";");
 		}
 	}
-	++scPacketNumber;
+	line(str, "");
+	int csGamePacketNumber = 10000;
+	for (const auto& item : gamePacketList)
+	{
+		if (startWith(item.mPacketName, "CS"))
+		{
+			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++csGamePacketNumber) + ";");
+		}
+	}
+	line(str, "");
+	int scGamePacketNumber = 20000;
+	for (const auto& item : gamePacketList)
+	{
+		if (startWith(item.mPacketName, "SC"))
+		{
+			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++scGamePacketNumber) + ";");
+		}
+	}
 	line(str, "}", false);
 
 	writeFile(filePath + "PacketDefine.cs", ANSIToUTF8(str.c_str(), true));
