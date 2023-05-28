@@ -568,31 +568,69 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	line(header, "#pragma once");
 	line(header, "");
 	// #include部分
-	FOR_VECTOR(includeList)
+	for (const string& item : includeList)
 	{
-		line(header, includeList[i]);
+		line(header, item);
 	}
-	END(includeList);
 	line(header, "");
 	line(header, packetInfo.mComment);
 	line(header, "class " + packetName + " : public Packet");
 	line(header, "{");
 	line(header, "public:");
-	const auto& memberList = packetInfo.mMemberList;
-	FOR_VECTOR_CONST(memberList)
+	for (const PacketMember& item : packetInfo.mMemberList)
 	{
-		line(header, "\t" + cppMemberDeclareString(memberList[i]));
+		line(header, "\t" + item.mTypeName + " " + item.mMemberName + ";");
 	}
 	line(header, "public:");
-	line(header, "\tvoid fillParams() override");
+	line(header, "\tvoid init() override");
 	line(header, "\t{");
 	line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-	line(header, "\t\tmExecuteInMain = " + boolToString(packetInfo.mServerExecuteInMain) + ";");
-	FOR_I(memberListCount)
-	{
-		line(header, "\t\t" + cppPushParamString(memberList[i]));
-	}
 	line(header, "\t}");
+	if (packetInfo.mMemberList.size() > 0)
+	{
+		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
+		line(header, "\t{");
+		line(header, "\t\tSerializer reader(pBuffer, bufferSize);");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				line(header, "\t\treader.readString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				line(header, "\t\treader.readList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				line(header, "\t\treader.read(" + item.mMemberName + ");");
+			}
+		}
+		line(header, "\t}");
+		line(header, "\tbool writeToBuffer(Serializer* serializer) const override");
+		line(header, "\t{");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				line(header, "\t\tserializer->writeString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				line(header, "\t\tserializer->writeList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				line(header, "\t\tserializer->write(" + item.mMemberName + ");");
+			}
+		}
+		line(header, "\t}");
+	}
+	else
+	{
+		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{}");
+		line(header, "\tbool writeToBuffer(Serializer* serializer) const override{}");
+	}
 	line(header, "\tvoid execute() override;");
 	// 自定义代码部分
 	FOR_VECTOR(customList)
@@ -643,7 +681,7 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 			FOR_I(lineCount)
 			{
 				// SC消息包fillParams函数结尾到类结尾之间是自定义代码部分
-				if (fileLines[i] == "\tvoid fillParams() override")
+				if (fileLines[i] == "\tvoid init() override")
 				{
 					findFillParams = true;
 					continue;
@@ -718,11 +756,11 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 	if (!isFileExist(sourceFullPath))
 	{
 		string source;
-		line(source, "#include \"GameHeader.h\"");
+		line(source, "#include \"GameCoreHeader.h\"");
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
-		line(source, "\tconst CharacterPlayer* player = getPlayer(mClient->getPlayerGUID());");
+		line(source, "\tCharacterPlayer* player = getPlayer(mClient->getPlayerGUID());");
 		line(source, "\tif (player == nullptr)");
 		line(source, "\t{");
 		line(source, "\t\treturn;");
@@ -752,29 +790,68 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	line(header, "#pragma once");
 	line(header, "");
 	// #include部分
-	FOR_VECTOR(includeList)
+	for (const string& item : includeList)
 	{
-		line(header, includeList[i]);
+		line(header, item);
 	}
-	END(includeList);
 	line(header, "");
 	line(header, packetInfo.mComment);
 	line(header, "class " + packetName + " : public Packet");
 	line(header, "{");
 	line(header, "public:");
-	const auto& memberList = packetInfo.mMemberList;
-	FOR_VECTOR_CONST(memberList)
+	for (const PacketMember& item : packetInfo.mMemberList)
 	{
-		line(header, "\t" + cppMemberDeclareString(memberList[i]));
+		line(header, "\t" + item.mTypeName + " " + item.mMemberName + ";");
 	}
 	line(header, "public:");
-	line(header, "\tvoid fillParams() override");
+	if (packetInfo.mMemberList.size() > 0)
+	{
+		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override;");
+		line(header, "\t{");
+		line(header, "\t\tSerializer reader(pBuffer, bufferSize);");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				line(header, "\t\treader.readString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				line(header, "\t\treader.readList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				line(header, "\t\treader.read(" + item.mMemberName + ");");
+			}
+		}
+		line(header, "\t}");
+		line(header, "\tbool writeToBuffer(Serializer* serializer) const override");
+		line(header, "\t{");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				line(header, "\t\tserializer->writeString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				line(header, "\t\tserializer->writeList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				line(header, "\t\tserializer->write(" + item.mMemberName + ");");
+			}
+		}
+		line(header, "\t}");
+	}
+	else
+	{
+		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{}");
+		line(header, "\tbool writeToBuffer(Serializer* serializer) const override{}");
+	}
+	line(header, "\tvoid init() override");
 	line(header, "\t{");
 	line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-	FOR_I(memberListCount)
-	{
-		line(header, "\t\t" + cppPushParamString(memberList[i]));
-	}
 	line(header, "\t}");
 	// 自定义代码部分
 	FOR_VECTOR(customList)

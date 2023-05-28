@@ -31,8 +31,6 @@ public:
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
 	static string stringDeclare(const string& name) { return "\tstatic constexpr const char* NAME_DEF(" + name + ") = STR(" + name + ");"; }
-	static string cppPushParamString(const PacketMember& memberInfo);
-	static string cppMemberDeclareString(const PacketMember& memberInfo);
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
 	static string cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix);
