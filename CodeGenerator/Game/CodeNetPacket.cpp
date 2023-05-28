@@ -576,6 +576,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	line(header, packetInfo.mComment);
 	line(header, "class " + packetName + " : public Packet");
 	line(header, "{");
+	line(header, "\tBASE(Packet);");
 	line(header, "public:");
 	for (const PacketMember& item : packetInfo.mMemberList)
 	{
@@ -590,7 +591,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	{
 		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
 		line(header, "\t{");
-		line(header, "\t\tSerializer reader(pBuffer, bufferSize);");
+		line(header, "\t\tSerializerRead reader(pBuffer, bufferSize);");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
 			if (item.mTypeName == "string")
@@ -607,7 +608,8 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 			}
 		}
 		line(header, "\t}");
-		line(header, "\tbool writeToBuffer(Serializer* serializer) const override");
+		
+		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override");
 		line(header, "\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
@@ -625,11 +627,40 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 			}
 		}
 		line(header, "\t}");
+
+		line(header, "\tvoid resetProperty() override");
+		line(header, "\t{");
+		line(header, "\t\tbase::resetProperty();");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string" || startWith(item.mTypeName, "Vector<"))
+			{
+				line(header, "\t\t" + item.mMemberName + ".clear();");
+			}
+			else if (item.mTypeName == "char" || 
+				item.mTypeName == "byte" || 
+				item.mTypeName == "short" || 
+				item.mTypeName == "ushort" || 
+				item.mTypeName == "int" || 
+				item.mTypeName == "uint" || 
+				item.mTypeName == "long" || 
+				item.mTypeName == "ulong" || 
+				item.mTypeName == "llong" || 
+				item.mTypeName == "ullong")
+			{
+				line(header, "\t\t" + item.mMemberName + " = 0;");
+			}
+			else if (item.mTypeName == "float" || item.mTypeName == "double")
+			{
+				line(header, "\t\t" + item.mMemberName + " = 0.0f;");
+			}
+		}
+		line(header, "\t}");
 	}
 	else
 	{
 		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{}");
-		line(header, "\tbool writeToBuffer(Serializer* serializer) const override{}");
+		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override{}");
 	}
 	line(header, "\tvoid execute() override;");
 	// 自定义代码部分
@@ -681,7 +712,7 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 			FOR_I(lineCount)
 			{
 				// SC消息包fillParams函数结尾到类结尾之间是自定义代码部分
-				if (fileLines[i] == "\tvoid init() override")
+				if (fileLines[i] == "\tvoid init() override" || fileLines[i] == "\tvoid fillParams() override")
 				{
 					findFillParams = true;
 					continue;
@@ -719,6 +750,7 @@ void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const str
 	else
 	{
 		includeList.push_back("#include \"Packet.h\"");
+		includeList.push_back("#include \"SerializerWrite.h\"");
 		customList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
 		customList.push_back("\t{");
 		customList.push_back("\t\tdebug(buffer, "");");
@@ -798,6 +830,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	line(header, packetInfo.mComment);
 	line(header, "class " + packetName + " : public Packet");
 	line(header, "{");
+	line(header, "\tBASE(Packet);");
 	line(header, "public:");
 	for (const PacketMember& item : packetInfo.mMemberList)
 	{
@@ -806,9 +839,9 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	line(header, "public:");
 	if (packetInfo.mMemberList.size() > 0)
 	{
-		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override;");
+		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
 		line(header, "\t{");
-		line(header, "\t\tSerializer reader(pBuffer, bufferSize);");
+		line(header, "\t\tSerializerRead reader(pBuffer, bufferSize);");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
 			if (item.mTypeName == "string")
@@ -825,7 +858,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 			}
 		}
 		line(header, "\t}");
-		line(header, "\tbool writeToBuffer(Serializer* serializer) const override");
+		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override");
 		line(header, "\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
@@ -847,7 +880,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	else
 	{
 		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{}");
-		line(header, "\tbool writeToBuffer(Serializer* serializer) const override{}");
+		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override{}");
 	}
 	line(header, "\tvoid init() override");
 	line(header, "\t{");
