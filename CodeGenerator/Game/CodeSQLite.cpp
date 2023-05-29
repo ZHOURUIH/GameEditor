@@ -704,7 +704,7 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		}
 		else if (listMemberSet.contains(memberInfo.mMemberName))
 		{
-			line(file, "\t\treader.read(m" + memberInfo.mMemberName + ");");
+			line(file, "\t\treader.readList(m" + memberInfo.mMemberName + ");");
 		}
 		else
 		{

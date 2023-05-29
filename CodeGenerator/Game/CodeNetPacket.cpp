@@ -769,11 +769,12 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			if (item.mTypeName == "string")
+			string csharpType = cppTypeToCSharpType(item.mTypeName);
+			if (csharpType == "string")
 			{
-				generateCodes.push_back("\t\treader.readString(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\treader.readString(out " + item.mMemberName + ");");
 			}
-			else if (startWith(item.mTypeName, "Vector<"))
+			else if (startWith(csharpType, "List<"))
 			{
 				generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
 			}
