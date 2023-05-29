@@ -574,7 +574,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\t{");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
-	generatePacketReadWrite(packetInfo, generateCodes);
+	generateCppPacketReadWrite(packetInfo, generateCodes);
 	generateCodes.push_back("\tvoid execute() override;");
 
 	// CSPacket.h
@@ -658,7 +658,7 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 	}
 }
 
-void CodeNetPacket::generatePacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
+void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
 {
 	if (packetInfo.mMemberList.size() > 0)
 	{
@@ -667,6 +667,7 @@ void CodeNetPacket::generatePacketReadWrite(const PacketInfo& packetInfo, myVect
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbool success = true;");
 		generateCodes.push_back("\t\tSerializerRead reader(pBuffer, bufferSize);");
+		generateCodes.push_back("\t\treader.setShowError(false);");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
 			if (item.mTypeName == "string")
@@ -759,6 +760,104 @@ void CodeNetPacket::generatePacketReadWrite(const PacketInfo& packetInfo, myVect
 	}
 }
 
+void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
+{
+	if (packetInfo.mMemberList.size() > 0)
+	{
+		// read
+		generateCodes.push_back("\tpublic override void read(SerializeRead reader)");
+		generateCodes.push_back("\t{");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				generateCodes.push_back("\t\treader.readString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
+			}
+		}
+		generateCodes.push_back("\t}");
+
+		// write
+		generateCodes.push_back("\tpublic override void write()");
+		generateCodes.push_back("\t{");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				generateCodes.push_back("\t\tmWriter.writeString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				generateCodes.push_back("\t\tmWriter.writeList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				generateCodes.push_back("\t\tmWriter.write(" + item.mMemberName + ");");
+			}
+		}
+		generateCodes.push_back("\t}");
+
+		// resetProperty
+		generateCodes.push_back("\tpublic override void resetProperty()");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase.resetProperty();");
+		int startLineCount = generateCodes.size();
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = string.Empty;");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + ".Clear();");
+			}
+			else if (item.mTypeName == "bool")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
+			}
+			else if (item.mTypeName == "char" ||
+				item.mTypeName == "byte" ||
+				item.mTypeName == "short" ||
+				item.mTypeName == "ushort" ||
+				item.mTypeName == "int" ||
+				item.mTypeName == "uint" ||
+				item.mTypeName == "long" ||
+				item.mTypeName == "ulong" ||
+				item.mTypeName == "llong" ||
+				item.mTypeName == "ullong")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
+			}
+			else if (item.mTypeName == "float" || item.mTypeName == "double")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+			}
+		}
+		if (generateCodes.size() - startLineCount != packetInfo.mMemberList.size())
+		{
+			ERROR("有成员变量未重置,可能是无法识别的类型, packetType:" + packetInfo.mPacketName);
+		}
+		generateCodes.push_back("\t}");
+	}
+	else
+	{
+		generateCodes.push_back("\tpublic override void read(SerializeRead reader){}");
+		generateCodes.push_back("\tpublic override void write(){}");
+		generateCodes.push_back("\tpublic override void resetProperty()");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase.resetProperty();");
+		generateCodes.push_back("\t}");
+	}
+}
+
 // SCPacket.h文件
 void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
@@ -782,7 +881,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\t{");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
-	generatePacketReadWrite(packetInfo, generateCodes);
+	generateCppPacketReadWrite(packetInfo, generateCodes);
 
 	// SCPacket.h
 	string headerFullPath = filePath + packetName + ".h";
@@ -943,6 +1042,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 	writeFile(filePath + "PacketRegister.cs", ANSIToUTF8(str.c_str(), true));
 }
 
+// CSPacket.cs文件
 void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const string& csFileHotfixPath, const string& csFileGamePath, const string& scFileHotfixPath, const string& scFileGamePath)
 {
 	string packetName = packetInfo.mPacketName;
@@ -982,16 +1082,11 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	{
 		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i], packetInfo.mHotFix));
 	}
-	if (memberCount > 0)
+	myVector<string> generateCodes;
+	generateCSharpPacketReadWrite(packetInfo, generateCodes);
+	for (const string& code : generateCodes)
 	{
-		// fillParams
-		line(file, "\tprotected override void fillParams()");
-		line(file, "\t{");
-		FOR_I(memberCount)
-		{
-			line(file, "\t\t" + cSharpPushParamString(packetInfo.mMemberList[i]));
-		}
-		line(file, "\t}");
+		line(file, code);
 	}
 	// 自定义代码部分
 	FOR_VECTOR(customList)

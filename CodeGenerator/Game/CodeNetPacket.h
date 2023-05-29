@@ -18,7 +18,8 @@ protected:
 	static void generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath);
 	static void generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath);
 	static int findPacketVersion(const string& filePath);
-	static void generatePacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
+	static void generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
+	static void generateCSharpPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
 	//c#
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& gamePacketList, const myVector<PacketInfo>& gameCorePacketList, const string& filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);

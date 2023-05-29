@@ -275,32 +275,31 @@ string CodeUtility::cppTypeToCSharpType(const string& cppType)
 	{
 		return "long";
 	}
-	return cppType;
+	else if (cppType == "Vector<char>")
+	{
+		return "List<byte>";
+	}
+	else if (cppType == "Vector<ullong>" || cppType == "Vector<llong>")
+	{
+		return "List<long>";
+	}
+	string csharpType = cppType;
+	replaceAll(csharpType, "Vector", "List");
+	return csharpType;
 }
 
 string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
-	string typeName = toUpper(cppTypeToCSharpType(memberInfo.mTypeName));
+	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
 	string str;
 	if (memberInfo.mIsArray)
 	{
-		typeName += "S";
-		string lengthMacro;
-		uint macroCount = memberInfo.mArrayLengthMacro.size();
-		FOR_I(macroCount)
-		{
-			lengthMacro += memberInfo.mArrayLengthMacro[i];
-			if (i != macroCount - 1)
-			{
-				lengthMacro += " * ";
-			}
-		}
-		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "(" + lengthMacro + ");";
+		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 	}
 	else
 	{
-		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+		str = "public " + typeName + " " + memberInfo.mMemberName + ";";
 	}
 	return str;
 }
