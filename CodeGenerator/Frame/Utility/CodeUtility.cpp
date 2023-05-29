@@ -163,52 +163,16 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 PacketMember CodeUtility::parseMemberLine(const string& line)
 {
 	PacketMember memberInfo;
-	// 数组成员变量
-	if (line.find_first_of('[') != -1)
+	myVector<string> memberStrList;
+	split(line.c_str(), " ", memberStrList);
+	if (memberStrList.size() != 2 && memberStrList.size() != 3)
 	{
-		// 如果是数组,则优先处理[]内部的常量
-		int lengthMarcoStart = (int)line.find_first_of('[');
-		int lengthMarcoEnd = (int)line.find_first_of(']');
-		string lengthMacro = line.substr(lengthMarcoStart + 1, lengthMarcoEnd - lengthMarcoStart - 1);
-		strReplaceAll(lengthMacro, " ", "");
-		split(lengthMacro.c_str(), "*", memberInfo.mArrayLengthMacro);
-		for (string& item : memberInfo.mArrayLengthMacro)
-		{
-			int pos = -1;
-			if (findSubstr(item, "::", &pos))
-			{
-				memberInfo.mArrayLengthSpace.push_back(item.substr(0, pos));
-				item = item.substr(pos + strlen("::"));
-			}
-			else
-			{
-				memberInfo.mArrayLengthSpace.push_back("");
-			}
-		}
-		// 常量处理完了,再判断变量类型和变量名
-		string memberLine = line.substr(0, lengthMarcoStart);
-		myVector<string> memberStrList;
-		split(memberLine.c_str(), " ", memberStrList);
-		memberInfo.mTypeName = memberStrList[0];
-		strReplaceAll(memberInfo.mTypeName, "\t", "");
-		memberInfo.mIsArray = true;
-		memberInfo.mMemberName = memberStrList[1];
+		ERROR("成员变量行错误:" + line);
+		return PacketMember();
 	}
-	// 普通成员变量
-	else
-	{
-		myVector<string> memberStrList;
-		split(line.c_str(), " ", memberStrList);
-		if (memberStrList.size() != 2 && memberStrList.size() != 3)
-		{
-			ERROR("成员变量行错误:" + line);
-			return PacketMember();
-		}
-		memberInfo.mTypeName = memberStrList[0];
-		strReplaceAll(memberInfo.mTypeName, "\t", "");
-		memberInfo.mIsArray = false;
-		memberInfo.mMemberName = memberStrList[1];
-	}
+	memberInfo.mTypeName = memberStrList[0];
+	strReplaceAll(memberInfo.mTypeName, "\t", "");
+	memberInfo.mMemberName = memberStrList[1];
 	return memberInfo;
 }
 
@@ -293,7 +257,7 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bo
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
 	string str;
-	if (memberInfo.mIsArray)
+	if (startWith(typeName, "List<"))
 	{
 		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 	}

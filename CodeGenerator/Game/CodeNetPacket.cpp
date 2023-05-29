@@ -765,7 +765,7 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 	if (packetInfo.mMemberList.size() > 0)
 	{
 		// read
-		generateCodes.push_back("\tpublic override void read(SerializeRead reader)");
+		generateCodes.push_back("\tpublic override void read(SerializerRead reader)");
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
@@ -785,7 +785,7 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 		generateCodes.push_back("\t}");
 
 		// write
-		generateCodes.push_back("\tpublic override void write()");
+		generateCodes.push_back("\tprotected override void write()");
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
@@ -849,8 +849,8 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 	}
 	else
 	{
-		generateCodes.push_back("\tpublic override void read(SerializeRead reader){}");
-		generateCodes.push_back("\tpublic override void write(){}");
+		generateCodes.push_back("\tpublic override void read(SerializerRead reader){}");
+		generateCodes.push_back("\tprotected override void write(){}");
 		generateCodes.push_back("\tpublic override void resetProperty()");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbase.resetProperty();");
@@ -910,7 +910,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
-		codeList.push_back("// auto generate end");
+		codeList.push_back("\t// auto generate end");
 		codeList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tdebug(buffer, "");");
@@ -1063,127 +1063,42 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		fullPath = packetInfo.mHotFix ? scFileHotfixPath + packetName + ".cs" : scFileGamePath + packetName + ".cs";
 	}
 
-	findCSharpUsingListCustomCode(packetName, fullPath, usingList, customList);
-
-	string file;
-	// using部分
-	FOR_VECTOR(usingList)
-	{
-		line(file, usingList[i]);
-	}
-	END(usingList);
-	line(file, "");
-	// 固定格式部分
-	line(file, packetInfo.mComment);
-	line(file, "public class " + packetName + " : NetPacketFrame");
-	line(file, "{");
-	uint memberCount = packetInfo.mMemberList.size();
-	FOR_I(memberCount)
-	{
-		line(file, "\t" + cSharpMemberDeclareString(packetInfo.mMemberList[i], packetInfo.mHotFix));
-	}
 	myVector<string> generateCodes;
+	generateCodes.push_back(packetInfo.mComment);
+	generateCodes.push_back("public class " + packetName + " : NetPacketFrame");
+	generateCodes.push_back("{");
+	for (const PacketMember& item : packetInfo.mMemberList)
+	{
+		generateCodes.push_back("\t" + cSharpMemberDeclareString(item, packetInfo.mHotFix));
+	}
 	generateCSharpPacketReadWrite(packetInfo, generateCodes);
-	for (const string& code : generateCodes)
-	{
-		line(file, code);
-	}
-	// 自定义代码部分
-	FOR_VECTOR(customList)
-	{
-		line(file, customList[i]);
-	}
-	END(customList);
-	line(file, "}", false);
 
-	writeFile(fullPath, ANSIToUTF8(file.c_str(), true));
-}
-
-void CodeNetPacket::findCSharpUsingListCustomCode(const string& packetName, const string& fullPath, myVector<string>& usingList, myVector<string>& customList)
-{
 	if (isFileExist(fullPath))
 	{
-		myVector<string> fileLists = openTxtFileLines(fullPath);
-		// 命名空间部分
-		uint lines = fileLists.size();
-		FOR_I(lines)
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(fullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
 		{
-			if (!startWith(fileLists[i], "using "))
-			{
-				break;
-			}
-			usingList.push_back(fileLists[i]);
+			return;
 		}
-
-		// 自定义函数体部分,从fillParams函数结束到类结束之间都是自定义函数部分
-		int customStart = -1;
-		int customEnd = -1;
-		bool findFillParams = false;
-		FOR_I(lines)
+		for (const string& line : generateCodes)
 		{
-			if (fileLists[i] == "\tprotected override void fillParams()")
-			{
-				findFillParams = true;
-				continue;
-			}
-			if (findFillParams && fileLists[i] == "\t}")
-			{
-				customStart = i + 1;
-				break;
-			}
+			codeList.insert(++lineStart, line);
 		}
-		FOR_I(lines)
-		{
-			if (fileLists[lines - i - 1] == "}")
-			{
-				customEnd = lines - i - 2;
-				break;
-			}
-		}
-
-		// 如果没有fillParams的函数定义,则说明没有参数,那类体全部都是自定义代码
-		if (customStart < 0 || customEnd < 0)
-		{
-			FOR_I(lines)
-			{
-				if (startWith(fileLists[i], "public class "))
-				{
-					if (fileLists[i + 1] == "{}")
-					{
-						break;
-					}
-					else if (fileLists[i + 1] == "{")
-					{
-						customStart = i + 2;
-						continue;
-					}
-				}
-				if (customStart >= 0 && fileLists[i] == "}")
-				{
-					customEnd = i - 1;
-					break;
-				}
-			}
-		}
-		// 将找到的自定义代码保存到列表中
-		if (customStart >= 0 && customEnd >= 0 && customStart <= customEnd)
-		{
-			int customCount = customEnd - customStart + 1;
-			FOR_I((uint)customCount)
-			{
-				customList.push_back(fileLists[customStart + i]);
-			}
-		}
+		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 	else
 	{
+		myVector<string> codeList;
 		usingList.push_back("using System;");
-		usingList.push_back("using static GD;");
+		codeList.addRange(generateCodes);
 		if (startWith(packetName, "SC"))
 		{
-			usingList.push_back("using static GBR;");
 			customList.push_back("\tpublic override void execute()");
 			customList.push_back("\t{}");
 		}
+		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }

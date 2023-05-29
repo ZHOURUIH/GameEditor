@@ -38,9 +38,6 @@ enum class PACKET_OWNER : byte
 
 struct PacketMember
 {
-	bool mIsArray;
-	myVector<string> mArrayLengthSpace;	// 是GameCoreDefine还是GD中的常量
-	myVector<string> mArrayLengthMacro;	// 多个常量只能相乘
 	string mTypeName;
 	string mMemberName;
 };
