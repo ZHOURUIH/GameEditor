@@ -559,202 +559,57 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		return;
 	}
 
-	// CSPacket.h
-	string headerFullPath = filePath + packetName + ".h";
-	myVector<string> includeList;
-	myVector<string> customList;
-	findCppIncludeCustomCode(packetName, headerFullPath, includeList, customList);
-	string header;
-	line(header, "#pragma once");
-	line(header, "");
-	// #include部分
-	for (const string& item : includeList)
-	{
-		line(header, item);
-	}
-	line(header, "");
-	line(header, packetInfo.mComment);
-	line(header, "class " + packetName + " : public Packet");
-	line(header, "{");
-	line(header, "\tBASE(Packet);");
-	line(header, "public:");
+	myVector<string> generateCodes;
+	generateCodes.push_back(packetInfo.mComment);
+	generateCodes.push_back("class " + packetName + " : public Packet");
+	generateCodes.push_back("{");
+	generateCodes.push_back("\tBASE(Packet);");
+	generateCodes.push_back("public:");
 	for (const PacketMember& item : packetInfo.mMemberList)
 	{
-		line(header, "\t" + item.mTypeName + " " + item.mMemberName + ";");
+		generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
 	}
-	line(header, "public:");
-	line(header, "\tvoid init() override");
-	line(header, "\t{");
-	line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-	line(header, "\t}");
-	if (packetInfo.mMemberList.size() > 0)
-	{
-		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
-		line(header, "\t{");
-		line(header, "\t\tSerializerRead reader(pBuffer, bufferSize);");
-		for (const PacketMember& item : packetInfo.mMemberList)
-		{
-			if (item.mTypeName == "string")
-			{
-				line(header, "\t\treader.readString(" + item.mMemberName + ");");
-			}
-			else if (startWith(item.mTypeName, "Vector<"))
-			{
-				line(header, "\t\treader.readList(" + item.mMemberName + ");");
-			}
-			else
-			{
-				line(header, "\t\treader.read(" + item.mMemberName + ");");
-			}
-		}
-		line(header, "\t}");
-		
-		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override");
-		line(header, "\t{");
-		for (const PacketMember& item : packetInfo.mMemberList)
-		{
-			if (item.mTypeName == "string")
-			{
-				line(header, "\t\tserializer->writeString(" + item.mMemberName + ");");
-			}
-			else if (startWith(item.mTypeName, "Vector<"))
-			{
-				line(header, "\t\tserializer->writeList(" + item.mMemberName + ");");
-			}
-			else
-			{
-				line(header, "\t\tserializer->write(" + item.mMemberName + ");");
-			}
-		}
-		line(header, "\t}");
+	generateCodes.push_back("public:");
+	generateCodes.push_back("\tvoid init() override");
+	generateCodes.push_back("\t{");
+	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+	generateCodes.push_back("\t}");
+	generatePacketReadWrite(packetInfo, generateCodes);
+	generateCodes.push_back("\tvoid execute() override;");
 
-		line(header, "\tvoid resetProperty() override");
-		line(header, "\t{");
-		line(header, "\t\tbase::resetProperty();");
-		for (const PacketMember& item : packetInfo.mMemberList)
+	// CSPacket.h
+	string headerFullPath = filePath + packetName + ".h";
+	if (isFileExist(headerFullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(headerFullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
 		{
-			if (item.mTypeName == "string" || startWith(item.mTypeName, "Vector<"))
-			{
-				line(header, "\t\t" + item.mMemberName + ".clear();");
-			}
-			else if (item.mTypeName == "char" || 
-				item.mTypeName == "byte" || 
-				item.mTypeName == "short" || 
-				item.mTypeName == "ushort" || 
-				item.mTypeName == "int" || 
-				item.mTypeName == "uint" || 
-				item.mTypeName == "long" || 
-				item.mTypeName == "ulong" || 
-				item.mTypeName == "llong" || 
-				item.mTypeName == "ullong")
-			{
-				line(header, "\t\t" + item.mMemberName + " = 0;");
-			}
-			else if (item.mTypeName == "float" || item.mTypeName == "double")
-			{
-				line(header, "\t\t" + item.mMemberName + " = 0.0f;");
-			}
+			return;
 		}
-		line(header, "\t}");
+		for (const string& line : generateCodes)
+		{
+			codeList.insert(++lineStart, line);
+		}
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 	else
 	{
-		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{}");
-		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override{}");
-	}
-	line(header, "\tvoid execute() override;");
-	// 自定义代码部分
-	FOR_VECTOR(customList)
-	{
-		line(header, customList[i]);
-	}
-	END(customList);
-	line(header, "};", false);
-
-	writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
-}
-
-void CodeNetPacket::findCppIncludeCustomCode(const string& packetName, const string& fullPath, myVector<string>& includeList, myVector<string>& customList)
-{
-	if (isFileExist(fullPath))
-	{
-		myVector<string> fileLines = openTxtFileLines(fullPath);
-		uint lineCount = fileLines.size();
-		int customStart = -1;
-		int customEnd = -1;
-		bool isCSPacket = startWith(packetName, "CS");
-
-		// #include部分
-		FOR_I(lineCount)
-		{
-			if (startWith(fileLines[i], "#include \""))
-			{
-				includeList.push_back(fileLines[i]);
-			}
-		}
-
-		// 查找自定义代码的起始
-		if (isCSPacket)
-		{
-			FOR_I(lineCount)
-			{
-				// CS消息包execute函数声明到类结尾之间是自定义代码部分
-				if (fileLines[i] == "\tvoid execute() override;")
-				{
-					customStart = i + 1;
-					break;
-				}
-			}
-		}
-		else
-		{
-			bool findFillParams = false;
-			FOR_I(lineCount)
-			{
-				// SC消息包fillParams函数结尾到类结尾之间是自定义代码部分
-				if (fileLines[i] == "\tvoid init() override" || fileLines[i] == "\tvoid fillParams() override")
-				{
-					findFillParams = true;
-					continue;
-				}
-				if (findFillParams && fileLines[i] == "\t}")
-				{
-					customStart = i + 1;
-					break;
-				}
-			}
-		}
-
-		// 查找自定义代码的终止
-		if (customStart >= 0)
-		{
-			FOR_I(lineCount)
-			{
-				if (fileLines[lineCount - i - 1] == "};")
-				{
-					customEnd = lineCount - i - 2;
-					break;
-				}
-			}
-		}
-		// 将自定义代码部分放入列表
-		if (customStart >= 0 && customEnd >= 0 && customStart <= customEnd)
-		{
-			uint customLineCount = customEnd - customStart + 1;
-			FOR_I(customLineCount)
-			{
-				customList.push_back(fileLines[customStart + i]);
-			}
-		}
-	}
-	else
-	{
-		includeList.push_back("#include \"Packet.h\"");
-		includeList.push_back("#include \"SerializerWrite.h\"");
-		customList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
-		customList.push_back("\t{");
-		customList.push_back("\t\tdebug(buffer, "");");
-		customList.push_back("\t}");
+		myVector<string> codeList;
+		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"SerializerWrite.h\"");
+		codeList.push_back("#include \"SerializerRead.h\"");
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
+		codeList.addRange(generateCodes);
+		codeList.push_back("// auto generate end");
+		codeList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
+		codeList.push_back("\t{");
+		codeList.push_back("\t\tdebug(buffer, "");");
+		codeList.push_back("\t}");
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
 
@@ -803,6 +658,107 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 	}
 }
 
+void CodeNetPacket::generatePacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
+{
+	if (packetInfo.mMemberList.size() > 0)
+	{
+		// readFromBuffer
+		generateCodes.push_back("\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbool success = true;");
+		generateCodes.push_back("\t\tSerializerRead reader(pBuffer, bufferSize);");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader.readString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader.readList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader.read(" + item.mMemberName + ");");
+			}
+		}
+		generateCodes.push_back("\t\treturn success;");
+		generateCodes.push_back("\t}");
+
+		// writeToBuffer
+		generateCodes.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override");
+		generateCodes.push_back("\t{");
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "Vector<bool>")
+			{
+				ERROR("不支持Vector<bool>类型,packetType:" + packetInfo.mPacketName);
+			}
+			if (item.mTypeName == "string")
+			{
+				generateCodes.push_back("\t\tserializer->writeString(" + item.mMemberName + ");");
+			}
+			else if (startWith(item.mTypeName, "Vector<"))
+			{
+				generateCodes.push_back("\t\tserializer->writeList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				generateCodes.push_back("\t\tserializer->write(" + item.mMemberName + ");");
+			}
+		}
+		generateCodes.push_back("\t}");
+
+		// resetProperty
+		generateCodes.push_back("\tvoid resetProperty() override");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase::resetProperty();");
+		int startLineCount = generateCodes.size();
+		for (const PacketMember& item : packetInfo.mMemberList)
+		{
+			if (item.mTypeName == "string" || startWith(item.mTypeName, "Vector<"))
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + ".clear();");
+			}
+			else if (item.mTypeName == "bool")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
+			}
+			else if (item.mTypeName == "char" ||
+				item.mTypeName == "byte" ||
+				item.mTypeName == "short" ||
+				item.mTypeName == "ushort" ||
+				item.mTypeName == "int" ||
+				item.mTypeName == "uint" ||
+				item.mTypeName == "long" ||
+				item.mTypeName == "ulong" ||
+				item.mTypeName == "llong" ||
+				item.mTypeName == "ullong")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
+			}
+			else if (item.mTypeName == "float" || item.mTypeName == "double")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+			}
+		}
+		if (generateCodes.size() - startLineCount != packetInfo.mMemberList.size())
+		{
+			ERROR("有成员变量未重置,可能是无法识别的类型, packetType:" + packetInfo.mPacketName);
+		}
+		generateCodes.push_back("\t}");
+	}
+	else
+	{
+		generateCodes.push_back("\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{ return true; }");
+		generateCodes.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override{}");
+		generateCodes.push_back("\tvoid resetProperty() override");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase::resetProperty();");
+		generateCodes.push_back("\t}");
+	}
+}
+
 // SCPacket.h文件
 void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
@@ -811,90 +767,57 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	{
 		return;
 	}
+	myVector<string> generateCodes;
+	generateCodes.push_back(packetInfo.mComment);
+	generateCodes.push_back("class " + packetName + " : public Packet");
+	generateCodes.push_back("{");
+	generateCodes.push_back("\tBASE(Packet);");
+	generateCodes.push_back("public:");
+	for (const PacketMember& item : packetInfo.mMemberList)
+	{
+		generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
+	}
+	generateCodes.push_back("public:");
+	generateCodes.push_back("\tvoid init() override");
+	generateCodes.push_back("\t{");
+	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+	generateCodes.push_back("\t}");
+	generatePacketReadWrite(packetInfo, generateCodes);
 
 	// SCPacket.h
 	string headerFullPath = filePath + packetName + ".h";
-	myVector<string> includeList;
-	myVector<string> customList;
-	findCppIncludeCustomCode(packetName, headerFullPath, includeList, customList);
-
-	string header;
-	line(header, "#pragma once");
-	line(header, "");
-	// #include部分
-	for (const string& item : includeList)
+	if (isFileExist(headerFullPath))
 	{
-		line(header, item);
-	}
-	line(header, "");
-	line(header, packetInfo.mComment);
-	line(header, "class " + packetName + " : public Packet");
-	line(header, "{");
-	line(header, "\tBASE(Packet);");
-	line(header, "public:");
-	for (const PacketMember& item : packetInfo.mMemberList)
-	{
-		line(header, "\t" + item.mTypeName + " " + item.mMemberName + ";");
-	}
-	line(header, "public:");
-	if (packetInfo.mMemberList.size() > 0)
-	{
-		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
-		line(header, "\t{");
-		line(header, "\t\tSerializerRead reader(pBuffer, bufferSize);");
-		for (const PacketMember& item : packetInfo.mMemberList)
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(headerFullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
 		{
-			if (item.mTypeName == "string")
-			{
-				line(header, "\t\treader.readString(" + item.mMemberName + ");");
-			}
-			else if (startWith(item.mTypeName, "Vector<"))
-			{
-				line(header, "\t\treader.readList(" + item.mMemberName + ");");
-			}
-			else
-			{
-				line(header, "\t\treader.read(" + item.mMemberName + ");");
-			}
+			return;
 		}
-		line(header, "\t}");
-		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override");
-		line(header, "\t{");
-		for (const PacketMember& item : packetInfo.mMemberList)
+		for (const string& line : generateCodes)
 		{
-			if (item.mTypeName == "string")
-			{
-				line(header, "\t\tserializer->writeString(" + item.mMemberName + ");");
-			}
-			else if (startWith(item.mTypeName, "Vector<"))
-			{
-				line(header, "\t\tserializer->writeList(" + item.mMemberName + ");");
-			}
-			else
-			{
-				line(header, "\t\tserializer->write(" + item.mMemberName + ");");
-			}
+			codeList.insert(++lineStart, line);
 		}
-		line(header, "\t}");
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 	else
 	{
-		line(header, "\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{}");
-		line(header, "\tbool writeToBuffer(SerializerWrite* serializer) const override{}");
+		myVector<string> codeList;
+		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"SerializerWrite.h\"");
+		codeList.push_back("#include \"SerializerRead.h\"");
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
+		codeList.addRange(generateCodes);
+		codeList.push_back("// auto generate end");
+		codeList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
+		codeList.push_back("\t{");
+		codeList.push_back("\t\tdebug(buffer, "");");
+		codeList.push_back("\t}");
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
-	line(header, "\tvoid init() override");
-	line(header, "\t{");
-	line(header, "\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
-	line(header, "\t}");
-	// 自定义代码部分
-	FOR_VECTOR(customList)
-	{
-		line(header, customList[i]);
-	}
-	END(customList);
-	line(header, "};", false);
-
-	writeFile(headerFullPath, ANSIToUTF8(header.c_str(), true));
 }
 
 // PacketDefine.cs文件
