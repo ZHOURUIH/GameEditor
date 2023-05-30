@@ -565,10 +565,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
-	for (const PacketMember& item : packetInfo.mMemberList)
-	{
-		generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
-	}
+	generateCppPacketMemberDeclare(packetInfo, generateCodes);
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\tvoid init() override");
 	generateCodes.push_back("\t{");
@@ -655,6 +652,33 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 		line(source, "}", false);
 
 		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
+	}
+}
+
+void CodeNetPacket::generateCppPacketMemberDeclare(const PacketInfo& packetInfo, myVector<string>& generateCodes)
+{
+	for (const PacketMember& item : packetInfo.mMemberList)
+	{
+		if (item.mTypeName == "byte" ||
+			item.mTypeName == "char" ||
+			item.mTypeName == "short" ||
+			item.mTypeName == "ushort" ||
+			item.mTypeName == "int" ||
+			item.mTypeName == "uint" ||
+			item.mTypeName == "llong" ||
+			item.mTypeName == "ullong")
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = 0;");
+		}
+		else if (item.mTypeName == "float" ||
+			item.mTypeName == "double")
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = 0.0f;");
+		}
+		else
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
+		}
 	}
 }
 
@@ -873,10 +897,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
-	for (const PacketMember& item : packetInfo.mMemberList)
-	{
-		generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
-	}
+	generateCppPacketMemberDeclare(packetInfo, generateCodes);
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\tvoid init() override");
 	generateCodes.push_back("\t{");
