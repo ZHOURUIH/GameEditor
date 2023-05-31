@@ -24,6 +24,36 @@ protected:
 	static string START_FALG;
 public:
 	static bool initPath();
+	static bool isPod(const string& type)
+	{
+		return type == "bool" ||
+			   type == "char" ||
+			   type == "byte" ||
+			   type == "short" ||
+			   type == "ushort" ||
+			   type == "int" ||
+			   type == "uint" ||
+			   type == "long" ||
+			   type == "ulong" ||
+			   type == "llong" ||
+			   type == "ullong" ||
+			   type == "float" ||
+			   type == "double";
+	}
+	static bool isPodInteger(const string& type)
+	{
+		return type == "bool" ||
+			   type == "char" ||
+			   type == "byte" ||
+			   type == "short" ||
+			   type == "ushort" ||
+			   type == "int" ||
+			   type == "uint" ||
+			   type == "long" ||
+			   type == "ulong" ||
+			   type == "llong" ||
+			   type == "ullong";
+	}
 	static MySQLMember parseMySQLMemberLine(string line);
 	// ignoreClientServer表示是否忽略客户端服务器标签,true则表示会忽略,将全部字段定义都导出
 	static SQLiteMember parseSQLiteMemberLine(string line, bool ignoreClientServer);
@@ -33,7 +63,8 @@ public:
 	static string stringDeclare(const string& name) { return "\tstatic constexpr const char* NAME_DEF(" + name + ") = STR(" + name + ");"; }
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
-	static string cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix);
+	static string cSharpMemberDeclareString(const PacketMember& memberInfo);
+	static void parseStructName(const string& line, PacketStruct& structInfo);
 	static void parsePacketName(const string& line, PacketInfo& packetInfo);
 	static string convertToCSharpType(const string& cppType);
 	static bool findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch);

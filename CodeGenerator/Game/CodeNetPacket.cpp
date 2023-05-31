@@ -5,6 +5,7 @@ void CodeNetPacket::generate()
 	// 解析模板文件
 	myVector<string> csLines = openTxtFileLines("PacketCS.txt");
 	myVector<string> scLines = openTxtFileLines("PacketSC.txt");
+	myVector<string> structLines = openTxtFileLines("PacketStruct.txt");
 	if (csLines.size() == 0)
 	{
 		ERROR("未找到协议文件PacketCS.txt");
@@ -15,13 +16,82 @@ void CodeNetPacket::generate()
 		ERROR("未找到协议文件PacketSC.txt");
 		return;
 	}
+
+	// 解析结构体定义
+	bool structStart = false;
+	myVector<PacketStruct> structInfoList;
+	myVector<PacketMember> tempStructMemberList;
+	int tempStructNameLine = 0;
+	FOR_VECTOR_CONST(structLines)
+	{
+		string line = structLines[i];
+		// 忽略注释
+		if (startWith(line, "//"))
+		{
+			continue;
+		}
+		// 如果后面插有注释,则去除
+		int pos = -1;
+		if (findString(line.c_str(), "//", &pos))
+		{
+			line = line.substr(0, pos);
+		}
+		// 去除所有制表符,分号
+		removeAll(line, '\t', ';');
+		// 没有成员变量的消息包
+		if (line == "{}")
+		{
+			PacketStruct info;
+			parseStructName(structLines[i - 1], info);
+			info.mComment = structLines[i - 2];
+			structInfoList.push_back(info);
+			continue;
+		}
+		// 成员变量列表起始
+		if (line == "{")
+		{
+			structStart = true;
+			tempStructNameLine = i - 1;
+			tempStructMemberList.clear();
+			continue;
+		}
+		// 成员变量列表结束
+		if (line == "}")
+		{
+			if (!structStart)
+			{
+				cout << "未找到前一个匹配的{, PacketStruct,前5行内容:" << endl;
+				int printStartLine = (int)i - 5;
+				clampMin(printStartLine, 0);
+				for (int j = printStartLine; j <= (int)i; ++j)
+				{
+					cout << structLines[j] << endl;
+				}
+			}
+			PacketStruct info;
+			parseStructName(structLines[tempStructNameLine], info);
+			info.mMemberList = tempStructMemberList;
+			info.mComment = structLines[tempStructNameLine - 1];
+			structInfoList.push_back(info);
+			structStart = false;
+			tempStructMemberList.clear();
+			tempStructNameLine = -1;
+			continue;
+		}
+		if (structStart)
+		{
+			tempStructMemberList.push_back(parseMemberLine(line));
+		}
+	}
+
+	// 解析消息定义
 	myVector<string> allLines;
 	allLines.addRange(csLines);
 	allLines.addRange(scLines);
 	bool packetStart = false;
 	myVector<PacketInfo> packetInfoList;
 	myVector<PacketMember> tempMemberList;
-	int tempPacketNameLine;
+	int tempPacketNameLine = 0;
 	FOR_VECTOR_CONST(allLines)
 	{
 		string line = allLines[i];
@@ -101,11 +171,26 @@ void CodeNetPacket::generate()
 			gameCorePacketList.push_back(packetInfo);
 		}
 	}
+
+	myVector<PacketStruct> gameStructList;
+	myVector<PacketStruct> gameCoreStructList;
+	for (const auto& info : structInfoList)
+	{
+		if (info.mOwner == PACKET_OWNER::GAME)
+		{
+			gameStructList.push_back(info);
+		}
+		else
+		{
+			gameCoreStructList.push_back(info);
+		}
+	}
 	// c++
 	//------------------------------------------------------------------------------------------------------------------------------
 	// Game层的消息
 	string cppGameCSPacketPath = cppGamePath + "Socket/ClientServer/";
 	string cppGameSCPacketPath = cppGamePath + "Socket/ServerClient/";
+	string cppGameStructPath = cppGamePath + "Socket/Struct/";
 	string cppGamePacketDefinePath = cppGamePath + "Socket/";
 	// 删除无用的消息
 	// c++ CS
@@ -166,9 +251,15 @@ void CodeNetPacket::generate()
 	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
 	generateStringDefinePacket(gamePacketNameList, cppGameStringDefineFile);
 
-	//GameCore层的消息
+	for (const PacketStruct& info : gameStructList)
+	{
+		generateCppStruct(info, cppGameStructPath);
+	}
+
+	// GameCore层的消息
 	string cppGameCoreCSPacketPath = cppGameCorePath + "Socket/ClientServer/";
 	string cppGameCoreSCPacketPath = cppGameCorePath + "Socket/ServerClient/";
+	string cppGameCoreStructPath = cppGameCorePath + "Socket/Struct/";
 	string cppGameCorePacketDefinePath = cppGameCorePath + "Socket/";
 	// 删除无用的消息
 	// c++ CS
@@ -227,12 +318,19 @@ void CodeNetPacket::generate()
 	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
 	generateStringDefinePacket(gameCorePacketNameList, cppGameCoreStringDefineFile);
 
+	for (const PacketStruct& info : gameCoreStructList)
+	{
+		generateCppStruct(info, cppGameCoreStructPath);
+	}
+
 	// c#
 	//------------------------------------------------------------------------------------------------------------------------------
 	string csharpCSGamePath = csGamePath + "Socket/ClientServer/";
 	string csharpCSHotfixPath = csHotfixGamePath + "Socket/ClientServer/";
 	string csharpSCGamePath = csGamePath + "Socket/ServerClient/";
 	string csharpSCHotfixPath = csHotfixGamePath + "Socket/ServerClient/";
+	string csharpStructGamePath = csGamePath + "Socket/Struct/";
+	string csharpStructHotfixPath = csHotfixGamePath + "Socket/Struct/";
 	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
 	myVector<string> hotfixList;
 	myVector<string> noHotfixList;
@@ -300,6 +398,12 @@ void CodeNetPacket::generate()
 	}
 	generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
+
+	// 生成结构体代码
+	for (const PacketStruct& item : structInfoList)
+	{
+		generateCSharpStruct(item, csharpStructGamePath, csharpStructHotfixPath);
+	}
 }
 
 // PacketDefine.h文件
@@ -610,6 +714,48 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	}
 }
 
+void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const string& filePath)
+{
+	const string& structName = structInfo.mStructName;
+
+	// PacketStruct.h
+	string headerFullPath = filePath + structName + ".h";
+	myVector<string> headerCodeList;
+	headerCodeList.push_back("#pragma once");
+	headerCodeList.push_back("");
+	headerCodeList.push_back("#include \"SerializableData.h\"");
+	headerCodeList.push_back("");
+	headerCodeList.push_back(structInfo.mComment);
+	headerCodeList.push_back("class " + structName + " : public SerializableData");
+	headerCodeList.push_back("{");
+	headerCodeList.push_back("\tBASE(SerializableData);");
+	headerCodeList.push_back("public:");
+	generateCppStructMemberDeclare(structInfo, headerCodeList);
+	headerCodeList.push_back("public:");
+	headerCodeList.push_back("\tbool readFromBuffer(SerializerRead* reader) override;");
+	headerCodeList.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override;");
+	headerCodeList.push_back("\tint dataLength() const override;");
+	headerCodeList.push_back("};");
+	writeFile(headerFullPath, ANSIToUTF8(codeListToString(headerCodeList).c_str(), true));
+	
+	// PacketStruct.cpp
+	string sourceFullPath = filePath + structName + ".cpp";
+	myVector<string> sourceCodeList;
+	if (structInfo.mOwner == PACKET_OWNER::GAME)
+	{
+		sourceCodeList.push_back("#include \"GameHeader.h\"");
+	}
+	else
+	{
+		sourceCodeList.push_back("#include \"GameCoreHeader.h\"");
+	}
+	sourceCodeList.push_back("#include \"SerializerWrite.h\"");
+	sourceCodeList.push_back("#include \"SerializerRead.h\"");
+	sourceCodeList.push_back("");
+	generateCppStructReadWrite(structInfo, sourceCodeList);
+	writeFile(sourceFullPath, ANSIToUTF8(codeListToString(sourceCodeList).c_str(), true));
+}
+
 int CodeNetPacket::findPacketVersion(const string& filePath)
 {
 	int packetVersion = 0;
@@ -682,6 +828,34 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const PacketInfo& packetInfo,
 	}
 }
 
+// 与消息的成员变量定义格式完全一致
+void CodeNetPacket::generateCppStructMemberDeclare(const PacketStruct& packetInfo, myVector<string>& generateCodes)
+{
+	for (const PacketMember& item : packetInfo.mMemberList)
+	{
+		if (item.mTypeName == "byte" ||
+			item.mTypeName == "char" ||
+			item.mTypeName == "short" ||
+			item.mTypeName == "ushort" ||
+			item.mTypeName == "int" ||
+			item.mTypeName == "uint" ||
+			item.mTypeName == "llong" ||
+			item.mTypeName == "ullong")
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = 0;");
+		}
+		else if (item.mTypeName == "float" ||
+			item.mTypeName == "double")
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = 0.0f;");
+		}
+		else
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
+		}
+	}
+}
+
 void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
 {
 	if (packetInfo.mMemberList.size() > 0)
@@ -698,18 +872,29 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			}
 			else if (startWith(item.mTypeName, "Vector<"))
 			{
-				if (item.mTypeName == "Vector<string>")
+				int lastPos;
+				findSubstr(item.mTypeName, ">", &lastPos);
+				const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+				if (elementType == "string")
 				{
 					generateCodes.push_back("\t\tsuccess = success && reader->readStringList(" + item.mMemberName + ");");
 				}
-				else
+				else if (isPod(elementType))
 				{
 					generateCodes.push_back("\t\tsuccess = success && reader->readList(" + item.mMemberName + ");");
 				}
+				else
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readCustomList(" + item.mMemberName + ");");
+				}
+			}
+			else if (isPod(item.mTypeName))
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->read(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back("\t\tsuccess = success && reader->read(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader->readCustom(" + item.mMemberName + ");");
 			}
 		}
 		generateCodes.push_back("\t\treturn success;");
@@ -730,18 +915,29 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			}
 			else if (startWith(item.mTypeName, "Vector<"))
 			{
-				if (item.mTypeName == "Vector<string>")
+				int lastPos;
+				findSubstr(item.mTypeName, ">", &lastPos);
+				const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+				if (elementType == "string")
 				{
 					generateCodes.push_back("\t\tserializer->writeStringList(" + item.mMemberName + ");");
 				}
-				else
+				else if (isPod(elementType))
 				{
 					generateCodes.push_back("\t\tserializer->writeList(" + item.mMemberName + ");");
 				}
+				else
+				{
+					generateCodes.push_back("\t\tserializer->writeCustomList(" + item.mMemberName + ");");
+				}
+			}
+			else if (isPod(item.mTypeName))
+			{
+				generateCodes.push_back("\t\tserializer->write(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back("\t\tserializer->write(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tserializer->writeCustom(" + item.mMemberName + ");");
 			}
 		}
 		generateCodes.push_back("\t}");
@@ -761,22 +957,13 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
 			}
-			else if (item.mTypeName == "char" ||
-				item.mTypeName == "byte" ||
-				item.mTypeName == "short" ||
-				item.mTypeName == "ushort" ||
-				item.mTypeName == "int" ||
-				item.mTypeName == "uint" ||
-				item.mTypeName == "long" ||
-				item.mTypeName == "ulong" ||
-				item.mTypeName == "llong" ||
-				item.mTypeName == "ullong")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
-			}
 			else if (item.mTypeName == "float" || item.mTypeName == "double")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+			}
+			else if (isPodInteger(item.mTypeName))
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
 			}
 		}
 		if (generateCodes.size() - startLineCount != packetInfo.mMemberList.size())
@@ -796,6 +983,126 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 	}
 }
 
+void CodeNetPacket::generateCppStructReadWrite(const PacketStruct& structInfo, myVector<string>& generateCodes)
+{
+	if (structInfo.mMemberList.size() == 0)
+	{
+		return;
+	}
+	const string& structName = structInfo.mStructName;
+	// readFromBuffer
+	generateCodes.push_back("bool " + structName + "::readFromBuffer(SerializerRead* reader)");
+	generateCodes.push_back("{");
+	generateCodes.push_back("\tbool success = true;");
+	for (const PacketMember& item : structInfo.mMemberList)
+	{
+		if (item.mTypeName == "string")
+		{
+			generateCodes.push_back("\tsuccess = success && reader->readString(" + item.mMemberName + ");");
+		}
+		else if (startWith(item.mTypeName, "Vector<"))
+		{
+			int lastPos;
+			findSubstr(item.mTypeName, ">", &lastPos);
+			const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+			if (elementType == "string")
+			{
+				generateCodes.push_back("\tsuccess = success && reader->readStringList(" + item.mMemberName + ");");
+			}
+			else if (isPod(elementType))
+			{
+				generateCodes.push_back("\tsuccess = success && reader->readList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				ERROR("结构体中不支持自定义结构体");
+			}
+		}
+		else if (isPod(item.mTypeName))
+		{
+			generateCodes.push_back("\tsuccess = success && reader->read(" + item.mMemberName + ");");
+		}
+		else
+		{
+			ERROR("结构体中不支持自定义结构体");
+		}
+	}
+	generateCodes.push_back("\treturn success;");
+	generateCodes.push_back("}");
+	generateCodes.push_back("");
+
+	// writeToBuffer
+	generateCodes.push_back("void " + structName + "::writeToBuffer(SerializerWrite* serializer) const");
+	generateCodes.push_back("{");
+	for (const PacketMember& item : structInfo.mMemberList)
+	{
+		if (item.mTypeName == "Vector<bool>")
+		{
+			ERROR("不支持Vector<bool>类型,请使用Vector<byte>代替,packetType:" + structName);
+		}
+		if (item.mTypeName == "string")
+		{
+			generateCodes.push_back("\tserializer->writeString(" + item.mMemberName + ");");
+		}
+		else if (startWith(item.mTypeName, "Vector<"))
+		{
+			int lastPos;
+			findSubstr(item.mTypeName, ">", &lastPos);
+			const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+			if (elementType == "string")
+			{
+				generateCodes.push_back("\tserializer->writeStringList(" + item.mMemberName + ");");
+			}
+			else if (isPod(elementType))
+			{
+				generateCodes.push_back("\tserializer->writeList(" + item.mMemberName + ");");
+			}
+			else
+			{
+				ERROR("结构体中不支持自定义结构体");
+			}
+		}
+		else if (isPod(item.mTypeName))
+		{
+			generateCodes.push_back("\tserializer->write(" + item.mMemberName + ");");
+		}
+		else
+		{
+			ERROR("结构体中不支持自定义结构体");
+		}
+	}
+	generateCodes.push_back("}");
+	generateCodes.push_back("");
+
+	// dataLength
+	generateCodes.push_back("void " + structName + "::dataLength()");
+	generateCodes.push_back("{");
+	const int memberCount = structInfo.mMemberList.size();
+	if (memberCount == 1)
+	{
+		generateCodes.push_back("\treturn sizeof(" + structInfo.mMemberList[0].mMemberName + ");");
+	}
+	else
+	{
+		for (int i = 0; i < memberCount; ++i)
+		{
+			if (i == 0)
+			{
+				generateCodes.push_back("\treturn sizeof(" + structInfo.mMemberList[i].mMemberName + ") + ");
+			}
+			else if (i == memberCount - 1)
+			{
+				generateCodes.push_back("\t\t   sizeof(" + structInfo.mMemberList[i].mMemberName + ");");
+			}
+			else
+			{
+				generateCodes.push_back("\t\t   sizeof(" + structInfo.mMemberList[i].mMemberName + ") + ");
+			}
+		}
+	}
+	generateCodes.push_back("}");
+}
+
 void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
 {
 	if (packetInfo.mMemberList.size() > 0)
@@ -805,7 +1112,7 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			string csharpType = cppTypeToCSharpType(item.mTypeName);
+			const string csharpType = cppTypeToCSharpType(item.mTypeName);
 			if (csharpType == "string")
 			{
 				generateCodes.push_back("\t\treader.readString(out " + item.mMemberName + ");");
@@ -822,21 +1129,22 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 		generateCodes.push_back("\t}");
 
 		// write
-		generateCodes.push_back("\tprotected override void write()");
+		generateCodes.push_back("\tprotected override void write(SerializerWrite writer)");
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			if (item.mTypeName == "string")
+			const string csharpType = cppTypeToCSharpType(item.mTypeName);
+			if (csharpType == "string")
 			{
-				generateCodes.push_back("\t\tmWriter.writeString(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\twriter.writeString(" + item.mMemberName + ");");
 			}
-			else if (startWith(item.mTypeName, "Vector<"))
+			else if (startWith(csharpType, "List<"))
 			{
-				generateCodes.push_back("\t\tmWriter.writeList(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back("\t\tmWriter.write(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\twriter.write(" + item.mMemberName + ");");
 			}
 		}
 		generateCodes.push_back("\t}");
@@ -848,32 +1156,31 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 		int startLineCount = generateCodes.size();
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			if (item.mTypeName == "string")
+			const string csharpType = cppTypeToCSharpType(item.mTypeName);
+			if (csharpType == "string")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = string.Empty;");
 			}
-			else if (startWith(item.mTypeName, "Vector<"))
+			else if (startWith(csharpType, "List<"))
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + ".Clear();");
 			}
-			else if (item.mTypeName == "bool")
+			else if (csharpType == "bool")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
 			}
-			else if (item.mTypeName == "char" ||
-				item.mTypeName == "byte" ||
-				item.mTypeName == "short" ||
-				item.mTypeName == "ushort" ||
-				item.mTypeName == "int" ||
-				item.mTypeName == "uint" ||
-				item.mTypeName == "long" ||
-				item.mTypeName == "ulong" ||
-				item.mTypeName == "llong" ||
-				item.mTypeName == "ullong")
+			else if (csharpType == "char" ||
+				csharpType == "byte" ||
+				csharpType == "short" ||
+				csharpType == "ushort" ||
+				csharpType == "int" ||
+				csharpType == "uint" ||
+				csharpType == "long" ||
+				csharpType == "ulong")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
 			}
-			else if (item.mTypeName == "float" || item.mTypeName == "double")
+			else if (csharpType == "float" || csharpType == "double")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
 			}
@@ -887,7 +1194,7 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 	else
 	{
 		generateCodes.push_back("\tpublic override void read(SerializerRead reader){}");
-		generateCodes.push_back("\tprotected override void write(){}");
+		generateCodes.push_back("\tprotected override void write(SerializerWrite writer){}");
 		generateCodes.push_back("\tpublic override void resetProperty()");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbase.resetProperty();");
@@ -1103,7 +1410,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	generateCodes.push_back("{");
 	for (const PacketMember& item : packetInfo.mMemberList)
 	{
-		generateCodes.push_back("\t" + cSharpMemberDeclareString(item, packetInfo.mHotFix));
+		generateCodes.push_back("\t" + cSharpMemberDeclareString(item));
 	}
 	generateCSharpPacketReadWrite(packetInfo, generateCodes);
 
@@ -1139,4 +1446,130 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		codeList.push_back("}");
 		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
+}
+
+void CodeNetPacket::generateCSharpStructReadWrite(const PacketStruct& structInfo, myVector<string>& generateCodes)
+{
+	if (structInfo.mMemberList.size() > 0)
+	{
+		// read
+		generateCodes.push_back("\tpublic override void read(SerializerRead reader)");
+		generateCodes.push_back("\t{");
+		for (const PacketMember& item : structInfo.mMemberList)
+		{
+			const string csharpType = cppTypeToCSharpType(item.mTypeName);
+			if (csharpType == "string")
+			{
+				generateCodes.push_back("\t\treader.readString(out " + item.mMemberName + ");");
+			}
+			else if (startWith(csharpType, "List<"))
+			{
+				generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
+			}
+			else if (isPod(csharpType))
+			{
+				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
+			}
+			else
+			{
+				ERROR("结构体中不支持自定义结构");
+			}
+		}
+		generateCodes.push_back("\t}");
+
+		// write
+		generateCodes.push_back("\tpublic override void write(SerializerWrite writer)");
+		generateCodes.push_back("\t{");
+		for (const PacketMember& item : structInfo.mMemberList)
+		{
+			const string csharpType = cppTypeToCSharpType(item.mTypeName);
+			if (csharpType == "string")
+			{
+				generateCodes.push_back("\t\twriter.writeString(" + item.mMemberName + ");");
+			}
+			else if (startWith(csharpType, "List<"))
+			{
+				generateCodes.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
+			}
+			else if (isPod(csharpType))
+			{
+				generateCodes.push_back("\t\twriter.write(" + item.mMemberName + ");");
+			}
+			else
+			{
+				ERROR("结构体中不支持自定义结构");
+			}
+		}
+		generateCodes.push_back("\t}");
+
+		// resetProperty
+		generateCodes.push_back("\tpublic override void resetProperty()");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase.resetProperty();");
+		int startLineCount = generateCodes.size();
+		for (const PacketMember& item : structInfo.mMemberList)
+		{
+			const string csharpType = cppTypeToCSharpType(item.mTypeName);
+			if (csharpType == "string")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = string.Empty;");
+			}
+			else if (startWith(csharpType, "List<"))
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + ".Clear();");
+			}
+			else if (csharpType == "bool")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
+			}
+			else if (csharpType == "char" ||
+				csharpType == "byte" ||
+				csharpType == "short" ||
+				csharpType == "ushort" ||
+				csharpType == "int" ||
+				csharpType == "uint" ||
+				csharpType == "long" ||
+				csharpType == "ulong")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
+			}
+			else if (csharpType == "float" || csharpType == "double")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+			}
+		}
+		if (generateCodes.size() - startLineCount != structInfo.mMemberList.size())
+		{
+			ERROR("有成员变量未重置,可能是无法识别的类型, packetType:" + structInfo.mStructName);
+		}
+		generateCodes.push_back("\t}");
+	}
+	else
+	{
+		generateCodes.push_back("\tpublic override void read(SerializerRead reader){}");
+		generateCodes.push_back("\tpublic override void write(SerializerWrite writer){}");
+		generateCodes.push_back("\tpublic override void resetProperty()");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase.resetProperty();");
+		generateCodes.push_back("\t}");
+	}
+}
+
+void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const string& gamePath, const string& hotFixPath)
+{
+	myVector<string> codeList;
+	codeList.push_back("using System;");
+	codeList.push_back("using System.Collections.Generic;");
+	codeList.push_back("");
+	codeList.push_back("public class " + structInfo.mStructName + " : ClassObject, ISerializable");
+	codeList.push_back("{");
+	for (const PacketMember& item : structInfo.mMemberList)
+	{
+		codeList.push_back("\t" + cSharpMemberDeclareString(item));
+	}
+	generateCSharpStructReadWrite(structInfo, codeList);
+	codeList.push_back("}");
+	const string fileName = structInfo.mStructName + ".cs";
+	const string fullPath = structInfo.mHotFix ? hotFixPath + fileName : gamePath + fileName;
+	writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

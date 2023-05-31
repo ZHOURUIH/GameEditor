@@ -42,13 +42,21 @@ struct PacketMember
 	string mMemberName;
 };
 
+struct PacketStruct
+{
+	myVector<PacketMember> mMemberList;	// 结构体成员
+	string mStructName;					// 结构体名字
+	string mComment;					// 结构体注释
+	PACKET_OWNER mOwner;				// 属于Game层还是GameCore层
+	bool mHotFix;						// 消息在客户端是否可热更
+};
+
 struct PacketInfo
 {
 	myVector<PacketMember> mMemberList;
 	string mPacketName;					// 消息包名
 	string mComment;					// 消息注释
 	bool mShowInfo;						// 是否显示调试信息
-	bool mServerExecuteInMain;			// 服务器接收的CS消息是否在子线程执行
 	bool mHotFix;						// 消息在客户端是否可热更
 	bool mUDP;							// 是否通过UDP传输
 	PACKET_OWNER mOwner;				// 属于Game层还是GameCore层

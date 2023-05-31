@@ -19,12 +19,17 @@ protected:
 	static void generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath);
 	static int findPacketVersion(const string& filePath);
 	static void generateCppPacketMemberDeclare(const PacketInfo& packetInfo, myVector<string>& generateCodes);
+	static void generateCppStructMemberDeclare(const PacketStruct& packetInfo, myVector<string>& generateCodes);
 	static void generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
-	static void generateCSharpPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
+	static void generateCppStructReadWrite(const PacketStruct& structInfo, myVector<string>& generateCodes);
+	static void generateCppStruct(const PacketStruct& structInfo, const string& filePath);
 	//c#
+	static void generateCSharpPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
 	static void generateCSharpPacketDefineFile(const myVector<PacketInfo>& gamePacketList, const myVector<PacketInfo>& gameCorePacketList, const string& filePath);
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);
 	static void generateCSharpPacketFile(const PacketInfo& packetInfo, const string& csFileHotfixPath, const string& csFileGamePath, const string& scFileHotfixPath, const string& scFileGamePath);
+	static void generateCSharpStructReadWrite(const PacketStruct& structInfo, myVector<string>& generateCodes);
+	static void generateCSharpStruct(const PacketStruct& structInfo, const string& gamePath, const string& hotFixPath);
 };
 
 #endif

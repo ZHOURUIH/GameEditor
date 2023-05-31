@@ -252,7 +252,7 @@ string CodeUtility::cppTypeToCSharpType(const string& cppType)
 	return csharpType;
 }
 
-string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bool isHotFix)
+string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
@@ -266,6 +266,51 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo, bo
 		str = "public " + typeName + " " + memberInfo.mMemberName + ";";
 	}
 	return str;
+}
+
+void CodeUtility::parseStructName(const string& line, PacketStruct& structInfo)
+{
+	int tagStartIndex = 0;
+	int startIndex = -1;
+	int endIndex = -1;
+	// 查找标签
+	myVector<string> tagList;
+	while (true)
+	{
+		findString(line.c_str(), "[", &startIndex, tagStartIndex);
+		findString(line.c_str(), "]", &endIndex, startIndex);
+		if (startIndex < 0 || endIndex < 0)
+		{
+			break;
+		}
+		tagList.push_back(line.substr(startIndex, endIndex - startIndex + 1));
+		tagStartIndex = endIndex;
+	}
+	structInfo.mHotFix = !tagList.contains("[NoHotFix]");
+	bool isGame = tagList.contains("[Game]");
+	bool isGameCore = tagList.contains("[GameCore]");
+	if (isGame == isGameCore)
+	{
+		if (isGame)
+		{
+			ERROR("结构体只能有一个Game或GameCore标签," + line);
+		}
+		else
+		{
+			ERROR("结构体缺少一个Game或GameCore标签," + line);
+		}
+	}
+	structInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
+	// 获取原始的表格名称
+	int firstTagPos = -1;
+	if (findString(line.c_str(), "[", &firstTagPos))
+	{
+		structInfo.mStructName = line.substr(0, firstTagPos);
+	}
+	else
+	{
+		structInfo.mStructName = line;
+	}
 }
 
 void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
@@ -289,7 +334,6 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
 	packetInfo.mUDP = tagList.contains("[UDP]");
 	packetInfo.mShowInfo = !tagList.contains("[NoLog]");
-	packetInfo.mServerExecuteInMain = !tagList.contains("[ServerInThread]");
 	bool isGame = tagList.contains("[Game]");
 	bool isGameCore = tagList.contains("[GameCore]");
 	if (isGame == isGameCore)
