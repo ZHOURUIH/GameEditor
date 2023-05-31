@@ -718,6 +718,17 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 {
 	const string& structName = structInfo.mStructName;
 
+	// 是否需要移动构造,当有列表,或者字符串等可移动的变量时,就需要有移动构造
+	bool hasMoveConstruct = false;
+	for (const PacketMember& member : structInfo.mMemberList)
+	{
+		if (member.mTypeName == "string" || startWith(member.mTypeName, "Vector<"))
+		{
+			hasMoveConstruct = true;
+			break;
+		}
+	}
+
 	// PacketStruct.h
 	string headerFullPath = filePath + structName + ".h";
 	myVector<string> headerCodeList;
@@ -732,6 +743,12 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back("public:");
 	generateCppStructMemberDeclare(structInfo, headerCodeList);
 	headerCodeList.push_back("public:");
+	if (hasMoveConstruct)
+	{
+		headerCodeList.push_back("\t" + structName + "() {}");
+		headerCodeList.push_back("\t" + structName + "(const " + structName + "& other);");
+		headerCodeList.push_back("\t" + structName + "(" + structName + "&& other);");
+	}
 	headerCodeList.push_back("\tbool readFromBuffer(SerializerRead* reader) override;");
 	headerCodeList.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override;");
 	headerCodeList.push_back("\tint dataLength() const override;");
@@ -752,6 +769,35 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	sourceCodeList.push_back("#include \"SerializerWrite.h\"");
 	sourceCodeList.push_back("#include \"SerializerRead.h\"");
 	sourceCodeList.push_back("");
+	if (hasMoveConstruct)
+	{
+		sourceCodeList.push_back(structName + "::" + structName + "(const " + structName + "& other) :");
+		const int memberCount = structInfo.mMemberList.size();
+		for (int i = 0; i < memberCount; ++i)
+		{
+			const PacketMember& member = structInfo.mMemberList[i];
+			const string endComma = i != memberCount - 1 ? "," : "";
+			sourceCodeList.push_back("\t" + member.mMemberName + "(other." + member.mMemberName + ")" + endComma);
+		}
+		sourceCodeList.push_back("{}");
+		sourceCodeList.push_back("");
+		sourceCodeList.push_back(structName + "::" + structName + "(" + structName + "&& other) :");
+		for (int i = 0; i < memberCount; ++i)
+		{
+			const PacketMember& member = structInfo.mMemberList[i];
+			const string endComma = i != memberCount - 1 ? "," : "";
+			if (member.mTypeName == "string" || startWith(member.mTypeName, "Vector<"))
+			{
+				sourceCodeList.push_back("\t" + member.mMemberName + "(move(other." + member.mMemberName + "))" + endComma);
+			}
+			else
+			{
+				sourceCodeList.push_back("\t" + member.mMemberName + "(other." + member.mMemberName + ")" + endComma);
+			}
+		}
+		sourceCodeList.push_back("{}");
+		sourceCodeList.push_back("");
+	}
 	generateCppStructReadWrite(structInfo, sourceCodeList);
 	writeFile(sourceFullPath, ANSIToUTF8(codeListToString(sourceCodeList).c_str(), true));
 }
@@ -1075,7 +1121,7 @@ void CodeNetPacket::generateCppStructReadWrite(const PacketStruct& structInfo, m
 	generateCodes.push_back("");
 
 	// dataLength
-	generateCodes.push_back("void " + structName + "::dataLength()");
+	generateCodes.push_back("int " + structName + "::dataLength() const");
 	generateCodes.push_back("{");
 	const int memberCount = structInfo.mMemberList.size();
 	if (memberCount == 1)
