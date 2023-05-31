@@ -1114,13 +1114,17 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	else
 	{
 		myVector<string> codeList;
-		usingList.push_back("using System;");
+		codeList.push_back("using System;");
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
+		codeList.push_back("\t// auto generate end");
 		if (startWith(packetName, "SC"))
 		{
-			customList.push_back("\tpublic override void execute()");
-			customList.push_back("\t{}");
+			codeList.push_back("\tpublic override void execute()");
+			codeList.push_back("\t{}");
 		}
+		codeList.push_back("}");
 		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
