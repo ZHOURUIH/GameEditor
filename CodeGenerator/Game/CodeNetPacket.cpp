@@ -315,6 +315,13 @@ void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& 
 	line(str, "public:");
 	line(str, "\tconstexpr static ushort MIN = 0;");
 	line(str, "");
+	line(str, "\tconstexpr static ushort GATE_CS_MIN = 1000;");
+	line(str, "\tconstexpr static ushort GATE_CS_HEART_BEAT = 1001;");
+	line(str, "\tconstexpr static ushort GATE_CS_SERVER_INFO = 1002;");
+	line(str, "");
+	line(str, "\tconstexpr static ushort GATE_SC_MIN = 1200;");
+	line(str, "\tconstexpr static ushort GATE_SC_HEART_BEAT = 1201;");
+	line(str, "");
 	line(str, "\tconstexpr static ushort MAIL_CS_MIN = 1500;");
 	line(str, "\tconstexpr static ushort MAIL_CS_HEART_BEAT = 1501;");
 	line(str, "\tconstexpr static ushort MAIL_CS_SEND_MAIL = 1502;");
@@ -358,13 +365,6 @@ void CodeNetPacket::generateCppGameCorePacketDefineFile(const myVector<PacketInf
 	line(str, "{");
 	line(str, "public:");
 	line(str, "\tconstexpr static ushort MIN = 0;");
-	line(str, "");
-	line(str, "\tconstexpr static ushort GATE_CS_MIN = 1000;");
-	line(str, "\tconstexpr static ushort GATE_CS_HEART_BEAT = 1001;");
-	line(str, "\tconstexpr static ushort GATE_CS_SERVER_INFO = 1002;");
-	line(str, "");
-	line(str, "\tconstexpr static ushort GATE_SC_MIN = 1200;");
-	line(str, "\tconstexpr static ushort GATE_SC_HEART_BEAT = 1201;");
 	line(str, "");
 	int csMinValue = 3000;
 	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
@@ -687,24 +687,29 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 	if (packetInfo.mMemberList.size() > 0)
 	{
 		// readFromBuffer
-		generateCodes.push_back("\tbool readFromBuffer(char* pBuffer, const int bufferSize) override");
+		generateCodes.push_back("\tbool readFromBuffer(SerializerRead* reader) override");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbool success = true;");
-		generateCodes.push_back("\t\tSerializerRead reader(pBuffer, bufferSize);");
-		generateCodes.push_back("\t\treader.setShowError(false);");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
 			if (item.mTypeName == "string")
 			{
-				generateCodes.push_back("\t\tsuccess = success && reader.readString(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader->readString(" + item.mMemberName + ");");
 			}
 			else if (startWith(item.mTypeName, "Vector<"))
 			{
-				generateCodes.push_back("\t\tsuccess = success && reader.readList(" + item.mMemberName + ");");
+				if (item.mTypeName == "Vector<string>")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readStringList(" + item.mMemberName + ");");
+				}
+				else
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readList(" + item.mMemberName + ");");
+				}
 			}
 			else
 			{
-				generateCodes.push_back("\t\tsuccess = success && reader.read(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader->read(" + item.mMemberName + ");");
 			}
 		}
 		generateCodes.push_back("\t\treturn success;");
@@ -725,7 +730,14 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			}
 			else if (startWith(item.mTypeName, "Vector<"))
 			{
-				generateCodes.push_back("\t\tserializer->writeList(" + item.mMemberName + ");");
+				if (item.mTypeName == "Vector<string>")
+				{
+					generateCodes.push_back("\t\tserializer->writeStringList(" + item.mMemberName + ");");
+				}
+				else
+				{
+					generateCodes.push_back("\t\tserializer->writeList(" + item.mMemberName + ");");
+				}
 			}
 			else
 			{
@@ -775,7 +787,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 	}
 	else
 	{
-		generateCodes.push_back("\tbool readFromBuffer(char* pBuffer, const int bufferSize) override{ return true; }");
+		generateCodes.push_back("\tbool readFromBuffer(SerializerRead* reader) override{ return true; }");
 		generateCodes.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override{}");
 		generateCodes.push_back("\tvoid resetProperty() override");
 		generateCodes.push_back("\t{");
