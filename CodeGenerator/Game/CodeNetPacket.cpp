@@ -1165,11 +1165,25 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 			}
 			else if (startWith(csharpType, "List<"))
 			{
-				generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
+				int lastPos;
+				findSubstr(csharpType, ">", &lastPos);
+				const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
+				if (elementType == "string" || isPod(elementType))
+				{
+					generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
+				}
+				else
+				{
+					generateCodes.push_back("\t\treader.readCustomList(" + item.mMemberName + ");");
+				}
+			}
+			else if (isPod(csharpType))
+			{
+				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
+				generateCodes.push_back("\t\treader.readCustom(out " + item.mMemberName + ");");
 			}
 		}
 		generateCodes.push_back("\t}");
@@ -1186,11 +1200,25 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 			}
 			else if (startWith(csharpType, "List<"))
 			{
-				generateCodes.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
+				int lastPos;
+				findSubstr(csharpType, ">", &lastPos);
+				const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
+				if (elementType == "string" || isPod(elementType))
+				{
+					generateCodes.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
+				}
+				else
+				{
+					generateCodes.push_back("\t\twriter.writeCustomList(" + item.mMemberName + ");");
+				}
+			}
+			else if (isPod(csharpType))
+			{
+				generateCodes.push_back("\t\twriter.write(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back("\t\twriter.write(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\twriter.writeCustom(" + item.mMemberName + ");");
 			}
 		}
 		generateCodes.push_back("\t}");
@@ -1209,7 +1237,17 @@ void CodeNetPacket::generateCSharpPacketReadWrite(const PacketInfo& packetInfo, 
 			}
 			else if (startWith(csharpType, "List<"))
 			{
-				generateCodes.push_back("\t\t" + item.mMemberName + ".Clear();");
+				int lastPos;
+				findSubstr(csharpType, ">", &lastPos);
+				const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
+				if (elementType == "string" || isPod(elementType))
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + ".Clear();");
+				}
+				else
+				{
+					generateCodes.push_back("\t\tUN_CLASS_LIST(" + item.mMemberName + ");");
+				}
 			}
 			else if (csharpType == "bool")
 			{
@@ -1499,28 +1537,30 @@ void CodeNetPacket::generateCSharpStructReadWrite(const PacketStruct& structInfo
 	if (structInfo.mMemberList.size() > 0)
 	{
 		// read
-		generateCodes.push_back("\tpublic override void read(SerializerRead reader)");
+		generateCodes.push_back("\tpublic override bool read(SerializerRead reader)");
 		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbool success = true;");
 		for (const PacketMember& item : structInfo.mMemberList)
 		{
 			const string csharpType = cppTypeToCSharpType(item.mTypeName);
 			if (csharpType == "string")
 			{
-				generateCodes.push_back("\t\treader.readString(out " + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader.readString(out " + item.mMemberName + ");");
 			}
 			else if (startWith(csharpType, "List<"))
 			{
-				generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader.readList(" + item.mMemberName + ");");
 			}
 			else if (isPod(csharpType))
 			{
-				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader.read(out " + item.mMemberName + ");");
 			}
 			else
 			{
 				ERROR("结构体中不支持自定义结构");
 			}
 		}
+		generateCodes.push_back("\t\treturn success;");
 		generateCodes.push_back("\t}");
 
 		// write
@@ -1569,13 +1609,13 @@ void CodeNetPacket::generateCSharpStructReadWrite(const PacketStruct& structInfo
 				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
 			}
 			else if (csharpType == "char" ||
-				csharpType == "byte" ||
-				csharpType == "short" ||
-				csharpType == "ushort" ||
-				csharpType == "int" ||
-				csharpType == "uint" ||
-				csharpType == "long" ||
-				csharpType == "ulong")
+					 csharpType == "byte" ||
+					 csharpType == "short" ||
+					 csharpType == "ushort" ||
+					 csharpType == "int" ||
+					 csharpType == "uint" ||
+					 csharpType == "long" ||
+					 csharpType == "ulong")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
 			}
@@ -1592,8 +1632,8 @@ void CodeNetPacket::generateCSharpStructReadWrite(const PacketStruct& structInfo
 	}
 	else
 	{
-		generateCodes.push_back("\tpublic override void read(SerializerRead reader){}");
-		generateCodes.push_back("\tpublic override void write(SerializerWrite writer){}");
+		generateCodes.push_back("\tpublic override bool read(SerializerRead reader) { return true; }");
+		generateCodes.push_back("\tpublic override void write(SerializerWrite writer) {}");
 		generateCodes.push_back("\tpublic override void resetProperty()");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbase.resetProperty();");
@@ -1607,7 +1647,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("using System;");
 	codeList.push_back("using System.Collections.Generic;");
 	codeList.push_back("");
-	codeList.push_back("public class " + structInfo.mStructName + " : ClassObject, ISerializable");
+	codeList.push_back("public class " + structInfo.mStructName + " : Serializable");
 	codeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
 	{
