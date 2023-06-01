@@ -257,13 +257,13 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
 	string str;
-	if (startWith(typeName, "List<"))
+	if (isPod(typeName) || typeName == "string")
 	{
-		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+		str = "public " + typeName + " " + memberInfo.mMemberName + ";";
 	}
 	else
 	{
-		str = "public " + typeName + " " + memberInfo.mMemberName + ";";
+		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 	}
 	return str;
 }

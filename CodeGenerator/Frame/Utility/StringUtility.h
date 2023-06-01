@@ -903,6 +903,8 @@ public:
 	static void jsonEndStruct(string& str, uint preTableCount = 0, bool returnLine = false);
 	static void jsonAddPair(string& str, const string& name, const string& value, uint preTableCount = 0, bool returnLine = false);
 	static void jsonAddObject(string& str, const string& name, const string& value, uint preTableCount = 0, bool returnLine = false);
+	static char toLower(char str);
+	static char toUpper(char str);
 	static string toLower(const string& str);
 	static string toUpper(const string& str);
 	static bool isUpper(char value) { return value >= 'A' && value <= 'Z'; }

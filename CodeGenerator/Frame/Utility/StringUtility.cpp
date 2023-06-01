@@ -1854,16 +1854,31 @@ void StringUtility::jsonAddObject(string& str, const string& name, const string&
 	}
 }
 
+char StringUtility::toLower(char str)
+{
+	if (str >= 'A' && str <= 'Z')
+	{
+		return str + 'a' - 'A';
+	}
+	return str;
+}
+
+char StringUtility::toUpper(char str)
+{
+	if (str >= 'a' && str <= 'z')
+	{
+		return str - ('a' - 'A');
+	}
+	return str;
+}
+
 string StringUtility::toLower(const string& str)
 {
 	string ret = str;
 	uint size = (uint)ret.length();
 	FOR_I(size)
 	{
-		if (isUpper(ret[i]))
-		{
-			ret[i] += 'a' - 'A';
-		}
+		ret[i] = toLower(ret[i]);
 	}
 	return ret;
 }
@@ -1874,10 +1889,7 @@ string StringUtility::toUpper(const string& str)
 	uint size = (uint)ret.length();
 	FOR_I(size)
 	{
-		if (isLower(ret[i]))
-		{
-			ret[i] -= 'a' - 'A';
-		}
+		ret[i] = toUpper(ret[i]);
 	}
 	return ret;
 }
