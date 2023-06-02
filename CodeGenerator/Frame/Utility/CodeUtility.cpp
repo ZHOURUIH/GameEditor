@@ -248,7 +248,8 @@ string CodeUtility::cppTypeToCSharpType(const string& cppType)
 		return "List<long>";
 	}
 	string csharpType = cppType;
-	replaceAll(csharpType, "Vector", "List");
+	// 为了避免误判断Vector2等以Vector开头的类型,需要加上<
+	replaceAll(csharpType, "Vector<", "List<");
 	return csharpType;
 }
 

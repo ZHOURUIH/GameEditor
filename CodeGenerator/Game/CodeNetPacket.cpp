@@ -756,7 +756,13 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			// 成员变量的命名格式都是以m开头,且后面的第一个字母是大写,所以需要去除m,将大写字母变为小写
 			string tempParamName = member.mMemberName.substr(2);
 			tempParamName.insert(0, 1, toLower(member.mMemberName[1]));
-			if (member.mTypeName == "string" || startWith(member.mTypeName, "Vector<"))
+			if (member.mTypeName == "string" || 
+				startWith(member.mTypeName, "Vector<") || 
+				member.mTypeName == "Vector2" || 
+				member.mTypeName == "Vector2UShort" || 
+				member.mTypeName == "Vector2Int" || 
+				member.mTypeName == "Vector3" || 
+				member.mTypeName == "Vector4")
 			{
 				constructParams += "const " + member.mTypeName + "& " + tempParamName;
 			}
@@ -911,16 +917,36 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			}
 			else
 			{
-				ERROR("结构体中不支持自定义结构体");
+				ERROR("结构体中不支持自定义结构体:" + elementType);
 			}
 		}
 		else if (isPod(item.mTypeName))
 		{
 			sourceCodeList.push_back("\tsuccess = success && reader->read(" + item.mMemberName + ");");
 		}
+		else if (item.mTypeName == "Vector2")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readVector2(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector2UShort")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readVector2UShort(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector2Int")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readVector2Int(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector3")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readVector3(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector4")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readVector4(" + item.mMemberName + ");");
+		}
 		else
 		{
-			ERROR("结构体中不支持自定义结构体");
+			ERROR("结构体中不支持自定义结构体:" + item.mTypeName);
 		}
 	}
 	sourceCodeList.push_back("\treturn success;");
@@ -955,16 +981,36 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			}
 			else
 			{
-				ERROR("结构体中不支持自定义结构体");
+				ERROR("结构体中不支持自定义结构体:" + elementType);
 			}
 		}
 		else if (isPod(item.mTypeName))
 		{
 			sourceCodeList.push_back("\tserializer->write(" + item.mMemberName + ");");
 		}
+		else if (item.mTypeName == "Vector2")
+		{
+			sourceCodeList.push_back("\tserializer->writeVector2(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector2Int")
+		{
+			sourceCodeList.push_back("\tserializer->writeVector2Int(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector2UShort")
+		{
+			sourceCodeList.push_back("\tserializer->writeVector2UShort(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector3")
+		{
+			sourceCodeList.push_back("\tserializer->writeVector3(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "Vector4")
+		{
+			sourceCodeList.push_back("\tserializer->writeVector4(" + item.mMemberName + ");");
+		}
 		else
 		{
-			ERROR("结构体中不支持自定义结构体");
+			ERROR("结构体中不支持自定义结构体:" + item.mTypeName);
 		}
 	}
 	sourceCodeList.push_back("}");
@@ -1007,7 +1053,13 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		{
 			ERROR("不支持Vector<bool>类型,请使用Vector<byte>代替,packetType:" + structName);
 		}
-		if (item.mTypeName == "string" || startWith(item.mTypeName, "Vector<"))
+		if (item.mTypeName == "string" || 
+			startWith(item.mTypeName, "Vector<") || 
+			item.mTypeName == "Vector2" || 
+			item.mTypeName == "Vector2UShort" || 
+			item.mTypeName == "Vector2Int" || 
+			item.mTypeName == "Vector3" || 
+			item.mTypeName == "Vector4")
 		{
 			sourceCodeList.push_back("\t" + item.mMemberName + ".clear();");
 		}
@@ -1029,7 +1081,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		}
 		else
 		{
-			ERROR("结构体中不支持自定义结构体");
+			ERROR("结构体中不支持自定义结构体:" + item.mTypeName);
 		}
 	}
 	sourceCodeList.push_back("}");
@@ -1618,6 +1670,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 {
 	myVector<string> codeList;
 	codeList.push_back("using System;");
+	codeList.push_back("using UnityEngine;");
 	codeList.push_back("using System.Collections.Generic;");
 	codeList.push_back("");
 	codeList.push_back("public class " + structInfo.mStructName + " : Serializable");
@@ -1643,13 +1696,18 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 			{
 				codeList.push_back("\t\tsuccess = success && reader.readList(" + item.mMemberName + ");");
 			}
-			else if (isPod(csharpType))
+			else if (isPod(csharpType) || 
+					csharpType == "Vector2" || 
+					csharpType == "Vector2UShort" || 
+					csharpType == "Vector2Int" || 
+					csharpType == "Vector3" || 
+					csharpType == "Vector4")
 			{
 				codeList.push_back("\t\tsuccess = success && reader.read(out " + item.mMemberName + ");");
 			}
 			else
 			{
-				ERROR("结构体中不支持自定义结构");
+				ERROR("结构体中不支持自定义结构体:" + csharpType);
 			}
 		}
 		codeList.push_back("\t\treturn success;");
@@ -1673,9 +1731,29 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 			{
 				codeList.push_back("\t\twriter.write(" + item.mMemberName + ");");
 			}
+			else if (csharpType == "Vector2")
+			{
+				codeList.push_back("\t\twriter.writeVector2(" + item.mMemberName + ");");
+			}
+			else if (csharpType == "Vector2UShort")
+			{
+				codeList.push_back("\t\twriter.writeVector2UShort(" + item.mMemberName + ");");
+			}
+			else if (csharpType == "Vector2Int")
+			{
+				codeList.push_back("\t\twriter.writeVector2Int(" + item.mMemberName + ");");
+			}
+			else if (csharpType == "Vector3")
+			{
+				codeList.push_back("\t\twriter.writeVector3(" + item.mMemberName + ");");
+			}
+			else if (csharpType == "Vector4")
+			{
+				codeList.push_back("\t\twriter.writeVector4(" + item.mMemberName + ");");
+			}
 			else
 			{
-				ERROR("结构体中不支持自定义结构");
+				ERROR("结构体中不支持自定义结构体:" + csharpType);
 			}
 		}
 		codeList.push_back("\t}");
@@ -1713,6 +1791,26 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 			else if (csharpType == "float" || csharpType == "double")
 			{
 				codeList.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+			}
+			else if (csharpType == "Vector2")
+			{
+				codeList.push_back("\t\t" + item.mMemberName + " = Vector2.zero;");
+			}
+			else if (csharpType == "Vector2UShort")
+			{
+				codeList.push_back("\t\t" + item.mMemberName + " = new Vector2UShort();");
+			}
+			else if (csharpType == "Vector2Int")
+			{
+				codeList.push_back("\t\t" + item.mMemberName + " = Vector2Int.zero;");
+			}
+			else if (csharpType == "Vector3")
+			{
+				codeList.push_back("\t\t" + item.mMemberName + " = Vector3.zero;");
+			}
+			else if (csharpType == "Vector4")
+			{
+				codeList.push_back("\t\t" + item.mMemberName + " = Vector4.zero;");
 			}
 			else
 			{
