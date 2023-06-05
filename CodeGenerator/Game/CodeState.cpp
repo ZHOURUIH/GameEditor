@@ -2,7 +2,8 @@
 
 void CodeState::generate()
 {
-	myVector<string> buffList = findTargetHeaderFile(cppGameCorePath,
+	// Game
+	myVector<string> gameBuffList = findTargetHeaderFile(cppGamePath,
 		[](const string& fileName) { return startWith(fileName, "Buff"); },
 		[](const string& line) 
 		{
@@ -14,20 +15,48 @@ void CodeState::generate()
 				   findSubstr(line, " : public RangePlayerCountMakeProperty") || 
 				   findSubstr(line, " : public CharacterBuffTrigger");
 		});
-	myVector<string> stateActionList = findTargetHeaderFile(cppGameCorePath,
+	myVector<string> gameStateActionList = findTargetHeaderFile(cppGamePath,
 		[](const string& fileName) { return startWith(fileName, "StateAction"); },
 		[](const string& line) { return findSubstr(line, " : public CharacterStateAction"); });
-	myVector<string> stateBehaviourList = findTargetHeaderFile(cppGameCorePath,
+	myVector<string> gameStateBehaviourList = findTargetHeaderFile(cppGamePath,
 		[](const string& fileName) { return startWith(fileName, "StateBehaviour"); },
 		[](const string& line) { return findSubstr(line, " : public CharacterGameState"); });
-	myVector<string> stateList;
-	stateList.addRange(buffList);
-	stateList.addRange(stateActionList);
-	stateList.addRange(stateBehaviourList);
+	myVector<string> gameStateList;
+	gameStateList.addRange(gameBuffList);
+	gameStateList.addRange(gameStateActionList);
+	gameStateList.addRange(gameStateBehaviourList);
 	// 生成StringDefineState文件
-	generateStringDefineState(stateList, cppGameCoreStringDefineFile);
+	generateStringDefineState(gameStateList, cppGameStringDefineFile);
 	// 生成StateRegister.cpp文件
-	generateStateRegister(stateList, cppGameCorePath + "Character/Component/StateMachine/StateRegister.cpp");
+	generateStateRegister(gameBuffList, cppGamePath + "Character/Component/StateMachine/GameStateRegister.cpp", false);
+
+	// GameCore
+	myVector<string> coreBuffList = findTargetHeaderFile(cppGameCorePath,
+		[](const string& fileName) { return startWith(fileName, "Buff"); },
+		[](const string& line)
+		{
+			return findSubstr(line, " : public CharacterBuff") ||
+				findSubstr(line, " : public StrengthIncreaseBuff") ||
+				findSubstr(line, " : public EquipStrengthLevelActiveBuff") ||
+				findSubstr(line, " : public PlayerLevelIncreaseBuff") ||
+				findSubstr(line, " : public RangeCharacterBuff") ||
+				findSubstr(line, " : public RangePlayerCountMakeProperty") ||
+				findSubstr(line, " : public CharacterBuffTrigger");
+		});
+	myVector<string> coreStateActionList = findTargetHeaderFile(cppGameCorePath,
+		[](const string& fileName) { return startWith(fileName, "StateAction"); },
+		[](const string& line) { return findSubstr(line, " : public CharacterStateAction"); });
+	myVector<string> coreStateBehaviourList = findTargetHeaderFile(cppGameCorePath,
+		[](const string& fileName) { return startWith(fileName, "StateBehaviour"); },
+		[](const string& line) { return findSubstr(line, " : public CharacterGameState"); });
+	myVector<string> coreStateList;
+	coreStateList.addRange(coreBuffList);
+	coreStateList.addRange(coreStateActionList);
+	coreStateList.addRange(coreStateBehaviourList);
+	// 生成StringDefineState文件
+	generateStringDefineState(coreStateList, cppGameCoreStringDefineFile);
+	// 生成StateRegister.cpp文件
+	generateStateRegister(coreBuffList, cppGameCorePath + "Character/Component/StateMachine/StateRegister.cpp", true);
 }
 
 void CodeState::generateStringDefineState(const myVector<string>& stateList, const string& stringDefineFile)
@@ -53,25 +82,28 @@ void CodeState::generateStringDefineState(const myVector<string>& stateList, con
 	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-void CodeState::generateStateRegister(const myVector<string>& stateList, const string& filePath)
+void CodeState::generateStateRegister(const myVector<string>& stateList, const string& filePath, const bool isGameCore)
 {
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(filePath, codeList, lineStart,
-		[](const string& codeLine) { return codeLine == "\t// buff状态"; },
-		[](const string& codeLine) { return codeLine == "\t// 行为状态"; }))
+		[](const string& codeLine) { return codeLine == "\t// auto generate start"; },
+		[](const string& codeLine) { return codeLine == "\t// auto generate end"; }))
 	{
 		return;
 	}
 	myVector<string> stateRegisteList;
 	FOR_VECTOR_CONST(stateList)
 	{
-		if (startWith(stateList[i], "StateAction") || startWith(stateList[i], "StateBehaviour"))
-		{
-			continue;
-		}
 		string enumTypeStr = nameToUpper(removeStartString(stateList[i], "Buff"), false);
-		codeList.insert(++lineStart, "\tSTATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + enumTypeStr + ");");
+		if (isGameCore)
+		{
+			codeList.insert(++lineStart, "\tCORE_STATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + enumTypeStr + ");");
+		}
+		else
+		{
+			codeList.insert(++lineStart, "\tSTATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + enumTypeStr + ");");
+		}
 	}
 	codeList.insert(++lineStart, "");
 
