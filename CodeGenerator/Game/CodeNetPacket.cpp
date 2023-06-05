@@ -1607,7 +1607,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 				}
 				else
 				{
-					generateCodes.push_back("\t\treader.readCustomList(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\treader.readCustomList(" + item.mMemberName + ", typeof(" + elementType + "));");
 				}
 			}
 			else if (isPod(csharpType) ||
@@ -1621,7 +1621,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 			}
 			else
 			{
-				generateCodes.push_back("\t\treader.readCustom(out " + item.mMemberName + ");");
+				generateCodes.push_back("\t\treader.readCustom(out " + item.mMemberName + ", typeof(" + csharpType + "));");
 			}
 		}
 		generateCodes.push_back("\t}");
