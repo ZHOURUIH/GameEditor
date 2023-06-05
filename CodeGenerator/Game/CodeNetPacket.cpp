@@ -1188,6 +1188,26 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 				{
 					generateCodes.push_back("\t\tsuccess = success && reader->readList(" + item.mMemberName + ");");
 				}
+				else if (elementType == "Vector2")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readVector2(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector2UShort")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readVector2UShort(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector2Int")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readVector2Int(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector3")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readVector3(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector4")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readVector4(" + item.mMemberName + ");");
+				}
 				else
 				{
 					generateCodes.push_back("\t\tsuccess = success && reader->readCustomList(" + item.mMemberName + ");");
@@ -1196,6 +1216,26 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			else if (isPod(item.mTypeName))
 			{
 				generateCodes.push_back("\t\tsuccess = success && reader->read(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector2")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readVector2(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector2UShort")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readVector2UShort(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector2Int")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readVector2Int(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector3")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readVector3(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector4")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readVector4(" + item.mMemberName + ");");
 			}
 			else
 			{
@@ -1231,6 +1271,26 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 				{
 					generateCodes.push_back("\t\tserializer->writeList(" + item.mMemberName + ");");
 				}
+				else if (elementType == "Vector2")
+				{
+					generateCodes.push_back("\t\tserializer->writeVector2(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector2Int")
+				{
+					generateCodes.push_back("\t\tserializer->writeVector2Int(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector2UShort")
+				{
+					generateCodes.push_back("\t\tserializer->writeVector2UShort(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector3")
+				{
+					generateCodes.push_back("\t\tserializer->writeVector3(" + item.mMemberName + ");");
+				}
+				else if (elementType == "Vector4")
+				{
+					generateCodes.push_back("\t\tserializer->writeVector4(" + item.mMemberName + ");");
+				}
 				else
 				{
 					generateCodes.push_back("\t\tserializer->writeCustomList(" + item.mMemberName + ");");
@@ -1239,6 +1299,26 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			else if (isPod(item.mTypeName))
 			{
 				generateCodes.push_back("\t\tserializer->write(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector2")
+			{
+				generateCodes.push_back("\t\tserializer->writeVector2(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector2Int")
+			{
+				generateCodes.push_back("\t\tserializer->writeVector2Int(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector2UShort")
+			{
+				generateCodes.push_back("\t\tserializer->writeVector2UShort(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector3")
+			{
+				generateCodes.push_back("\t\tserializer->writeVector3(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "Vector4")
+			{
+				generateCodes.push_back("\t\tserializer->writeVector4(" + item.mMemberName + ");");
 			}
 			else
 			{
@@ -1254,7 +1334,13 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 		int startLineCount = generateCodes.size();
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			if (item.mTypeName == "string" || startWith(item.mTypeName, "Vector<"))
+			if (item.mTypeName == "string" || 
+				startWith(item.mTypeName, "Vector<") || 
+				item.mTypeName == "Vector2" || 
+				item.mTypeName == "Vector2UShort" || 
+				item.mTypeName == "Vector2Int" || 
+				item.mTypeName == "Vector3" || 
+				item.mTypeName == "Vector4")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + ".clear();");
 			}
@@ -1524,7 +1610,12 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 					generateCodes.push_back("\t\treader.readCustomList(" + item.mMemberName + ");");
 				}
 			}
-			else if (isPod(csharpType))
+			else if (isPod(csharpType) ||
+					csharpType == "Vector2" ||
+					csharpType == "Vector2UShort" ||
+					csharpType == "Vector2Int" ||
+					csharpType == "Vector3" ||
+					csharpType == "Vector4")
 			{
 				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
 			}
@@ -1559,7 +1650,12 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 					generateCodes.push_back("\t\twriter.writeCustomList(" + item.mMemberName + ");");
 				}
 			}
-			else if (isPod(csharpType))
+			else if (isPod(csharpType) ||
+					csharpType == "Vector2" ||
+					csharpType == "Vector2UShort" ||
+					csharpType == "Vector2Int" ||
+					csharpType == "Vector3" ||
+					csharpType == "Vector4")
 			{
 				generateCodes.push_back("\t\twriter.write(" + item.mMemberName + ");");
 			}
@@ -1601,19 +1697,39 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
 			}
 			else if (csharpType == "char" ||
-				csharpType == "byte" ||
-				csharpType == "short" ||
-				csharpType == "ushort" ||
-				csharpType == "int" ||
-				csharpType == "uint" ||
-				csharpType == "long" ||
-				csharpType == "ulong")
+					 csharpType == "byte" ||
+					 csharpType == "short" ||
+					 csharpType == "ushort" ||
+					 csharpType == "int" ||
+					 csharpType == "uint" ||
+					 csharpType == "long" ||
+					 csharpType == "ulong")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
 			}
 			else if (csharpType == "float" || csharpType == "double")
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+			}
+			else if (csharpType == "Vector2")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector2.zero;");
+			}
+			else if (csharpType == "Vector2UShort")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = new Vector2UShort();");
+			}
+			else if (csharpType == "Vector2Int")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector2Int.zero;");
+			}
+			else if (csharpType == "Vector3")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector3.zero;");
+			}
+			else if (csharpType == "Vector4")
+			{
+				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector4.zero;");
 			}
 			else
 			{
@@ -1727,29 +1843,14 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 			{
 				codeList.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
 			}
-			else if (isPod(csharpType))
+			else if (isPod(csharpType) || 
+					csharpType == "Vector2" ||
+					csharpType == "Vector2UShort" ||
+					csharpType == "Vector2Int" ||
+					csharpType == "Vector3" ||
+					csharpType == "Vector4")
 			{
 				codeList.push_back("\t\twriter.write(" + item.mMemberName + ");");
-			}
-			else if (csharpType == "Vector2")
-			{
-				codeList.push_back("\t\twriter.writeVector2(" + item.mMemberName + ");");
-			}
-			else if (csharpType == "Vector2UShort")
-			{
-				codeList.push_back("\t\twriter.writeVector2UShort(" + item.mMemberName + ");");
-			}
-			else if (csharpType == "Vector2Int")
-			{
-				codeList.push_back("\t\twriter.writeVector2Int(" + item.mMemberName + ");");
-			}
-			else if (csharpType == "Vector3")
-			{
-				codeList.push_back("\t\twriter.writeVector3(" + item.mMemberName + ");");
-			}
-			else if (csharpType == "Vector4")
-			{
-				codeList.push_back("\t\twriter.writeVector4(" + item.mMemberName + ");");
 			}
 			else
 			{
