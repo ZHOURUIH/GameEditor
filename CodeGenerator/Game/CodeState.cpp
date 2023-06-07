@@ -98,14 +98,13 @@ void CodeState::generateStateRegister(const myVector<string>& stateList, const s
 		string enumTypeStr = nameToUpper(removeStartString(stateList[i], "Buff"), false);
 		if (isGameCore)
 		{
-			codeList.insert(++lineStart, "\tCORE_STATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + enumTypeStr + ");");
+			codeList.insert(++lineStart, "\tCORE_STATE_FACTORY(" + stateList[i] + ", CORE_CHARACTER_STATE::" + enumTypeStr + ");");
 		}
 		else
 		{
 			codeList.insert(++lineStart, "\tSTATE_FACTORY(" + stateList[i] + ", CHARACTER_STATE::" + enumTypeStr + ");");
 		}
 	}
-	codeList.insert(++lineStart, "");
 
 	// 生成新的文件
 	writeFile(filePath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
