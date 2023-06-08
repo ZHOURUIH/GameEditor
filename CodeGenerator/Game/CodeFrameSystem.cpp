@@ -3,7 +3,7 @@
 void CodeFrameSystem::generate()
 {
 	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase");
-	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "Game/GameCore.cpp", "GameCoreBase");
+	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "GameCore/GameCore.cpp", "GameCoreBase");
 	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase");
 }
 
