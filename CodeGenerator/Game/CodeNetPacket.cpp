@@ -465,7 +465,7 @@ void CodeNetPacket::generateCppGameCorePacketDefineFile(const myVector<PacketInf
 	line(str, "");
 	line(str, "#include \"FrameDefine.h\"");
 	line(str, "");
-	line(str, "class PACKET_TYPE_CORE");
+	line(str, "class MICRO_LEGEND_CORE_API PACKET_TYPE_CORE");
 	line(str, "{");
 	line(str, "public:");
 	line(str, "\tconstexpr static ushort MIN = 0;");
@@ -665,7 +665,14 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
-	generateCodes.push_back("class " + packetName + " : public Packet");
+	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+	{
+		generateCodes.push_back("class MICRO_LEGEND_CORE_API " + packetName + " : public Packet");
+	}
+	else
+	{
+		generateCodes.push_back("class " + packetName + " : public Packet");
+	}
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
@@ -737,7 +744,14 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back("#include \"SerializableData.h\"");
 	headerCodeList.push_back("");
 	headerCodeList.push_back(structInfo.mComment);
-	headerCodeList.push_back("class " + structName + " : public SerializableData");
+	if (structInfo.mOwner == PACKET_OWNER::GAME_CORE)
+	{
+		headerCodeList.push_back("class MICRO_LEGEND_CORE_API " + structName + " : public SerializableData");
+	}
+	else
+	{
+		headerCodeList.push_back("class " + structName + " : public SerializableData");
+	}
 	headerCodeList.push_back("{");
 	headerCodeList.push_back("\tBASE(SerializableData);");
 	headerCodeList.push_back("public:");
@@ -804,7 +818,9 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	{
 		headerCodeList.push_back("\t" + structName + "(const " + structName + "& other);");
 		headerCodeList.push_back("\t" + structName + "(" + structName + "&& other);");
+		headerCodeList.push_back("\t" + structName + "& operator=(" + structName + "&& other);");
 	}
+	headerCodeList.push_back("\t" + structName + "& operator=(const " + structName + "& other);");
 	headerCodeList.push_back("\tbool readFromBuffer(SerializerRead* reader) override;");
 	headerCodeList.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override;");
 	headerCodeList.push_back("\tint dataLength() const override;");
@@ -825,9 +841,9 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	}
 	sourceCodeList.push_back("#include \"SerializerWrite.h\"");
 	sourceCodeList.push_back("#include \"SerializerRead.h\"");
-	sourceCodeList.push_back("");
 	if (constructParams.length() > 0)
 	{
+		sourceCodeList.push_back("");
 		sourceCodeList.push_back(structName + "::" + structName + "(" + constructParams + ") :");
 		FOR_I(memberCount)
 		{
@@ -839,10 +855,10 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			sourceCodeList.push_back("\t" + member.mMemberName + "(" + tempParamName + ")" + endComma);
 		}
 		sourceCodeList.push_back("{}");
-		sourceCodeList.push_back("");
 	}
 	if (constructMoveParams.length() > 0)
 	{
+		sourceCodeList.push_back("");
 		sourceCodeList.push_back(structName + "::" + structName + "(" + constructMoveParams + ") :");
 		FOR_I(memberCount)
 		{
@@ -861,10 +877,10 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			}
 		}
 		sourceCodeList.push_back("{}");
-		sourceCodeList.push_back("");
 	}
 	if (hasMoveConstruct)
 	{
+		sourceCodeList.push_back("");
 		sourceCodeList.push_back(structName + "::" + structName + "(const " + structName + "& other) :");
 		FOR_I(memberCount)
 		{
@@ -890,9 +906,36 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		}
 		sourceCodeList.push_back("{}");
 		sourceCodeList.push_back("");
+		sourceCodeList.push_back(structName + "& " + structName + "::operator=(" + structName + "&& other)");
+		sourceCodeList.push_back("{");
+		FOR_I(memberCount)
+		{
+			const PacketMember& member = structInfo.mMemberList[i];
+			if (member.mTypeName == "string" || startWith(member.mTypeName, "Vector<"))
+			{
+				sourceCodeList.push_back("\t" + member.mMemberName + " = move(other." + member.mMemberName + ");");
+			}
+			else
+			{
+				sourceCodeList.push_back("\t" + member.mMemberName + " = other." + member.mMemberName + ";");
+			}
+		}
+		sourceCodeList.push_back("\treturn *this;");
+		sourceCodeList.push_back("}");
 	}
+	sourceCodeList.push_back("");
+	sourceCodeList.push_back(structName + "& " + structName + "::operator=(const " + structName + "& other)");
+	sourceCodeList.push_back("{");
+	FOR_I(memberCount)
+	{
+		const PacketMember& member = structInfo.mMemberList[i];
+		sourceCodeList.push_back("\t" + member.mMemberName + " = other." + member.mMemberName + ";");
+	}
+	sourceCodeList.push_back("\treturn *this;");
+	sourceCodeList.push_back("}");
 
 	// readFromBuffer
+	sourceCodeList.push_back("");
 	sourceCodeList.push_back("bool " + structName + "::readFromBuffer(SerializerRead* reader)");
 	sourceCodeList.push_back("{");
 	sourceCodeList.push_back("\tbool success = true;");
@@ -951,9 +994,9 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	}
 	sourceCodeList.push_back("\treturn success;");
 	sourceCodeList.push_back("}");
-	sourceCodeList.push_back("");
 
 	// writeToBuffer
+	sourceCodeList.push_back("");
 	sourceCodeList.push_back("void " + structName + "::writeToBuffer(SerializerWrite* serializer) const");
 	sourceCodeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
@@ -1014,9 +1057,9 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		}
 	}
 	sourceCodeList.push_back("}");
-	sourceCodeList.push_back("");
 
 	// dataLength
+	sourceCodeList.push_back("");
 	sourceCodeList.push_back("int " + structName + "::dataLength() const");
 	sourceCodeList.push_back("{");
 	if (memberCount == 1)
@@ -1042,9 +1085,9 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		}
 	}
 	sourceCodeList.push_back("}");
-	sourceCodeList.push_back("");
 	
 	// resetProperty
+	sourceCodeList.push_back("");
 	sourceCodeList.push_back("void " + structName + "::resetProperty()");
 	sourceCodeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
@@ -1384,7 +1427,14 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	}
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
-	generateCodes.push_back("class " + packetName + " : public Packet");
+	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+	{
+		generateCodes.push_back("class MICRO_LEGEND_CORE_API " + packetName + " : public Packet");
+	}
+	else
+	{
+		generateCodes.push_back("class " + packetName + " : public Packet");
+	}
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");

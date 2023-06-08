@@ -340,9 +340,21 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "#pragma once");
 	line(header, "");
 	line(header, "#include \"SQLiteData.h\"");
+	if (sqliteInfo.mServerOwner == SQLITE_SERVER_OWNER::GAME_CORE)
+	{
+		line(header, "#include \"GameCoreDefine.h\"");
+	}
 	line(header, "");
 	line(header, "// " + sqliteInfo.mComment);
-	line(header, "class " + dataClassName + " : public SQLiteData");
+	if (sqliteInfo.mServerOwner == SQLITE_SERVER_OWNER::GAME)
+	{
+		line(header, "class " + dataClassName + " : public SQLiteData");
+	}
+	else
+	{
+		line(header, "class MICRO_LEGEND_CORE_API " + dataClassName + " : public SQLiteData");
+	}
+	
 	line(header, "{");
 	line(header, "\tBASE(SQLiteData);");
 	line(header, "public:");
@@ -456,7 +468,14 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 		line(table, "#include \"" + dataClassName + ".h\"");
 		line(table, "#include \"SQLiteTable.h\"");
 		line(table, "");
-		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
+		if (sqliteInfo.mServerOwner == SQLITE_SERVER_OWNER::GAME)
+		{
+			line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
+		}
+		else
+		{
+			line(table, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
+		}
 		line(table, "{");
 		line(table, "public:");
 		line(table, "};", false);
@@ -511,7 +530,7 @@ void CodeSQLite::generateCppGameCoreSQLiteRegisteFile(const myVector<SQLiteInfo>
 	line(str0, "");
 	line(str0, "#include \"GameCoreBase.h\"");
 	line(str0, "");
-	line(str0, "class GameCoreSQLiteRegister");
+	line(str0, "class MICRO_LEGEND_CORE_API GameCoreSQLiteRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");

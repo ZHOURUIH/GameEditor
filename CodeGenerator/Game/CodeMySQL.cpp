@@ -170,7 +170,14 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "#include \"MySQLData.h\"");
 	line(header, "");
 	line(header, "// " + mysqlInfo.mComment);
-	line(header, "class " + className + " : public MySQLData");
+	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+	{
+		line(header, "class " + className + " : public MySQLData");
+	}
+	else
+	{
+		line(header, "class MICRO_LEGEND_CORE_API " + className + " : public MySQLData");
+	}
 	line(header, "{");
 	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
@@ -887,7 +894,14 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	line(header, "");
 	line(header, "#include \"MySQLTable.h\"");
 	line(header, "");
-	line(header, "class " + tableClassName + " : public MySQLTable");
+	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
+	{
+		line(header, "class " + tableClassName + " : public MySQLTable");
+	}
+	else
+	{
+		line(header, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public MySQLTable");
+	}
 	line(header, "{");
 	line(header, "\ttypedef MySQLTable base;");
 	line(header, "public:");
@@ -1003,7 +1017,7 @@ void CodeMySQL::generateCppMySQLGameCoreRegisteFile(const myVector<MySQLInfo>& m
 	line(str0, "");
 	line(str0, "#include \"GameCoreBase.h\"");
 	line(str0, "");
-	line(str0, "class GameCoreMySQLRegister");
+	line(str0, "class MICRO_LEGEND_CORE_API GameCoreMySQLRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
