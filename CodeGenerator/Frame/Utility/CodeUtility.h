@@ -13,6 +13,7 @@ protected:
 	static string ClientProjectPath;
 	static myVector<string> ServerExcludeIncludePath;
 	static string cppGameProjectPath;
+	static string cppGameCoreProjectPath;
 	static string cppFrameProjectPath;
 	static string cppGamePath;
 	static string cppGameCorePath;
