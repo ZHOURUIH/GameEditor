@@ -746,14 +746,14 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back(structInfo.mComment);
 	if (structInfo.mOwner == PACKET_OWNER::GAME_CORE)
 	{
-		headerCodeList.push_back("class MICRO_LEGEND_CORE_API " + structName + " : public SerializableData");
+		headerCodeList.push_back("class MICRO_LEGEND_CORE_API " + structName + " : public SerializableBitData");
 	}
 	else
 	{
-		headerCodeList.push_back("class " + structName + " : public SerializableData");
+		headerCodeList.push_back("class " + structName + " : public SerializableBitData");
 	}
 	headerCodeList.push_back("{");
-	headerCodeList.push_back("\tBASE(SerializableData);");
+	headerCodeList.push_back("\tBASE(SerializableBitData);");
 	headerCodeList.push_back("public:");
 	generateCppPacketMemberDeclare(structInfo.mMemberList, headerCodeList);
 	headerCodeList.push_back("public:");
@@ -821,8 +821,8 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		headerCodeList.push_back("\t" + structName + "& operator=(" + structName + "&& other);");
 	}
 	headerCodeList.push_back("\t" + structName + "& operator=(const " + structName + "& other);");
-	headerCodeList.push_back("\tbool readFromBuffer(SerializerRead* reader) override;");
-	headerCodeList.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override;");
+	headerCodeList.push_back("\tbool readFromBuffer(SerializerBitRead* reader) override;");
+	headerCodeList.push_back("\tbool writeToBuffer(SerializerBitWrite* serializer) const override;");
 	headerCodeList.push_back("\tint dataLength() const override;");
 	headerCodeList.push_back("\tvoid resetProperty() override;");
 	headerCodeList.push_back("};");
@@ -839,8 +839,6 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	{
 		sourceCodeList.push_back("#include \"GameCoreHeader.h\"");
 	}
-	sourceCodeList.push_back("#include \"SerializerWrite.h\"");
-	sourceCodeList.push_back("#include \"SerializerRead.h\"");
 	if (constructParams.length() > 0)
 	{
 		sourceCodeList.push_back("");
@@ -936,7 +934,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 
 	// readFromBuffer
 	sourceCodeList.push_back("");
-	sourceCodeList.push_back("bool " + structName + "::readFromBuffer(SerializerRead* reader)");
+	sourceCodeList.push_back("bool " + structName + "::readFromBuffer(SerializerBitRead* reader)");
 	sourceCodeList.push_back("{");
 	sourceCodeList.push_back("\tbool success = true;");
 	for (const PacketMember& item : structInfo.mMemberList)
@@ -954,18 +952,50 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			{
 				sourceCodeList.push_back("\tsuccess = success && reader->readStringList(" + item.mMemberName + ");");
 			}
-			else if (isPod(elementType))
+			else if (elementType == "bool")
 			{
-				sourceCodeList.push_back("\tsuccess = success && reader->readList(" + item.mMemberName + ");");
+				ERROR("不支持bool的列表");
+			}
+			else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+			{
+				sourceCodeList.push_back("\tsuccess = success && reader->readSignedList(" + item.mMemberName + ");");
+			}
+			else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+			{
+				sourceCodeList.push_back("\tsuccess = success && reader->readUnsignedList(" + item.mMemberName + ");");
+			}
+			else if (elementType == "float")
+			{
+				sourceCodeList.push_back("\tsuccess = success && reader->readFloatList(" + item.mMemberName + ");");
+			}
+			else if (elementType == "double")
+			{
+				sourceCodeList.push_back("\tsuccess = success && reader->readFloatList(" + item.mMemberName + ");");
 			}
 			else
 			{
 				ERROR("结构体中不支持自定义结构体:" + elementType);
 			}
 		}
-		else if (isPod(item.mTypeName))
+		else if (item.mTypeName == "bool")
 		{
-			sourceCodeList.push_back("\tsuccess = success && reader->read(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && reader->readBool(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readSigned(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readUnsigned(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "float")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readFloat(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "double")
+		{
+			sourceCodeList.push_back("\tsuccess = success && reader->readDouble(" + item.mMemberName + ");");
 		}
 		else if (item.mTypeName == "Vector2")
 		{
@@ -997,17 +1027,14 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 
 	// writeToBuffer
 	sourceCodeList.push_back("");
-	sourceCodeList.push_back("void " + structName + "::writeToBuffer(SerializerWrite* serializer) const");
+	sourceCodeList.push_back("bool " + structName + "::writeToBuffer(SerializerBitWrite* serializer) const");
 	sourceCodeList.push_back("{");
+	sourceCodeList.push_back("\tbool success = true;");
 	for (const PacketMember& item : structInfo.mMemberList)
 	{
-		if (item.mTypeName == "Vector<bool>")
-		{
-			ERROR("不支持Vector<bool>类型,请使用Vector<byte>代替,packetType:" + structName);
-		}
 		if (item.mTypeName == "string")
 		{
-			sourceCodeList.push_back("\tserializer->writeString(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeString(" + item.mMemberName + ");");
 		}
 		else if (startWith(item.mTypeName, "Vector<"))
 		{
@@ -1016,46 +1043,75 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
 			if (elementType == "string")
 			{
-				sourceCodeList.push_back("\tserializer->writeStringList(" + item.mMemberName + ");");
+				sourceCodeList.push_back("\tsuccess = success && serializer->writeStringList(" + item.mMemberName + ");");
 			}
-			else if (isPod(elementType))
+			else if (elementType == "bool")
 			{
-				sourceCodeList.push_back("\tserializer->writeList(" + item.mMemberName + ");");
+				ERROR("不支持bool的列表");
+			}
+			else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+			{
+				sourceCodeList.push_back("\tsuccess = success && serializer->writeSignedList(" + item.mMemberName + ");");
+			}
+			else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+			{
+				sourceCodeList.push_back("\tsuccess = success && serializer->writeUnsignedList(" + item.mMemberName + ");");
+			}
+			else if (elementType == "float")
+			{
+				sourceCodeList.push_back("\tsuccess = success && serializer->writeFloatList(" + item.mMemberName + ");");
+			}
+			else if (elementType == "double")
+			{
+				sourceCodeList.push_back("\tsuccess = success && serializer->writeDoubleList(" + item.mMemberName + ");");
 			}
 			else
 			{
 				ERROR("结构体中不支持自定义结构体:" + elementType);
 			}
 		}
-		else if (isPod(item.mTypeName))
+		else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
 		{
-			sourceCodeList.push_back("\tserializer->write(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeSigned(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
+		{
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeUnsigned(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "float")
+		{
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeFloat(" + item.mMemberName + ");");
+		}
+		else if (item.mTypeName == "double")
+		{
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeDouble(" + item.mMemberName + ");");
 		}
 		else if (item.mTypeName == "Vector2")
 		{
-			sourceCodeList.push_back("\tserializer->writeVector2(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeVector2(" + item.mMemberName + ");");
 		}
 		else if (item.mTypeName == "Vector2Int")
 		{
-			sourceCodeList.push_back("\tserializer->writeVector2Int(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeVector2Int(" + item.mMemberName + ");");
 		}
 		else if (item.mTypeName == "Vector2UShort")
 		{
-			sourceCodeList.push_back("\tserializer->writeVector2UShort(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeVector2UShort(" + item.mMemberName + ");");
 		}
 		else if (item.mTypeName == "Vector3")
 		{
-			sourceCodeList.push_back("\tserializer->writeVector3(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeVector3(" + item.mMemberName + ");");
 		}
 		else if (item.mTypeName == "Vector4")
 		{
-			sourceCodeList.push_back("\tserializer->writeVector4(" + item.mMemberName + ");");
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeVector4(" + item.mMemberName + ");");
 		}
 		else
 		{
 			ERROR("结构体中不支持自定义结构体:" + item.mTypeName);
 		}
 	}
+	sourceCodeList.push_back("\treturn success;");
 	sourceCodeList.push_back("}");
 
 	// dataLength
@@ -1209,7 +1265,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 	if (packetInfo.mMemberList.size() > 0)
 	{
 		// readFromBuffer
-		generateCodes.push_back("\tbool readFromBuffer(SerializerRead* reader) override");
+		generateCodes.push_back("\tbool readFromBuffer(SerializerBitRead* reader) override");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbool success = true;");
 		for (const PacketMember& item : packetInfo.mMemberList)
@@ -1227,9 +1283,25 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 				{
 					generateCodes.push_back("\t\tsuccess = success && reader->readStringList(" + item.mMemberName + ");");
 				}
-				else if (isPod(elementType))
+				else if (elementType == "bool")
 				{
-					generateCodes.push_back("\t\tsuccess = success && reader->readList(" + item.mMemberName + ");");
+					ERROR("不支持bool的列表");
+				}
+				else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readSignedList(" + item.mMemberName + ");");
+				}
+				else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readUnsignedList(" + item.mMemberName + ");");
+				}
+				else if (elementType == "float")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readFloatList(" + item.mMemberName + ");");
+				}
+				else if (elementType == "double")
+				{
+					generateCodes.push_back("\t\tsuccess = success && reader->readDoubleList(" + item.mMemberName + ");");
 				}
 				else if (elementType == "Vector2")
 				{
@@ -1256,9 +1328,25 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 					generateCodes.push_back("\t\tsuccess = success && reader->readCustomList(" + item.mMemberName + ");");
 				}
 			}
-			else if (isPod(item.mTypeName))
+			else if (item.mTypeName == "bool")
 			{
-				generateCodes.push_back("\t\tsuccess = success && reader->read(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && reader->readBool(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readSigned(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readUnsigned(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "float")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readFloat(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "double")
+			{
+				generateCodes.push_back("\t\tsuccess = success && reader->readDouble(" + item.mMemberName + ");");
 			}
 			else if (item.mTypeName == "Vector2")
 			{
@@ -1289,17 +1377,14 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 		generateCodes.push_back("\t}");
 
 		// writeToBuffer
-		generateCodes.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override");
+		generateCodes.push_back("\tbool writeToBuffer(SerializerBitWrite* serializer) const override");
 		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbool success = true;");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			if (item.mTypeName == "Vector<bool>")
-			{
-				ERROR("不支持Vector<bool>类型,packetType:" + packetInfo.mPacketName);
-			}
 			if (item.mTypeName == "string")
 			{
-				generateCodes.push_back("\t\tserializer->writeString(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeString(" + item.mMemberName + ");");
 			}
 			else if (startWith(item.mTypeName, "Vector<"))
 			{
@@ -1308,66 +1393,99 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 				const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
 				if (elementType == "string")
 				{
-					generateCodes.push_back("\t\tserializer->writeStringList(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeStringList(" + item.mMemberName + ") success;");
 				}
-				else if (isPod(elementType))
+				else if (elementType == "bool")
 				{
-					generateCodes.push_back("\t\tserializer->writeList(" + item.mMemberName + ");");
+					ERROR("不支持bool的列表");
+				}
+				else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+				{
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeSignedList(" + item.mMemberName + ");");
+				}
+				else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+				{
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeUnsignedList(" + item.mMemberName + ");");
+				}
+				else if (elementType == "float")
+				{
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeFloatList(" + item.mMemberName + ");");
+				}
+				else if (elementType == "double")
+				{
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeDoubleList(" + item.mMemberName + ");");
 				}
 				else if (elementType == "Vector2")
 				{
-					generateCodes.push_back("\t\tserializer->writeVector2(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeVector2List(" + item.mMemberName + ");");
 				}
 				else if (elementType == "Vector2Int")
 				{
-					generateCodes.push_back("\t\tserializer->writeVector2Int(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeVector2IntList(" + item.mMemberName + ");");
 				}
 				else if (elementType == "Vector2UShort")
 				{
-					generateCodes.push_back("\t\tserializer->writeVector2UShort(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeVector2UShortList(" + item.mMemberName + ");");
 				}
 				else if (elementType == "Vector3")
 				{
-					generateCodes.push_back("\t\tserializer->writeVector3(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeVector3List(" + item.mMemberName + ");");
 				}
 				else if (elementType == "Vector4")
 				{
-					generateCodes.push_back("\t\tserializer->writeVector4(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeVector4List(" + item.mMemberName + ");");
 				}
 				else
 				{
-					generateCodes.push_back("\t\tserializer->writeCustomList(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeCustomList(" + item.mMemberName + ");");
 				}
 			}
-			else if (isPod(item.mTypeName))
+			else if (item.mTypeName == "bool")
 			{
-				generateCodes.push_back("\t\tserializer->write(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeBool(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
+			{
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeSigned(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
+			{
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeUnsigned(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "float")
+			{
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeFloat(" + item.mMemberName + ");");
+			}
+			else if (item.mTypeName == "double")
+			{
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeDouble(" + item.mMemberName + ");");
 			}
 			else if (item.mTypeName == "Vector2")
 			{
-				generateCodes.push_back("\t\tserializer->writeVector2(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeVector2(" + item.mMemberName + ");");
 			}
 			else if (item.mTypeName == "Vector2Int")
 			{
-				generateCodes.push_back("\t\tserializer->writeVector2Int(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeVector2Int(" + item.mMemberName + ");");
 			}
 			else if (item.mTypeName == "Vector2UShort")
 			{
-				generateCodes.push_back("\t\tserializer->writeVector2UShort(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeVector2UShort(" + item.mMemberName + ");");
 			}
 			else if (item.mTypeName == "Vector3")
 			{
-				generateCodes.push_back("\t\tserializer->writeVector3(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeVector3(" + item.mMemberName + ");");
 			}
 			else if (item.mTypeName == "Vector4")
 			{
-				generateCodes.push_back("\t\tserializer->writeVector4(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeVector4(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back("\t\tserializer->writeCustom(" + item.mMemberName + ");");
+				generateCodes.push_back("\t\tsuccess = success && serializer->writeCustom(" + item.mMemberName + ");");
 			}
 		}
+		generateCodes.push_back("\t\treturn success;");
 		generateCodes.push_back("\t}");
 
 		// resetProperty
@@ -1408,8 +1526,8 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 	}
 	else
 	{
-		generateCodes.push_back("\tbool readFromBuffer(SerializerRead* reader) override{ return true; }");
-		generateCodes.push_back("\tvoid writeToBuffer(SerializerWrite* serializer) const override{}");
+		generateCodes.push_back("\tbool readFromBuffer(SerializerBitRead* reader) override { return true; }");
+		generateCodes.push_back("\tbool writeToBuffer(SerializerBitWrite* serializer) const override { return true; }");
 		generateCodes.push_back("\tvoid resetProperty() override");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbase::resetProperty();");
@@ -1637,7 +1755,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	if (packetInfo.mMemberList.size() > 0)
 	{
 		// read
-		generateCodes.push_back("\tpublic override void read(SerializerRead reader)");
+		generateCodes.push_back("\tpublic override void read(SerializerBitRead reader)");
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
@@ -1677,7 +1795,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		generateCodes.push_back("\t}");
 
 		// write
-		generateCodes.push_back("\tprotected override void write(SerializerWrite writer)");
+		generateCodes.push_back("\tprotected override void write(SerializerBitWrite writer)");
 		generateCodes.push_back("\t{");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
@@ -1790,8 +1908,8 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	}
 	else
 	{
-		generateCodes.push_back("\tpublic override void read(SerializerRead reader){}");
-		generateCodes.push_back("\tprotected override void write(SerializerWrite writer){}");
+		generateCodes.push_back("\tpublic override void read(SerializerBitRead reader){}");
+		generateCodes.push_back("\tprotected override void write(SerializerBitWrite writer){}");
 		generateCodes.push_back("\tpublic override void resetProperty()");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbase.resetProperty();");
@@ -1839,7 +1957,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("using UnityEngine;");
 	codeList.push_back("using System.Collections.Generic;");
 	codeList.push_back("");
-	codeList.push_back("public class " + structInfo.mStructName + " : Serializable");
+	codeList.push_back("public class " + structInfo.mStructName + " : SerializableBit");
 	codeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
 	{
@@ -1848,7 +1966,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	if (structInfo.mMemberList.size() > 0)
 	{
 		// read
-		codeList.push_back("\tpublic override bool read(SerializerRead reader)");
+		codeList.push_back("\tpublic override bool read(SerializerBitRead reader)");
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tbool success = true;");
 		for (const PacketMember& item : structInfo.mMemberList)
@@ -1880,7 +1998,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		codeList.push_back("\t}");
 
 		// write
-		codeList.push_back("\tpublic override void write(SerializerWrite writer)");
+		codeList.push_back("\tpublic override void write(SerializerBitWrite writer)");
 		codeList.push_back("\t{");
 		for (const PacketMember& item : structInfo.mMemberList)
 		{
