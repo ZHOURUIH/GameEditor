@@ -29,6 +29,7 @@ public:
 	{
 		return type == "bool" ||
 			   type == "char" ||
+			   type == "sbyte" ||
 			   type == "byte" ||
 			   type == "short" ||
 			   type == "ushort" ||
