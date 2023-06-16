@@ -1085,6 +1085,10 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		{
 			sourceCodeList.push_back("\tsuccess = success && serializer->writeUnsigned(" + item.mMemberName + ");");
 		}
+		else if (item.mTypeName == "bool")
+		{
+			sourceCodeList.push_back("\tsuccess = success && serializer->writeBool(" + item.mMemberName + ");");
+		}
 		else if (item.mTypeName == "float")
 		{
 			sourceCodeList.push_back("\tsuccess = success && serializer->writeFloat(" + item.mMemberName + ");");
@@ -1871,7 +1875,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 			{
 				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
 			}
-			else if (csharpType == "char" ||
+			else if (csharpType == "sbyte" ||
 					 csharpType == "byte" ||
 					 csharpType == "short" ||
 					 csharpType == "ushort" ||
@@ -1988,6 +1992,8 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 				codeList.push_back("\t\tsuccess = success && reader.readList(" + item.mMemberName + ");");
 			}
 			else if (isPod(csharpType) || 
+					csharpType == "bool" ||
+					csharpType == "sbyte" ||
 					csharpType == "Vector2" || 
 					csharpType == "Vector2UShort" || 
 					csharpType == "Vector2Int" || 
@@ -2019,6 +2025,8 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 				codeList.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
 			}
 			else if (isPod(csharpType) || 
+					csharpType == "bool" ||
+					csharpType == "sbyte" ||
 					csharpType == "Vector2" ||
 					csharpType == "Vector2UShort" ||
 					csharpType == "Vector2Int" ||
@@ -2053,14 +2061,14 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 			{
 				codeList.push_back("\t\t" + item.mMemberName + " = false;");
 			}
-			else if (csharpType == "char" ||
-				csharpType == "byte" ||
-				csharpType == "short" ||
-				csharpType == "ushort" ||
-				csharpType == "int" ||
-				csharpType == "uint" ||
-				csharpType == "long" ||
-				csharpType == "ulong")
+			else if (csharpType == "sbyte" ||
+					csharpType == "byte" ||
+					csharpType == "short" ||
+					csharpType == "ushort" ||
+					csharpType == "int" ||
+					csharpType == "uint" ||
+					csharpType == "long" ||
+					csharpType == "ulong")
 			{
 				codeList.push_back("\t\t" + item.mMemberName + " = 0;");
 			}

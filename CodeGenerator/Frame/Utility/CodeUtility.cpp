@@ -235,7 +235,7 @@ string CodeUtility::cppTypeToCSharpType(const string& cppType)
 {
 	if (cppType == "char")
 	{
-		return "byte";
+		return "sbyte";
 	}
 	else if (cppType == "ullong" || cppType == "llong")
 	{
@@ -243,7 +243,7 @@ string CodeUtility::cppTypeToCSharpType(const string& cppType)
 	}
 	else if (cppType == "Vector<char>")
 	{
-		return "List<byte>";
+		return "List<sbyte>";
 	}
 	else if (cppType == "Vector<ullong>" || cppType == "Vector<llong>")
 	{
