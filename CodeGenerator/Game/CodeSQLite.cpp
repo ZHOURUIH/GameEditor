@@ -249,65 +249,68 @@ void CodeSQLite::generate()
 
 	//------------------------------------------------------------------------------------------------------------------------------
 	// csharp
-	string csExcelDataGamePath = csGamePath + "DataBase/Excel/Data/";
-	string csExcelDataHotFixPath = csHotfixGamePath + "DataBase/Excel/Data/";
-	string csExcelTableGamePath = csGamePath + "DataBase/Excel/Table/";
-	string csExcelTableHotFixPath = csHotfixGamePath + "DataBase/Excel/Table/";
-	string csExcelTableDeclareGamePath = csGamePath + "Common/";
-	string csExcelTableDeclareHotFixPath = csHotfixGamePath + "Common/";
+	if (!csGamePath.empty())
+	{
+		string csExcelDataGamePath = csGamePath + "DataBase/Excel/Data/";
+		string csExcelDataHotFixPath = csHotfixGamePath + "DataBase/Excel/Data/";
+		string csExcelTableGamePath = csGamePath + "DataBase/Excel/Table/";
+		string csExcelTableHotFixPath = csHotfixGamePath + "DataBase/Excel/Table/";
+		string csExcelTableDeclareGamePath = csGamePath + "Common/";
+		string csExcelTableDeclareHotFixPath = csHotfixGamePath + "Common/";
 
-	string csSQLiteDataGamePath = csGamePath + "DataBase/SQLite/Data/";
-	string csSQLiteDataHotFixPath = csHotfixGamePath + "DataBase/SQLite/Data/";
-	string csSQLiteTableGamePath = csGamePath + "DataBase/SQLite/Table/";
-	string csSQLiteTableHotFixPath = csHotfixGamePath + "DataBase/SQLite/Table/";
-	// 筛选出Client的表格
-	myVector<SQLiteInfo> clientSQLiteList;
-	for (const SQLiteInfo& info : sqliteInfoList)
-	{
-		if (info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+		string csSQLiteDataGamePath = csGamePath + "DataBase/SQLite/Data/";
+		string csSQLiteDataHotFixPath = csHotfixGamePath + "DataBase/SQLite/Data/";
+		string csSQLiteTableGamePath = csGamePath + "DataBase/SQLite/Table/";
+		string csSQLiteTableHotFixPath = csHotfixGamePath + "DataBase/SQLite/Table/";
+		// 筛选出Client的表格
+		myVector<SQLiteInfo> clientSQLiteList;
+		for (const SQLiteInfo& info : sqliteInfoList)
 		{
-			clientSQLiteList.push_back(info);
+			if (info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::CLIENT_ONLY)
+			{
+				clientSQLiteList.push_back(info);
+			}
 		}
-	}
-	// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
-	myVector<string> csDataFileList;
-	findFiles(csExcelDataGamePath, csDataFileList, ".cs");
-	findFiles(csExcelDataHotFixPath, csDataFileList, ".cs");
-	findFiles(csSQLiteDataGamePath, csDataFileList, ".cs");
-	findFiles(csSQLiteDataHotFixPath, csDataFileList, ".cs");
-	for (const string& str : csDataFileList)
-	{
-		deleteFile(str);
-	}
-	myVector<string> csTableFileList;
-	findFiles(csExcelTableGamePath, csTableFileList, ".cs");
-	findFiles(csExcelTableHotFixPath, csTableFileList, ".cs");
-	for (const string& str : csTableFileList)
-	{
-		deleteFile(str);
-	}
+		// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
+		myVector<string> csDataFileList;
+		findFiles(csExcelDataGamePath, csDataFileList, ".cs");
+		findFiles(csExcelDataHotFixPath, csDataFileList, ".cs");
+		findFiles(csSQLiteDataGamePath, csDataFileList, ".cs");
+		findFiles(csSQLiteDataHotFixPath, csDataFileList, ".cs");
+		for (const string& str : csDataFileList)
+		{
+			deleteFile(str);
+		}
+		myVector<string> csTableFileList;
+		findFiles(csExcelTableGamePath, csTableFileList, ".cs");
+		findFiles(csExcelTableHotFixPath, csTableFileList, ".cs");
+		for (const string& str : csTableFileList)
+		{
+			deleteFile(str);
+		}
 
-	// 生成代码文件
-	for (const SQLiteInfo& info : clientSQLiteList)
-	{
-		// .cs代码的SQLite格式
-		if (info.mClientSQLite)
+		// 生成代码文件
+		for (const SQLiteInfo& info : clientSQLiteList)
 		{
-			generateCSharpSQLiteDataFile(info, csSQLiteDataGamePath, csSQLiteDataHotFixPath);
-			generateCSharpSQLiteTableFile(info, csSQLiteTableGamePath, csSQLiteTableHotFixPath);
+			// .cs代码的SQLite格式
+			if (info.mClientSQLite)
+			{
+				generateCSharpSQLiteDataFile(info, csSQLiteDataGamePath, csSQLiteDataHotFixPath);
+				generateCSharpSQLiteTableFile(info, csSQLiteTableGamePath, csSQLiteTableHotFixPath);
+			}
+			// .cs代码的Excel格式
+			else
+			{
+				generateCSharpExcelDataFile(info, csExcelDataGamePath, csExcelDataHotFixPath);
+				generateCSharpExcelTableFile(info, csExcelTableGamePath, csExcelTableHotFixPath);
+			}
 		}
-		// .cs代码的Excel格式
-		else
-		{
-			generateCSharpExcelDataFile(info, csExcelDataGamePath, csExcelDataHotFixPath);
-			generateCSharpExcelTableFile(info, csExcelTableGamePath, csExcelTableHotFixPath);
-		}
-	}
 
-	// 在上一层目录生成SQLiteRegister.cs和SQLiteRegister.cs文件
-	generateCSharpExcelRegisteFileFile(clientSQLiteList, getFilePath(csExcelDataHotFixPath) + "/", getFilePath(csExcelDataGamePath) + "/");
-	generateCSharpSQLiteRegisteFileFile(clientSQLiteList, getFilePath(csSQLiteDataHotFixPath) + "/", getFilePath(csSQLiteDataGamePath) + "/");
-	generateCSharpExcelDeclare(clientSQLiteList, csExcelTableDeclareHotFixPath, csExcelTableDeclareGamePath);
+		// 在上一层目录生成SQLiteRegister.cs和SQLiteRegister.cs文件
+		generateCSharpExcelRegisteFileFile(clientSQLiteList, getFilePath(csExcelDataHotFixPath) + "/", getFilePath(csExcelDataGamePath) + "/");
+		generateCSharpSQLiteRegisteFileFile(clientSQLiteList, getFilePath(csSQLiteDataHotFixPath) + "/", getFilePath(csSQLiteDataGamePath) + "/");
+		generateCSharpExcelDeclare(clientSQLiteList, csExcelTableDeclareHotFixPath, csExcelTableDeclareGamePath);
+	}
 }
 
 // TDSQLite.h和TDSQLite.cpp文件
