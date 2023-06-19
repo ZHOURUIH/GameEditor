@@ -255,20 +255,120 @@ string CodeUtility::cppTypeToCSharpType(const string& cppType)
 	return csharpType;
 }
 
+string CodeUtility::cSharpTypeToWrapType(const string& csharpType)
+{
+	if (csharpType == "bool")
+	{
+		return "BOOL";
+	}
+	if (csharpType == "byte")
+	{
+		return "BYTE";
+	}
+	if (csharpType == "List<byte>")
+	{
+		return "BYTES";
+	}
+	if (csharpType == "sbyte")
+	{
+		return "SBYTE";
+	}
+	if (csharpType == "List<sbyte>")
+	{
+		return "SBYTES";
+	}
+	if (csharpType == "short")
+	{
+		return "SHORT";
+	}
+	if (csharpType == "List<short>")
+	{
+		return "SHORTS";
+	}
+	if (csharpType == "ushort")
+	{
+		return "USHORT";
+	}
+	if (csharpType == "List<ushort>")
+	{
+		return "USHORTS";
+	}
+	if (csharpType == "int")
+	{
+		return "INT";
+	}
+	if (csharpType == "List<int>")
+	{
+		return "INTS";
+	}
+	if (csharpType == "uint")
+	{
+		return "UINT";
+	}
+	if (csharpType == "List<uint>")
+	{
+		return "UINTS";
+	}
+	if (csharpType == "long")
+	{
+		return "LONG";
+	}
+	if (csharpType == "List<long>")
+	{
+		return "LONGS";
+	}
+	if (csharpType == "float")
+	{
+		return "FLOAT";
+	}
+	if (csharpType == "List<float>")
+	{
+		return "FLOATS";
+	}
+	if (csharpType == "string")
+	{
+		return "STRING";
+	}
+	if (csharpType == "List<string>")
+	{
+		return "STRINGS";
+	}
+	if (csharpType == "Vector2")
+	{
+		return "VECTOR2";
+	}
+	if (csharpType == "Vector2UShort")
+	{
+		return "VECTOR2USHORt";
+	}
+	if (csharpType == "Vector2Int")
+	{
+		return "VECTOR2INT";
+	}
+	if (csharpType == "Vector3")
+	{
+		return "VECTOR3";
+	}
+	if (csharpType == "Vector4")
+	{
+		return "VECTOR4";
+	}
+	// 如果是自定义的参数类型的列表,则是此类型的名字加上_List后缀
+	if (startWith(csharpType, "List<"))
+	{
+		int lastPos;
+		findSubstr(csharpType, ">", &lastPos);
+		const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
+		return elementType + "_List";
+	}
+	return csharpType;
+}
+
 string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
-	string typeName = cppTypeToCSharpType(memberInfo.mTypeName);
-	string str;
-	if (isPod(typeName) || typeName == "string")
-	{
-		str = "public " + typeName + " " + memberInfo.mMemberName + ";";
-	}
-	else
-	{
-		str = "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
-	}
-	return str;
+	string typeName = cSharpTypeToWrapType(cppTypeToCSharpType(memberInfo.mTypeName));
+	return "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 }
 
 void CodeUtility::parseStructName(const string& line, PacketStruct& structInfo)
