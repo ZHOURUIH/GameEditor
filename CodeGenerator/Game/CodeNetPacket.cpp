@@ -1758,168 +1758,17 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	}
 	if (packetInfo.mMemberList.size() > 0)
 	{
-		// read
-		generateCodes.push_back("\tpublic override void read(SerializerBitRead reader)");
+		// init
+		generateCodes.push_back("\tpublic override void init()");
 		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase.init();");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
-			const string csharpType = cppTypeToCSharpType(item.mTypeName);
-			if (csharpType == "string")
-			{
-				generateCodes.push_back("\t\treader.readString(out " + item.mMemberName + ");");
-			}
-			else if (startWith(csharpType, "List<"))
-			{
-				int lastPos;
-				findSubstr(csharpType, ">", &lastPos);
-				const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
-				if (elementType == "string" || isPod(elementType))
-				{
-					generateCodes.push_back("\t\treader.readList(" + item.mMemberName + ");");
-				}
-				else
-				{
-					generateCodes.push_back("\t\treader.readCustomList(" + item.mMemberName + ", typeof(" + elementType + "));");
-				}
-			}
-			else if (isPod(csharpType) ||
-					csharpType == "Vector2" ||
-					csharpType == "Vector2UShort" ||
-					csharpType == "Vector2Int" ||
-					csharpType == "Vector3" ||
-					csharpType == "Vector4")
-			{
-				generateCodes.push_back("\t\treader.read(out " + item.mMemberName + ");");
-			}
-			else
-			{
-				generateCodes.push_back("\t\treader.readCustom(out " + item.mMemberName + ", typeof(" + csharpType + "));");
-			}
-		}
-		generateCodes.push_back("\t}");
-
-		// write
-		generateCodes.push_back("\tprotected override void write(SerializerBitWrite writer)");
-		generateCodes.push_back("\t{");
-		for (const PacketMember& item : packetInfo.mMemberList)
-		{
-			const string csharpType = cppTypeToCSharpType(item.mTypeName);
-			if (csharpType == "string")
-			{
-				generateCodes.push_back("\t\twriter.writeString(" + item.mMemberName + ");");
-			}
-			else if (startWith(csharpType, "List<"))
-			{
-				int lastPos;
-				findSubstr(csharpType, ">", &lastPos);
-				const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
-				if (elementType == "string" || isPod(elementType))
-				{
-					generateCodes.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
-				}
-				else
-				{
-					generateCodes.push_back("\t\twriter.writeCustomList(" + item.mMemberName + ");");
-				}
-			}
-			else if (isPod(csharpType) ||
-					csharpType == "Vector2" ||
-					csharpType == "Vector2UShort" ||
-					csharpType == "Vector2Int" ||
-					csharpType == "Vector3" ||
-					csharpType == "Vector4")
-			{
-				generateCodes.push_back("\t\twriter.write(" + item.mMemberName + ");");
-			}
-			else
-			{
-				generateCodes.push_back("\t\twriter.writeCustom(" + item.mMemberName + ");");
-			}
-		}
-		generateCodes.push_back("\t}");
-
-		// resetProperty
-		generateCodes.push_back("\tpublic override void resetProperty()");
-		generateCodes.push_back("\t{");
-		generateCodes.push_back("\t\tbase.resetProperty();");
-		int startLineCount = generateCodes.size();
-		for (const PacketMember& item : packetInfo.mMemberList)
-		{
-			const string csharpType = cppTypeToCSharpType(item.mTypeName);
-			if (csharpType == "string")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = string.Empty;");
-			}
-			else if (startWith(csharpType, "List<"))
-			{
-				int lastPos;
-				findSubstr(csharpType, ">", &lastPos);
-				const string elementType = csharpType.substr(strlen("List<"), lastPos - strlen("List<"));
-				if (elementType == "string" || isPod(elementType))
-				{
-					generateCodes.push_back("\t\t" + item.mMemberName + ".Clear();");
-				}
-				else
-				{
-					generateCodes.push_back("\t\tUN_CLASS_LIST(" + item.mMemberName + ");");
-				}
-			}
-			else if (csharpType == "bool")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
-			}
-			else if (csharpType == "sbyte" ||
-					 csharpType == "byte" ||
-					 csharpType == "short" ||
-					 csharpType == "ushort" ||
-					 csharpType == "int" ||
-					 csharpType == "uint" ||
-					 csharpType == "long" ||
-					 csharpType == "ulong")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
-			}
-			else if (csharpType == "float" || csharpType == "double")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
-			}
-			else if (csharpType == "Vector2")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector2.zero;");
-			}
-			else if (csharpType == "Vector2UShort")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = new Vector2UShort();");
-			}
-			else if (csharpType == "Vector2Int")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector2Int.zero;");
-			}
-			else if (csharpType == "Vector3")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector3.zero;");
-			}
-			else if (csharpType == "Vector4")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = Vector4.zero;");
-			}
-			else
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + ".resetProperty();");
-			}
+			generateCodes.push_back("\t\taddParam(" + item.mMemberName + ");");
 		}
 		generateCodes.push_back("\t}");
 	}
-	else
-	{
-		generateCodes.push_back("\tpublic override void read(SerializerBitRead reader){}");
-		generateCodes.push_back("\tprotected override void write(SerializerBitWrite writer){}");
-		generateCodes.push_back("\tpublic override void resetProperty()");
-		generateCodes.push_back("\t{");
-		generateCodes.push_back("\t\tbase.resetProperty();");
-		generateCodes.push_back("\t}");
-	}
-
+	
 	if (isFileExist(fullPath))
 	{
 		myVector<string> codeList;
@@ -1960,152 +1809,47 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("using System;");
 	codeList.push_back("using UnityEngine;");
 	codeList.push_back("using System.Collections.Generic;");
+	codeList.push_back("using static FrameUtility;");
 	codeList.push_back("");
-	codeList.push_back("public class " + structInfo.mStructName + " : SerializableBit");
+	codeList.push_back("public class " + structInfo.mStructName + " : NetStruct");
 	codeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
 	{
 		codeList.push_back("\t" + cSharpMemberDeclareString(item));
 	}
-	if (structInfo.mMemberList.size() > 0)
+	codeList.push_back("\tpublic " + structInfo.mStructName + "()");
+	codeList.push_back("\t{");
+	for (const PacketMember& item : structInfo.mMemberList)
 	{
-		// read
-		codeList.push_back("\tpublic override bool read(SerializerBitRead reader)");
-		codeList.push_back("\t{");
-		codeList.push_back("\t\tbool success = true;");
-		for (const PacketMember& item : structInfo.mMemberList)
-		{
-			const string csharpType = cppTypeToCSharpType(item.mTypeName);
-			if (csharpType == "string")
-			{
-				codeList.push_back("\t\tsuccess = success && reader.readString(out " + item.mMemberName + ");");
-			}
-			else if (startWith(csharpType, "List<"))
-			{
-				codeList.push_back("\t\tsuccess = success && reader.readList(" + item.mMemberName + ");");
-			}
-			else if (isPod(csharpType) || 
-					csharpType == "bool" ||
-					csharpType == "sbyte" ||
-					csharpType == "Vector2" || 
-					csharpType == "Vector2UShort" || 
-					csharpType == "Vector2Int" || 
-					csharpType == "Vector3" || 
-					csharpType == "Vector4")
-			{
-				codeList.push_back("\t\tsuccess = success && reader.read(out " + item.mMemberName + ");");
-			}
-			else
-			{
-				ERROR("结构体中不支持自定义结构体:" + csharpType);
-			}
-		}
-		codeList.push_back("\t\treturn success;");
-		codeList.push_back("\t}");
-
-		// write
-		codeList.push_back("\tpublic override void write(SerializerBitWrite writer)");
-		codeList.push_back("\t{");
-		for (const PacketMember& item : structInfo.mMemberList)
-		{
-			const string csharpType = cppTypeToCSharpType(item.mTypeName);
-			if (csharpType == "string")
-			{
-				codeList.push_back("\t\twriter.writeString(" + item.mMemberName + ");");
-			}
-			else if (startWith(csharpType, "List<"))
-			{
-				codeList.push_back("\t\twriter.writeList(" + item.mMemberName + ");");
-			}
-			else if (isPod(csharpType) || 
-					csharpType == "bool" ||
-					csharpType == "sbyte" ||
-					csharpType == "Vector2" ||
-					csharpType == "Vector2UShort" ||
-					csharpType == "Vector2Int" ||
-					csharpType == "Vector3" ||
-					csharpType == "Vector4")
-			{
-				codeList.push_back("\t\twriter.write(" + item.mMemberName + ");");
-			}
-			else
-			{
-				ERROR("结构体中不支持自定义结构体:" + csharpType);
-			}
-		}
-		codeList.push_back("\t}");
-
-		// resetProperty
-		codeList.push_back("\tpublic override void resetProperty()");
-		codeList.push_back("\t{");
-		codeList.push_back("\t\tbase.resetProperty();");
-		for (const PacketMember& item : structInfo.mMemberList)
-		{
-			const string csharpType = cppTypeToCSharpType(item.mTypeName);
-			if (csharpType == "string")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = string.Empty;");
-			}
-			else if (startWith(csharpType, "List<"))
-			{
-				codeList.push_back("\t\t" + item.mMemberName + ".Clear();");
-			}
-			else if (csharpType == "bool")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = false;");
-			}
-			else if (csharpType == "sbyte" ||
-					csharpType == "byte" ||
-					csharpType == "short" ||
-					csharpType == "ushort" ||
-					csharpType == "int" ||
-					csharpType == "uint" ||
-					csharpType == "long" ||
-					csharpType == "ulong")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = 0;");
-			}
-			else if (csharpType == "float" || csharpType == "double")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = 0.0f;");
-			}
-			else if (csharpType == "Vector2")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = Vector2.zero;");
-			}
-			else if (csharpType == "Vector2UShort")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = new Vector2UShort();");
-			}
-			else if (csharpType == "Vector2Int")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = Vector2Int.zero;");
-			}
-			else if (csharpType == "Vector3")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = Vector3.zero;");
-			}
-			else if (csharpType == "Vector4")
-			{
-				codeList.push_back("\t\t" + item.mMemberName + " = Vector4.zero;");
-			}
-			else
-			{
-				codeList.push_back("\t\t" + item.mMemberName + ".resetProperty();");
-			}
-		}
-		codeList.push_back("\t}");
+		codeList.push_back("\t\taddParam(" + item.mMemberName + ");");
 	}
-	else
-	{
-		codeList.push_back("\tpublic override bool read(SerializerRead reader) { return true; }");
-		codeList.push_back("\tpublic override void write(SerializerWrite writer) {}");
-		codeList.push_back("\tpublic override void resetProperty()");
-		codeList.push_back("\t{");
-		codeList.push_back("\t\tbase.resetProperty();");
-		codeList.push_back("\t}");
-	}
+	codeList.push_back("\t}");
 	codeList.push_back("}");
+	codeList.push_back("");
+	codeList.push_back("public class " + structInfo.mStructName + "_List : SerializableBit");
+	codeList.push_back("{");
+	codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new List<" + structInfo.mStructName + ">();");
+	codeList.push_back("\tpublic " + structInfo.mStructName + " this[int index]");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\tget { return mList[index]; }");
+	codeList.push_back("\t\tset { mList[index] = value; }");
+	codeList.push_back("\t}");
+	codeList.push_back("\tpublic int Count{ get { return mList.Count; } }");
+	codeList.push_back("\tpublic override bool read(SerializerBitRead reader)");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\treturn reader.readCustomList(mList, typeof(" + structInfo.mStructName + "));");
+	codeList.push_back("\t}");
+	codeList.push_back("\tpublic override void write(SerializerBitWrite writer)");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\twriter.writeCustomList(mList);");
+	codeList.push_back("\t}");
+	codeList.push_back("\tpublic override void resetProperty()");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\tbase.resetProperty();");
+	codeList.push_back("\t\tUN_CLASS_LIST(mList);");
+	codeList.push_back("\t}");
+	codeList.push_back("}");
+
 	const string fullPath = (structInfo.mHotFix ? hotFixPath : gamePath) + structInfo.mStructName + ".cs";
 	writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

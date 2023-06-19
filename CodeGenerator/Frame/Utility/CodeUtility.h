@@ -65,6 +65,7 @@ public:
 	static string stringDeclare(const string& name) { return "\tstatic constexpr const char* NAME_DEF(" + name + ") = STR(" + name + ");"; }
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
+	static string cSharpTypeToWrapType(const string& csharpType);
 	static string cSharpMemberDeclareString(const PacketMember& memberInfo);
 	static void parseStructName(const string& line, PacketStruct& structInfo);
 	static void parsePacketName(const string& line, PacketInfo& packetInfo);
