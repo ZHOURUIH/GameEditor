@@ -16,7 +16,6 @@
 #include "CodeSceneTrigger.h"
 #include "CodeCondition.h"
 #include "CodeFunctionParam.h"
-#include "CodeRank.h"
 
 void main()
 {
@@ -47,7 +46,6 @@ void main()
 		CodeComponent::generate();
 		CodeSceneTrigger::generate();
 		CodeFunctionParam::generate();
-		CodeRank::generate();
 		CodeCondition::generate();
 	}
 	else if (input == 1)
@@ -68,7 +66,6 @@ void main()
 		CodeComponent::generate();
 		CodeSceneTrigger::generate();
 		CodeFunctionParam::generate();
-		CodeRank::generate();
 		CodeCondition::generate();
 	}
 	system("pause");
