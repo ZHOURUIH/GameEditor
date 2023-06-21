@@ -24,7 +24,24 @@ class Program
 			Console.Read();
 			return;
 		}
+		string RootPathKey = "RootPath";
 		string[] lines = removeAll(Encoding.UTF8.GetString(bytes), '\r').Split('\n');
+		if (!lines[0].StartsWith(RootPathKey + "="))
+		{
+			Console.WriteLine("第一行必须是" + RootPathKey);
+			Console.Read();
+			return;
+		}
+		string[] tempPair = lines[0].Split('=');
+		if (tempPair.Length != 2)
+		{
+			Console.WriteLine(RootPathKey + "配置错误");
+			Console.Read();
+			return;
+		}
+		string rootPath = tempPair[1];
+		lines[0] = null;
+
 		Dictionary<string, Dictionary<string, string>> paramMap = new Dictionary<string, Dictionary<string, string>>();
 		string curFlag = null;
 		foreach (string line in lines)
@@ -48,7 +65,8 @@ class Program
 			{
 				continue;
 			}
-			paramMap[curFlag].Add(paramPair[0], paramPair[1]);
+			// 将RootPath替换为配置的值
+			paramMap[curFlag].Add(paramPair[0], paramPair[1].Replace("{" + RootPathKey + "}", rootPath));
 		}
 		foreach (var item in paramMap)
 		{
@@ -206,7 +224,14 @@ class Program
 				if (innerChild.Name == "Filter")
 				{
 					XmlNode id = innerChild.SelectSingleNode("ns:UniqueIdentifier", nsMgr);
-					filterGuid.Add(innerChild.GetAttribute("Include"), id.InnerText);
+					if (id.InnerText[0] != '{')
+					{
+						filterGuid.Add(innerChild.GetAttribute("Include"), "{" + id.InnerText + "}");
+					}
+					else
+					{
+						filterGuid.Add(innerChild.GetAttribute("Include"), id.InnerText);
+					}
 				}
 			}
 		}
@@ -236,7 +261,7 @@ class Program
 			}
 			else
 			{
-				identifierNode.InnerText = Guid.NewGuid().ToString();
+				identifierNode.InnerText = "{" + Guid.NewGuid().ToString() + "}";
 			}
 			filterNode.AppendChild(identifierNode);
 			filterItemGroup.AppendChild(filterNode);
