@@ -709,17 +709,18 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	else
 	{
 		myVector<string> codeList;
+		codeList.push_back("#pragma once");
+		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
-		codeList.push_back("#include \"SerializerWrite.h\"");
-		codeList.push_back("#include \"SerializerRead.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
-		codeList.push_back("// auto generate end");
+		codeList.push_back("\t// auto generate end");
 		codeList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tdebug(buffer, "");");
 		codeList.push_back("\t}");
+		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
@@ -1225,15 +1226,22 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 	}
 
 	// CSPacket.cpp
-	string sourceFullPath = filePath + packetName + ".cpp";
+	const string sourceFullPath = filePath + packetName + ".cpp";
 	if (!isFileExist(sourceFullPath))
 	{
 		string source;
-		line(source, "#include \"GameCoreHeader.h\"");
+		if (packetInfo.mOwner == PACKET_OWNER::GAME)
+		{
+			line(source, "#include \"GameHeader.h\"");
+		}
+		else if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+		{
+			line(source, "#include \"GameCoreHeader.h\"");
+		}
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
-		line(source, "\tCharacterPlayer* player = getPlayer(mClient->getPlayerGUID());");
+		line(source, "\tCharacterPlayer* player = GameCoreUtility::getPlayer(mClient->getPlayerGUID());");
 		line(source, "\tif (player == nullptr)");
 		line(source, "\t{");
 		line(source, "\t\treturn;");
@@ -1596,9 +1604,9 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	else
 	{
 		myVector<string> codeList;
+		codeList.push_back("#pragma once");
+		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
-		codeList.push_back("#include \"SerializerWrite.h\"");
-		codeList.push_back("#include \"SerializerRead.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -1607,6 +1615,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tdebug(buffer, "");");
 		codeList.push_back("\t}");
+		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
