@@ -745,7 +745,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	myVector<string> headerCodeList;
 	headerCodeList.push_back("#pragma once");
 	headerCodeList.push_back("");
-	headerCodeList.push_back("#include \"SerializableData.h\"");
+	headerCodeList.push_back("#include \"SerializableBitData.h\"");
 	headerCodeList.push_back("");
 	headerCodeList.push_back(structInfo.mComment);
 	if (structInfo.mOwner == PACKET_OWNER::GAME_CORE)
