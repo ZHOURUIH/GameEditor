@@ -218,7 +218,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "public:");
 	line(header, "\t" + className + "();");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
-	line(header, "\tvoid parseResult(Map<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid parseResult(HashMap<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(string& params) const override;");
 	line(header, "\tvoid generateUpdate(string& params, ullong flag) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
@@ -275,7 +275,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "}");
 	line(source, "");
 	// parseResultº¯Êý
-	line(source, "void " + className + "::parseResult(Map<const char*, char*>& resultRow)");
+	line(source, "void " + className + "::parseResult(HashMap<const char*, char*>& resultRow)");
 	line(source, "{");
 	line(source, "\tparseLLong(mID, resultRow.get(ID, nullptr));");
 	FOR_I(memberCount)
