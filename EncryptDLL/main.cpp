@@ -2,8 +2,23 @@
 #include "EncryptDLL.h"
 #include "DecryptDLL.h"
 
+#ifdef _X86
+#ifdef _DEBUG
+#pragma comment(lib, "../Debug/EncryptDLL.lib")
+#pragma comment(lib, "../Debug/DecryptDLL.lib")
+#else
+#pragma comment(lib, "../Release/EncryptDLL.lib")
+#pragma comment(lib, "../Release/DecryptDLL.lib")
+#endif
+#else
+#ifdef _DEBUG
+#pragma comment(lib, "../x64/Debug/EncryptDLL.lib")
+#pragma comment(lib, "../x64/Debug/DecryptDLL.lib")
+#else
 #pragma comment(lib, "../x64/Release/EncryptDLL.lib")
 #pragma comment(lib, "../x64/Release/DecryptDLL.lib")
+#endif
+#endif
 
 int main()
 {

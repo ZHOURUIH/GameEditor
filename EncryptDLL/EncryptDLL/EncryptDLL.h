@@ -14,7 +14,19 @@
 #define ENCRYPT_DLL_API
 #endif
 
+#ifdef _X86
+#ifdef _DEBUG
+#pragma comment(lib, "../Debug/Frame.lib")
+#else
+#pragma comment(lib, "../Release/Frame.lib")
+#endif
+#else
+#ifdef _DEBUG
+#pragma comment(lib, "../x64/Debug/Frame.lib")
+#else
 #pragma comment(lib, "../x64/Release/Frame.lib")
+#endif
+#endif
 
 typedef function<char(char, int)> EncryptCharFunc;
 
