@@ -13,9 +13,9 @@ int main()
 	string filePath = "./HotFix.dll";
 	FileContent content;
 	FileUtility::openBinaryFile(filePath, content, false);
-	EncryptDLL::encrypt(filePath, content.mBuffer, content.mFileSize);
+	encrypt(filePath.c_str(), content.mBuffer, content.mFileSize);
 	FileUtility::writeFileSimple(filePath + ".encrypt", content.mBuffer, content.mFileSize);
-	DecryptDLL::decrypt(filePath, content.mBuffer, content.mFileSize);
+	decrypt(filePath.c_str(), content.mBuffer, content.mFileSize);
 	FileUtility::writeFileSimple(filePath + ".decrypt", content.mBuffer, content.mFileSize);
 	return 0;
 }

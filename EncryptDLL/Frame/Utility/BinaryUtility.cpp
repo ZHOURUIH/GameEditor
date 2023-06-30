@@ -117,3 +117,213 @@ bool BinaryUtility::writeBuffer(char* buffer, uint bufferSize, uint& destOffset,
 	}
 	return true;
 }
+
+char BinaryUtility::encryptChar0(char value, int index)
+{
+	return value + (index >> 3);
+}
+
+char BinaryUtility::encryptChar1(char value, int index)
+{
+	return value ^ (index + 4);
+}
+
+char BinaryUtility::encryptChar2(char value, int index)
+{
+	return value ^ (index * 4 + 15);
+}
+
+char BinaryUtility::encryptChar3(char value, int index)
+{
+	return value + 23 - index * 5;
+}
+
+char BinaryUtility::encryptChar4(char value, int index)
+{
+	return value + 13 - index * BinaryUtility::crc16_byte(0xFF, 5);
+}
+
+char BinaryUtility::encryptChar5(char value, int index)
+{
+	return value - index * BinaryUtility::crc16_byte(0xFF, index);
+}
+
+char BinaryUtility::encryptChar6(char value, int index)
+{
+	return encryptChar5(value, index) + index;
+}
+
+char BinaryUtility::encryptChar7(char value, int index)
+{
+	return value - BinaryUtility::crc16_byte(0x6F, index) - 13;
+}
+
+char BinaryUtility::encryptChar8(char value, int index)
+{
+	return value ^ BinaryUtility::crc16_byte(0x6F, index * 2);
+}
+
+char BinaryUtility::encryptChar9(char value, int index)
+{
+	return value ^ BinaryUtility::crc16_byte(index - 4, 0x6F);
+}
+
+char BinaryUtility::encryptChar10(char value, int index)
+{
+	return decryptChar9(value, index * 2);
+}
+
+char BinaryUtility::encryptChar11(char value, int index)
+{
+	return decryptChar7(value, index);
+}
+
+char BinaryUtility::encryptChar12(char value, int index)
+{
+	return encryptChar5(value, index + 3);
+}
+
+char BinaryUtility::encryptChar13(char value, int index)
+{
+	return encryptChar3(value, index + 3);
+}
+
+char BinaryUtility::encryptChar14(char value, int index)
+{
+	return encryptChar4(value, index + 3);
+}
+
+char BinaryUtility::encryptChar15(char value, int index)
+{
+	return decryptChar4(value, index ^ 5);
+}
+
+char BinaryUtility::encryptChar16(char value, int index)
+{
+	return decryptChar3(value, index * 2);
+}
+
+char BinaryUtility::encryptChar17(char value, int index)
+{
+	return decryptChar3(value, index ^ 2);
+}
+
+char BinaryUtility::encryptChar18(char value, int index)
+{
+	return value ^ (index ^ (index - 17));
+}
+
+char BinaryUtility::encryptChar19(char value, int index)
+{
+	return decryptChar7(value, index ^ 11);
+}
+
+char BinaryUtility::encryptChar20(char value, int index)
+{
+	return encryptChar7(value, index ^ 11);
+}
+
+char BinaryUtility::decryptChar0(char value, int index)
+{
+	return value - (index >> 3);
+}
+
+char BinaryUtility::decryptChar1(char value, int index)
+{
+	return value ^ (index + 4);
+}
+
+char BinaryUtility::decryptChar2(char value, int index)
+{
+	return value ^ (index * 4 + 15);
+}
+
+char BinaryUtility::decryptChar3(char value, int index)
+{
+	return value - 23 + index * 5;
+}
+
+char BinaryUtility::decryptChar4(char value, int index)
+{
+	return value - 13 + index * BinaryUtility::crc16_byte(0xFF, 5);
+}
+
+char BinaryUtility::decryptChar5(char value, int index)
+{
+	return value + index * BinaryUtility::crc16_byte(0xFF, index);
+}
+
+char BinaryUtility::decryptChar6(char value, int index)
+{
+	return decryptChar5(value, index) - index;
+}
+
+char BinaryUtility::decryptChar7(char value, int index)
+{
+	return value + BinaryUtility::crc16_byte(0x6F, index) + 13;
+}
+
+char BinaryUtility::decryptChar8(char value, int index)
+{
+	return value ^ BinaryUtility::crc16_byte(0x6F, index * 2);
+}
+
+char BinaryUtility::decryptChar9(char value, int index)
+{
+	return value ^ BinaryUtility::crc16_byte(index - 4, 0x6F);
+}
+
+char BinaryUtility::decryptChar10(char value, int index)
+{
+	return encryptChar9(value, index * 2);
+}
+
+char BinaryUtility::decryptChar11(char value, int index)
+{
+	return encryptChar7(value, index);
+}
+
+char BinaryUtility::decryptChar12(char value, int index)
+{
+	return decryptChar5(value, index + 3);
+}
+
+char BinaryUtility::decryptChar13(char value, int index)
+{
+	return decryptChar3(value, index + 3);
+}
+
+char BinaryUtility::decryptChar14(char value, int index)
+{
+	return decryptChar4(value, index + 3);
+}
+
+char BinaryUtility::decryptChar15(char value, int index)
+{
+	return encryptChar4(value, index ^ 5);
+}
+
+char BinaryUtility::decryptChar16(char value, int index)
+{
+	return encryptChar3(value, index * 2);
+}
+
+char BinaryUtility::decryptChar17(char value, int index)
+{
+	return encryptChar3(value, index ^ 2);
+}
+
+char BinaryUtility::decryptChar18(char value, int index)
+{
+	return value ^ (index ^ (index - 17));
+}
+
+char BinaryUtility::decryptChar19(char value, int index)
+{
+	return encryptChar7(value, index ^ 11);
+}
+
+char BinaryUtility::decryptChar20(char value, int index)
+{
+	return decryptChar7(value, index ^ 11);
+}
