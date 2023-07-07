@@ -1272,6 +1272,10 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>&
 		{
 			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = 0.0f;");
 		}
+		else if (item.mTypeName == "bool")
+		{
+			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = false;");
+		}
 		else
 		{
 			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
