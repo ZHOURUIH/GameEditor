@@ -249,7 +249,7 @@ void CodeNetPacket::generate()
 	}
 	generateCppGamePacketDefineFile(gamePacketList, cppGamePacketDefinePath);
 	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
-	generateStringDefinePacket(gamePacketNameList, cppGameStringDefineFile);
+	CodeUtility::generateStringDefine(gamePacketNameList, "// Packet", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 
 	for (const PacketStruct& info : gameStructList)
 	{
@@ -316,7 +316,7 @@ void CodeNetPacket::generate()
 	}
 	generateCppGameCorePacketDefineFile(gameCorePacketList, cppGameCorePacketDefinePath);
 	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
-	generateStringDefinePacket(gameCorePacketNameList, cppGameCoreStringDefineFile);
+	CodeUtility::generateStringDefine(gameCorePacketNameList, "// Packet", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 
 	for (const PacketStruct& info : gameCoreStructList)
 	{
@@ -636,25 +636,6 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 	line(str, "};", false);
 
 	writeFile(filePath + "GameCorePacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
-}
-
-void CodeNetPacket::generateStringDefinePacket(const myVector<string>& packetList, const string& stringDefineFile)
-{
-	// 更新StringDefine.h的特定部分
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// Packet"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
-	for (const string& item : packetList)
-	{
-		codeList.insert(++lineStart, stringDeclare(item));
-	}
-	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // CSPacket.h和CSPacket.cpp

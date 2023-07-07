@@ -7,7 +7,7 @@ void CodeFunctionParam::generate()
 		[](const string& fileName) { return startWith(fileName, "Param"); },
 		[](const string& line) { return findSubstr(line, " : public FunctionParam"); });
 	// 生成StringDefineFunctionParam文件
-	generateStringDefine(listGame, cppGameStringDefineFile);
+	CodeUtility::generateStringDefine(listGame, "// FcuntionParam", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 	// 生成FunctionParamRegister文件
 	generateCppGameRegister(listGame, cppGamePath + "FunctionParam/");
 
@@ -16,7 +16,7 @@ void CodeFunctionParam::generate()
 		[](const string& fileName) { return startWith(fileName, "Param"); },
 		[](const string& line) { return findSubstr(line, " : public FunctionParam"); });
 	// 生成StringDefineFunctionParam文件
-	generateStringDefine(listGameCore, cppGameCoreStringDefineFile);
+	CodeUtility::generateStringDefine(listGameCore, "// FcuntionParam", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	// 生成FunctionParamRegister文件
 	generateCppGameCoreRegister(listGameCore, cppGameCorePath + "FunctionParam/");
 }
@@ -52,23 +52,4 @@ void CodeFunctionParam::generateCppGameCoreRegister(const myVector<string>& para
 	line(str0, "}", false);
 
 	writeFile(filePath + "GameCoreFunctionParamRegister.cpp", ANSIToUTF8(str0.c_str(), true));
-}
-
-void CodeFunctionParam::generateStringDefine(const myVector<string>& paramList, const string& stringDefineFile)
-{
-	// 更新StringDefine.h的特定部分
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// FcuntionParam"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
-	for (const string& item : paramList)
-	{
-		codeList.insert(++lineStart, stringDeclare(item));
-	}
-	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

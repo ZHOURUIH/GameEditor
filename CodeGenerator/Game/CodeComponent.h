@@ -9,7 +9,6 @@ public:
 	static void generate();
 protected:
 	//c++
-	static void generateStringDefineComponent(const myVector<string>& componentList, const string& stringDefineFile);
 	static void generateGameComponentRegister(const myVector<string>& componentList, const string& filePath);
 	static void generateGameCoreComponentRegister(const myVector<string>& componentList, const string& filePath);
 protected:

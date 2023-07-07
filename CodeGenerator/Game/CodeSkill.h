@@ -8,8 +8,6 @@ class CodeSkill : public CodeUtility
 public:
 	static void generate();
 protected:
-	static void generateStringDefineSkill(const myVector<string>& skillList, const string& stringDefineFile);
-protected:
 };
 
 #endif

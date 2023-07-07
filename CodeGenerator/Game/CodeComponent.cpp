@@ -21,7 +21,7 @@ void CodeComponent::generate()
 			   findSubstr(line, " : public GameComponent");
 	});
 	// 生成StringDefine文件
-	generateStringDefineComponent(gameComFiles, cppGameStringDefineFile);
+	CodeUtility::generateStringDefine(gameComFiles, "// Component", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 	// ComponentRegister.cpp
 	generateGameComponentRegister(gameComFiles, cppGameRegisterPath);
 
@@ -44,28 +44,9 @@ void CodeComponent::generate()
 			findSubstr(line, " : public GameComponent");
 	});
 	// 生成StringDefine文件
-	generateStringDefineComponent(gameCoreComFiles, cppGameCoreStringDefineFile);
+	CodeUtility::generateStringDefine(gameCoreComFiles, "// Component", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	// ComponentRegister.cpp
 	generateGameCoreComponentRegister(gameCoreComFiles, cppGameCoreRegisterPath);
-}
-
-void CodeComponent::generateStringDefineComponent(const myVector<string>& componentList, const string& stringDefineFile)
-{
-	// 更新StringDefine.h的特定部分
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// Component"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
-	for (const string& item : componentList)
-	{
-		codeList.insert(++lineStart, stringDeclare(item));
-	}
-	writeFile(stringDefineFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 // GameComponentRegister.cpp

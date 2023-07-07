@@ -131,7 +131,12 @@ void CodeMySQL::generate()
 	const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
 	const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
 	generateCppMySQLGameRegisteFile(gameMySQLInfoList, totalHeaderGamePath);
-	generateStringDefineMySQL(gameMySQLInfoList, cppGameStringDefineFile);
+	myVector<string> newGameList;
+	for (const MySQLInfo& info : gameMySQLInfoList)
+	{
+		newGameList.push_back("MD" + info.mMySQLClassName);
+	}
+	CodeUtility::generateStringDefine(newGameList, "// MySQL", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 	generateMySQLInstanceDeclare(gameMySQLInfoList, gameBaseHeaderPath);
 	generateMySQLInstanceDefine(gameMySQLInfoList, gameBaseSourcePath);
 	generateMySQLInstanceClear(gameMySQLInfoList, gameBaseSourcePath);
@@ -153,7 +158,12 @@ void CodeMySQL::generate()
 	const string gameCoreBaseHeaderPath = cppGameCorePath + "Common/GameCoreBase.h";
 	const string gameCoreBaseSourcePath = cppGameCorePath + "Common/GameCoreBase.cpp";
 	generateCppMySQLGameCoreRegisteFile(gameCoreMySQLInfoList, totalHeaderGameCorePath);
-	generateStringDefineMySQL(gameCoreMySQLInfoList, cppGameCoreStringDefineFile);
+	myVector<string> newCoreGameList;
+	for (const MySQLInfo& info : gameCoreMySQLInfoList)
+	{
+		newCoreGameList.push_back("MD" + info.mMySQLClassName);
+	}
+	CodeUtility::generateStringDefine(newCoreGameList, "// MySQL", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	generateMySQLInstanceDeclare(gameCoreMySQLInfoList, gameCoreBaseHeaderPath);
 	generateMySQLInstanceDefine(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
 	generateMySQLInstanceClear(gameCoreMySQLInfoList, gameCoreBaseSourcePath);

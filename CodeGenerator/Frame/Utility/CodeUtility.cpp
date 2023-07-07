@@ -10,8 +10,10 @@ string CodeUtility::cppFrameProjectPath;
 string CodeUtility::cppGamePath;
 string CodeUtility::cppGameCorePath;
 string CodeUtility::cppFramePath;
-string CodeUtility::cppGameStringDefineFile;
-string CodeUtility::cppGameCoreStringDefineFile;
+string CodeUtility::cppGameStringDefineHeaderFile;
+string CodeUtility::cppGameStringDefineSourceFile;
+string CodeUtility::cppGameCoreStringDefineHeaderFile;
+string CodeUtility::cppGameCoreStringDefineSourceFile;
 string CodeUtility::csGamePath;
 string CodeUtility::csHotfixGamePath;
 string CodeUtility::START_FALG = "#start";
@@ -63,8 +65,10 @@ bool CodeUtility::initPath()
 		cppGamePath = cppGameProjectPath + "Game/";
 		cppGameCorePath = cppGameCoreProjectPath + "GameCore/";
 		cppFramePath = cppFrameProjectPath + "Frame/";
-		cppGameCoreStringDefineFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
-		cppGameStringDefineFile = cppGamePath + "Common/GameStringDefine.h";
+		cppGameCoreStringDefineHeaderFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
+		cppGameCoreStringDefineSourceFile = cppGameCorePath + "Common/GameCoreStringDefine.cpp";
+		cppGameStringDefineHeaderFile = cppGamePath + "Common/GameStringDefine.h";
+		cppGameStringDefineSourceFile = cppGamePath + "Common/GameStringDefine.cpp";
 	}
 	if (ClientProjectPath.length() > 0)
 	{
@@ -592,4 +596,39 @@ string CodeUtility::findClassName(const string& line)
 		}
 	}
 	return "";
+}
+
+void CodeUtility::generateStringDefine(const myVector<string>& packetList, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile)
+{
+	// 更新StringDefine.h的特定部分
+	myVector<string> codeListHeader;
+	int lineStartHeader = -1;
+	if (!findCustomCode(stringDefineHeaderFile, codeListHeader, lineStartHeader,
+		[key](const string& codeLine) { return endWith(codeLine, key); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+	{
+		return;
+	}
+
+	for (const string& item : packetList)
+	{
+		codeListHeader.insert(++lineStartHeader, stringDeclare(item));
+	}
+	writeFile(stringDefineHeaderFile, ANSIToUTF8(codeListToString(codeListHeader).c_str(), true));
+
+	// 更新StringDefine.cpp的特定部分
+	myVector<string> codeListSource;
+	int lineStartSource = -1;
+	if (!findCustomCode(stringDefineSourceFile, codeListSource, lineStartSource,
+		[key](const string& codeLine) { return endWith(codeLine, key); },
+		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+	{
+		return;
+	}
+
+	for (const string& item : packetList)
+	{
+		codeListSource.insert(++lineStartSource, stringDefine(item, className));
+	}
+	writeFile(stringDefineSourceFile, ANSIToUTF8(codeListToString(codeListSource).c_str(), true));
 }

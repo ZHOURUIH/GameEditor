@@ -26,7 +26,13 @@ void CodeState::generate()
 	gameStateList.addRange(gameStateActionList);
 	gameStateList.addRange(gameStateBehaviourList);
 	// 生成StringDefineState文件
-	generateStringDefineState(gameStateList, cppGameStringDefineFile);
+	myVector<string> gameStateWithParamList;
+	gameStateWithParamList.addRange(gameStateList);
+	for (const string& item : gameStateList)
+	{
+		gameStateWithParamList.push_back(item + "Param");
+	}
+	CodeUtility::generateStringDefine(gameStateWithParamList, "// State", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 	// 生成StateRegister.cpp文件
 	generateStateRegister(gameBuffList, cppGamePath + "Character/Component/StateMachine/GameStateRegister.cpp", false);
 
@@ -54,7 +60,13 @@ void CodeState::generate()
 	coreStateList.addRange(coreStateActionList);
 	coreStateList.addRange(coreStateBehaviourList);
 	// 生成StringDefineState文件
-	generateStringDefineState(coreStateList, cppGameCoreStringDefineFile);
+	myVector<string> coreStateWithParamList;
+	coreStateWithParamList.addRange(coreStateList);
+	for (const string& item : coreStateList)
+	{
+		coreStateWithParamList.push_back(item + "Param");
+	}
+	CodeUtility::generateStringDefine(coreStateWithParamList, "// State", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	// 生成StateRegister.cpp文件
 	generateStateRegister(coreBuffList, cppGameCorePath + "Character/Component/StateMachine/StateRegister.cpp", true);
 }

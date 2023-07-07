@@ -11,7 +11,7 @@ void CodeSceneTrigger::generate()
 		[](const string& fileName) { return startWith(fileName, "TriggerModifier"); },
 		[](const string& line) { return findSubstr(line, " : public TriggerModifier"); });
 	// 生成StringDefineSceneTrigger文件
-	generateStringDefine(triggerList, cppGameCoreStringDefineFile);
+	CodeUtility::generateStringDefine(triggerList, "// SceneTrigger", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	// 生成SceneTriggerRegister文件
 	generateCppRegister(triggerList, modifierList, cppHeaderPath);
 }
@@ -48,7 +48,7 @@ void CodeSceneTrigger::generateStringDefine(const myVector<string>& list, const 
 	myVector<string> codeList;
 	int lineStart = -1;
 	if (!findCustomCode(stringDefineFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// SceneTrigger"); },
+		[](const string& codeLine) { return endWith(codeLine, "// "); },
 		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
 	{
 		return;

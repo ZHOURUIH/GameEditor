@@ -18,8 +18,10 @@ protected:
 	static string cppGamePath;
 	static string cppGameCorePath;
 	static string cppFramePath;
-	static string cppGameStringDefineFile;
-	static string cppGameCoreStringDefineFile;
+	static string cppGameStringDefineHeaderFile;
+	static string cppGameStringDefineSourceFile;
+	static string cppGameCoreStringDefineHeaderFile;
+	static string cppGameCoreStringDefineSourceFile;
 	static string csGamePath;
 	static string csHotfixGamePath;
 	static string START_FALG;
@@ -62,7 +64,8 @@ public:
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
-	static string stringDeclare(const string& name) { return "\tstatic constexpr const char* NAME_DEF(" + name + ") = STR(" + name + ");"; }
+	static string stringDeclare(const string& name) { return "\tstatic const char* NAME_DEF(" + name + ");"; }
+	static string stringDefine(const string& name, const string& className) { return "const char* " + className + "::NAME_DEF(" + name + ") = STR(" + name + ");"; }
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
 	static string cSharpTypeToWrapType(const string& csharpType);
@@ -82,6 +85,7 @@ public:
 			str += "\r\n";
 		}
 	}
+	static void generateStringDefine(const myVector<string>& packetList, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile);
 };
 
 #endif
