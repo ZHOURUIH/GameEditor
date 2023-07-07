@@ -191,10 +191,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "{");
 	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
+	line(header, "\tstatic const char* ID;");
 	const uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tstatic constexpr const char* " + mysqlInfo.mMemberList[i].mMemberName + " = \"" + mysqlInfo.mMemberList[i].mMemberName + "\";");
+		line(header, "\tstatic const char* " + mysqlInfo.mMemberList[i].mMemberName + "; ");
 	}
 	line(header, "public:");
 	FOR_I(memberCount)
@@ -256,9 +257,10 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "#include \"GameCoreHeader.h\"");
 	line(source, "");
 	// 字段静态变量定义
+	line(source, "const char* " + className + "::ID = \"ID\";");
 	FOR_I(memberCount)
 	{
-		line(source, "constexpr const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + ";");
+		line(source, "const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + " = \"" + mysqlInfo.mMemberList[i].mMemberName + "\";");
 	}
 	// 构造
 	line(source, "");

@@ -363,7 +363,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "public:");
 	for (const SQLiteMember& member : memberNoIDList)
 	{
-		line(header, "\tstatic constexpr const char* " + member.mMemberName + " = STR(" + member.mMemberName + ");");
+		line(header, "\tstatic const char* " + member.mMemberName + ";");
 	}
 	if (memberUsedInServerNoIDList.size() > 0)
 	{
@@ -429,7 +429,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(source, "");
 	for (const SQLiteMember& member : memberNoIDList)
 	{
-		line(source, "constexpr const char* " + dataClassName + "::" + member.mMemberName + ";");
+		line(source, "const char* " + dataClassName + "::" + member.mMemberName + " = \"" + member.mMemberName + "\";");
 	}
 	line(source, "");
 	line(source, "void " + dataClassName + "::clone(SQLiteData* target)");
