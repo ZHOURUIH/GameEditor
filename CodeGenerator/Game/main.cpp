@@ -4,7 +4,6 @@
 #include "CodeMySQL.h"
 #include "CodeSQLite.h"
 #include "CodeNetPacket.h"
-#include "CodeDTNode.h"
 #include "CodeUnityBuild.h"
 #include "CodeFrameSystem.h"
 #include "CodeClassDeclare.h"
@@ -28,7 +27,6 @@ void main()
 		CodeMySQL::generate();
 		CodeSkill::generate();
 		CodeState::generate();
-		CodeDTNode::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
 		CodeClassDeclare::generate();
@@ -41,7 +39,6 @@ void main()
 		CodeMySQL::generate();
 		CodeSkill::generate();
 		CodeState::generate();
-		CodeDTNode::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
 		CodeClassDeclare::generate();
