@@ -249,7 +249,6 @@ void CodeNetPacket::generate()
 	}
 	generateCppGamePacketDefineFile(gamePacketList, cppGamePacketDefinePath);
 	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
-	CodeUtility::generateStringDefine(gamePacketNameList, "// Packet", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 
 	for (const PacketStruct& info : gameStructList)
 	{
@@ -316,7 +315,6 @@ void CodeNetPacket::generate()
 	}
 	generateCppGameCorePacketDefineFile(gameCorePacketList, cppGameCorePacketDefinePath);
 	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
-	CodeUtility::generateStringDefine(gameCorePacketNameList, "// Packet", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 
 	for (const PacketStruct& info : gameCoreStructList)
 	{
@@ -423,18 +421,18 @@ void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& 
 	line(str, "\tconstexpr static ushort MIN = 0;");
 	line(str, "");
 	line(str, "\tconstexpr static ushort GATE_CS_MIN = 1000;");
-	line(str, "\tconstexpr static ushort GATE_CS_HEART_BEAT = 1001;");
-	line(str, "\tconstexpr static ushort GATE_CS_SERVER_INFO = 1002;");
+	line(str, "\tconstexpr static ushort GateCSHeartBeat = 1001;");
+	line(str, "\tconstexpr static ushort GateCSServerInfo = 1002;");
 	line(str, "");
 	line(str, "\tconstexpr static ushort GATE_SC_MIN = 1200;");
-	line(str, "\tconstexpr static ushort GATE_SC_HEART_BEAT = 1201;");
+	line(str, "\tconstexpr static ushort GateSCHeartBeat = 1201;");
 	line(str, "");
 	line(str, "\tconstexpr static ushort MAIL_CS_MIN = 1500;");
-	line(str, "\tconstexpr static ushort MAIL_CS_HEART_BEAT = 1501;");
-	line(str, "\tconstexpr static ushort MAIL_CS_SEND_MAIL = 1502;");
+	line(str, "\tconstexpr static ushort MailCSHeartBeat = 1501;");
+	line(str, "\tconstexpr static ushort MailCSSendMail = 1502;");
 	line(str, "");
 	line(str, "\tconstexpr static ushort MAIL_SC_MIN = 2000;");
-	line(str, "\tconstexpr static ushort MAIL_SC_HEART_BEAT = 2001;");
+	line(str, "\tconstexpr static ushort MailSCHeartBeat = 2001;");
 	line(str, "");
 	int csMinValue = 10000;
 	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
@@ -443,7 +441,7 @@ void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& 
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++csMinValue) + ";");
+			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
 		}
 	}
 	line(str, "");
@@ -453,7 +451,7 @@ void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& 
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++scMinValue) + ";");
+			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
 		}
 	}
 	line(str, "};", false);
@@ -480,7 +478,7 @@ void CodeNetPacket::generateCppGameCorePacketDefineFile(const myVector<PacketInf
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++csMinValue) + ";");
+			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
 		}
 	}
 	line(str, "");
@@ -490,7 +488,7 @@ void CodeNetPacket::generateCppGameCorePacketDefineFile(const myVector<PacketInf
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\tconstexpr static ushort " + packetNameToUpper(packetList[i].mPacketName) + " = " + intToString(++scMinValue) + ";");
+			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
 		}
 	}
 	line(str, "};", false);
@@ -524,7 +522,7 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_NAME(" + packetName + "));");
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
 	}
 	line(str, "");
 	myVector<PacketInfo> udpSCList;
@@ -546,14 +544,14 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetNameToUpper(packetName) + ", GAME_NAME(" + packetName + "));");
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
 	}
 	if (udpCSList.size() > 0)
 	{
 		line(str, "");
 		for (const auto& info : udpCSList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + packetNameToUpper(info.mPacketName) + "); ");
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + info.mPacketName + "); ");
 		}
 	}
 	if (udpSCList.size() > 0)
@@ -561,7 +559,7 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 		line(str, "");
 		for (const auto& info : udpSCList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + packetNameToUpper(info.mPacketName) + "); ");
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + info.mPacketName + "); ");
 		}
 	}
 	line(str, "};", false);
@@ -593,7 +591,7 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetNameToUpper(packetName) + ", GAME_CORE_NAME(" + packetName + "));");
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
 	}
 	line(str, "");
 	myVector<PacketInfo> udpSCList;
@@ -615,14 +613,14 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetNameToUpper(packetName) + ", GAME_CORE_NAME(" + packetName + "));");
+		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
 	}
 	if (udpCSList.size() > 0)
 	{
 		line(str, "");
 		for (const auto& info : udpCSList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + packetNameToUpper(info.mPacketName) + "); ");
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
 		}
 	}
 	if (udpSCList.size() > 0)
@@ -630,7 +628,7 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 		line(str, "");
 		for (const auto& info : udpSCList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + packetNameToUpper(info.mPacketName) + "); ");
+			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
 		}
 	}
 	line(str, "};", false);
