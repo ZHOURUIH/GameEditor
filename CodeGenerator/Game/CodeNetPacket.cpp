@@ -808,7 +808,6 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back("\t" + structName + "& operator=(const " + structName + "& other);");
 	headerCodeList.push_back("\tbool readFromBuffer(SerializerBitRead* reader) override;");
 	headerCodeList.push_back("\tbool writeToBuffer(SerializerBitWrite* serializer) const override;");
-	headerCodeList.push_back("\tint dataLength() const override;");
 	headerCodeList.push_back("\tvoid resetProperty() override;");
 	headerCodeList.push_back("};");
 	writeFile(headerFullPath, ANSIToUTF8(codeListToString(headerCodeList).c_str(), true));
@@ -1105,34 +1104,6 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		}
 	}
 	sourceCodeList.push_back("\treturn success;");
-	sourceCodeList.push_back("}");
-
-	// dataLength
-	sourceCodeList.push_back("");
-	sourceCodeList.push_back("int " + structName + "::dataLength() const");
-	sourceCodeList.push_back("{");
-	if (memberCount == 1)
-	{
-		sourceCodeList.push_back("\treturn sizeof(" + structInfo.mMemberList[0].mMemberName + ");");
-	}
-	else
-	{
-		FOR_I(memberCount)
-		{
-			if (i == 0)
-			{
-				sourceCodeList.push_back("\treturn sizeof(" + structInfo.mMemberList[i].mMemberName + ") + ");
-			}
-			else if (i == memberCount - 1)
-			{
-				sourceCodeList.push_back("\t\t   sizeof(" + structInfo.mMemberList[i].mMemberName + ");");
-			}
-			else
-			{
-				sourceCodeList.push_back("\t\t   sizeof(" + structInfo.mMemberList[i].mMemberName + ") + ");
-			}
-		}
-	}
 	sourceCodeList.push_back("}");
 	
 	// resetProperty

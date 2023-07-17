@@ -17,6 +17,7 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 				   findClassName(line) != "FactoryManager" && 
 				   findClassName(line) != "ClassPool"&&
 				   findClassName(line) != "ClassTypePool"&&
+				   findClassName(line) != "ClassBaseTypePool"&&
 				   findClassName(line) != "ClassKeyPool";
 		});
 	myVector<string> classPoolList = findTargetHeaderFile(cppPath,
@@ -25,6 +26,7 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 		{
 			return findSubstr(line, " : public ClassPool<") ||
 				   findSubstr(line, " : public ClassTypePool<") ||
+				   findSubstr(line, " : public ClassBaseTypePool<") ||
 				   findSubstr(line, " : public ClassKeyPool<");
 		});
 	myVector<string> factoryList = findTargetHeaderFile(cppPath,
