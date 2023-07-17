@@ -1,5 +1,4 @@
 #include "Utility.h"
-#include "CodeSkill.h"
 #include "CodeState.h"
 #include "CodeMySQL.h"
 #include "CodeSQLite.h"
@@ -25,7 +24,6 @@ void main()
 	{
 		CodeSQLite::generate();
 		CodeMySQL::generate();
-		CodeSkill::generate();
 		CodeState::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
@@ -37,7 +35,6 @@ void main()
 		CodeNetPacket::generate();
 		CodeSQLite::generate();
 		CodeMySQL::generate();
-		CodeSkill::generate();
 		CodeState::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
