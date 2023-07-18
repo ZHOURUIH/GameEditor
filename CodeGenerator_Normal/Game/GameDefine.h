@@ -1,5 +1,4 @@
-#ifndef _GAME_DEFINE_H_
-#define _GAME_DEFINE_H_
+#pragma once
 
 #include "Utility.h"
 
@@ -108,5 +107,3 @@ struct MySQLInfo
 		mOwner = owner;
 	}
 };
-
-#endif

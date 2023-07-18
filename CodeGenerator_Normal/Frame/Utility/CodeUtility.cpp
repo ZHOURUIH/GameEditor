@@ -419,16 +419,9 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 	packetInfo.mShowInfo = !tagList.contains("[NoLog]");
 	bool isGame = tagList.contains("[Game]");
 	bool isGameCore = tagList.contains("[GameCore]");
-	if (isGame == isGameCore)
+	if (isGame && isGameCore)
 	{
-		if (isGame)
-		{
-			ERROR("消息只能有一个Game或GameCore标签," + line);
-		}
-		else
-		{
-			ERROR("消息缺少一个Game或GameCore标签," + line);
-		}
+		ERROR("消息只能有一个Game或GameCore标签," + line);
 	}
 	packetInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
 	// 获取原始的表格名称

@@ -160,11 +160,12 @@ void CodeNetPacket::generate()
 		gamePacketNameList.push_back(packetInfo.mPacketName);
 	}
 
-	generateServer(gamePacketNameList, packetInfoList, structInfoList);
-	generateClient(gamePacketNameList, packetInfoList, structInfoList);
+	int packetVersion = 0;
+	generateServer(gamePacketNameList, packetInfoList, structInfoList, packetVersion);
+	generateClient(gamePacketNameList, packetInfoList, structInfoList, packetVersion);
 }
 
-void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList)
+void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int& packetVersion)
 {
 	string cppGameCSPacketPath = ServerProjectPath + "Game/Socket/ClientServer/";
 	string cppGameSCPacketPath = ServerProjectPath + "Game/Socket/ServerClient/";
@@ -195,7 +196,7 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 	}
 
 	// 打开消息注册文件,找到当前的消息版本号,然后版本号自增
-	int packetVersion = findPacketVersion(cppGamePacketDefinePath + "PacketRegister.cpp") + 1;
+	packetVersion = findPacketVersion(cppGamePacketDefinePath + "PacketRegister.cpp") + 1;
 	// 生成c++代码
 	for (const PacketInfo& packetInfo : packetInfoList)
 	{
@@ -221,9 +222,9 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 				scHeaderPath = getFilePath(file) + "/";
 			}
 		}
-		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
+		generateServerCSPacketFileHeader(packetInfo, csHeaderPath, "");
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
+		generateServerSCPacketFileHeader(packetInfo, scHeaderPath, "");
 	}
 	generateServerGamePacketDefineFile(packetInfoList, cppGamePacketDefinePath);
 	generateServerGamePacketRegisteFile(packetInfoList, cppGamePacketDefinePath, packetVersion);
@@ -234,7 +235,7 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 	}
 }
 
-void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList)
+void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int packetVersion)
 {
 	string cppGameCSPacketPath = ClientProjectPath + "Source/Reflame/TestTCP/Client2Server/";
 	string cppGameSCPacketPath = ClientProjectPath + "Source/Reflame/TestTCP/Server2Client/";
@@ -264,8 +265,6 @@ void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, c
 		}
 	}
 
-	// 打开消息注册文件,找到当前的消息版本号,然后版本号自增
-	int packetVersion = findPacketVersion(cppGamePacketDefinePath + "PacketRegister.cpp") + 1;
 	// 生成c++代码
 	for (const PacketInfo& packetInfo : packetInfoList)
 	{
@@ -291,9 +290,9 @@ void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, c
 				scHeaderPath = getFilePath(file) + "/";
 			}
 		}
-		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
+		generateClientCSPacketFileHeader(packetInfo, csHeaderPath, "REFLAME_API");
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
+		generateClientSCPacketFileHeader(packetInfo, scHeaderPath, "REFLAME_API");
 	}
 	generateClientGamePacketDefineFile(packetInfoList, cppGamePacketDefinePath);
 	generateClientGamePacketRegisteFile(packetInfoList, cppGamePacketDefinePath, packetVersion);
@@ -415,11 +414,12 @@ void CodeNetPacket::generateServerGamePacketRegisteFile(const myVector<PacketInf
 void CodeNetPacket::generateClientGamePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion)
 {
 	string str;
+	line(str, "#include \"PacketRegister.h\"");
 	line(str, "#include \"GameHeader.h\"");
 
 	line(str, "");
 	line(str, "int PacketRegister::PACKET_VERSION = " + intToString(packetVersion) + ";");
-	line(str, "void PacketRegister::registeAll()");
+	line(str, "void PacketRegister::registerAll()");
 
 	line(str, "{");
 	for (const auto& info : packetList)
@@ -429,7 +429,7 @@ void CodeNetPacket::generateClientGamePacketRegisteFile(const myVector<PacketInf
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
+		line(str, "\tPacketFactoryManager::Get()->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
 	}
 	line(str, "");
 	for (const auto& info : packetList)
@@ -439,15 +439,15 @@ void CodeNetPacket::generateClientGamePacketRegisteFile(const myVector<PacketInf
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
+		line(str, "\tPacketFactoryManager::Get()->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
 	}
-	line(str, "};", false);
+	line(str, "}", false);
 
 	writeFile(filePath + "PacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
 }
 
 // CSPacket.h和CSPacket.cpp
-void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
+void CodeNetPacket::generateServerCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "CS"))
@@ -457,9 +457,9 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+	if (!apiMacro.empty())
 	{
-		generateCodes.push_back("class MICRO_LEGEND_CORE_API " + packetName + " : public Packet");
+		generateCodes.push_back("class " + apiMacro + " " + packetName + " : public Packet");
 	}
 	else
 	{
@@ -474,7 +474,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\t{");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
-	generateCppPacketReadWrite(packetInfo, generateCodes);
+	generateCppPacketReadWrite(packetInfo, generateCodes, true);
 	generateCodes.push_back("\tvoid execute() override;");
 
 	// CSPacket.h
@@ -509,6 +509,64 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tdebug(buffer, "");");
 		codeList.push_back("\t}");
+		codeList.push_back("};");
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+}
+
+void CodeNetPacket::generateClientCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
+{
+	const string& packetName = packetInfo.mPacketName;
+	if (!startWith(packetName, "CS"))
+	{
+		return;
+	}
+
+	myVector<string> generateCodes;
+	generateCodes.push_back(packetInfo.mComment);
+	if (!apiMacro.empty())
+	{
+		generateCodes.push_back("class " + apiMacro + " " + packetName + " : public Packet");
+	}
+	else
+	{
+		generateCodes.push_back("class " + packetName + " : public Packet");
+	}
+	generateCodes.push_back("{");
+	generateCodes.push_back("\tBASE(Packet);");
+	generateCodes.push_back("public:");
+	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCodes.push_back("public:");
+	generateCppPacketReadWrite(packetInfo, generateCodes, false);
+
+	// CSPacket.h
+	string headerFullPath = filePath + packetName + ".h";
+	if (isFileExist(headerFullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(headerFullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
+		{
+			return;
+		}
+		for (const string& line : generateCodes)
+		{
+			codeList.insert(++lineStart, line);
+		}
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+	else
+	{
+		myVector<string> codeList;
+		codeList.push_back("#pragma once");
+		codeList.push_back("");
+		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
+		codeList.addRange(generateCodes);
+		codeList.push_back("\t// auto generate end");
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
@@ -987,11 +1045,6 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
-		line(source, "\tCharacterPlayer* player = GameCoreUtility::getPlayer(mClient->getPlayerGUID());");
-		line(source, "\tif (player == nullptr)");
-		line(source, "\t{");
-		line(source, "\t\treturn;");
-		line(source, "\t}");
 		line(source, "}", false);
 
 		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
@@ -1029,7 +1082,7 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>&
 	}
 }
 
-void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
+void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes, bool includeResetProperty)
 {
 	if (packetInfo.mMemberList.size() > 0)
 	{
@@ -1258,54 +1311,60 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 		generateCodes.push_back("\t}");
 
 		// resetProperty
-		generateCodes.push_back("\tvoid resetProperty() override");
-		generateCodes.push_back("\t{");
-		generateCodes.push_back("\t\tbase::resetProperty();");
-		int startLineCount = generateCodes.size();
-		for (const PacketMember& item : packetInfo.mMemberList)
+		if (includeResetProperty)
 		{
-			if (item.mTypeName == "string" || 
-				startWith(item.mTypeName, "Vector<") || 
-				item.mTypeName == "Vector2" || 
-				item.mTypeName == "Vector2UShort" || 
-				item.mTypeName == "Vector2Int" || 
-				item.mTypeName == "Vector3" || 
-				item.mTypeName == "Vector4")
+			generateCodes.push_back("\tvoid resetProperty() override");
+			generateCodes.push_back("\t{");
+			generateCodes.push_back("\t\tbase::resetProperty();");
+			int startLineCount = generateCodes.size();
+			for (const PacketMember& item : packetInfo.mMemberList)
 			{
-				generateCodes.push_back("\t\t" + item.mMemberName + ".clear();");
+				if (item.mTypeName == "string" ||
+					startWith(item.mTypeName, "Vector<") ||
+					item.mTypeName == "Vector2" ||
+					item.mTypeName == "Vector2UShort" ||
+					item.mTypeName == "Vector2Int" ||
+					item.mTypeName == "Vector3" ||
+					item.mTypeName == "Vector4")
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + ".clear();");
+				}
+				else if (item.mTypeName == "bool")
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
+				}
+				else if (item.mTypeName == "float" || item.mTypeName == "double")
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
+				}
+				else if (isPodInteger(item.mTypeName))
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
+				}
+				else
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + ".resetProperty();");
+				}
 			}
-			else if (item.mTypeName == "bool")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = false;");
-			}
-			else if (item.mTypeName == "float" || item.mTypeName == "double")
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = 0.0f;");
-			}
-			else if (isPodInteger(item.mTypeName))
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + " = 0;");
-			}
-			else
-			{
-				generateCodes.push_back("\t\t" + item.mMemberName + ".resetProperty();");
-			}
+			generateCodes.push_back("\t}");
 		}
-		generateCodes.push_back("\t}");
 	}
 	else
 	{
 		generateCodes.push_back("\tbool readFromBuffer(SerializerBitRead* reader) override { return true; }");
 		generateCodes.push_back("\tbool writeToBuffer(SerializerBitWrite* serializer) const override { return true; }");
-		generateCodes.push_back("\tvoid resetProperty() override");
-		generateCodes.push_back("\t{");
-		generateCodes.push_back("\t\tbase::resetProperty();");
-		generateCodes.push_back("\t}");
+		if (includeResetProperty)
+		{
+			generateCodes.push_back("\tvoid resetProperty() override");
+			generateCodes.push_back("\t{");
+			generateCodes.push_back("\t\tbase::resetProperty();");
+			generateCodes.push_back("\t}");
+		}
 	}
 }
 
 // SCPacket.h文件
-void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
+void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "SC"))
@@ -1314,9 +1373,9 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	}
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+	if (!apiMacro.empty())
 	{
-		generateCodes.push_back("class MICRO_LEGEND_CORE_API " + packetName + " : public Packet");
+		generateCodes.push_back("class " + apiMacro + " " + packetName + " : public Packet");
 	}
 	else
 	{
@@ -1331,7 +1390,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\t{");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
-	generateCppPacketReadWrite(packetInfo, generateCodes);
+	generateCppPacketReadWrite(packetInfo, generateCodes, true);
 
 	// SCPacket.h
 	string headerFullPath = filePath + packetName + ".h";
@@ -1365,6 +1424,65 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tdebug(buffer, "");");
 		codeList.push_back("\t}");
+		codeList.push_back("};");
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+}
+
+// SCPacket.h文件
+void CodeNetPacket::generateClientSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
+{
+	const string& packetName = packetInfo.mPacketName;
+	if (!startWith(packetName, "SC"))
+	{
+		return;
+	}
+	myVector<string> generateCodes;
+	generateCodes.push_back(packetInfo.mComment);
+	if (!apiMacro.empty())
+	{
+		generateCodes.push_back("class " + apiMacro + " " + packetName + " : public Packet");
+	}
+	else
+	{
+		generateCodes.push_back("class " + packetName + " : public Packet");
+	}
+	generateCodes.push_back("{");
+	generateCodes.push_back("\tBASE(Packet);");
+	generateCodes.push_back("public:");
+	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCodes.push_back("public:");
+	generateCppPacketReadWrite(packetInfo, generateCodes, false);
+	generateCodes.push_back("\tvoid execute() override;");
+
+	// SCPacket.h
+	string headerFullPath = filePath + packetName + ".h";
+	if (isFileExist(headerFullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(headerFullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
+		{
+			return;
+		}
+		for (const string& line : generateCodes)
+		{
+			codeList.insert(++lineStart, line);
+		}
+		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+	else
+	{
+		myVector<string> codeList;
+		codeList.push_back("#pragma once");
+		codeList.push_back("");
+		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
+		codeList.addRange(generateCodes);
+		codeList.push_back("\t// auto generate end");
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
