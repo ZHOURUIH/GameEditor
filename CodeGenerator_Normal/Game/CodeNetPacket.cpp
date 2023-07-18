@@ -167,10 +167,11 @@ void CodeNetPacket::generate()
 
 void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int& packetVersion)
 {
-	string cppGameCSPacketPath = ServerProjectPath + "Game/Socket/ClientServer/";
-	string cppGameSCPacketPath = ServerProjectPath + "Game/Socket/ServerClient/";
-	string cppGameStructPath = ServerProjectPath + "Game/Socket/Struct/";
-	string cppGamePacketDefinePath = ServerProjectPath + "Game/Socket/";
+	string path = ServerProjectPath + "Game/Network/";
+	string cppGameCSPacketPath = path + "ClientServer/";
+	string cppGameSCPacketPath = path + "ServerClient/";
+	string cppGameStructPath = path + "Struct/";
+	string cppGamePacketDefinePath = path;
 	// 删除无用的消息
 	// CS
 	myVector<string> cppGameCSFiles;
