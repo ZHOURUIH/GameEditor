@@ -237,10 +237,11 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 
 void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int packetVersion)
 {
-	string cppGameCSPacketPath = ClientProjectPath + "Source/Reflame/TestTCP/Client2Server/";
-	string cppGameSCPacketPath = ClientProjectPath + "Source/Reflame/TestTCP/Server2Client/";
-	string cppGameStructPath = ClientProjectPath + "Source/Reflame/TestTCP/NetStruct/";
-	string cppGamePacketDefinePath = ClientProjectPath + "Source/Reflame/TestTCP/";
+	string networkPath = ClientProjectPath + "Source/Reflame/Network/";
+	string cppGameCSPacketPath = networkPath + "Client2Server/";
+	string cppGameSCPacketPath = networkPath + "Server2Client/";
+	string cppGameStructPath = networkPath + "NetStruct/";
+	string cppGamePacketDefinePath = networkPath;
 	// 删除无用的消息
 	// CS
 	myVector<string> cppGameCSFiles;
