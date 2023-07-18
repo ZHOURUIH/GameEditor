@@ -3,6 +3,7 @@
 
 string CodeUtility::ServerProjectPath;
 string CodeUtility::ClientProjectPath;
+myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::START_FALG = "#start";
 
 bool CodeUtility::initPath()
@@ -26,9 +27,14 @@ bool CodeUtility::initPath()
 		{
 			ServerProjectPath = params[1];
 		}
-		else if (params[0] == "GAME_PROJECT_PATH")
+		else if (params[0] == "CLIENT_PROJECT_PATH")
 		{
 			ClientProjectPath = params[1];
+		}
+		else if (params[0] == "SERVER_EXCLUDE_INCLUDE_PATH")
+		{
+			rightToLeft(params[1]);
+			split(params[1].c_str(), ",", ServerExcludeIncludePath);
 		}
 	}
 

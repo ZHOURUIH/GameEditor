@@ -11,6 +11,7 @@ class CodeUtility : public SystemUtility
 protected:
 	static string ServerProjectPath;
 	static string ClientProjectPath;
+	static myVector<string> ServerExcludeIncludePath;
 	static string START_FALG;
 public:
 	static bool initPath();

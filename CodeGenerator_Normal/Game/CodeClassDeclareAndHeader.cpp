@@ -2,14 +2,17 @@
 
 void CodeClassDeclareAndHeader::generate()
 {
-	string path0 = ClientProjectPath + "/Plugins/NetTCP/Source/";
-	generateCppGameClassAndHeader(path0, path0 + "Common/", "NetTCPClassDeclare", "NetTCPHeader");
+	string clientPath0 = ClientProjectPath + "/Plugins/NetTCP/Source/";
+	generateCppGameClassAndHeader(clientPath0, clientPath0 + "Common/", "FrameClassDeclare", "FrameHeader");
 
-	string path1 = ServerProjectPath + "/Frame";
-	generateCppGameClassAndHeader(path1, path1 + "Common/", "FrameClassDeclare", "FrameHeader");
+	string clientPath1 = ClientProjectPath + "/Source/Reflame/";
+	generateCppGameClassAndHeader(clientPath1, clientPath1 + "Common/", "GameClassDeclare", "GameHeader");
 
-	string path = ServerProjectPath + "/Game";
-	generateCppGameClassAndHeader(path, path + "Common/", "GameClassDeclare", "GameHeader");
+	string serverPath0 = ServerProjectPath + "/Frame/";
+	generateCppGameClassAndHeader(serverPath0, serverPath0 + "Common/", "FrameClassDeclare", "FrameHeader");
+
+	string serverPath1 = ServerProjectPath + "/Game/";
+	generateCppGameClassAndHeader(serverPath1, serverPath1 + "Common/", "GameClassDeclare", "GameHeader");
 }
 
 void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path, const string& targetFilePath, const string& declareFileName, const string& headerFileName)
@@ -21,9 +24,12 @@ void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path
 	FOR_VECTOR(fileList)
 	{
 		const string& fileName = fileList[i];
-		const string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
-
-		if (fileNameNoSuffix != headerFileName)
+		// 忽略第三方库的文件
+		if (findSubstr(fileName, "Dependency/"))
+		{
+			continue;
+		}
+		if (getFileNameNoSuffix(fileName, true) != headerFileName)
 		{
 			gameHeaderList.push_back(getFileName(fileName));
 		}
@@ -56,6 +62,7 @@ void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path
 	writeFileIfChanged(targetFilePath + declareFileName + ".h", ANSIToUTF8(str1.c_str(), true));
 
 	// GameHeader.h
+	gameHeaderList.insert(0, "FrameHeader.h");
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
