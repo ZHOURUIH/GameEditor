@@ -80,9 +80,7 @@ void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path
 		const string& fileName = fileList[i];
 		const string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
 
-		// StringDefine的各个头文件是仅在StringDefine.h中包含的,所以不能在其他地方再次包含,否则linux下编译会报大量警告,相当于所有的源文件都定义了大量的未使用变量
-		if (fileNameNoSuffix != headerFileName &&
-			(!startWith(fileNameNoSuffix, "StringDefine") || fileNameNoSuffix == "StringDefine"))
+		if (fileNameNoSuffix != headerFileName)
 		{
 			gameHeaderList.push_back(getFileName(fileName));
 		}
@@ -139,9 +137,7 @@ void CodeClassDeclareAndHeader::generateCppGameCoreClassAndHeader(const string& 
 		const string& fileName = fileList[i];
 		string fileNameNoSuffix = getFileNameNoSuffix(fileName, true);
 
-		// StringDefine的各个头文件是仅在StringDefine.h中包含的,所以不能在其他地方再次包含,否则linux下编译会报大量警告,相当于所有的源文件都定义了大量的未使用变量
-		if (fileNameNoSuffix != headerFileName &&
-			(!startWith(fileNameNoSuffix, "StringDefine") || fileNameNoSuffix == "StringDefine"))
+		if (fileNameNoSuffix != headerFileName)
 		{
 			gameCoreHeaderList.push_back(getFileName(fileName));
 		}
@@ -162,7 +158,7 @@ void CodeClassDeclareAndHeader::generateCppGameCoreClassAndHeader(const string& 
 	}
 	END(fileList);
 
-	// BattleCoreClassDeclare.h
+	// GameCoreClassDeclare.h
 	string str1;
 	line(str1, "#pragma once");
 	line(str1, "");
@@ -173,7 +169,7 @@ void CodeClassDeclareAndHeader::generateCppGameCoreClassAndHeader(const string& 
 	}
 	writeFileIfChanged(targetFilePath + "GameCoreClassDeclare.h", ANSIToUTF8(str1.c_str(), true));
 
-	// BattleCoreHeader.h
+	// GameCoreHeader.h
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
