@@ -18,7 +18,7 @@ void CodeClassDeclareAndHeader::generateCppFrameClassAndHeader(const string& pat
 	{
 		const string& fileName = fileList[i];
 		// 忽略第三方库的文件
-		if (findSubstr(fileName, "Dependency/") != NULL)
+		if (findSubstr(fileName, "Dependency/"))
 		{
 			continue;
 		}
