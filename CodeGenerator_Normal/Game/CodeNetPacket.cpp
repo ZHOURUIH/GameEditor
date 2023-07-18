@@ -223,7 +223,7 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 			}
 		}
 		generateServerCSPacketFileHeader(packetInfo, csHeaderPath, "");
-		generateCppCSPacketFileSource(packetInfo, csSourcePath);
+		generateServerCSPacketFileSource(packetInfo, csSourcePath);
 		generateServerSCPacketFileHeader(packetInfo, scHeaderPath, "");
 	}
 	generateServerGamePacketDefineFile(packetInfoList, cppGamePacketDefinePath);
@@ -292,8 +292,8 @@ void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, c
 			}
 		}
 		generateClientCSPacketFileHeader(packetInfo, csHeaderPath, "REFLAME_API");
-		generateCppCSPacketFileSource(packetInfo, csSourcePath);
 		generateClientSCPacketFileHeader(packetInfo, scHeaderPath, "REFLAME_API");
+		generateClientSCPacketFileSource(packetInfo, scHeaderPath);
 	}
 	generateClientGamePacketDefineFile(packetInfoList, cppGamePacketDefinePath);
 	generateClientGamePacketRegisteFile(packetInfoList, cppGamePacketDefinePath, packetVersion);
@@ -502,6 +502,8 @@ void CodeNetPacket::generateServerCSPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"SerializerBitRead.h\"");
+		codeList.push_back("#include \"SerializerBitWrite.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -564,6 +566,8 @@ void CodeNetPacket::generateClientCSPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"SerializerBitRead.h\"");
+		codeList.push_back("#include \"SerializerBitWrite.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -1029,7 +1033,7 @@ int CodeNetPacket::findPacketVersion(const string& filePath)
 	return packetVersion;
 }
 
-void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
+void CodeNetPacket::generateServerCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "CS"))
@@ -1042,6 +1046,30 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 	if (!isFileExist(sourceFullPath))
 	{
 		string source;
+		line(source, "#include \"GameHeader.h\"");
+		line(source, "");
+		line(source, "void " + packetName + "::execute()");
+		line(source, "{");
+		line(source, "}", false);
+
+		writeFile(sourceFullPath, ANSIToUTF8(source.c_str(), true));
+	}
+}
+
+void CodeNetPacket::generateClientSCPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
+{
+	const string& packetName = packetInfo.mPacketName;
+	if (!startWith(packetName, "SC"))
+	{
+		return;
+	}
+
+	// SCPacket.cpp
+	const string sourceFullPath = filePath + packetName + ".cpp";
+	if (!isFileExist(sourceFullPath))
+	{
+		string source;
+		line(source, "#include \"" + packetName + ".h\"");
 		line(source, "#include \"GameHeader.h\"");
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
@@ -1417,6 +1445,8 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"SerializerBitRead.h\"");
+		codeList.push_back("#include \"SerializerBitWrite.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -1480,6 +1510,8 @@ void CodeNetPacket::generateClientSCPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"SerializerBitRead.h\"");
+		codeList.push_back("#include \"SerializerBitWrite.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
