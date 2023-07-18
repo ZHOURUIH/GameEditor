@@ -1,9 +1,8 @@
-#ifndef _CODE_CLASS_DECLARE_H_
-#define _CODE_CLASS_DECLARE_H_
+#pragma once
 
 #include "CodeUtility.h"
 
-class CodeClassDeclare : public CodeUtility
+class CodeClassDeclareAndHeader : public CodeUtility
 {
 public:
 	static void generate();
@@ -14,5 +13,3 @@ protected:
 	static void generateCppGameCoreClassAndHeader(const string& path, const string& targetFilePath);
 protected:
 };
-
-#endif

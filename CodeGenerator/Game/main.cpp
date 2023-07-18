@@ -5,7 +5,7 @@
 #include "CodeNetPacket.h"
 #include "CodeUnityBuild.h"
 #include "CodeFrameSystem.h"
-#include "CodeClassDeclare.h"
+#include "CodeClassDeclareAndHeader.h"
 #include "CodeComponent.h"
 
 void main()
@@ -27,7 +27,7 @@ void main()
 		CodeState::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
-		CodeClassDeclare::generate();
+		CodeClassDeclareAndHeader::generate();
 		CodeComponent::generate();
 	}
 	else if (input == 1)
@@ -38,7 +38,7 @@ void main()
 		CodeState::generate();
 		CodeUnityBuild::generate();
 		CodeFrameSystem::generate();
-		CodeClassDeclare::generate();
+		CodeClassDeclareAndHeader::generate();
 		CodeComponent::generate();
 	}
 	system("pause");

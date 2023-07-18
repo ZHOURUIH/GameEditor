@@ -1,13 +1,13 @@
-#include "CodeClassDeclare.h"
+#include "CodeClassDeclareAndHeader.h"
 
-void CodeClassDeclare::generate()
+void CodeClassDeclareAndHeader::generate()
 {
 	generateCppFrameClassAndHeader(cppFrameProjectPath, cppFramePath + "Common/");
 	generateCppGameClassAndHeader(cppGamePath, cppGamePath + "Common/");
 	generateCppGameCoreClassAndHeader(cppGameCorePath, cppGameCorePath + "Common/");
 }
 
-void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const string& targetFilePath)
+void CodeClassDeclareAndHeader::generateCppFrameClassAndHeader(const string& path, const string& targetFilePath)
 {
 	const string headerFileName = "FrameHeader";
 	myVector<string> frameClassList;
@@ -68,7 +68,7 @@ void CodeClassDeclare::generateCppFrameClassAndHeader(const string& path, const 
 	writeFileIfChanged(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
 }
 
-void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const string& targetFilePath)
+void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path, const string& targetFilePath)
 {
 	const string headerFileName = "GameHeader";
 	myVector<string> gameClassList;
@@ -127,7 +127,7 @@ void CodeClassDeclare::generateCppGameClassAndHeader(const string& path, const s
 	writeFileIfChanged(targetFilePath + headerFileName + ".h", ANSIToUTF8(str0.c_str(), true));
 }
 
-void CodeClassDeclare::generateCppGameCoreClassAndHeader(const string& path, const string& targetFilePath)
+void CodeClassDeclareAndHeader::generateCppGameCoreClassAndHeader(const string& path, const string& targetFilePath)
 {
 	const string headerFileName = "GameCoreHeader";
 	myVector<string> gameCoreClassList;
