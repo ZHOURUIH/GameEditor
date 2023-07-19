@@ -2,6 +2,7 @@
 
 void CodeMySQL::generate()
 {
+	print("正在生成MySQL");
 	// 解析模板文件
 	// 整个文件是否已经开始解析
 	bool fileStart = false;
@@ -165,6 +166,8 @@ void CodeMySQL::generate()
 	generateMySQLInstanceDeclare(gameCoreMySQLInfoList, gameCoreBaseHeaderPath);
 	generateMySQLInstanceDefine(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
 	generateMySQLInstanceClear(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
+	print("完成生成MySQL");
+	print("");
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
@@ -940,11 +943,11 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
-	line(source, "\treturn MySQLManager::createData<" + dataClassName + ">();");
+	line(source, "\treturn FrameBase::mMySQLDataPool->newClass<" + dataClassName + ">();");
 	line(source, "}");
 	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
-	line(source, "\treturn MySQLManager::createDataList<" + dataClassName + ">(dataList, count);");
+	line(source, "\treturn FrameBase::mMySQLDataPool->newClassList<" + dataClassName + ">(dataList, count);");
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));

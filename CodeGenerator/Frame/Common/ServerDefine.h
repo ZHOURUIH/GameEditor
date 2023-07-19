@@ -437,13 +437,6 @@ StringUtility::strcat_s(charArray, size, str3); \
 StringUtility::strcat_s(charArray, size, str4); \
 StringUtility::strcat_s(charArray, size, str5);
 
-// 数据库字段变量定义宏
-#define COL(varType, colName) static const char* colName;varType m##colName;
-#define COL_EMPTY(varType, colName) static const char* colName;
-#define COL_DEFINE(className, varName)const char* className::varName = STR(varName)
-#define REGISTE_PARAM(col) mParameters.push_back(TableParam(&m##col, col, typeid(m##col).hash_code(), typeid(m##col).name()))
-#define REGISTE_PARAM_EMPTY(col) mParameters.push_back(TableParam(NULL, col, 0, ""))
-
 #ifdef ERROR
 #undef ERROR
 #endif
@@ -476,13 +469,6 @@ try\
 #define UNLOCK(l) \
 }catch(...){}\
 (l).unlock()
-
-#define GET_SYSTEM(type) getSystem<type>(STR(type), m##type)
-
-#define REGISTE_FRAME_COMPONENT(type)					\
-	{type* component = NEW(type, component, STR(type));\
-	mFrameComponentVector.push_back(component);			\
-	mFrameComponentMap.insert(STR(type), component);}
 
 //内存相关宏定义
 //---------------------------------------------------------------------------------------------------------------------

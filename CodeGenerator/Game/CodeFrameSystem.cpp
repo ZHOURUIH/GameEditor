@@ -2,9 +2,12 @@
 
 void CodeFrameSystem::generate()
 {
+	print("正在生成框架组件");
 	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase");
 	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "GameCore/GameCore.cpp", "GameCoreBase");
 	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase");
+	print("完成生成框架组件");
+	print("");
 }
 
 void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& baseFilePathNoSuffix, const string& gameFilePath, const string& baseClassName)

@@ -2,6 +2,7 @@
 
 void CodeSQLite::generate()
 {
+	print("正在生成SQLite");
 	// 解析模板文件
 	myVector<string> lines = openTxtFileLines("SQLite.txt");
 	if (lines.size() == 0)
@@ -311,6 +312,8 @@ void CodeSQLite::generate()
 		generateCSharpSQLiteRegisteFileFile(clientSQLiteList, getFilePath(csSQLiteDataHotFixPath) + "/", getFilePath(csSQLiteDataGamePath) + "/");
 		generateCSharpExcelDeclare(clientSQLiteList, csExcelTableDeclareHotFixPath, csExcelTableDeclareGamePath);
 	}
+	print("完成生成SQLite");
+	print("");
 }
 
 // TDSQLite.h和TDSQLite.cpp文件

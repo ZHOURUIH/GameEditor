@@ -2,6 +2,7 @@
 
 void CodeUnityBuild::generate()
 {
+	print("正在生成UnityBuild");
 	if (ServerProjectPath.length() == 0)
 	{
 		return;
@@ -11,6 +12,8 @@ void CodeUnityBuild::generate()
 	generateCppUnityBuild(cppGamePath, "UnityBuildGame.cpp");
 	generateCppUnityBuild(cppGameCorePath, "UnityBuildGameCore.cpp");
 	generateCppUnityBuild(cppFrameProjectPath, "UnityBuildFrame.cpp");
+	print("完成生成UnityBuild");
+	print("");
 }
 
 // UnityBuild.cpp

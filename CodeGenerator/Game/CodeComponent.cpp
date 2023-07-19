@@ -2,6 +2,7 @@
 
 void CodeComponent::generate()
 {
+	print("正在生成组件代码");
 	// Game
 	const string cppGameRegisterPath = cppGamePath + "/Component/";
 	myVector<string> gameComFiles = findTargetHeaderFile(cppGamePath, 
@@ -47,6 +48,8 @@ void CodeComponent::generate()
 	CodeUtility::generateStringDefine(gameCoreComFiles, "// Component", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	// ComponentRegister.cpp
 	generateGameCoreComponentRegister(gameCoreComFiles, cppGameCoreRegisterPath);
+	print("完成生成组件代码");
+	print("");
 }
 
 // GameComponentRegister.cpp
