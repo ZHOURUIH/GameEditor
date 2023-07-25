@@ -2,6 +2,7 @@
 
 void CodeNetPacket::generate()
 {
+	print("正在生成网络消息");
 	// 解析模板文件
 	myVector<string> csLines = openTxtFileLines("PacketCS.txt");
 	myVector<string> scLines = openTxtFileLines("PacketSC.txt");
@@ -405,6 +406,8 @@ void CodeNetPacket::generate()
 			generateCSharpStruct(item, csharpStructGamePath, csharpStructHotfixPath);
 		}
 	}
+	print("完成生成网络消息");
+	print("");
 }
 
 // PacketDefine.h文件

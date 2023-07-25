@@ -2,6 +2,7 @@
 
 void CodeMySQL::generate()
 {
+	print("正在生成MySQL");
 	// 解析模板文件
 	// 整个文件是否已经开始解析
 	bool fileStart = false;
@@ -165,6 +166,8 @@ void CodeMySQL::generate()
 	generateMySQLInstanceDeclare(gameCoreMySQLInfoList, gameCoreBaseHeaderPath);
 	generateMySQLInstanceDefine(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
 	generateMySQLInstanceClear(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
+	print("完成生成MySQL");
+	print("");
 }
 
 // 生成MySQLData.h和MySQLData.cpp文件
