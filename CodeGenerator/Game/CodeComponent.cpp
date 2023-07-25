@@ -21,7 +21,7 @@ void CodeComponent::generate()
 			   findSubstr(line, " : public GameComponent");
 	});
 	// 生成StringDefine文件
-	CodeUtility::generateStringDefine(gameComFiles, "// Component", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
+	CodeUtility::generateStringDefine(gameComFiles, 20000, "// Component", "GameStringDefine", cppGameStringDefineHeaderFile, cppGameStringDefineSourceFile);
 	// ComponentRegister.cpp
 	generateGameComponentRegister(gameComFiles, cppGameRegisterPath);
 
@@ -44,7 +44,7 @@ void CodeComponent::generate()
 			findSubstr(line, " : public GameComponent");
 	});
 	// 生成StringDefine文件
-	CodeUtility::generateStringDefine(gameCoreComFiles, "// Component", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
+	CodeUtility::generateStringDefine(gameCoreComFiles, 10000, "// Component", "GameCoreStringDefine", cppGameCoreStringDefineHeaderFile, cppGameCoreStringDefineSourceFile);
 	// ComponentRegister.cpp
 	generateGameCoreComponentRegister(gameCoreComFiles, cppGameCoreRegisterPath);
 }

@@ -226,7 +226,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
-	line(header, "\tvoid parseResult(HashMap<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid parseResult(const HashMap<const char*, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(string& params) const override;");
 	line(header, "\tvoid generateUpdate(string& params, ullong flag) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
@@ -271,7 +271,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "}");
 	line(source, "");
 	// parseResultº¯Êý
-	line(source, "void " + className + "::parseResult(HashMap<const char*, char*>& resultRow)");
+	line(source, "void " + className + "::parseResult(const HashMap<const char*, char*>& resultRow)");
 	line(source, "{");
 	line(source, "\tparseLLong(mID, resultRow.get(ID, nullptr));");
 	FOR_I(memberCount)
@@ -940,11 +940,11 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
-	line(source, "\treturn MySQLManager::createData<" + dataClassName + ">();");
+	line(source, "\treturn FrameBase::mMySQLDataPool->newClass<" + dataClassName + ">();");
 	line(source, "}");
 	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
-	line(source, "\treturn MySQLManager::createDataList<" + dataClassName + ">(dataList, count);");
+	line(source, "\treturn FrameBase::mMySQLDataPool->newClassList<" + dataClassName + ">(dataList, count);");
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));

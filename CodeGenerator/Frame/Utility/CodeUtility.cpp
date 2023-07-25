@@ -598,7 +598,7 @@ string CodeUtility::findClassName(const string& line)
 	return "";
 }
 
-void CodeUtility::generateStringDefine(const myVector<string>& packetList, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile)
+void CodeUtility::generateStringDefine(const myVector<string>& packetList, int startID, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile)
 {
 	// 更新StringDefine.h的特定部分
 	myVector<string> codeListHeader;
@@ -612,23 +612,7 @@ void CodeUtility::generateStringDefine(const myVector<string>& packetList, const
 
 	for (const string& item : packetList)
 	{
-		codeListHeader.insert(++lineStartHeader, stringDeclare(item));
+		codeListHeader.insert(++lineStartHeader, stringDeclare(item, ++startID));
 	}
 	writeFile(stringDefineHeaderFile, ANSIToUTF8(codeListToString(codeListHeader).c_str(), true));
-
-	// 更新StringDefine.cpp的特定部分
-	myVector<string> codeListSource;
-	int lineStartSource = -1;
-	if (!findCustomCode(stringDefineSourceFile, codeListSource, lineStartSource,
-		[key](const string& codeLine) { return endWith(codeLine, key); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
-	for (const string& item : packetList)
-	{
-		codeListSource.insert(++lineStartSource, stringDefine(item, className));
-	}
-	writeFile(stringDefineSourceFile, ANSIToUTF8(codeListToString(codeListSource).c_str(), true));
 }

@@ -64,7 +64,7 @@ public:
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
-	static string stringDeclare(const string& name) { return "\tstatic const char* NAME_DEF(" + name + ");"; }
+	static string stringDeclare(const string& name, int id) { return "\tstatic const int NAME_DEF(" + name + ") = " + intToString(id) + ";"; }
 	static string stringDefine(const string& name, const string& className) { return "const char* " + className + "::NAME_DEF(" + name + ") = STR(" + name + ");"; }
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
@@ -85,7 +85,7 @@ public:
 			str += "\r\n";
 		}
 	}
-	static void generateStringDefine(const myVector<string>& packetList, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile);
+	static void generateStringDefine(const myVector<string>& packetList, int startID, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile);
 };
 
 #endif

@@ -204,7 +204,7 @@ string SerializedData::getValueString(uint paramIndex)
 	}
 	else if (dataType == mByteArrayType)
 	{
-		uint count = dataParam.mDataSize / sizeof(byte);
+		const int count = (int)dataParam.mDataSize / sizeof(byte);
 		FOR_I(count)
 		{
 			dataString += intToString(*(byte*)(dataParam.mDataPtr + i * sizeof(byte)));
@@ -220,7 +220,7 @@ string SerializedData::getValueString(uint paramIndex)
 	}
 	else if (dataType == mUIntArrayType)
 	{
-		uint count = dataParam.mDataSize / sizeof(uint);
+		const int count = (int)dataParam.mDataSize / sizeof(uint);
 		FOR_I(count)
 		{
 			dataString += intToString(*(uint*)(dataParam.mDataPtr + i * sizeof(uint)));
@@ -232,7 +232,7 @@ string SerializedData::getValueString(uint paramIndex)
 	}
 	else if (dataType == mShortArrayType)
 	{
-		uint count = dataParam.mDataSize / sizeof(short);
+		const int count = (int)dataParam.mDataSize / sizeof(short);
 		FOR_I(count)
 		{
 			dataString += intToString(*(short*)(dataParam.mDataPtr + i * sizeof(short)));
@@ -244,7 +244,7 @@ string SerializedData::getValueString(uint paramIndex)
 	}
 	else if (dataType == mUShortArrayType)
 	{
-		uint count = dataParam.mDataSize / sizeof(ushort);
+		const int count = (int)dataParam.mDataSize / sizeof(ushort);
 		FOR_I(count)
 		{
 			dataString += intToString(*(ushort*)(dataParam.mDataPtr + i * sizeof(ushort)));
