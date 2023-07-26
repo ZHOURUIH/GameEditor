@@ -68,6 +68,7 @@ struct SQLiteMember
 	string mTypeName;
 	string mMemberName;
 	string mComment;
+	string mEnumRealType;
 	bool mIsList;
 };
 

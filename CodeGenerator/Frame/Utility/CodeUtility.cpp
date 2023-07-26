@@ -163,6 +163,14 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 	split(line.c_str(), " ", memberStrList);
 	memberInfo.mTypeName = memberStrList[0];
 	memberInfo.mMemberName = memberStrList[1];
+	// 枚举类型的实际基础数据类型
+	int leftPos = 0;
+	int rightPos = 0;
+	if (findSubstr(memberInfo.mMemberName, "(", &leftPos) && findSubstr(memberInfo.mMemberName, ")",&rightPos))
+	{
+		memberInfo.mEnumRealType = memberInfo.mMemberName.substr(leftPos + 1, rightPos - leftPos - 1);
+		memberInfo.mMemberName = memberInfo.mMemberName.substr(0, leftPos);
+	}
 	return memberInfo;
 }
 

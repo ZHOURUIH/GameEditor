@@ -393,11 +393,15 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 			{
 				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = 0.0f;";
 			}
+			else if (!member.mEnumRealType.empty())
+			{
+				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = (" + member.mTypeName + ")0;";
+			}
 			else
 			{
 				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + ";";
 			}
-			uint tabCount = generateAlignTableCount(memberLine, 40);
+			uint tabCount = generateAlignTableCount(memberLine, 60);
 			FOR_I(tabCount)
 			{
 				memberLine += '\t';
@@ -414,7 +418,21 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		const string& name = member.mMemberName;
 		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
 		{
-			line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
+			if (member.mEnumRealType.empty())
+			{
+				line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
+			}
+			else
+			{
+				if (startWith(member.mTypeName, "Vector<"))
+				{
+					line(header, "\t\tregisteEnumListParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + name + "); ");
+				}
+				else
+				{
+					line(header, "\t\tregisteEnumParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + name + "); ");
+				}
+			}
 		}
 		else
 		{
