@@ -18,19 +18,27 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 		{
 			return findSubstr(line, " : public FrameComponent") && 
 				   findClassName(line) != "FactoryManager" && 
-				   findClassName(line) != "ClassPool"&&
-				   findClassName(line) != "ClassTypePool"&&
-				   findClassName(line) != "ClassBaseTypePool"&&
-				   findClassName(line) != "ClassKeyPool";
+				   findClassName(line) != "ClassPool" &&
+				   findClassName(line) != "ClassPoolThread" &&
+				   findClassName(line) != "ClassTypePool" &&
+				   findClassName(line) != "ClassTypePoolThread" &&
+				   findClassName(line) != "ClassBaseTypePool" &&
+				   findClassName(line) != "ClassBaseTypePoolThread" &&
+				   findClassName(line) != "ClassKeyPool" && 
+				   findClassName(line) != "ClassKeyPoolThread";
 		});
 	myVector<string> classPoolList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "Pool"); },
 		[](const string& line)
 		{
 			return findSubstr(line, " : public ClassPool<") ||
+				   findSubstr(line, " : public ClassPoolThread<") ||
 				   findSubstr(line, " : public ClassTypePool<") ||
+				   findSubstr(line, " : public ClassTypePoolThread<") ||
 				   findSubstr(line, " : public ClassBaseTypePool<") ||
-				   findSubstr(line, " : public ClassKeyPool<");
+				   findSubstr(line, " : public ClassBaseTypePoolThread<") ||
+				   findSubstr(line, " : public ClassKeyPool<") ||
+				   findSubstr(line, " : public ClassKeyPoolThread<");
 		});
 	myVector<string> factoryList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "FactoryManager"); },
