@@ -395,7 +395,14 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 			}
 			else if (!member.mEnumRealType.empty())
 			{
-				memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = (" + member.mTypeName + ")0;";
+				if (startWith(member.mTypeName, "Vector<"))
+				{
+					memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + ";";
+				}
+				else
+				{
+					memberLine = "\t" + member.mTypeName + " m" + member.mMemberName + " = (" + member.mTypeName + ")0;";
+				}
 			}
 			else
 			{
