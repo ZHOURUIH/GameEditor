@@ -192,11 +192,17 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(header, "{");
 	line(header, "\ttypedef MySQLData base;");
 	line(header, "public:");
-	line(header, "\tstatic const char* ID;");
+	line(header, "\tstatic constexpr int ID = 0;");
 	const uint memberCount = mysqlInfo.mMemberList.size();
 	FOR_I(memberCount)
 	{
-		line(header, "\tstatic const char* " + mysqlInfo.mMemberList[i].mMemberName + "; ");
+		line(header, "\tstatic constexpr int " + mysqlInfo.mMemberList[i].mMemberName + " = " + intToString(i + 1) + ";");
+	}
+
+	line(header, "\tstatic const string Name_ID;");
+	FOR_I(memberCount)
+	{
+		line(header, "\tstatic const string Name_" + mysqlInfo.mMemberList[i].mMemberName + ";");
 	}
 	line(header, "public:");
 	FOR_I(memberCount)
@@ -229,7 +235,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	}
 	line(header, "public:");
 	line(header, "\tstatic void fillColName(MySQLTable* table);");
-	line(header, "\tvoid parseResult(const HashMap<const char*, char*>& resultRow) override;");
+	line(header, "\tvoid parseResult(const HashMap<int, char*>& resultRow) override;");
 	line(header, "\tvoid paramList(string& params) const override;");
 	line(header, "\tvoid generateUpdate(string& params, ullong flag) const override;");
 	line(header, "\tvoid clone(MySQLData* target) const override;");
@@ -257,24 +263,24 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	line(source, "#include \"GameCoreHeader.h\"");
 	line(source, "");
 	// 字段静态变量定义
-	line(source, "const char* " + className + "::ID = \"ID\";");
+	line(source, "const string " + className + "::Name_ID = \"ID\";");
 	FOR_I(memberCount)
 	{
-		line(source, "const char* " + className + "::" + mysqlInfo.mMemberList[i].mMemberName + " = \"" + mysqlInfo.mMemberList[i].mMemberName + "\";");
+		line(source, "const string " + className + "::Name_" + mysqlInfo.mMemberList[i].mMemberName + " = \"" + mysqlInfo.mMemberList[i].mMemberName + "\";");
 	}
 	// fillColName函数
 	line(source, "");
 	line(source, "void " + className + "::fillColName(MySQLTable* table)");
 	line(source, "{");
-	line(source, "\ttable->addColName(ID, 0);");
+	line(source, "\ttable->addColName(Name_ID);");
 	FOR_I(memberCount)
 	{
-		line(source, "\ttable->addColName(" + mysqlInfo.mMemberList[i].mMemberName + ", " + intToString(i + 1) + ");");
+		line(source, "\ttable->addColName(Name_" + mysqlInfo.mMemberList[i].mMemberName + ");");
 	}
 	line(source, "}");
 	line(source, "");
 	// parseResult函数
-	line(source, "void " + className + "::parseResult(const HashMap<const char*, char*>& resultRow)");
+	line(source, "void " + className + "::parseResult(const HashMap<int, char*>& resultRow)");
 	line(source, "{");
 	line(source, "\tparseLLong(mID, resultRow.get(ID, nullptr));");
 	FOR_I(memberCount)
@@ -394,54 +400,54 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
 		const string& typeName = memberInfo.mTypeName;
 		const string& memberName = memberInfo.mMemberName;
-		line(source, "\tif (Utility::hasBit(flag, " + intToString(i + 1) + "))");
+		line(source, "\tif (Utility::hasBit(flag, " + memberName + "))");
 		line(source, "\t{");
 		if (typeName == "string")
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\t\tUtility::sqlUpdateStringUTF8(params, " + memberName + ", m" + memberName + ");");
+				line(source, "\t\tUtility::sqlUpdateStringUTF8(params, Name_" + memberName + ", m" + memberName + ");");
 			}
 			else
 			{
-				line(source, "\t\tUtility::sqlUpdateString(params, " + memberName + ", m" + memberName + ");");
+				line(source, "\t\tUtility::sqlUpdateString(params, Name_" + memberName + ", m" + memberName + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\t\tUtility::sqlUpdateBool(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateBool(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\t\tUtility::sqlUpdateFloat(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateFloat(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\t\tUtility::sqlUpdateLLong(params, " + memberName + ", m" + memberName + ");");
+			line(source, "\t\tUtility::sqlUpdateLLong(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		line(source, "\t}");
 	}
@@ -480,7 +486,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
-			line(source, "\tif (Utility::hasBit(flag, " + intToString(i + 1) + "))");
+			line(source, "\tif (Utility::hasBit(flag, " + memberName + "))");
 			line(source, "\t{");
 			line(source, "\t\ttargetData->m" + memberName + " = m" + memberName + ";");
 			line(source, "\t}");
@@ -527,11 +533,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "bool")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+			line(source, "\tcase " + memberName + ": m" + memberName + " = value; return true;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -552,11 +558,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "int" || typeName == "ushort" || typeName == "short" || typeName == "byte" || typeName == "char")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+			line(source, "\tcase " + memberName + ": m" + memberName + " = value; return true;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -577,11 +583,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "float")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+			line(source, "\tcase " + memberName + ": m" + memberName + " = value; return true;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -602,11 +608,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "llong")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+			line(source, "\tcase " + memberName + ": m" + memberName + " = value; return true;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -627,11 +633,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "string")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": m" + memberName + " = value; return true;");
+			line(source, "\tcase " + memberName + ": m" + memberName + " = value; return true;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -650,11 +656,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "bool")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+			line(source, "\tcase " + memberName + ": return m" + memberName + " == value;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -674,11 +680,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "int" || typeName == "ushort" || typeName == "short" || typeName == "byte" || typeName == "char")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+			line(source, "\tcase " + memberName + ": return m" + memberName + " == value;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -698,11 +704,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "float")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+			line(source, "\tcase " + memberName + ": return m" + memberName + " == value;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -722,11 +728,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "llong")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+			line(source, "\tcase " + memberName + ": return m" + memberName + " == value;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -746,11 +752,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "string")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + " == value;");
+			line(source, "\tcase " + memberName + ": return m" + memberName + " == value;");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -770,11 +776,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "bool")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+			line(source, "\tcase " + memberName + ": return m" + memberName + ";");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return false;");
+			line(source, "\tcase " + memberName + ": return false;");
 		}
 	}
 	line(source, "\t}");
@@ -794,11 +800,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "int" || typeName == "ushort" || typeName == "short" || typeName == "byte" || typeName == "char")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+			line(source, "\tcase " + memberName + ": return m" + memberName + ";");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return 0;");
+			line(source, "\tcase " + memberName + ": return 0;");
 		}
 	}
 	line(source, "\t}");
@@ -818,11 +824,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "float")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+			line(source, "\tcase " + memberName + ": return m" + memberName + ";");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return 0.0f;");
+			line(source, "\tcase " + memberName + ": return 0.0f;");
 		}
 	}
 	line(source, "\t}");
@@ -842,11 +848,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "llong")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+			line(source, "\tcase " + memberName + ": return m" + memberName + ";");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return 0;");
+			line(source, "\tcase " + memberName + ": return 0;");
 		}
 	}
 	line(source, "\t}");
@@ -866,11 +872,11 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const string& memberName = memberInfo.mMemberName;
 		if (typeName == "string")
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return m" + memberName + ";");
+			line(source, "\tcase " + memberName + ": return m" + memberName + ";");
 		}
 		else
 		{
-			line(source, "\tcase " + intToString(i + 1) + ": return FrameDefine::EMPTY;");
+			line(source, "\tcase " + memberName + ": return FrameDefine::EMPTY;");
 		}
 	}
 	line(source, "\t}");
@@ -936,7 +942,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		line(source, "\tbase::lateInit();");
 		for (const string& indexName : mysqlInfo.mIndexList)
 		{
-			line(source, "\texecuteNonQuery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::" + indexName + " + \")\").c_str(), false);");
+			line(source, "\texecuteNonQuery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::Name_" + indexName + " + \")\").c_str(), false);");
 		}
 		line(source, "}");
 		line(source, "");

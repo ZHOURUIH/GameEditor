@@ -11,9 +11,7 @@ string CodeUtility::cppGamePath;
 string CodeUtility::cppGameCorePath;
 string CodeUtility::cppFramePath;
 string CodeUtility::cppGameStringDefineHeaderFile;
-string CodeUtility::cppGameStringDefineSourceFile;
 string CodeUtility::cppGameCoreStringDefineHeaderFile;
-string CodeUtility::cppGameCoreStringDefineSourceFile;
 string CodeUtility::csGamePath;
 string CodeUtility::csHotfixGamePath;
 string CodeUtility::START_FALG = "#start";
@@ -66,9 +64,7 @@ bool CodeUtility::initPath()
 		cppGameCorePath = cppGameCoreProjectPath + "GameCore/";
 		cppFramePath = cppFrameProjectPath + "Frame/";
 		cppGameCoreStringDefineHeaderFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
-		cppGameCoreStringDefineSourceFile = cppGameCorePath + "Common/GameCoreStringDefine.cpp";
 		cppGameStringDefineHeaderFile = cppGamePath + "Common/GameStringDefine.h";
-		cppGameStringDefineSourceFile = cppGamePath + "Common/GameStringDefine.cpp";
 	}
 	if (ClientProjectPath.length() > 0)
 	{
@@ -606,7 +602,7 @@ string CodeUtility::findClassName(const string& line)
 	return "";
 }
 
-void CodeUtility::generateStringDefine(const myVector<string>& packetList, int startID, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile)
+void CodeUtility::generateStringDefine(const myVector<string>& defineList, int startID, const string& key, const string& stringDefineHeaderFile)
 {
 	// 更新StringDefine.h的特定部分
 	myVector<string> codeListHeader;
@@ -618,7 +614,7 @@ void CodeUtility::generateStringDefine(const myVector<string>& packetList, int s
 		return;
 	}
 
-	for (const string& item : packetList)
+	for (const string& item : defineList)
 	{
 		codeListHeader.insert(++lineStartHeader, stringDeclare(item, ++startID));
 	}
