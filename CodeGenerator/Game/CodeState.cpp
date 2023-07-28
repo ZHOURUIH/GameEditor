@@ -34,6 +34,12 @@ void CodeState::generate()
 		});
 	// 生成StateRegister.cpp文件
 	generateStateRegister(coreBuffList, cppGameCorePath + "Character/Component/StateMachine/StateRegister.cpp", true);
+
+	myVector<string> coreStateGroupList = findTargetHeaderFile(cppGameCorePath,
+		[](const string& fileName) { return startWith(fileName, "StateGroup"); },
+		[](const string& line) { return findSubstr(line, " : public StateGroup"); });
+	generateStringDefine(coreStateGroupList, 0, "// StateGroup", cppGameCoreStringDefineHeaderFile);
+
 	print("完成生成角色状态");
 	print("");
 }

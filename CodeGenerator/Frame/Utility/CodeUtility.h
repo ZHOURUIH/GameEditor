@@ -19,9 +19,7 @@ protected:
 	static string cppGameCorePath;
 	static string cppFramePath;
 	static string cppGameStringDefineHeaderFile;
-	static string cppGameStringDefineSourceFile;
 	static string cppGameCoreStringDefineHeaderFile;
-	static string cppGameCoreStringDefineSourceFile;
 	static string csGamePath;
 	static string csHotfixGamePath;
 	static string START_FALG;
@@ -64,7 +62,7 @@ public:
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
-	static string stringDeclare(const string& name, int id) { return "\tstatic constexpr int NAME_DEF(" + name + ") = " + intToString(id) + ";"; }
+	static string stringDeclare(const string& name, int id) { return "\tstatic constexpr int " + name + " = " + intToString(id) + ";"; }
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
 	static string cSharpTypeToWrapType(const string& csharpType);
@@ -84,7 +82,7 @@ public:
 			str += "\r\n";
 		}
 	}
-	static void generateStringDefine(const myVector<string>& packetList, int startID, const string& key, const string className, const string& stringDefineHeaderFile, const string& stringDefineSourceFile);
+	static void generateStringDefine(const myVector<string>& defineList, int startID, const string& key, const string& stringDefineHeaderFile);
 };
 
 #endif
