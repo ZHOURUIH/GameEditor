@@ -232,7 +232,7 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 
 	for (const PacketStruct& info : structInfoList)
 	{
-		generateCppStruct(info, cppGameStructPath);
+		generateCppStruct(info, cppGameStructPath, true);
 	}
 }
 
@@ -301,7 +301,7 @@ void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, c
 
 	for (const PacketStruct& info : structInfoList)
 	{
-		generateCppStruct(info, cppGameStructPath);
+		generateCppStruct(info, cppGameStructPath, false);
 	}
 }
 
@@ -470,7 +470,7 @@ void CodeNetPacket::generateServerCSPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
-	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, true);
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\tvoid init() override");
 	generateCodes.push_back("\t{");
@@ -539,7 +539,7 @@ void CodeNetPacket::generateClientCSPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
-	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, false);
 	generateCodes.push_back("public:");
 	generateCppPacketReadWrite(packetInfo, generateCodes, false);
 
@@ -578,7 +578,7 @@ void CodeNetPacket::generateClientCSPacketFileHeader(const PacketInfo& packetInf
 	}
 }
 
-void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const string& filePath)
+void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const string& filePath, bool isServer)
 {
 	const string& structName = structInfo.mStructName;
 
@@ -612,7 +612,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back("{");
 	headerCodeList.push_back("\tBASE(SerializableBitData);");
 	headerCodeList.push_back("public:");
-	generateCppPacketMemberDeclare(structInfo.mMemberList, headerCodeList);
+	generateCppPacketMemberDeclare(structInfo.mMemberList, headerCodeList, isServer);
 	headerCodeList.push_back("public:");
 	headerCodeList.push_back("\t" + structName + "() = default;");
 	string constructParams;
@@ -1081,7 +1081,7 @@ void CodeNetPacket::generateClientSCPacketFileSource(const PacketInfo& packetInf
 	}
 }
 
-void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>& memberList, myVector<string>& generateCodes)
+void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>& memberList, myVector<string>& generateCodes, const bool isServer)
 {
 	for (const PacketMember& item : memberList)
 	{
@@ -1104,6 +1104,12 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>&
 		else if (item.mTypeName == "bool")
 		{
 			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + " = false;");
+		}
+		// 字符串类型在客户端和服务器不一样,客户端是UE,使用UE的FString
+		else if (item.mTypeName == "string")
+		{
+			const string typeName = isServer ? item.mTypeName : "FString";
+			generateCodes.push_back("\t" + typeName + " " + item.mMemberName + ";");
 		}
 		else
 		{
@@ -1414,7 +1420,7 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
-	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, true);
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\tvoid init() override");
 	generateCodes.push_back("\t{");
@@ -1482,7 +1488,7 @@ void CodeNetPacket::generateClientSCPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
-	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, false);
 	generateCodes.push_back("public:");
 	generateCppPacketReadWrite(packetInfo, generateCodes, false);
 	generateCodes.push_back("\tvoid execute() override;");
