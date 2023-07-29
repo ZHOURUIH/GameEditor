@@ -23,7 +23,7 @@ protected:
 	static void generateClientSCPacketFileSource(const PacketInfo& packetInfo, const string& filePath);
 	// 公共生成逻辑
 	static int findPacketVersion(const string& filePath);
-	static void generateCppPacketMemberDeclare(const myVector<PacketMember>& memberList, myVector<string>& generateCodes, const bool isServer);
-	static void generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes, bool includeResetProperty);
+	static void generateCppPacketMemberDeclare(const myVector<PacketMember>& memberList, myVector<string>& generateCodes, bool isServer);
+	static void generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes, bool includeResetProperty, bool isServer);
 	static void generateCppStruct(const PacketStruct& structInfo, const string& filePath, bool isServer);
 };

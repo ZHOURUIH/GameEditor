@@ -476,7 +476,7 @@ void CodeNetPacket::generateServerCSPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("\t{");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
-	generateCppPacketReadWrite(packetInfo, generateCodes, true);
+	generateCppPacketReadWrite(packetInfo, generateCodes, true, true);
 	generateCodes.push_back("\tvoid execute() override;");
 
 	// CSPacket.h
@@ -541,7 +541,7 @@ void CodeNetPacket::generateClientCSPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("public:");
 	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, false);
 	generateCodes.push_back("public:");
-	generateCppPacketReadWrite(packetInfo, generateCodes, false);
+	generateCppPacketReadWrite(packetInfo, generateCodes, false, false);
 
 	// CSPacket.h
 	string headerFullPath = filePath + packetName + ".h";
@@ -1111,6 +1111,16 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>&
 			const string typeName = isServer ? item.mTypeName : "FString";
 			generateCodes.push_back("\t" + typeName + " " + item.mMemberName + ";");
 		}
+		else if (findSubstr(item.mTypeName, "Vector<"))
+		{
+			string typeName = item.mTypeName;
+			if (!isServer)
+			{
+				replaceAll(typeName, "Vector", "TArray");
+				replaceAll(typeName, "string", "FString");
+			}
+			generateCodes.push_back("\t" + typeName + " " + item.mMemberName + ";");
+		}
 		else
 		{
 			generateCodes.push_back("\t" + item.mTypeName + " " + item.mMemberName + ";");
@@ -1118,7 +1128,7 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>&
 	}
 }
 
-void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes, bool includeResetProperty)
+void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes, bool includeResetProperty, const bool isServer)
 {
 	if (packetInfo.mMemberList.size() > 0)
 	{
@@ -1251,7 +1261,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 				const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
 				if (elementType == "string")
 				{
-					generateCodes.push_back("\t\tsuccess = success && serializer->writeStringList(" + item.mMemberName + ") success;");
+					generateCodes.push_back("\t\tsuccess = success && serializer->writeStringList(" + item.mMemberName + ");");
 				}
 				else if (elementType == "bool")
 				{
@@ -1426,7 +1436,7 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("\t{");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
-	generateCppPacketReadWrite(packetInfo, generateCodes, true);
+	generateCppPacketReadWrite(packetInfo, generateCodes, true, true);
 
 	// SCPacket.h
 	string headerFullPath = filePath + packetName + ".h";
@@ -1490,7 +1500,7 @@ void CodeNetPacket::generateClientSCPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("public:");
 	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, false);
 	generateCodes.push_back("public:");
-	generateCppPacketReadWrite(packetInfo, generateCodes, false);
+	generateCppPacketReadWrite(packetInfo, generateCodes, false, false);
 	generateCodes.push_back("\tvoid execute() override;");
 
 	// SCPacket.h
