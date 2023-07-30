@@ -2,17 +2,23 @@
 
 void CodeClassDeclareAndHeader::generate()
 {
-	string clientPath0 = ClientProjectPath + "/Plugins/NetTCP/Source/";
-	generateCppGameClassAndHeader(clientPath0, clientPath0 + "Common/", "FrameClassDeclare", "FrameHeader");
+	if (!ClientProjectPath.empty())
+	{
+		string clientPath0 = ClientProjectPath + "/Plugins/NetTCP/Source/";
+		generateCppGameClassAndHeader(clientPath0, clientPath0 + "Common/", "FrameClassDeclare", "FrameHeader");
 
-	string clientPath1 = ClientProjectPath + "/Source/Reflame/";
-	generateCppGameClassAndHeader(clientPath1, clientPath1 + "Common/", "GameClassDeclare", "GameHeader");
+		string clientPath1 = ClientProjectPath + "/Source/Reflame/";
+		generateCppGameClassAndHeader(clientPath1, clientPath1 + "Common/", "GameClassDeclare", "GameHeader");
+	}
 
-	string serverPath0 = ServerProjectPath + "/Frame/";
-	generateCppGameClassAndHeader(serverPath0, serverPath0 + "Common/", "FrameClassDeclare", "FrameHeader");
+	if (!ServerProjectPath.empty())
+	{
+		string serverPath0 = ServerProjectPath + "/Frame/";
+		generateCppGameClassAndHeader(serverPath0, serverPath0 + "Common/", "FrameClassDeclare", "FrameHeader");
 
-	string serverPath1 = ServerProjectPath + "/Game/";
-	generateCppGameClassAndHeader(serverPath1, serverPath1 + "Common/", "GameClassDeclare", "GameHeader");
+		string serverPath1 = ServerProjectPath + "/Game/";
+		generateCppGameClassAndHeader(serverPath1, serverPath1 + "Common/", "GameClassDeclare", "GameHeader");
+	}
 }
 
 void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path, const string& targetFilePath, const string& declareFileName, const string& headerFileName)

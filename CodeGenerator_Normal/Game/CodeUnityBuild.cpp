@@ -2,6 +2,10 @@
 
 void CodeUnityBuild::generate()
 {
+	if (ServerProjectPath.empty())
+	{
+		return;
+	}
 	generateCppUnityBuild(ServerProjectPath, ServerProjectPath + "Game/UnityBuild.cpp");
 }
 

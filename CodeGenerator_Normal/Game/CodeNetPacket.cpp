@@ -167,6 +167,10 @@ void CodeNetPacket::generate()
 
 void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int& packetVersion)
 {
+	if (ServerProjectPath.empty())
+	{
+		return;
+	}
 	string path = ServerProjectPath + "Game/Network/";
 	string cppGameCSPacketPath = path + "ClientServer/";
 	string cppGameSCPacketPath = path + "ServerClient/";
@@ -238,6 +242,10 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 
 void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int packetVersion)
 {
+	if (ClientProjectPath.empty())
+	{
+		return;
+	}
 	string networkPath = ClientProjectPath + "Source/Reflame/Network/";
 	string cppGameCSPacketPath = networkPath + "Client2Server/";
 	string cppGameSCPacketPath = networkPath + "Server2Client/";
@@ -308,73 +316,127 @@ void CodeNetPacket::generateClient(const myVector<string>& gamePacketNameList, c
 // 服务器的PacketDefine.h文件
 void CodeNetPacket::generateServerGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
-	string str;
-	line(str, "#pragma once");
-	line(str, "");
-	line(str, "#include \"FrameDefine.h\"");
-	line(str, "");
-	line(str, "class PACKET_TYPE");
-	line(str, "{");
-	line(str, "public:");
+	const string fullPath = filePath + "PacketDefine.h";
+	myVector<string> generateList;
 	int csMinValue = 0;
-	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
+	generateList.push_back("\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
+			generateList.push_back("\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
 		}
 	}
-	line(str, "");
+	generateList.push_back("");
 	int scMinValue = 10000;
-	line(str, "\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
+	generateList.push_back("\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
+			generateList.push_back("\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
 		}
 	}
-	line(str, "};", false);
 
-	writeFile(filePath + "PacketDefine.h", ANSIToUTF8(str.c_str(), true));
+	if (isFileExist(fullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(fullPath, codeList, lineStart,
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate start"); },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
+		{
+			return;
+		}
+		for (const string& line : generateList)
+		{
+			codeList.insert(++lineStart, line);
+		}
+		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+	else
+	{
+		string str;
+		line(str, "#pragma once");
+		line(str, "");
+		line(str, "#include \"FrameDefine.h\"");
+		line(str, "");
+		line(str, "class PACKET_TYPE");
+		line(str, "{");
+		line(str, "public:");
+		
+		for (const string& generateLine : generateList)
+		{
+			line(str, generateLine);
+		}
+		line(str, "};", false);
+
+		writeFile(fullPath, ANSIToUTF8(str.c_str(), true));
+	}
 }
 
 // 客户端的PacketDefine.h文件
 void CodeNetPacket::generateClientGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
-	string str;
-	line(str, "#pragma once");
-	line(str, "");
-	line(str, "#include \"FrameDefine.h\"");
-	line(str, "");
-	line(str, "class PACKET_TYPE");
-	line(str, "{");
-	line(str, "public:");
+	const string fullPath = filePath + "PacketDefine.h";
+	myVector<string> generateList;
 	int csMinValue = 0;
-	line(str, "\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
+	generateList.push_back("\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
 	uint packetCount = packetList.size();
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "CS"))
 		{
-			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
+			generateList.push_back("\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
 		}
 	}
-	line(str, "");
+	generateList.push_back("");
 	int scMinValue = 10000;
-	line(str, "\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
+	generateList.push_back("\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
 	FOR_I(packetCount)
 	{
 		if (startWith(packetList[i].mPacketName, "SC"))
 		{
-			line(str, "\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
+			generateList.push_back("\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
 		}
 	}
-	line(str, "};", false);
 
-	writeFile(filePath + "PacketDefine.h", ANSIToUTF8(str.c_str(), true));
+	if (isFileExist(fullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(fullPath, codeList, lineStart,
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate start"); },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
+		{
+			return;
+		}
+		for (const string& line : generateList)
+		{
+			codeList.insert(++lineStart, line);
+		}
+		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+	else
+	{
+		string str;
+		line(str, "#pragma once");
+		line(str, "");
+		line(str, "#include \"FrameDefine.h\"");
+		line(str, "");
+		line(str, "class PACKET_TYPE");
+		line(str, "{");
+		line(str, "public:");
+
+		for (const string& generateLine : generateList)
+		{
+			line(str, generateLine);
+		}
+		line(str, "};", false);
+
+		writeFile(fullPath, ANSIToUTF8(str.c_str(), true));
+	}
 }
 
 // 服务器的PacketRegister.cpp文件

@@ -2,6 +2,10 @@
 
 void CodeFrameSystem::generate()
 {
+	if (ServerProjectPath.empty())
+	{
+		return;
+	}
 	generateFrameSystem(ServerProjectPath + "Frame/", "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase");
 	generateFrameSystem(ServerProjectPath + "Game/", "Common/GameBase.h", "Game/Game.cpp", "GameBase");
 }
