@@ -706,8 +706,22 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 			continue;
 		}
 		string typeName = convertToCSharpType(member.mTypeName);
+		if (!member.mEnumRealType.empty())
+		{
+			int pos0;
+			if (findString(typeName.c_str(), "List<", &pos0))
+			{
+				int pos1;
+				findString(typeName.c_str(), ">", &pos1);
+				replace(typeName, pos0 + (int)strlen("List<"), pos1, member.mEnumRealType);
+			}
+			else
+			{
+				typeName = convertToCSharpType(member.mEnumRealType);
+			}
+		}
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
-		if (findString(typeName.c_str(), "List", NULL))
+		if (findString(typeName.c_str(), "List", nullptr))
 		{
 			listMemberList.push_back(make_pair(typeName, member.mMemberName));
 			listMemberSet.insert(member.mMemberName);
@@ -846,24 +860,24 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		{
 			continue;
 		}
-		string typeName = member.mTypeName;
 		// 因为模板文件是按照C++来写的,但是有些类型在C#中是没有的,所以要转换为C#中对应的类型
-		// myVector替换为List,char替换为sbyte
-		if (startWith(typeName, "Vector<"))
+		string typeName = cppTypeToCSharpType(member.mTypeName);
+		if (!member.mEnumRealType.empty())
 		{
-			strReplaceAll(typeName, "Vector<", "List<");
+			int pos0;
+			if (findString(typeName.c_str(), "List<", &pos0))
+			{
+				int pos1;
+				findString(typeName.c_str(), ">", &pos1);
+				replace(typeName, pos0 + (int)strlen("List<"), pos1, member.mEnumRealType);
+			}
+			else
+			{
+				typeName = convertToCSharpType(member.mEnumRealType);
+			}
 		}
-		else if (typeName == "char")
-		{
-			typeName = "sbyte";
-		}
-		else if (typeName == "llong")
-		{
-			typeName = "long";
-		}
-
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
-		if (findString(typeName.c_str(), "List", NULL))
+		if (findString(typeName.c_str(), "List", nullptr))
 		{
 			listMemberList.push_back(make_pair(typeName, member.mMemberName));
 		}
