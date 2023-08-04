@@ -415,8 +415,9 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "public:");
 	line(header, "\t" + dataClassName + "()");
 	line(header, "\t{");
-	for (const SQLiteMember& member : memberNoIDList)
+	FOR_VECTOR(memberNoIDList)
 	{
+		const SQLiteMember& member = memberNoIDList[i];
 		const string& name = member.mMemberName;
 		if (member.mOwner != SQLITE_OWNER::SERVER_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
 		{
@@ -424,17 +425,17 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		}
 		if (member.mEnumRealType.empty())
 		{
-			line(header, "\t\tregisteParam(m" + name + ");");
+			line(header, "\t\tregisteParam(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
 		}
 		else
 		{
 			if (startWith(member.mTypeName, "Vector<"))
 			{
-				line(header, "\t\tregisteEnumListParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + "); ");
+				line(header, "\t\tregisteEnumListParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
 			}
 			else
 			{
-				line(header, "\t\tregisteEnumParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + "); ");
+				line(header, "\t\tregisteEnumParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
 			}
 		}
 	}
