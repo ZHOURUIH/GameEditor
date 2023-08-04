@@ -1680,7 +1680,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.push_back(packetName + " " + packetName + "::mStaticObject;");
-		codeList.push_back("\t// auto generate end");
+		codeList.push_back("// auto generate end");
 		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
