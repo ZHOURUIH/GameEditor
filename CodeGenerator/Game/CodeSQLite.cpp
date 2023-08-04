@@ -363,11 +363,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	
 	line(header, "{");
 	line(header, "\tBASE(SQLiteData);");
-	line(header, "public:");
-	for (const SQLiteMember& member : memberNoIDList)
-	{
-		line(header, "\tstatic const char* " + member.mMemberName + ";");
-	}
 	if (memberUsedInServerNoIDList.size() > 0)
 	{
 		line(header, "public:");
@@ -423,27 +418,24 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	for (const SQLiteMember& member : memberNoIDList)
 	{
 		const string& name = member.mMemberName;
-		if (member.mOwner == SQLITE_OWNER::SERVER_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
+		if (member.mOwner != SQLITE_OWNER::SERVER_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
 		{
-			if (member.mEnumRealType.empty())
-			{
-				line(header, "\t\tregisteParam(m" + name + ", " + name + ");");
-			}
-			else
-			{
-				if (startWith(member.mTypeName, "Vector<"))
-				{
-					line(header, "\t\tregisteEnumListParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + name + "); ");
-				}
-				else
-				{
-					line(header, "\t\tregisteEnumParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + name + "); ");
-				}
-			}
+			continue;
+		}
+		if (member.mEnumRealType.empty())
+		{
+			line(header, "\t\tregisteParam(m" + name + ");");
 		}
 		else
 		{
-			line(header, "\t\tregisteParamEmpty(" + name + ");");
+			if (startWith(member.mTypeName, "Vector<"))
+			{
+				line(header, "\t\tregisteEnumListParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + "); ");
+			}
+			else
+			{
+				line(header, "\t\tregisteEnumParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + "); ");
+			}
 		}
 	}
 	line(header, "\t}");
@@ -454,11 +446,6 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	// TDSQLite.cpp
 	string source;
 	line(source, "#include \"" + dataClassName + ".h\"");
-	line(source, "");
-	for (const SQLiteMember& member : memberNoIDList)
-	{
-		line(source, "const char* " + dataClassName + "::" + member.mMemberName + " = \"" + member.mMemberName + "\";");
-	}
 	line(source, "");
 	line(source, "void " + dataClassName + "::clone(SQLiteData* target)");
 	line(source, "{");
