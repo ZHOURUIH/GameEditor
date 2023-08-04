@@ -1585,6 +1585,8 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
 	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes);
+	generateCodes.push_back("private:");
+	generateCodes.push_back("\tstatic " + packetName + " mStaticObject;");
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\t" + packetName + "()");
 	generateCodes.push_back("\t{");
@@ -1597,6 +1599,11 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
 	}
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+	generateCodes.push_back("\t}");
+	generateCodes.push_back("\tstatic " + packetName + "& get()");
+	generateCodes.push_back("\t{");
+	generateCodes.push_back("\t\tmStaticObject.resetProperty();");
+	generateCodes.push_back("\t\treturn mStaticObject;");
 	generateCodes.push_back("\t}");
 	generateCppPacketReadWrite(packetInfo, generateCodes);
 
@@ -1642,6 +1649,39 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t}");
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+
+	// SCPacket.cpp
+	string cppFullPath = filePath + packetName + ".cpp";
+	if (isFileExist(cppFullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(cppFullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
+		{
+			return;
+		}
+		codeList.insert(++lineStart, packetName + " " + packetName + "::mStaticObject;");
+		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+	else
+	{
+		myVector<string> codeList;
+		if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+		{
+			codeList.push_back("#include \"GameCoreHeader.h\"");
+		}
+		else
+		{
+			codeList.push_back("#include \"GameHeader.h\"");
+		}
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
+		codeList.push_back(packetName + " " + packetName + "::mStaticObject;");
+		codeList.push_back("\t// auto generate end");
+		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
 
