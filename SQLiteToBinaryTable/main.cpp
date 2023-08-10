@@ -304,6 +304,12 @@ int main()
 		table.setTableName(tableName);
 		table.init(file);
 		SQLiteDataReader* reader = table.doSelect();
+		if (reader == nullptr)
+		{
+			cout << "¼ÓÔØ±í¸ñÊ§°Ü:" << file << endl;
+			system("pause");
+			return 0;
+		}
 		while (reader->read())
 		{
 			const auto& memberList = sqliteTableInfo.mMemberList;
