@@ -156,9 +156,11 @@ void parseSQLiteTemplate(const string& filePath, Map<string, SQLiteInfo>& sqlite
 			Vector<string> tagList;
 			while (true)
 			{
-				StringUtility::findString(lastLine.c_str(), "[", &startIndex, tagStartIndex);
-				StringUtility::findString(lastLine.c_str(), "]", &endIndex, startIndex);
-				if (startIndex < 0 || endIndex < 0)
+				if (StringUtility::findString(lastLine.c_str(), "[", &startIndex, tagStartIndex))
+				{
+					break;
+				}
+				if (StringUtility::findString(lastLine.c_str(), "]", &endIndex, startIndex))
 				{
 					break;
 				}
