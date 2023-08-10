@@ -62,7 +62,6 @@ public:
 	static PacketMember parseMemberLine(const string& line);
 	static string packetNameToUpper(const string& packetName);
 	static string nameToUpper(const string& sqliteName, bool preUnderLine = true);
-	static string stringDeclare(const string& name, int id) { return "\tstatic constexpr int " + name + " = " + intToString(id) + ";"; }
 	static string cSharpPushParamString(const PacketMember& memberInfo);
 	static string cppTypeToCSharpType(const string& cppType);
 	static string cSharpTypeToWrapType(const string& csharpType);

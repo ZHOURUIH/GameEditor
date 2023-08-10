@@ -616,7 +616,8 @@ void CodeUtility::generateStringDefine(const myVector<string>& defineList, int s
 
 	for (const string& item : defineList)
 	{
-		codeListHeader.insert(++lineStartHeader, stringDeclare(item, ++startID));
+		const string line = "\tstatic constexpr ushort " + item + " = " + intToString(++startID) + ";";
+		codeListHeader.insert(++lineStartHeader, line);
 	}
 	writeFile(stringDefineHeaderFile, ANSIToUTF8(codeListToString(codeListHeader).c_str(), true));
 }
