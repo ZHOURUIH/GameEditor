@@ -11,7 +11,7 @@ void CodeUnityBuild::generate()
 	// 生成UnityBuild.cpp文件
 	generateCppUnityBuild(cppGamePath, "UnityBuildGame.cpp");
 	generateCppUnityBuild(cppGameCorePath, "UnityBuildGameCore.cpp");
-	generateCppUnityBuild(cppFrameProjectPath, "UnityBuildFrame.cpp");
+	generateCppUnityBuild(cppFramePath, "UnityBuildFrame.cpp");
 	print("完成生成UnityBuild");
 	print("");
 }
