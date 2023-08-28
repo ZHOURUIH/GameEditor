@@ -246,7 +246,7 @@ void CodeNetPacket::generate()
 		}
 		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
+		generateCppSCPacketFile(packetInfo, scHeaderPath);
 	}
 	generateCppGamePacketDefineFile(gamePacketList, cppGamePacketDefinePath);
 	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
@@ -312,7 +312,7 @@ void CodeNetPacket::generate()
 		}
 		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
+		generateCppSCPacketFile(packetInfo, scHeaderPath);
 	}
 	generateCppGameCorePacketDefineFile(gameCorePacketList, cppGameCorePacketDefinePath);
 	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
@@ -675,7 +675,7 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 	writeFile(filePath + "GameCorePacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
 }
 
-// CSPacket.hºÍCSPacket.cpp
+// CSPacket.h
 void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
@@ -1222,6 +1222,7 @@ int CodeNetPacket::findPacketVersion(const string& filePath)
 	return packetVersion;
 }
 
+// CSPacket.cpp
 void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
@@ -1230,7 +1231,6 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 		return;
 	}
 
-	// CSPacket.cpp
 	const string sourceFullPath = filePath + packetName + ".cpp";
 	if (!isFileExist(sourceFullPath))
 	{
@@ -1564,7 +1564,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 }
 
 // SCPacket.hÎÄ¼þ
-void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
+void CodeNetPacket::generateCppSCPacketFile(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "SC"))
@@ -1633,11 +1633,11 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("#include \"Packet.h\"");
 		if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
 		{
-			codeList.push_back("#include \"GameCorePacketType.h\"");
+			codeList.push_back("#include \"GameCorePacketDefine.h\"");
 		}
 		else
 		{
-			codeList.push_back("#include \"GamePacketType.h\"");
+			codeList.push_back("#include \"GamePacketDefine.h\"");
 		}
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");

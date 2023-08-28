@@ -15,7 +15,7 @@ protected:
 	static void generateCppGameCorePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath);
 	static void generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath);
 	static void generateCppCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath);
-	static void generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath);
+	static void generateCppSCPacketFile(const PacketInfo& packetInfo, const string& filePath);
 	static int findPacketVersion(const string& filePath);
 	static void generateCppPacketMemberDeclare(const myVector<PacketMember>& memberList, myVector<string>& generateCodes);
 	static void generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes);
