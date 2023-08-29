@@ -7,3 +7,4 @@ const string ServerDefine::LOG_PATH = "Log/";
 const string ServerDefine::EMPTY_STRING = "";
 const char* ServerDefine::DESTROY_CHARACTER_STATE = "Destroy";
 const char* ServerDefine::ZERO_ONE = "ZeroOne";
+bool ServerDefine::mHasError = false;

@@ -21,7 +21,7 @@ bool CodeUtility::initPath()
 	myVector<string> configLines = openTxtFileLines("./CodeGenerator_Config.txt");
 	if (configLines.size() == 0)
 	{
-		cout << "未找到配置文件CodeGenerator_Config.txt" << endl;
+		ERROR("未找到配置文件CodeGenerator_Config.txt");
 		return false;
 	}
 	FOR_VECTOR_CONST(configLines)
@@ -516,12 +516,12 @@ bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeL
 	}
 	if (lineStart < 0)
 	{
-		cout << "找不到代码特定起始段,文件名:" << fullPath << endl;
+		ERROR("找不到代码特定起始段,文件名:" + fullPath);
 		return false;
 	}
 	if (endCode < 0)
 	{
-		cout << "找不到代码特定结束段,文件名:" << fullPath << endl;
+		ERROR("找不到代码特定结束段,文件名:" + fullPath);
 		return false;
 	}
 	int removeLineCount = endCode - lineStart - 1;

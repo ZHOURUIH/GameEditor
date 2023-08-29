@@ -440,7 +440,7 @@ StringUtility::strcat_s(charArray, size, str5);
 #ifdef ERROR
 #undef ERROR
 #endif
-#define ERROR(info) cout << info << " File:" << __FILE__ << ", Line:" << __LINE__ << endl
+#define ERROR(info) cout << info << " File:" << __FILE__ << ", Line:" << __LINE__ << endl;ServerDefine::mHasError = true
 #define INFO(info) cout << info << endl
 
 typedef unsigned char byte;
@@ -644,6 +644,7 @@ public:
 	static const string EMPTY_STRING;
 	static const char* DESTROY_CHARACTER_STATE;
 	static const char* ZERO_ONE;
+	static bool mHasError;
 };
 
 #endif

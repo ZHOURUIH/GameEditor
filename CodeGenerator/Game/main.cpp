@@ -41,5 +41,8 @@ void main()
 		CodeClassDeclareAndHeader::generate();
 		CodeComponent::generate();
 	}
-	system("pause");
+	if (ServerDefine::mHasError)
+	{
+		system("pause");
+	}
 }

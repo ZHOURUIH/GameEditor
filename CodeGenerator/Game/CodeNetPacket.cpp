@@ -61,12 +61,12 @@ void CodeNetPacket::generate()
 		{
 			if (!structStart)
 			{
-				cout << "未找到前一个匹配的{, PacketStruct,前5行内容:" << endl;
+				ERROR("未找到前一个匹配的{, PacketStruct,前5行内容:");
 				int printStartLine = (int)i - 5;
 				clampMin(printStartLine, 0);
 				for (int j = printStartLine; j <= (int)i; ++j)
 				{
-					cout << structLines[j] << endl;
+					ERROR(structLines[j]);
 				}
 			}
 			PacketStruct info;
@@ -131,12 +131,12 @@ void CodeNetPacket::generate()
 		{
 			if (!packetStart)
 			{
-				cout << "未找到前一个匹配的{, NetPacket,前5行内容:" << endl;
+				ERROR("未找到前一个匹配的{, NetPacket,前5行内容:");
 				int printStartLine = (int)i - 5;
 				clampMin(printStartLine, 0);
 				for (int j = printStartLine; j <= (int)i; ++j)
 				{
-					cout << allLines[j] << endl;
+					ERROR(allLines[j]);
 				}
 			}
 			PacketInfo info;
