@@ -89,7 +89,20 @@ SQLiteMember parseSQLiteMemberLine(const string& line, bool ignoreClientServer)
 	int rightPos = 0;
 	if (StringUtility::findString(memberInfo.mMemberName, "(", &leftPos) && StringUtility::findString(memberInfo.mMemberName, ")", &rightPos))
 	{
-		memberInfo.mTypeName = memberInfo.mMemberName.substr(leftPos + 1, rightPos - leftPos - 1);
+		string realType = memberInfo.mMemberName.substr(leftPos + 1, rightPos - leftPos - 1);
+		// 列表类型,则替换列表的元素类型
+		int leftListPos = 0;
+		int rightListPos = 0;
+		if (StringUtility::findString(memberInfo.mTypeName, "Vector<", &leftListPos) && 
+			StringUtility::findString(memberInfo.mTypeName, ">", &rightListPos))
+		{
+			StringUtility::replace(memberInfo.mTypeName, strlen("Vector<") + leftListPos, rightListPos, realType);
+		}
+		// 非列表,则直接替换类型
+		else
+		{
+			memberInfo.mTypeName = realType;
+		}
 		memberInfo.mMemberName = memberInfo.mMemberName.substr(0, leftPos);
 	}
 	return memberInfo;
@@ -156,11 +169,11 @@ void parseSQLiteTemplate(const string& filePath, Map<string, SQLiteInfo>& sqlite
 			Vector<string> tagList;
 			while (true)
 			{
-				if (StringUtility::findString(lastLine.c_str(), "[", &startIndex, tagStartIndex))
+				if (!StringUtility::findString(lastLine.c_str(), "[", &startIndex, tagStartIndex))
 				{
 					break;
 				}
-				if (StringUtility::findString(lastLine.c_str(), "]", &endIndex, startIndex))
+				if (!StringUtility::findString(lastLine.c_str(), "]", &endIndex, startIndex))
 				{
 					break;
 				}
@@ -296,223 +309,224 @@ int main()
 				FileUtility::writeFile(sqliteFilePath, content.mBuffer, content.mFileSize);
 				cout << "加密并拷贝文件:" << sqliteFilePath << endl;
 			}
-			continue;
 		}
-
-		Serializer serializer;
-		SQLiteTableBase table;
-		table.setTableName(tableName);
-		table.init(file);
-		SQLiteDataReader* reader = table.doSelect();
-		if (reader == nullptr)
+		else
 		{
-			cout << "加载表格失败:" << file << endl;
-			system("pause");
-			return 0;
-		}
-		while (reader->read())
-		{
-			const auto& memberList = sqliteTableInfo.mMemberList;
-			FOR_CONST_J(memberList)
+			Serializer serializer;
+			SQLiteTableBase table;
+			table.setTableName(tableName);
+			table.init(file);
+			SQLiteDataReader* reader = table.doSelect();
+			if (reader == nullptr)
 			{
-				const string& typeName = memberList[j].mTypeName;
-				if (memberList[j].mOwner != SQLITE_OWNER::CLIENT_ONLY && memberList[j].mOwner != SQLITE_OWNER::BOTH)
-				{
-					continue;
-				}
-				if (typeName == "bool")
-				{
-					serializer.write(reader->getInt(j) != 0);
-				}
-				else if (typeName == "byte")
-				{
-					serializer.write((byte)reader->getInt(j));
-				}
-				else if (typeName == "char")
-				{
-					serializer.write((char)reader->getInt(j));
-				}
-				else if (typeName == "short")
-				{
-					serializer.write((short)reader->getInt(j));
-				}
-				else if (typeName == "ushort")
-				{
-					serializer.write((ushort)reader->getInt(j));
-				}
-				else if (typeName == "int")
-				{
-					serializer.write(reader->getInt(j));
-				}
-				else if (typeName == "uint")
-				{
-					serializer.write((uint)reader->getInt(j));
-				}
-				else if (typeName == "float")
-				{
-					serializer.write(reader->getFloat(j));
-				}
-				else if (typeName == "llong")
-				{
-					serializer.write(reader->getLLong(j));
-				}
-				else if (typeName == "string")
-				{
-					string value;
-					reader->getString(j, value, false);
-					serializer.writeString(value.c_str());
-				}
-				else if (typeName == "Vector<bool>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<bool> bools;
-					StringUtility::stringToBools(value, bools);
-					serializer.writeArray(bools);
-				}
-				else if (typeName == "Vector<byte>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<byte> bytes;
-					StringUtility::stringToBytes(value, bytes);
-					serializer.writeArray(bytes);
-				}
-				else if (typeName == "Vector<short>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<short> shorts;
-					StringUtility::stringToShorts(value, shorts);
-					serializer.writeArray(shorts);
-				}
-				else if (typeName == "Vector<ushort>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<ushort> ushorts;
-					StringUtility::stringToUShorts(value, ushorts);
-					serializer.writeArray(ushorts);
-				}
-				else if (typeName == "Vector<int>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<int> ints;
-					StringUtility::stringToInts(value, ints);
-					serializer.writeArray(ints);
-				}
-				else if (typeName == "Vector<uint>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<uint> uints;
-					StringUtility::stringToUInts(value, uints);
-					serializer.writeArray(uints);
-				}
-				else if (typeName == "Vector<float>")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<float> floats;
-					StringUtility::stringToFloats(value, floats);
-					serializer.writeArray(floats);
-				}
-				else if (typeName == "Vector<string>")
-				{
-					string value;
-					reader->getString(j, value, false);
-					Vector<string> strings;
-					StringUtility::split(value, ",", strings);
-					serializer.writeArray(strings);
-				}
-				else if (typeName == "Vector2Short")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<short> shorts;
-					StringUtility::stringToShorts(value, shorts);
-					if (shorts.size() == 0)
-					{
-						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
-						system("pause");
-						return 0;
-					}
-					serializer.write(shorts[0]);
-					serializer.write(shorts[1]);
-				}
-				else if (typeName == "Vector2UShort")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<ushort> ushorts;
-					StringUtility::stringToUShorts(value, ushorts);
-					if (ushorts.size() == 0)
-					{
-						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
-						system("pause");
-						return 0;
-					}
-					serializer.write(ushorts[0]);
-					serializer.write(ushorts[1]);
-				}
-				else if (typeName == "Vector2Int")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<int> ints;
-					StringUtility::stringToInts(value, ints);
-					if (ints.size() == 0)
-					{
-						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
-						system("pause");
-						return 0;
-					}
-					serializer.write(ints[0]);
-					serializer.write(ints[1]);
-				}
-				else if (typeName == "Vector2UInt")
-				{
-					string value;
-					reader->getString(j, value);
-					Vector<uint> uints;
-					StringUtility::stringToUInts(value, uints);
-					if (uints.size() == 0)
-					{
-						llong id = reader->getLLong(0);
-						cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
-						system("pause");
-						return 0;
-					}
-					serializer.write(uints[0]);
-					serializer.write(uints[1]);
-				}
-				else
-				{
-					cout << "无法识别的字段类型:" << typeName << endl;
-					system("pause");
-					return 0;
-				}
+				cout << "加载表格失败:" << file << endl;
+				system("pause");
+				return 0;
 			}
-			END_CONST();
-		}
-		table.releaseReader(reader);
-		// 重新计算密钥
-		string key = "ASLD" + tableName;
-		key = FileUtility::generateFileMD5(key.c_str(), key.length()) + "23y35y983";
-		char* buffer = serializer.getWriteableBuffer();
-		uint bufferSize = serializer.getBufferSize();
-		FOR_J(bufferSize)
-		{
-			buffer[j] = (buffer[j] - ((j << 1) & 0xFF)) ^ key[j % key.length()];
-		}
+			while (reader->read())
+			{
+				const auto& memberList = sqliteTableInfo.mMemberList;
+				FOR_CONST_J(memberList)
+				{
+					const string& typeName = memberList[j].mTypeName;
+					if (memberList[j].mOwner != SQLITE_OWNER::CLIENT_ONLY && memberList[j].mOwner != SQLITE_OWNER::BOTH)
+					{
+						continue;
+					}
+					if (typeName == "bool")
+					{
+						serializer.write(reader->getInt(j) != 0);
+					}
+					else if (typeName == "byte")
+					{
+						serializer.write((byte)reader->getInt(j));
+					}
+					else if (typeName == "char")
+					{
+						serializer.write((char)reader->getInt(j));
+					}
+					else if (typeName == "short")
+					{
+						serializer.write((short)reader->getInt(j));
+					}
+					else if (typeName == "ushort")
+					{
+						serializer.write((ushort)reader->getInt(j));
+					}
+					else if (typeName == "int")
+					{
+						serializer.write(reader->getInt(j));
+					}
+					else if (typeName == "uint")
+					{
+						serializer.write((uint)reader->getInt(j));
+					}
+					else if (typeName == "float")
+					{
+						serializer.write(reader->getFloat(j));
+					}
+					else if (typeName == "llong")
+					{
+						serializer.write(reader->getLLong(j));
+					}
+					else if (typeName == "string")
+					{
+						string value;
+						reader->getString(j, value, false);
+						serializer.writeString(value.c_str());
+					}
+					else if (typeName == "Vector<bool>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<bool> bools;
+						StringUtility::stringToBools(value, bools);
+						serializer.writeArray(bools);
+					}
+					else if (typeName == "Vector<byte>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<byte> bytes;
+						StringUtility::stringToBytes(value, bytes);
+						serializer.writeArray(bytes);
+					}
+					else if (typeName == "Vector<short>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<short> shorts;
+						StringUtility::stringToShorts(value, shorts);
+						serializer.writeArray(shorts);
+					}
+					else if (typeName == "Vector<ushort>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<ushort> ushorts;
+						StringUtility::stringToUShorts(value, ushorts);
+						serializer.writeArray(ushorts);
+					}
+					else if (typeName == "Vector<int>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<int> ints;
+						StringUtility::stringToInts(value, ints);
+						serializer.writeArray(ints);
+					}
+					else if (typeName == "Vector<uint>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<uint> uints;
+						StringUtility::stringToUInts(value, uints);
+						serializer.writeArray(uints);
+					}
+					else if (typeName == "Vector<float>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<float> floats;
+						StringUtility::stringToFloats(value, floats);
+						serializer.writeArray(floats);
+					}
+					else if (typeName == "Vector<string>")
+					{
+						string value;
+						reader->getString(j, value, false);
+						Vector<string> strings;
+						StringUtility::split(value, ",", strings);
+						serializer.writeArray(strings);
+					}
+					else if (typeName == "Vector2Short")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<short> shorts;
+						StringUtility::stringToShorts(value, shorts);
+						if (shorts.size() == 0)
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.write(shorts[0]);
+						serializer.write(shorts[1]);
+					}
+					else if (typeName == "Vector2UShort")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<ushort> ushorts;
+						StringUtility::stringToUShorts(value, ushorts);
+						if (ushorts.size() == 0)
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.write(ushorts[0]);
+						serializer.write(ushorts[1]);
+					}
+					else if (typeName == "Vector2Int")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<int> ints;
+						StringUtility::stringToInts(value, ints);
+						if (ints.size() == 0)
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.write(ints[0]);
+						serializer.write(ints[1]);
+					}
+					else if (typeName == "Vector2UInt")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<uint> uints;
+						StringUtility::stringToUInts(value, uints);
+						if (uints.size() == 0)
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.write(uints[0]);
+						serializer.write(uints[1]);
+					}
+					else
+					{
+						cout << "无法识别的字段类型:" << typeName << endl;
+						system("pause");
+						return 0;
+					}
+				}
+				END_CONST();
+			}
+			table.releaseReader(reader);
+			// 重新计算密钥
+			string key = "ASLD" + tableName;
+			key = FileUtility::generateFileMD5(key.c_str(), key.length()) + "23y35y983";
+			char* buffer = serializer.getWriteableBuffer();
+			uint bufferSize = serializer.getBufferSize();
+			FOR_J(bufferSize)
+			{
+				buffer[j] = (buffer[j] - ((j << 1) & 0xFF)) ^ key[j % key.length()];
+			}
 
-		string fullPath = destPath + "/" + tableName + ".bytes";
-		serializer.writeToFile(fullPath);
-		cout << "生成文件:" << fullPath << endl;
+			string fullPath = destPath + "/" + tableName + ".bytes";
+			serializer.writeToFile(fullPath);
+			cout << "生成文件:" << fullPath << endl;
+		}
 	}
 	return 0;
 }
