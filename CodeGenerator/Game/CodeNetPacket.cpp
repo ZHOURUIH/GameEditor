@@ -246,7 +246,8 @@ void CodeNetPacket::generate()
 		}
 		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFile(packetInfo, scHeaderPath);
+		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
+		generateCppSCPacketFileSource(packetInfo, scHeaderPath);
 	}
 	generateCppGamePacketDefineFile(gamePacketList, cppGamePacketDefinePath);
 	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
@@ -312,7 +313,8 @@ void CodeNetPacket::generate()
 		}
 		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
 		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFile(packetInfo, scHeaderPath);
+		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
+		generateCppSCPacketFileSource(packetInfo, scHeaderPath);
 	}
 	generateCppGameCorePacketDefineFile(gameCorePacketList, cppGameCorePacketDefinePath);
 	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
@@ -1564,7 +1566,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 }
 
 // SCPacket.hÎÄ¼þ
-void CodeNetPacket::generateCppSCPacketFile(const PacketInfo& packetInfo, const string& filePath)
+void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
 	if (!startWith(packetName, "SC"))
@@ -1607,7 +1609,6 @@ void CodeNetPacket::generateCppSCPacketFile(const PacketInfo& packetInfo, const 
 	generateCodes.push_back("\t}");
 	generateCppPacketReadWrite(packetInfo, generateCodes);
 
-	// SCPacket.h
 	string headerFullPath = filePath + packetName + ".h";
 	if (isFileExist(headerFullPath))
 	{
@@ -1650,8 +1651,16 @@ void CodeNetPacket::generateCppSCPacketFile(const PacketInfo& packetInfo, const 
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
+}
 
-	// SCPacket.cpp
+// SCPacket.cpp
+void CodeNetPacket::generateCppSCPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
+{
+	const string& packetName = packetInfo.mPacketName;
+	if (!startWith(packetName, "SC"))
+	{
+		return;
+	}
 	string cppFullPath = filePath + packetName + ".cpp";
 	if (isFileExist(cppFullPath))
 	{
