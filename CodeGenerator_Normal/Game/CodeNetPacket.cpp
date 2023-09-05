@@ -230,6 +230,7 @@ void CodeNetPacket::generateServer(const myVector<string>& gamePacketNameList, c
 		generateServerCSPacketFileHeader(packetInfo, csHeaderPath, "");
 		generateServerCSPacketFileSource(packetInfo, csSourcePath);
 		generateServerSCPacketFileHeader(packetInfo, scHeaderPath, "");
+		generateServerSCPacketFileSource(packetInfo, scHeaderPath, "");
 	}
 	generateServerGamePacketDefineFile(packetInfoList, cppGamePacketDefinePath);
 	generateServerGamePacketRegisteFile(packetInfoList, cppGamePacketDefinePath, packetVersion);
@@ -534,8 +535,9 @@ void CodeNetPacket::generateServerCSPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("public:");
 	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, true);
 	generateCodes.push_back("public:");
-	generateCodes.push_back("\tvoid init() override");
+	generateCodes.push_back("\t" + packetName + "()");
 	generateCodes.push_back("\t{");
+	generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
 	generateCppPacketReadWrite(packetInfo, generateCodes, true, true);
@@ -565,6 +567,7 @@ void CodeNetPacket::generateServerCSPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"PacketDefinegenerateServerSCPacketFileHeader.h\"");
 		codeList.push_back("#include \"SerializerBitRead.h\"");
 		codeList.push_back("#include \"SerializerBitWrite.h\"");
 		codeList.push_back("");
@@ -1096,6 +1099,7 @@ int CodeNetPacket::findPacketVersion(const string& filePath)
 	return packetVersion;
 }
 
+// 服务器的SCPacket.cpp
 void CodeNetPacket::generateServerCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
@@ -1119,6 +1123,7 @@ void CodeNetPacket::generateServerCSPacketFileSource(const PacketInfo& packetInf
 	}
 }
 
+// 客户端的SCPacket.cpp
 void CodeNetPacket::generateClientSCPacketFileSource(const PacketInfo& packetInfo, const string& filePath)
 {
 	const string& packetName = packetInfo.mPacketName;
@@ -1471,7 +1476,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 	}
 }
 
-// SCPacket.h文件
+// 服务器的SCPacket.h文件
 void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
 {
 	const string& packetName = packetInfo.mPacketName;
@@ -1493,10 +1498,18 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 	generateCodes.push_back("\tBASE(Packet);");
 	generateCodes.push_back("public:");
 	generateCppPacketMemberDeclare(packetInfo.mMemberList, generateCodes, true);
+	generateCodes.push_back("private:");
+	generateCodes.push_back("\tstatic " + packetName + " mStaticObject;");
 	generateCodes.push_back("public:");
-	generateCodes.push_back("\tvoid init() override");
+	generateCodes.push_back("\t" + packetName + "()");
 	generateCodes.push_back("\t{");
+	generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
+	generateCodes.push_back("\t}");
+	generateCodes.push_back("\tstatic " + packetName + "& get()");
+	generateCodes.push_back("\t{");
+	generateCodes.push_back("\t\tmStaticObject.resetProperty();");
+	generateCodes.push_back("\t\treturn mStaticObject;");
 	generateCodes.push_back("\t}");
 	generateCppPacketReadWrite(packetInfo, generateCodes, true, true);
 
@@ -1524,6 +1537,7 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
+		codeList.push_back("#include \"PacketDefine.h\"");
 		codeList.push_back("#include \"SerializerBitRead.h\"");
 		codeList.push_back("#include \"SerializerBitWrite.h\"");
 		codeList.push_back("");
@@ -1539,7 +1553,41 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 	}
 }
 
-// SCPacket.h文件
+// SCPacket.cpp
+void CodeNetPacket::generateServerSCPacketFileSource(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
+{
+	const string& packetName = packetInfo.mPacketName;
+	if (!startWith(packetName, "SC"))
+	{
+		return;
+	}
+	string cppFullPath = filePath + packetName + ".cpp";
+	if (isFileExist(cppFullPath))
+	{
+		myVector<string> codeList;
+		int lineStart = -1;
+		if (!findCustomCode(cppFullPath, codeList, lineStart,
+			[](const string& codeLine) { return codeLine == "// auto generate start"; },
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
+		{
+			return;
+		}
+		codeList.insert(++lineStart, packetName + " " + packetName + "::mStaticObject;");
+		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+	else
+	{
+		myVector<string> codeList;
+		codeList.push_back("#include \"GameHeader.h\"");
+		codeList.push_back("");
+		codeList.push_back("// auto generate start");
+		codeList.push_back(packetName + " " + packetName + "::mStaticObject;");
+		codeList.push_back("// auto generate end");
+		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	}
+}
+
+// 客户端的SCPacket.h文件
 void CodeNetPacket::generateClientSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro)
 {
 	const string& packetName = packetInfo.mPacketName;

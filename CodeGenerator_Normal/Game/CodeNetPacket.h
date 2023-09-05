@@ -12,8 +12,9 @@ protected:
 	static void generateServerGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
 	static void generateServerGamePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);
 	static void generateServerCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro);
-	static void generateServerSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro);
 	static void generateServerCSPacketFileSource(const PacketInfo& packetInfo, const string& filePath);
+	static void generateServerSCPacketFileHeader(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro);
+	static void generateServerSCPacketFileSource(const PacketInfo& packetInfo, const string& filePath, const string& apiMacro);
 	// ¿Í»§¶Ë
 	static void generateClient(const myVector<string>& gamePacketNameList, const myVector<PacketInfo>& packetInfoList, const myVector<PacketStruct>& structInfoList, int packetVersion);
 	static void generateClientGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
