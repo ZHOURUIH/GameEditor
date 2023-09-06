@@ -1607,6 +1607,22 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\t\tmStaticObject.resetProperty();");
 	generateCodes.push_back("\t\treturn mStaticObject;");
 	generateCodes.push_back("\t}");
+	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
+	{
+		generateCodes.push_back("\tstatic constexpr ushort getStaticType() { return PACKET_TYPE_CORE::" + packetName + "; }");
+	}
+	else
+	{
+		generateCodes.push_back("\tstatic constexpr ushort getStaticType() { return PACKET_TYPE::" + packetName + "; }");
+	}
+	if (packetInfo.mMemberList.size() > 0)
+	{
+		generateCodes.push_back("\tstatic constexpr bool hasMember() { return true; }");
+	}
+	else
+	{
+		generateCodes.push_back("\tstatic constexpr bool hasMember() { return false; }");
+	}
 	generateCppPacketReadWrite(packetInfo, generateCodes);
 
 	string headerFullPath = filePath + packetName + ".h";
