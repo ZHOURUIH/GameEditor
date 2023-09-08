@@ -7,6 +7,7 @@ class CodeNetPacket : public CodeUtility
 {
 public:
 	static void generate();
+	static void generateVirtualClient();
 protected:
 	//c++
 	static void generateCppGamePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath);
@@ -26,6 +27,11 @@ protected:
 	static void generateCSharpPacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath, int packetVersion);
 	static void generateCSharpPacketFile(const PacketInfo& packetInfo, const string& csFileHotfixPath, const string& csFileGamePath, const string& scFileHotfixPath, const string& scFileGamePath);
 	static void generateCSharpStruct(const PacketStruct& structInfo, const string& gamePath, const string& hotFixPath);
+protected:
+	static void generateCpp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int& packetVersion);
+	static void generateCSharp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int packetVersion);
+	static void generateCSharpVirtualClient(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int packetVersion);
+	static void parsePacketConfig(myVector<PacketStruct>& structInfoList, myVector<PacketInfo>& packetInfoList);
 };
 
 #endif

@@ -11,6 +11,7 @@ class CodeUtility : public SystemUtility
 protected:
 	static string ServerProjectPath;
 	static string ClientProjectPath;
+	static string VirtualClientProjectPath;
 	static myVector<string> ServerExcludeIncludePath;
 	static string cppGameProjectPath;
 	static string cppGameCoreProjectPath;
@@ -22,6 +23,7 @@ protected:
 	static string cppGameCoreStringDefineHeaderFile;
 	static string csGamePath;
 	static string csHotfixGamePath;
+	static string VirtualClientSocketPath;
 	static string START_FALG;
 public:
 	static bool initPath();

@@ -3,6 +3,7 @@
 
 string CodeUtility::ServerProjectPath;
 string CodeUtility::ClientProjectPath;
+string CodeUtility::VirtualClientProjectPath;
 myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::cppGameProjectPath;
 string CodeUtility::cppGameCoreProjectPath;
@@ -14,6 +15,7 @@ string CodeUtility::cppGameStringDefineHeaderFile;
 string CodeUtility::cppGameCoreStringDefineHeaderFile;
 string CodeUtility::csGamePath;
 string CodeUtility::csHotfixGamePath;
+string CodeUtility::VirtualClientSocketPath;
 string CodeUtility::START_FALG = "#start";
 
 bool CodeUtility::initPath()
@@ -37,7 +39,7 @@ bool CodeUtility::initPath()
 		{
 			ServerProjectPath = params[1];
 		}
-		else if (params[0] == "GAME_PROJECT_PATH")
+		else if (params[0] == "CLIENT_PROJECT_PATH")
 		{
 			ClientProjectPath = params[1];
 		}
@@ -46,14 +48,18 @@ bool CodeUtility::initPath()
 			rightToLeft(params[1]);
 			split(params[1].c_str(), ",", ServerExcludeIncludePath);
 		}
+		else if (params[0] == "VIRTUAL_CLIENT_PROJECT_PATH")
+		{
+			VirtualClientProjectPath = params[1];
+		}
 	}
 
-	if (ServerProjectPath == "" && ClientProjectPath == "")
+	if (ServerProjectPath.empty() && ClientProjectPath.empty() && VirtualClientProjectPath.empty())
 	{
 		return false;
 	}
 
-	if (ServerProjectPath.length() > 0)
+	if (!ServerProjectPath.empty())
 	{
 		rightToLeft(ServerProjectPath);
 		validPath(ServerProjectPath);
@@ -66,12 +72,18 @@ bool CodeUtility::initPath()
 		cppGameCoreStringDefineHeaderFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
 		cppGameStringDefineHeaderFile = cppGamePath + "Common/GameStringDefine.h";
 	}
-	if (ClientProjectPath.length() > 0)
+	if (!ClientProjectPath.empty())
 	{
 		rightToLeft(ClientProjectPath);
 		validPath(ClientProjectPath);
 		csGamePath = ClientProjectPath + "Assets/Scripts/Game/";
 		csHotfixGamePath = ClientProjectPath + "HotFix/Game/";
+	}
+	if (!VirtualClientProjectPath.empty())
+	{
+		rightToLeft(VirtualClientProjectPath);
+		validPath(VirtualClientProjectPath);
+		VirtualClientSocketPath = VirtualClientProjectPath + "Assets/Scripts/Game/Socket/";
 	}
 	return true;
 }

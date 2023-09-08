@@ -3,6 +3,41 @@
 void CodeNetPacket::generate()
 {
 	print("正在生成网络消息");
+	myVector<PacketStruct> structInfoList;
+	myVector<PacketInfo> packetInfoList;
+	parsePacketConfig(structInfoList, packetInfoList);
+
+	int packetVersion = 0;
+	generateCpp(structInfoList, packetInfoList, packetVersion);
+
+	if (!csGamePath.empty())
+	{
+		generateCSharp(structInfoList, packetInfoList, packetVersion);
+	}
+	print("完成生成网络消息");
+	print("");
+}
+
+void CodeNetPacket::generateVirtualClient()
+{
+	if (VirtualClientSocketPath.empty())
+	{
+		ERROR("未配置虚拟客户端项目路径");
+		return;
+	}
+	print("正在生成虚拟客户端网络消息");
+	myVector<PacketStruct> structInfoList;
+	myVector<PacketInfo> packetInfoList;
+	parsePacketConfig(structInfoList, packetInfoList);
+
+	int packetVersion = findPacketVersion(cppGamePath + "Socket/GamePacketRegister.cpp");
+	generateCSharpVirtualClient(structInfoList, packetInfoList, packetVersion);
+	print("完成生成虚拟客户端网络消息");
+	print("");
+}
+
+void CodeNetPacket::parsePacketConfig(myVector<PacketStruct>& structInfoList, myVector<PacketInfo>& packetInfoList)
+{
 	// 解析模板文件
 	myVector<string> csLines = openTxtFileLines("PacketCS.txt");
 	myVector<string> scLines = openTxtFileLines("PacketSC.txt");
@@ -20,7 +55,6 @@ void CodeNetPacket::generate()
 
 	// 解析结构体定义
 	bool structStart = false;
-	myVector<PacketStruct> structInfoList;
 	myVector<PacketMember> tempStructMemberList;
 	int tempStructNameLine = 0;
 	FOR_VECTOR(structLines)
@@ -90,7 +124,6 @@ void CodeNetPacket::generate()
 	allLines.addRange(csLines);
 	allLines.addRange(scLines);
 	bool packetStart = false;
-	myVector<PacketInfo> packetInfoList;
 	myVector<PacketMember> tempMemberList;
 	int tempPacketNameLine = 0;
 	FOR_VECTOR(allLines)
@@ -154,7 +187,10 @@ void CodeNetPacket::generate()
 			tempMemberList.push_back(parseMemberLine(line));
 		}
 	}
+}
 
+void CodeNetPacket::generateCpp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int& packetVersion)
+{
 	myVector<PacketInfo> gamePacketList;
 	myVector<PacketInfo> gameCorePacketList;
 	myVector<string> gamePacketNameList;
@@ -186,8 +222,6 @@ void CodeNetPacket::generate()
 			gameCoreStructList.push_back(info);
 		}
 	}
-	// c++
-	//------------------------------------------------------------------------------------------------------------------------------
 	// Game层的消息
 	string cppGameCSPacketPath = cppGamePath + "Socket/ClientServer/";
 	string cppGameSCPacketPath = cppGamePath + "Socket/ServerClient/";
@@ -218,7 +252,7 @@ void CodeNetPacket::generate()
 	}
 
 	// 打开服务器的消息注册文件,找到当前的消息版本号,然后版本号自增
-	int packetVersion = findPacketVersion(cppGamePacketDefinePath + "GamePacketRegister.cpp") + 1;
+	packetVersion = findPacketVersion(cppGamePacketDefinePath + "GamePacketRegister.cpp") + 1;
 	// 生成c++代码
 	for (const PacketInfo& packetInfo : gamePacketList)
 	{
@@ -323,108 +357,189 @@ void CodeNetPacket::generate()
 	{
 		generateCppStruct(info, cppGameCoreStructPath);
 	}
+}
 
-	// c#
-	//------------------------------------------------------------------------------------------------------------------------------
-	if (!csGamePath.empty())
+void CodeNetPacket::generateCSharp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, const int packetVersion)
+{
+	string csharpCSGamePath = csGamePath + "Socket/ClientServer/";
+	string csharpCSHotfixPath = csHotfixGamePath + "Socket/ClientServer/";
+	string csharpSCGamePath = csGamePath + "Socket/ServerClient/";
+	string csharpSCHotfixPath = csHotfixGamePath + "Socket/ServerClient/";
+	string csharpStructGamePath = csGamePath + "Socket/Struct/";
+	string csharpStructHotfixPath = csHotfixGamePath + "Socket/Struct/";
+	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
+
+	myVector<PacketInfo> gamePacketList;
+	myVector<PacketInfo> gameCorePacketList;
+	myVector<string> gamePacketNameList;
+	myVector<string> gameCorePacketNameList;
+	for (const PacketInfo& packetInfo : packetInfoList)
 	{
-		string csharpCSGamePath = csGamePath + "Socket/ClientServer/";
-		string csharpCSHotfixPath = csHotfixGamePath + "Socket/ClientServer/";
-		string csharpSCGamePath = csGamePath + "Socket/ServerClient/";
-		string csharpSCHotfixPath = csHotfixGamePath + "Socket/ServerClient/";
-		string csharpStructGamePath = csGamePath + "Socket/Struct/";
-		string csharpStructHotfixPath = csHotfixGamePath + "Socket/Struct/";
-		string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
-		myVector<string> hotfixList;
-		myVector<string> noHotfixList;
-		for (const PacketInfo& packetInfo : packetInfoList)
+		if (packetInfo.mOwner == PACKET_OWNER::GAME)
 		{
-			if (packetInfo.mHotFix)
-			{
-				hotfixList.push_back(packetInfo.mPacketName);
-			}
-			else
-			{
-				noHotfixList.push_back(packetInfo.mPacketName);
-			}
+			gamePacketNameList.push_back(packetInfo.mPacketName);
+			gamePacketList.push_back(packetInfo);
 		}
-		// 删除无用的消息
-		// c# CS非热更
-		myVector<string> csharpCSNoHotfixFiles;
-		findFiles(csharpCSGamePath, csharpCSNoHotfixFiles, ".cs");
-		for (const string& file : csharpCSNoHotfixFiles)
+		else
 		{
-			if (!noHotfixList.contains(getFileNameNoSuffix(file, true)))
-			{
-				deleteFile(file);
-				deleteFile(file + ".meta");
-			}
-		}
-		// c# CS热更
-		myVector<string> csharpCSHotfixFiles;
-		findFiles(csharpCSHotfixPath, csharpCSHotfixFiles, ".cs");
-		for (const string& file : csharpCSHotfixFiles)
-		{
-			if (!hotfixList.contains(getFileNameNoSuffix(file, true)))
-			{
-				deleteFile(file);
-				deleteFile(file + ".meta");
-			}
-		}
-		// c# SC非热更
-		myVector<string> csharpSCNoHotfixFiles;
-		findFiles(csharpSCGamePath, csharpSCNoHotfixFiles, ".cs");
-		for (const string& file : csharpSCNoHotfixFiles)
-		{
-			if (!noHotfixList.contains(getFileNameNoSuffix(file, true)))
-			{
-				deleteFile(file);
-				deleteFile(file + ".meta");
-			}
-		}
-		// c# SC热更
-		myVector<string> csharpSCHotfixFiles;
-		findFiles(csharpSCHotfixPath, csharpSCHotfixFiles, ".cs");
-		for (const string& file : csharpSCHotfixFiles)
-		{
-			if (!hotfixList.contains(getFileNameNoSuffix(file, true)))
-			{
-				deleteFile(file);
-				deleteFile(file + ".meta");
-			}
-		}
-		// 删除当前所有的结构体代码
-		myVector<string> csharpGameStructFiles;
-		findFiles(csharpStructGamePath, csharpGameStructFiles, ".cs");
-		for (const string& file : csharpGameStructFiles)
-		{
-			deleteFile(file);
-			deleteFile(file + ".meta");
-		}
-		myVector<string> csharpHotfixStructFiles;
-		findFiles(csharpStructHotfixPath, csharpHotfixStructFiles, ".cs");
-		for (const string& file : csharpHotfixStructFiles)
-		{
-			deleteFile(file);
-			deleteFile(file + ".meta");
-		}
-
-		// 生成cs代码
-		for (const PacketInfo& packetInfo : packetInfoList)
-		{
-			generateCSharpPacketFile(packetInfo, csharpCSHotfixPath, csharpCSGamePath, csharpSCHotfixPath, csharpSCGamePath);
-		}
-		generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
-		generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
-
-		// 生成结构体代码
-		for (const PacketStruct& item : structInfoList)
-		{
-			generateCSharpStruct(item, csharpStructGamePath, csharpStructHotfixPath);
+			gameCorePacketNameList.push_back(packetInfo.mPacketName);
+			gameCorePacketList.push_back(packetInfo);
 		}
 	}
-	print("完成生成网络消息");
-	print("");
+
+	myVector<string> hotfixList;
+	myVector<string> noHotfixList;
+	for (const PacketInfo& packetInfo : packetInfoList)
+	{
+		if (packetInfo.mHotFix)
+		{
+			hotfixList.push_back(packetInfo.mPacketName);
+		}
+		else
+		{
+			noHotfixList.push_back(packetInfo.mPacketName);
+		}
+	}
+	// 删除无用的消息
+	// c# CS非热更
+	myVector<string> csharpCSNoHotfixFiles;
+	findFiles(csharpCSGamePath, csharpCSNoHotfixFiles, ".cs");
+	for (const string& file : csharpCSNoHotfixFiles)
+	{
+		if (!noHotfixList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
+	}
+	// c# CS热更
+	myVector<string> csharpCSHotfixFiles;
+	findFiles(csharpCSHotfixPath, csharpCSHotfixFiles, ".cs");
+	for (const string& file : csharpCSHotfixFiles)
+	{
+		if (!hotfixList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+		}
+	}
+	// c# SC非热更
+	myVector<string> csharpSCNoHotfixFiles;
+	findFiles(csharpSCGamePath, csharpSCNoHotfixFiles, ".cs");
+	for (const string& file : csharpSCNoHotfixFiles)
+	{
+		if (!noHotfixList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
+	}
+	// c# SC热更
+	myVector<string> csharpSCHotfixFiles;
+	findFiles(csharpSCHotfixPath, csharpSCHotfixFiles, ".cs");
+	for (const string& file : csharpSCHotfixFiles)
+	{
+		if (!hotfixList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+		}
+	}
+	// 删除当前所有的结构体代码,因为结构体中不包含自定义的代码,所以可以全部重新生成
+	myVector<string> csharpGameStructFiles;
+	findFiles(csharpStructGamePath, csharpGameStructFiles, ".cs");
+	for (const string& file : csharpGameStructFiles)
+	{
+		deleteFile(file);
+		deleteFile(file + ".meta");
+	}
+	myVector<string> csharpHotfixStructFiles;
+	findFiles(csharpStructHotfixPath, csharpHotfixStructFiles, ".cs");
+	for (const string& file : csharpHotfixStructFiles)
+	{
+		deleteFile(file);
+	}
+
+	// 生成cs代码
+	for (const PacketInfo& packetInfo : packetInfoList)
+	{
+		generateCSharpPacketFile(packetInfo, csharpCSHotfixPath, csharpCSGamePath, csharpSCHotfixPath, csharpSCGamePath);
+	}
+	generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
+	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
+
+	// 生成结构体代码
+	for (const PacketStruct& item : structInfoList)
+	{
+		generateCSharpStruct(item, csharpStructGamePath, csharpStructHotfixPath);
+	}
+}
+
+void CodeNetPacket::generateCSharpVirtualClient(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, const int packetVersion)
+{
+	string csharpCSGamePath = VirtualClientSocketPath + "ClientServer/";
+	string csharpSCGamePath = VirtualClientSocketPath + "ServerClient/";
+	string csharpStructGamePath = VirtualClientSocketPath + "Struct/";
+	string csharpPacketDefinePath = VirtualClientSocketPath;
+
+	myVector<PacketInfo> gamePacketList;
+	myVector<PacketInfo> gameCorePacketList;
+	myVector<string> packetNameList;
+	for (const PacketInfo& packetInfo : packetInfoList)
+	{
+		packetNameList.push_back(packetInfo.mPacketName);
+		if (packetInfo.mOwner == PACKET_OWNER::GAME)
+		{
+			gamePacketList.push_back(packetInfo);
+		}
+		else
+		{
+			gameCorePacketList.push_back(packetInfo);
+		}
+	}
+
+	// 删除无用的消息
+	// CS
+	myVector<string> csharpCSFiles;
+	findFiles(csharpCSGamePath, csharpCSFiles, ".cs");
+	for (const string& file : csharpCSFiles)
+	{
+		if (!packetNameList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
+	}
+	// SC
+	myVector<string> csharpSCFiles;
+	findFiles(csharpSCGamePath, csharpSCFiles, ".cs");
+	for (const string& file : csharpSCFiles)
+	{
+		if (!packetNameList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
+	}
+	// 删除当前所有的结构体代码,因为结构体中不包含自定义的代码,所以可以全部重新生成
+	myVector<string> csharpStructFiles;
+	findFiles(csharpStructGamePath, csharpStructFiles, ".cs");
+	for (const string& file : csharpStructFiles)
+	{
+		deleteFile(file);
+	}
+
+	// 生成cs代码
+	for (const PacketInfo& packetInfo : packetInfoList)
+	{
+		generateCSharpPacketFile(packetInfo, csharpCSGamePath, csharpCSGamePath, csharpSCGamePath, csharpSCGamePath);
+	}
+	generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
+	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
+
+	// 生成结构体代码
+	for (const PacketStruct& item : structInfoList)
+	{
+		generateCSharpStruct(item, csharpStructGamePath, csharpStructGamePath);
+	}
 }
 
 // PacketDefine.h文件

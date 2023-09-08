@@ -18,6 +18,7 @@ void main()
 
 	cout << "0.全部生成(除了网络通信协议代码)" << endl;
 	cout << "1.全部生成(包括网络通信协议代码)" << endl;
+	cout << "2.生成虚拟客户端网络通信协议代码" << endl;
 	int input;
 	cin >> input;
 	if (input == 0)
@@ -40,6 +41,10 @@ void main()
 		CodeFrameSystem::generate();
 		CodeClassDeclareAndHeader::generate();
 		CodeComponent::generate();
+	}
+	else if (input == 2)
+	{
+		CodeNetPacket::generateVirtualClient();
 	}
 	if (ServerDefine::mHasError)
 	{
