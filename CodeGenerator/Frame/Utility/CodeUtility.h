@@ -66,6 +66,7 @@ public:
 	static string cppTypeToCSharpType(const string& cppType);
 	static string cSharpTypeToWrapType(const string& csharpType);
 	static string cSharpMemberDeclareString(const PacketMember& memberInfo);
+	static myVector<string> parseTagList(const string& line, string& newLine);
 	static void parseStructName(const string& line, PacketStruct& structInfo);
 	static void parsePacketName(const string& line, PacketInfo& packetInfo);
 	static string convertToCSharpType(const string& cppType);

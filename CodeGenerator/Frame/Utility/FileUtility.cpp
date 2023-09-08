@@ -537,7 +537,7 @@ myVector<string> FileUtility::openTxtFileLines(const string& filePath, bool utf8
 {
 	myVector<string> fileLines;
 	split(openTxtFile(filePath, utf8ToANSI).c_str(), "\n", fileLines);
-	FOR_VECTOR_CONST(fileLines)
+	FOR_VECTOR(fileLines)
 	{
 		removeAll(fileLines[i], '\r');
 	}

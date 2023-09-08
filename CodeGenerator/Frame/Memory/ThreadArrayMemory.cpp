@@ -8,7 +8,6 @@ void ThreadArrayMemory::destroy()
 		char* data = (char*)iter->first;
 		DELETE_ARRAY(data);
 	}
-	END(mMemorySearchMap);
 	mMemorySearchMap.clear();
 	mInuseMemoryList.clear();
 	mUnuseMemoryList.clear();

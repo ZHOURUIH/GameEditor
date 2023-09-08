@@ -55,7 +55,7 @@ void CodeState::generateStateRegister(const myVector<string>& stateList, const s
 		return;
 	}
 	myVector<string> stateRegisteList;
-	FOR_VECTOR_CONST(stateList)
+	FOR_VECTOR(stateList)
 	{
 		if (isGameCore)
 		{

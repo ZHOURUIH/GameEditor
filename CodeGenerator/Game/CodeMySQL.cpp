@@ -19,7 +19,7 @@ void CodeMySQL::generate()
 	myVector<MySQLInfo> gameMySQLInfoList;
 	myVector<MySQLInfo> gameCoreMySQLInfoList;
 	MySQLInfo tempInfo;
-	FOR_VECTOR_CONST(lines)
+	FOR_VECTOR(lines)
 	{
 		if (lines[i] == START_FALG)
 		{

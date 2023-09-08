@@ -888,7 +888,7 @@ void StringUtility::stringToByteArray(const string& str, myVector<byte>& valueLi
 {
 	myVector<string> strList;
 	split(str.c_str(), seperate, strList);
-	FOR_VECTOR_CONST(strList)
+	FOR_VECTOR(strList)
 	{
 		valueList.push_back(stringToInt(strList[i]));
 	}
@@ -940,7 +940,7 @@ void StringUtility::stringToUShortArray(const string& str, myVector<ushort>& val
 {
 	myVector<string> strList;
 	split(str.c_str(), seperate, strList);
-	FOR_VECTOR_CONST(strList)
+	FOR_VECTOR(strList)
 	{
 		valueList.push_back(stringToInt(strList[i]));
 	}
@@ -992,7 +992,7 @@ void StringUtility::stringToIntArray(const string& str, myVector<int>& valueList
 {
 	myVector<string> strList;
 	split(str.c_str(), seperate, strList);
-	FOR_VECTOR_CONST(strList)
+	FOR_VECTOR(strList)
 	{
 		valueList.push_back(stringToInt(strList[i]));
 	}
@@ -1044,7 +1044,7 @@ void StringUtility::stringToUIntArray(const string& str, myVector<uint>& valueLi
 {
 	myVector<string> strList;
 	split(str.c_str(), seperate, strList);
-	FOR_VECTOR_CONST(strList)
+	FOR_VECTOR(strList)
 	{
 		valueList.push_back((uint)stringToInt(strList[i]));
 	}
@@ -1096,7 +1096,7 @@ void StringUtility::stringToULLongArray(const string& str, myVector<ullong>& val
 {
 	myVector<string> strList;
 	split(str.c_str(), seperate, strList);
-	FOR_VECTOR_CONST(strList)
+	FOR_VECTOR(strList)
 	{
 		valueList.push_back(stringToULLong(strList[i]));
 	}
@@ -1576,11 +1576,11 @@ string StringUtility::stringArrayToString(string* strList, uint stringCount, con
 #if RUN_PLATFORM == PLATFORM_WINDOWS
 wstring StringUtility::ANSIToUnicode(const char* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return L"";
 	}
-	int unicodeLen = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+	int unicodeLen = MultiByteToWideChar(CP_ACP, 0, str, -1, nullptr, 0);
 	int allocSize = MathUtility::getGreaterPower2(unicodeLen + 1);
 	wchar_t* pUnicode = ArrayPool::newArray<wchar_t>(allocSize);
 	MultiByteToWideChar(CP_ACP, 0, str, -1, (LPWSTR)pUnicode, unicodeLen);
@@ -1591,29 +1591,29 @@ wstring StringUtility::ANSIToUnicode(const char* str)
 
 string StringUtility::UnicodeToANSI(const wchar_t* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		"";
 	}
-	int iTextLen = WideCharToMultiByte(CP_ACP, 0, str, -1, NULL, 0, NULL, NULL);
+	int iTextLen = WideCharToMultiByte(CP_ACP, 0, str, -1, nullptr, 0, nullptr, nullptr);
 	int allocSize = MathUtility::getGreaterPower2(iTextLen + 1);
 	char* pElementText = ArrayPool::newArray<char>(allocSize);
-	WideCharToMultiByte(CP_ACP, 0, str, -1, pElementText, iTextLen, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, str, -1, pElementText, iTextLen, nullptr, nullptr);
 	string strText(pElementText);
 	ArrayPool::deleteArray(pElementText);
 	return strText;
 }
 string StringUtility::UnicodeToUTF8(const wchar_t* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return "";
 	}
 	// wide char to multi char
-	int iTextLen = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
+	int iTextLen = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
 	int allocSize = MathUtility::getGreaterPower2(iTextLen + 1);
 	char* pElementText = ArrayPool::newArray<char>(allocSize);
-	WideCharToMultiByte(CP_UTF8, 0, str, -1, pElementText, iTextLen, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, str, -1, pElementText, iTextLen, nullptr, nullptr);
 	string strText(pElementText);
 	ArrayPool::deleteArray(pElementText);
 	return strText;
@@ -1621,11 +1621,11 @@ string StringUtility::UnicodeToUTF8(const wchar_t* str)
 
 wstring StringUtility::UTF8ToUnicode(const char* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return L"";
 	}
-	int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+	int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
 	int allocSize = MathUtility::getGreaterPower2(unicodeLen + 1);
 	wchar_t* pUnicode = ArrayPool::newArray<wchar_t>(allocSize);
 	MultiByteToWideChar(CP_UTF8, 0, str, -1, (LPWSTR)pUnicode, unicodeLen);
@@ -1637,11 +1637,11 @@ wstring StringUtility::UTF8ToUnicode(const char* str)
 #elif RUN_PLATFORM == PLATFORM_LINUX
 wstring StringUtility::ANSIToUnicode(const char* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return L"";
 	}
-	char* oldname = setlocale(LC_ALL, NULL);
+	char* oldname = setlocale(LC_ALL, nullptr);
 	try
 	{
 		setlocale(LC_ALL, LC_NAME_zh_CN_GBK);
@@ -1651,7 +1651,7 @@ wstring StringUtility::ANSIToUnicode(const char* str)
 		ERROR("当前系统不支持GBK编码");
 		return L"";
 	}
-	int dSize = mbstowcs(NULL, str, 0) + 1;
+	int dSize = mbstowcs(nullptr, str, 0) + 1;
 	int allocSize = MathUtility::getGreaterPower2(dSize);
 	wchar_t* dBuf = ArrayPool::newArray<wchar_t>(allocSize);
 	mbstowcs(dBuf, str, dSize);
@@ -1663,11 +1663,11 @@ wstring StringUtility::ANSIToUnicode(const char* str)
 
 string StringUtility::UnicodeToANSI(const wchar_t* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return "";
 	}
-	char* oldname = setlocale(LC_ALL, NULL);
+	char* oldname = setlocale(LC_ALL, nullptr);
 	try
 	{
 		setlocale(LC_ALL, LC_NAME_zh_CN_GBK);
@@ -1677,7 +1677,7 @@ string StringUtility::UnicodeToANSI(const wchar_t* str)
 		ERROR("当前系统不支持GBK编码");
 		return EMPTY_STRING;
 	}
-	int dSize = wcstombs(NULL, str, 0) + 1;
+	int dSize = wcstombs(nullptr, str, 0) + 1;
 	int allocSize = MathUtility::getGreaterPower2(dSize);
 	char* dBuf = ArrayPool::newArray<char>(allocSize);
 	wcstombs(dBuf, str, dSize);
@@ -1688,11 +1688,11 @@ string StringUtility::UnicodeToANSI(const wchar_t* str)
 }
 string StringUtility::UnicodeToUTF8(const wchar_t* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return "";
 	}
-	char* oldname = setlocale(LC_ALL, NULL);
+	char* oldname = setlocale(LC_ALL, nullptr);
 	try
 	{
 		setlocale(LC_ALL, LC_NAME_zh_CN_UTF8);
@@ -1702,7 +1702,7 @@ string StringUtility::UnicodeToUTF8(const wchar_t* str)
 		ERROR("当前系统不支持UTF8编码");
 		return EMPTY_STRING;
 	}
-	int dSize = wcstombs(NULL, str, 0) + 1;
+	int dSize = wcstombs(nullptr, str, 0) + 1;
 	int allocSize = MathUtility::getGreaterPower2(dSize);
 	char* dBuf = ArrayPool::newArray<char>(allocSize);
 	wcstombs(dBuf, str, dSize);
@@ -1714,11 +1714,11 @@ string StringUtility::UnicodeToUTF8(const wchar_t* str)
 
 wstring StringUtility::UTF8ToUnicode(const char* str)
 {
-	if (str == NULL || str[0] == 0)
+	if (str == nullptr || str[0] == 0)
 	{
 		return L"";
 	}
-	char* oldname = setlocale(LC_ALL, NULL);
+	char* oldname = setlocale(LC_ALL, nullptr);
 	try
 	{
 		setlocale(LC_ALL, LC_NAME_zh_CN_UTF8);
@@ -1728,7 +1728,7 @@ wstring StringUtility::UTF8ToUnicode(const char* str)
 		ERROR("当前系统不支持UTF8编码");
 		return L"";
 	}
-	int dSize = mbstowcs(NULL, str, 0) + 1;
+	int dSize = mbstowcs(nullptr, str, 0) + 1;
 	int allocSize = MathUtility::getGreaterPower2(dSize);
 	wchar_t* dBuf = ArrayPool::newArray<wchar_t>(allocSize);
 	mbstowcs(dBuf, str, dSize);
@@ -1971,7 +1971,7 @@ bool StringUtility::findSubstr(const string& res, const string& sub, int* pos, u
 			}
 		}
 	}
-	if (pos != NULL)
+	if (pos != nullptr)
 	{
 		*pos = posFind;
 	}
@@ -1996,14 +1996,14 @@ bool StringUtility::findString(const char* str, const char* key, int* pos, uint 
 		}
 		if (find)
 		{
-			if (pos != NULL)
+			if (pos != nullptr)
 			{
 				*pos = i;
 			}
 			return true;
 		}
 	}
-	if (pos != NULL)
+	if (pos != nullptr)
 	{
 		*pos = -1;
 	}
@@ -2235,7 +2235,7 @@ void StringUtility::appendConditionString(char* condition, uint size, const char
 {
 	if (toUTF8)
 	{
-		if (operate == NULL)
+		if (operate == nullptr)
 		{
 			STR_APPEND5_N(condition, size, col, " = ", "\"", ANSIToUTF8(str).c_str(), "\"");
 		}
@@ -2246,7 +2246,7 @@ void StringUtility::appendConditionString(char* condition, uint size, const char
 	}
 	else
 	{
-		if (operate == NULL)
+		if (operate == nullptr)
 		{
 			STR_APPEND5_N(condition, size, col, " = ", "\"", str, "\"");
 		}
@@ -2261,7 +2261,7 @@ void StringUtility::appendConditionInt(char* condition, uint size, const char* c
 {
 	array<char, 16> temp;
 	intToString(temp, value);
-	if (operate == NULL)
+	if (operate == nullptr)
 	{
 		STR_APPEND3_N(condition, size, col, " = ", temp._Elems);
 	}
@@ -2275,7 +2275,7 @@ void StringUtility::appendConditionFloat(char* condition, uint size, const char*
 {
 	array<char, 16> temp;
 	floatToString(temp, value);
-	if (operate == NULL)
+	if (operate == nullptr)
 	{
 		STR_APPEND3_N(condition, size, col, " = ", temp._Elems);
 	}
@@ -2289,7 +2289,7 @@ void StringUtility::appendConditionULLong(char* condition, uint size, const char
 {
 	array<char, 32> temp;
 	ullongToString(temp, value);
-	if (operate == NULL)
+	if (operate == nullptr)
 	{
 		STR_APPEND3_N(condition, size, col, " = ", temp._Elems);
 	}

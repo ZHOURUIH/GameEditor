@@ -114,7 +114,7 @@ int MathUtility::floor(float value)
 uint MathUtility::randomHit(const myVector<float>& oddsList)
 {
 	float max = 0.0f;
-	FOR_VECTOR_CONST(oddsList)
+	FOR_VECTOR(oddsList)
 	{
 		max += oddsList[i];
 	}

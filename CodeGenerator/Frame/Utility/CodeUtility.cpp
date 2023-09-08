@@ -24,7 +24,7 @@ bool CodeUtility::initPath()
 		ERROR("未找到配置文件CodeGenerator_Config.txt");
 		return false;
 	}
-	FOR_VECTOR_CONST(configLines)
+	FOR_VECTOR(configLines)
 	{
 		myVector<string> params;
 		removeAll(configLines[i], ' ', '\t');
@@ -172,7 +172,6 @@ SQLiteMember CodeUtility::parseSQLiteMemberLine(string line, bool ignoreClientSe
 
 PacketMember CodeUtility::parseMemberLine(const string& line)
 {
-	PacketMember memberInfo;
 	myVector<string> memberStrList;
 	split(line.c_str(), " ", memberStrList);
 	if (memberStrList.size() != 2 && memberStrList.size() != 3)
@@ -180,9 +179,16 @@ PacketMember CodeUtility::parseMemberLine(const string& line)
 		ERROR("成员变量行错误:" + line);
 		return PacketMember();
 	}
-	memberInfo.mTypeName = memberStrList[0];
-	strReplaceAll(memberInfo.mTypeName, "\t", "");
+	strReplaceAll(memberStrList[0], "\t", "");
+	PacketMember memberInfo;
+	myVector<string> tagList = parseTagList(memberStrList[0], memberInfo.mTypeName);
+	memberInfo.mOptional = tagList.contains("[Option]");
 	memberInfo.mMemberName = memberStrList[1];
+	memberInfo.mMemberNameNoPrefix = memberInfo.mMemberName;
+	if (memberInfo.mMemberNameNoPrefix[0] == 'm')
+	{
+		memberInfo.mMemberNameNoPrefix.erase(0, 1);
+	}
 	return memberInfo;
 }
 
@@ -223,7 +229,7 @@ string CodeUtility::nameToUpper(const string& sqliteName, bool preUnderLine)
 	}
 	macroList.push_back(sqliteName.substr(lastIndex, length - lastIndex));
 	string headerMacro;
-	FOR_VECTOR_CONST(macroList)
+	FOR_VECTOR(macroList)
 	{
 		headerMacro += "_" + toUpper(macroList[i]);
 	}
@@ -379,24 +385,28 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 	return "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
 }
 
-void CodeUtility::parseStructName(const string& line, PacketStruct& structInfo)
+myVector<string> CodeUtility::parseTagList(const string& line, string& newLine)
 {
-	int tagStartIndex = 0;
-	int startIndex = -1;
-	int endIndex = -1;
-	// 查找标签
+	newLine = line;
 	myVector<string> tagList;
 	while (true)
 	{
-		findString(line.c_str(), "[", &startIndex, tagStartIndex);
-		findString(line.c_str(), "]", &endIndex, startIndex);
-		if (startIndex < 0 || endIndex < 0)
+		int startIndex = -1;
+		int endIndex = -1;
+		if (!findSubstr(newLine, "[", &startIndex) || !findSubstr(newLine, "]", &endIndex, startIndex))
 		{
 			break;
 		}
-		tagList.push_back(line.substr(startIndex, endIndex - startIndex + 1));
-		tagStartIndex = endIndex;
+		tagList.push_back(newLine.substr(startIndex, endIndex - startIndex + 1));
+		newLine = newLine.erase(startIndex, endIndex - startIndex + 1);
 	}
+	return tagList;
+}
+
+void CodeUtility::parseStructName(const string& line, PacketStruct& structInfo)
+{
+	// 查找标签
+	myVector<string> tagList = parseTagList(line, structInfo.mStructName);
 	structInfo.mHotFix = !tagList.contains("[NoHotFix]");
 	bool isGame = tagList.contains("[Game]");
 	bool isGameCore = tagList.contains("[GameCore]");
@@ -412,36 +422,12 @@ void CodeUtility::parseStructName(const string& line, PacketStruct& structInfo)
 		}
 	}
 	structInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
-	// 获取原始的表格名称
-	int firstTagPos = -1;
-	if (findString(line.c_str(), "[", &firstTagPos))
-	{
-		structInfo.mStructName = line.substr(0, firstTagPos);
-	}
-	else
-	{
-		structInfo.mStructName = line;
-	}
 }
 
 void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 {
-	int tagStartIndex = 0;
-	int startIndex = -1;
-	int endIndex = -1;
 	// 查找标签
-	myVector<string> tagList;
-	while (true)
-	{
-		findString(line.c_str(), "[", &startIndex, tagStartIndex);
-		findString(line.c_str(), "]", &endIndex, startIndex);
-		if (startIndex < 0 || endIndex < 0)
-		{
-			break;
-		}
-		tagList.push_back(line.substr(startIndex, endIndex - startIndex + 1));
-		tagStartIndex = endIndex;
-	}
+	myVector<string> tagList = parseTagList(line, packetInfo.mPacketName);
 	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
 	packetInfo.mUDP = tagList.contains("[UDP]");
 	packetInfo.mShowInfo = !tagList.contains("[NoLog]");
@@ -459,16 +445,6 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 		}
 	}
 	packetInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
-	// 获取原始的表格名称
-	int firstTagPos = -1;
-	if (findString(line.c_str(), "[", &firstTagPos))
-	{
-		packetInfo.mPacketName = line.substr(0, firstTagPos);
-	}
-	else
-	{
-		packetInfo.mPacketName = line;
-	}
 }
 
 string CodeUtility::convertToCSharpType(const string& cppType)

@@ -26,7 +26,6 @@ bool SerializedData::readFromBuffer(char* pBuffer, uint bufferSize)
 		// 读取实际的数组数据
 		ret = ret && readBuffer(pBuffer, bufferSize, bufferOffset, param.mDataPtr, param.mRealSize);
 	}
-	END(mDataParameterList);
 	return ret;
 }
 
@@ -44,7 +43,6 @@ bool SerializedData::writeToBuffer(char* pBuffer, uint bufferSize)
 		}
 		ret = ret && writeBuffer(pBuffer, bufferSize, curWriteSize, param.mDataPtr, param.mRealSize);
 	}
-	END(mDataParameterList);
 	return ret;
 }
 
@@ -94,7 +92,7 @@ bool SerializedData::writeData(const string& dataString, int paramIndex)
 	{
 		myVector<int> valueList;
 		stringToIntArray(dataString, valueList, ";");
-		FOR_VECTOR_CONST(valueList)
+		FOR_VECTOR(valueList)
 		{
 			((byte*)(dataParam.mDataPtr))[i] = valueList[i];
 		}
@@ -103,7 +101,7 @@ bool SerializedData::writeData(const string& dataString, int paramIndex)
 	{
 		myVector<int> valueList;
 		stringToIntArray(dataString, valueList, ";");
-		FOR_VECTOR_CONST(valueList)
+		FOR_VECTOR(valueList)
 		{
 			((int*)(dataParam.mDataPtr))[i] = valueList[i];
 		}
@@ -112,7 +110,7 @@ bool SerializedData::writeData(const string& dataString, int paramIndex)
 	{
 		myVector<int> valueList;
 		stringToIntArray(dataString, valueList, ";");
-		FOR_VECTOR_CONST(valueList)
+		FOR_VECTOR(valueList)
 		{
 			((uint*)(dataParam.mDataPtr))[i] = valueList[i];
 		}
@@ -121,7 +119,7 @@ bool SerializedData::writeData(const string& dataString, int paramIndex)
 	{
 		myVector<int> valueList;
 		stringToIntArray(dataString, valueList, ";");
-		FOR_VECTOR_CONST(valueList)
+		FOR_VECTOR(valueList)
 		{
 			((short*)(dataParam.mDataPtr))[i] = valueList[i];
 		}
@@ -130,7 +128,7 @@ bool SerializedData::writeData(const string& dataString, int paramIndex)
 	{
 		myVector<int> valueList;
 		stringToIntArray(dataString, valueList, ";");
-		FOR_VECTOR_CONST(valueList)
+		FOR_VECTOR(valueList)
 		{
 			((ushort*)(dataParam.mDataPtr))[i] = valueList[i];
 		}
@@ -139,7 +137,7 @@ bool SerializedData::writeData(const string& dataString, int paramIndex)
 	{
 		myVector<float> valueList;
 		stringToFloatArray(dataString, valueList, ";");
-		FOR_VECTOR_CONST(valueList)
+		FOR_VECTOR(valueList)
 		{
 			((float*)(dataParam.mDataPtr))[i] = valueList[i];
 		}
@@ -276,7 +274,6 @@ void SerializedData::zeroParams()
 		elem.mRealSize = elem.mDataSize;
 		mMaxDataSize += elem.mDataSize;
 	}
-	END(mDataParameterList);
 }
 
 bool SerializedData::readStringList(const myVector<string>& dataList)
@@ -334,7 +331,6 @@ bool SerializedData::readStringList(const myVector<string>& dataList)
 		}
 		++curIndex;
 	}
-	END(mDataParameterList);
 	return result;
 }
 
@@ -349,7 +345,6 @@ uint SerializedData::generateSize()
 		}
 		size += mDataParameterList[i].mRealSize;
 	}
-	END(mDataParameterList);
 	return size;
 }
 
@@ -365,7 +360,6 @@ uint SerializedData::getElementCount(void* paramPtr)
 			break;
 		}
 	}
-	END(mDataParameterList);
 	return count;
 }
 
@@ -390,7 +384,6 @@ void SerializedData::setElementCount(void* paramPtr, uint count)
 			break;
 		}
 	}
-	END(mDataParameterList);
 }
 
 void SerializedData::setArrayByte(char* paramPtr, const char* str, uint length)

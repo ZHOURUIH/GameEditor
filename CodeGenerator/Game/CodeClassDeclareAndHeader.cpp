@@ -45,7 +45,6 @@ void CodeClassDeclareAndHeader::generateCppFrameClassAndHeader(const string& pat
 			}
 		}
 	}
-	END(fileList);
 
 	// FrameClassDeclare.h
 	string str1;
@@ -102,7 +101,6 @@ void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path
 			}
 		}
 	}
-	END(fileList);
 
 	// GameClassDeclare.h
 	string str1;
@@ -159,7 +157,6 @@ void CodeClassDeclareAndHeader::generateCppGameCoreClassAndHeader(const string& 
 			}
 		}
 	}
-	END(fileList);
 
 	// GameCoreClassDeclare.h
 	string str1;

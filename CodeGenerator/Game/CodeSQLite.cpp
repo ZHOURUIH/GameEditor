@@ -21,7 +21,7 @@ void CodeSQLite::generate()
 	myVector<SQLiteInfo> sqliteInfoList;
 	SQLiteInfo tempInfo;
 	bool fileStart = false;
-	FOR_VECTOR_CONST(lines)
+	FOR_VECTOR(lines)
 	{
 		if (lines[i] == START_FALG)
 		{
@@ -731,7 +731,6 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		{
 			line(file, "\t\tm" + listMemberList[i].second + " = new " + listMemberList[i].first + "();");
 		}
-		END(listMemberList);
 		line(file, "\t}");
 	}
 	line(file, "\tpublic override void read(SerializerRead reader)");
@@ -897,7 +896,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		{
 			line(file, "\t\tm" + listMemberList[i].second + " = new " + listMemberList[i].first + "();");
 		}
-		END(listMemberList);
 		line(file, "\t}");
 	}
 	line(file, "\tpublic override void parse(SqliteDataReader reader)");

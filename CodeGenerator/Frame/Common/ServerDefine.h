@@ -186,33 +186,12 @@ if (thread != NULL_THREAD)		\
 #define PACKET(classType, packet) classType* packet = mNetServer->createPacket(packet, NAME(classType))
 #define PACKET_DONT_DESTROY(classType, packet) classType* packet = mNetServer->createPacket(packet, NAME(classType));packet->setAutoDestroy(false)
 
-// 再次封装后的容器的遍历宏
-#ifdef _DEBUG
-// 需要在循环结束后添加END
-#define FOR(stl, expression)stl.lock(STL_LOCK::SL_WRITE, __FILE__, __LINE__);for (expression)
-#define END(stl) stl.unlock(STL_LOCK::SL_WRITE);
-#else
-// 不需要在循环结束后添加END
-#define FOR(stl, expression)for (expression)
-#define END(stl)
-#endif
-
-// 要在循环结束后添加END
 #define FOREACH(iter, stl)\
 auto iter = stl.begin();\
 auto iter##End = stl.end();\
-FOR(stl, ; iter != iter##End; ++iter)
-
-// 不需要在循环结束后添加END
-#define FOREACH_CONST(iter, stl)\
-auto iter = stl.cbegin();\
-auto iter##End = stl.cend();\
 for(; iter != iter##End; ++iter)
 
-// 需要在循环结束后添加END
-#define FOR_VECTOR(stl) int stl##Count = stl.size(); FOR(stl, int i = 0; i < stl##Count; ++i)
-// 不需要在循环结束后添加END
-#define FOR_VECTOR_CONST(stl) int stl##Count = stl.size(); for(int i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR(stl) int stl##Count = stl.size(); for(int i = 0; i < stl##Count; ++i)
 // 简单的for循环
 #define FOR_I(count) for (int i = 0; i < (int)count; ++i)
 #define FOR_J(count) for (int j = 0; j < (int)count; ++j)

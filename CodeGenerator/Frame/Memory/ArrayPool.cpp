@@ -9,13 +9,12 @@ void ArrayPool::destroy()
 	{
 		DELETE(iter->second);
 	}
-	END(mThreadArrayMemoryList);
 	mThreadArrayMemoryList.clear();
 }
 
 void ArrayPool::deleteArray(void* data)
 {
-	ThreadArrayMemory* threadArrayMemory = NULL;
+	ThreadArrayMemory* threadArrayMemory = nullptr;
 	uint threadID = SystemUtility::getThreadID();
 	LOCK(mLock);
 	if (mThreadArrayMemoryList.contains(threadID))
@@ -23,7 +22,7 @@ void ArrayPool::deleteArray(void* data)
 		threadArrayMemory = mThreadArrayMemoryList[threadID];
 	}
 	UNLOCK(mLock);
-	if (threadArrayMemory != NULL)
+	if (threadArrayMemory != nullptr)
 	{
 		threadArrayMemory->release(data);
 	}

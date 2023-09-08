@@ -40,17 +40,21 @@ struct PacketMember
 {
 	string mTypeName;
 	string mMemberName;
+	string mMemberNameNoPrefix;
+	bool mOptional = false;
 };
 
+// 表示消息中的结构体定义
 struct PacketStruct
 {
 	myVector<PacketMember> mMemberList;	// 结构体成员
 	string mStructName;					// 结构体名字
 	string mComment;					// 结构体注释
 	PACKET_OWNER mOwner;				// 属于Game层还是GameCore层
-	bool mHotFix;						// 消息在客户端是否可热更
+	bool mHotFix = false;				// 消息在客户端是否可热更
 };
 
+// 消息中的所有信息定义
 struct PacketInfo
 {
 	myVector<PacketMember> mMemberList;
