@@ -10,13 +10,11 @@ void main()
 
 	while (true)
 	{
-		cout << "选择功能" << endl;
 		cout << "2:自动计算角色,武器,翅膀图片名" << endl;
 		cout << "4:整理怪物文件结构0" << endl;
 		cout << "6:整理特效文件结构" << endl;
 		cout << "7:自动计算方向" << endl;
 		cout << "8:拆分位置文件" << endl;
-		cout << "9:删除无效图片" << endl;
 		cout << "10:按序号重命名文件,改为数字文件名" << endl;
 		cout << "15:解析所有wix和wil文件" << endl;
 		cout << "16:整理NPC文件结构" << endl;
@@ -31,20 +29,22 @@ void main()
 		cout << "37:图集:图片划分到多个图集" << endl;
 		cout << "38:图集:将所有目录的图片划分到多个图集" << endl;
 		cout << endl;
-		cout << "11:序列帧:重命名为序列帧格式" << endl;
+		cout << "9:序列帧:删除无效图片" << endl;
+		cout << "11:序列帧:根据文件夹重命名为序列帧格式" << endl;
 		cout << "17:序列帧:将media中全部序列帧数据写入SQLite" << endl;
-		cout << "26:序列帧:裁剪序列帧图片到最小尺寸" << endl;
-		cout << "33:将图片的所有空白去除,并计算偏移量" << endl;
+		cout << "26:序列帧:裁剪序列帧图片到相同的最小尺寸" << endl;
+		cout << "33:序列帧:将图片的所有空白去除,并计算偏移量" << endl;
 		cout << endl;
 		cout << "22:地图:更新地图中的特效信息到SQLite" << endl;
 		cout << "29:地图:转换所有地图文件为简化版本并且生成阻挡文件" << endl;
-		cout << "34:检查所有地图是否有无效地砖下标" << endl;
+		cout << "34:地图:检查所有地图是否有无效地砖下标" << endl;
 		cout << "36:地图:输出地图解析文本" << endl;
 		cout << "39:地图:生成地图地砖图片信息文件" << endl;
 		cout << "40:地图:查看所有.map地图宽高" << endl;
 		cout << "41:地图:将地图导出为txt格式" << endl;
 		cout << "42:地图:通过txt格式生成map文件" << endl;
 		cout << "0:退出" << endl;
+		cout << "请选择功能:";
 		int input;
 		cin >> input;
 		if (input == 0)
@@ -323,6 +323,7 @@ void main()
 			ImageUtility::autoFillMonsterAnimationTable(monsterName, startID);
 		}
 		system("pause");
+		system("cls");
 		cout << endl;
 	}
 	return;
