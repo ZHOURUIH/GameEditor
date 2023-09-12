@@ -2010,7 +2010,7 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 		FOR_Y(oldHeight)
 		{
 			RGBQUAD color = getColor(oldBitmap, x, y);
-			if (color.rgbReserved > 5)
+			if (color.rgbReserved > alphaThreashold)
 			{
 				columnTop = (int)y;
 				break;
@@ -2025,7 +2025,7 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 		FOR_Y(oldHeight)
 		{
 			RGBQUAD color = getColor(oldBitmap, x, oldHeight - y - 1);
-			if (color.rgbReserved > 5)
+			if (color.rgbReserved > alphaThreashold)
 			{
 				columnBottom = (int)(oldHeight - y - 1);
 				break;
@@ -2040,7 +2040,7 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 		FOR_X(oldWidth)
 		{
 			RGBQUAD color = getColor(oldBitmap, x, y);
-			if (color.rgbReserved > 5)
+			if (color.rgbReserved > alphaThreashold)
 			{
 				lineLeft = (int)x;
 				break;
@@ -2055,7 +2055,7 @@ void ImageUtility::generateMinimalImage(const string& fileName, const string& ne
 		FOR_X(oldWidth)
 		{
 			RGBQUAD color = getColor(oldBitmap, oldWidth - x - 1, y);
-			if (color.rgbReserved > 5)
+			if (color.rgbReserved > alphaThreashold)
 			{
 				lineRight = (int)(oldWidth - x - 1);
 				break;
