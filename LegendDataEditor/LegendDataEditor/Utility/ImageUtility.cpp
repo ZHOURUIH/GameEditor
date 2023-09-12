@@ -1571,7 +1571,7 @@ void ImageUtility::trimAllImage(const string& filePath, const int minAlpha)
 	}
 }
 
-void ImageUtility::fullImageToMinimal(const string& path)
+void ImageUtility::fullImageToMinimal(const string& path, int alphaThreashold)
 {
 	myVector<string> files;
 	findFiles(path, files, ".png", true);
@@ -1582,7 +1582,7 @@ void ImageUtility::fullImageToMinimal(const string& path)
 		string newFullPath = "../media/" + rootFolderName + "_removeEmpty" + "/" + removeFirstPath(fullPathNoMedia);
 		createFolder(getFilePath(newFullPath));
 		Vector2Int offset;
-		generateMinimalImage(files[i], newFullPath, offset);
+		generateMinimalImage(files[i], newFullPath, offset, alphaThreashold);
 		writeFile(replaceSuffix(newFullPath, ".txt"), vector2IntToString(offset));
 	}
 	END(files);
@@ -1994,7 +1994,7 @@ Vector2Int ImageUtility::generateImageSizeWithOffset(const string& fileName, Vec
 }
 
 // 计算图片的最小尺寸,并且返回出该图片的偏移量,以确保渲染位置不变
-void ImageUtility::generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset)
+void ImageUtility::generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset, int alphaThreashold)
 {
 	FreeImage_Initialise();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName.c_str());

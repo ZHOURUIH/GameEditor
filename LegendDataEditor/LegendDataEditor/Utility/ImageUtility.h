@@ -73,7 +73,7 @@ public:
 	static void writeTileObjectImageSizeSQLite(const string& filePath, int mapFileID);
 	static void scaleTexture(const string& path, float scale);
 	static void scalePosition(const string& fileName, float scale);
-	static void fullImageToMinimal(const string& path);
+	static void fullImageToMinimal(const string& path, int alphaThreashold);
 	static void checkMapTile(const string& path);
 	static void autoFillHumanAnimationTable(const string& clothName, int startID);
 	static void autoFillMonsterAnimationTable(const string& monsterName, int startID);
@@ -86,7 +86,7 @@ public:
 	static void txtToMapFile(const string& filePath);
 protected:
 	static void packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath);
-	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset);
+	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset, int alphaThreashold);
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);
 	static void removeBackground(const string& fileName, const string& newFileName);
@@ -94,7 +94,6 @@ protected:
 	static Vector2Int generateImageSizeWithOffset(const string& fileName, Vector2Int offset);
 	static void generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset);
 	static Vector4Int generateMinRect(const string& fileName, const int minAlpha);
-	static void removeEmptyRectangle(const string& fileName, Vector2Int );
 	static void setPixel(BYTE* pixelData, int bpp, const RGBQUAD& rgb);
 	static RGBQUAD getPixel(BYTE* pixelData, int bpp, RGBQUAD* palette);
 	static bool isBlack(const RGBQUAD& rgb);

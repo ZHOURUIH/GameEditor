@@ -245,7 +245,10 @@ void main()
 			cout << "输入文件夹名:";
 			string fileName;
 			cin >> fileName;
-			ImageUtility::fullImageToMinimal("../media/" + fileName);
+			cout << "输入透明度阈值:";
+			int alphaThreashold;
+			cin >> alphaThreashold;
+			ImageUtility::fullImageToMinimal("../media/" + fileName, alphaThreashold);
 		}
 		else if (input == 34)
 		{
