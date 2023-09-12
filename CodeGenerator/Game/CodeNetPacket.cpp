@@ -400,6 +400,19 @@ void CodeNetPacket::generateCSharp(const myVector<PacketStruct>& structInfoList,
 			noHotfixList.push_back(packetInfo.mPacketName);
 		}
 	}
+	myVector<string> hotfixStructList;
+	myVector<string> noHotfixStructList;
+	for (const PacketStruct& structInfo : structInfoList)
+	{
+		if (structInfo.mHotFix)
+		{
+			hotfixStructList.push_back(structInfo.mStructName);
+		}
+		else
+		{
+			noHotfixStructList.push_back(structInfo.mStructName);
+		}
+	}
 	// 删除无用的消息
 	// c# CS非热更
 	myVector<string> csharpCSNoHotfixFiles;
@@ -443,19 +456,25 @@ void CodeNetPacket::generateCSharp(const myVector<PacketStruct>& structInfoList,
 			deleteFile(file);
 		}
 	}
-	// 删除当前所有的结构体代码,因为结构体中不包含自定义的代码,所以可以全部重新生成
+	// 删除无用的结构体代码
 	myVector<string> csharpGameStructFiles;
 	findFiles(csharpStructGamePath, csharpGameStructFiles, ".cs");
 	for (const string& file : csharpGameStructFiles)
 	{
-		deleteFile(file);
-		deleteFile(file + ".meta");
+		if (!noHotfixStructList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+			deleteFile(file + ".meta");
+		}
 	}
 	myVector<string> csharpHotfixStructFiles;
 	findFiles(csharpStructHotfixPath, csharpHotfixStructFiles, ".cs");
 	for (const string& file : csharpHotfixStructFiles)
 	{
-		deleteFile(file);
+		if (!hotfixStructList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+		}
 	}
 
 	// 生成cs代码
@@ -495,6 +514,11 @@ void CodeNetPacket::generateCSharpVirtualClient(const myVector<PacketStruct>& st
 			gameCorePacketList.push_back(packetInfo);
 		}
 	}
+	myVector<string> structNameList;
+	for (const PacketStruct& structInfo : structInfoList)
+	{
+		structNameList.push_back(structInfo.mStructName);
+	}
 
 	// 删除无用的消息
 	// CS
@@ -519,12 +543,15 @@ void CodeNetPacket::generateCSharpVirtualClient(const myVector<PacketStruct>& st
 			deleteFile(file + ".meta");
 		}
 	}
-	// 删除当前所有的结构体代码,因为结构体中不包含自定义的代码,所以可以全部重新生成
+	// 删除无用的结构体代码
 	myVector<string> csharpStructFiles;
 	findFiles(csharpStructGamePath, csharpStructFiles, ".cs");
 	for (const string& file : csharpStructFiles)
 	{
-		deleteFile(file);
+		if (!structNameList.contains(getFileNameNoSuffix(file, true)))
+		{
+			deleteFile(file);
+		}
 	}
 
 	// 生成cs代码
