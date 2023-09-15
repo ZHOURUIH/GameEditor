@@ -6,7 +6,7 @@ void CodeUnityBuild::generate()
 	{
 		return;
 	}
-	generateCppUnityBuild(ServerProjectPath, ServerProjectPath + "Game/UnityBuild.cpp");
+	generateCppUnityBuild(ServerProjectPath, ServerProjectPath + "UnityBuild.cpp");
 }
 
 // UnityBuild.cpp

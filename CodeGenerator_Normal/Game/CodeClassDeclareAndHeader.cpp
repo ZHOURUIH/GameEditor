@@ -68,7 +68,10 @@ void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path
 	writeFileIfChanged(targetFilePath + declareFileName + ".h", ANSIToUTF8(str1.c_str(), true));
 
 	// GameHeader.h
-	gameHeaderList.insert(0, "FrameHeader.h");
+	if (headerFileName != "FrameHeader")
+	{
+		gameHeaderList.insert(0, "FrameHeader.h");
+	}
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
