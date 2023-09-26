@@ -686,7 +686,7 @@ void ImageUtility::texturePackerAll(const string& texturePath)
 			}
 			else
 			{
-				cout << "已打包:" << i + 1 << "/" << folderListCount << ",打包失败" << endl;
+				cout << "已打包:" << i + 1 << "/" << folderListCount << ",打包失败,path:" << folderList[i] << endl;
 			}
 		}
 		else
