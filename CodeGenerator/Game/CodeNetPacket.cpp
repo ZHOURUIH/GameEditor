@@ -2195,9 +2195,8 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	if (packetInfo.mMemberList.size() > 0)
 	{
 		// init
-		generateCodes.push_back("\tpublic override void init()");
+		generateCodes.push_back("\tpublic " + packetName + "()");
 		generateCodes.push_back("\t{");
-		generateCodes.push_back("\t\tbase.init();");
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
 			generateCodes.push_back("\t\taddParam(" + item.mMemberName + ", " + (item.mOptional ? "true" : "false") + ");");
