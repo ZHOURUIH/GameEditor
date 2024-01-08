@@ -77,7 +77,7 @@ bool CodeUtility::initPath()
 		rightToLeft(ClientProjectPath);
 		validPath(ClientProjectPath);
 		csGamePath = ClientProjectPath + "Assets/Scripts/Game/";
-		csHotfixGamePath = ClientProjectPath + "HotFix/Game/";
+		csHotfixGamePath = ClientProjectPath + "Assets/Scripts/HotFix/";
 	}
 	if (!VirtualClientProjectPath.empty())
 	{

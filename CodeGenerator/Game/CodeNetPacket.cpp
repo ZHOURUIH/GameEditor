@@ -2272,7 +2272,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("\tpublic int Count{ get { return mList.Count; } }");
 	codeList.push_back("\tpublic override bool read(SerializerBitRead reader)");
 	codeList.push_back("\t{");
-	codeList.push_back("\t\treturn reader.readCustomList(mList, typeof(" + structInfo.mStructName + "));");
+	codeList.push_back("\t\treturn reader.readCustomList(mList);");
 	codeList.push_back("\t}");
 	codeList.push_back("\tpublic override void write(SerializerBitWrite writer)");
 	codeList.push_back("\t{");
