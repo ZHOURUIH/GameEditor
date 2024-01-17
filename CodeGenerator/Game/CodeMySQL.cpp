@@ -947,7 +947,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		line(source, "\tbase::lateInit();");
 		for (const string& indexName : mysqlInfo.mIndexList)
 		{
-			line(source, "\texecuteNonQuery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::Name_" + indexName + " + \")\").c_str(), false);");
+			line(source, "\texecuteNonQuery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::Name_" + indexName + " + \")\").c_str(), false, true);");
 		}
 		line(source, "}");
 		line(source, "");
