@@ -89,6 +89,7 @@ void CodeEnumCheck::generateEnumCheck(const myMap<string, myVector<string>>& all
 	line(header, "// auto generated file");
 	line(header, "class " + className);
 	line(header, "{");
+	line(header, "public:");
 	for (const auto& itemPair : allEnumValueList)
 	{
 		line(header, "\tstatic constexpr bool checkEnum(const " + itemPair.first + " value)");
