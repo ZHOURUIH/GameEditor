@@ -7,6 +7,7 @@
 #include "CodeFrameSystem.h"
 #include "CodeClassDeclareAndHeader.h"
 #include "CodeComponent.h"
+#include "CodeEnumCheck.h"
 
 void main()
 {
@@ -30,6 +31,7 @@ void main()
 		CodeFrameSystem::generate();
 		CodeClassDeclareAndHeader::generate();
 		CodeComponent::generate();
+		CodeEnumCheck::generate();
 	}
 	else if (input == 1)
 	{
@@ -41,6 +43,7 @@ void main()
 		CodeFrameSystem::generate();
 		CodeClassDeclareAndHeader::generate();
 		CodeComponent::generate();
+		CodeEnumCheck::generate();
 	}
 	else if (input == 2)
 	{

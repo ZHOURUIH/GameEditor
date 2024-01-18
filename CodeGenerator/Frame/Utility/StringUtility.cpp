@@ -111,6 +111,21 @@ int StringUtility::findCharCount(const string& str, char key)
 	return count;
 }
 
+int StringUtility::findFirstNonEmptyChar(const string& str)
+{
+	// 不能有控制字符,不能有英文空格,不能有中文空格
+	int index = 0;
+	while (str[index] != '\0')
+	{
+		if (!iscntrl(str[index]) && str[index] != ' ')
+		{
+			return index;
+		}
+		++index;
+	}
+	return -1;
+}
+
 string StringUtility::getFileName(string str)
 {
 	rightToLeft(str);

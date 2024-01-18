@@ -24,6 +24,8 @@ public:
 	iterator end() {return mMap.end();}
 	const_iterator cbegin() const { return mMap.cbegin(); }
 	const_iterator cend() const { return mMap.cend(); }
+	const_iterator begin() const { return mMap.begin(); }
+	const_iterator end() const { return mMap.end(); }
 	const Value& get(const Key& k, const Value& defaultValue) const
 	{
 		auto iter = mMap.find(k);

@@ -22,6 +22,7 @@ public:
 	static void removeEnd(string& str, char key);
 	// 查找str中指定key的数量
 	static int findCharCount(const string& str, char key);
+	static int findFirstNonEmptyChar(const string& str);
 	static string getFileName(string str);
 	static string getFileNameNoSuffix(string str, bool removePath);
 	static string getFilePath(const string& dir);
