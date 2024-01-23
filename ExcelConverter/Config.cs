@@ -1,45 +1,63 @@
 ﻿using System;
+using static FileUtility;
+using static StringUtility;
 
-public class Config : FileUtility
+public class Config
 {
-	public static string SCRIPT_PATH;
-	public static string DATA_PATH;
-	public static string EXCEL_PATH;
+	public static string mClientProjectPath;
+	public static string mExcelPath;
+	public static string mExcelDataHotFixPath;
+	public static string mExcelTableHotFixPath;
+	public static string mExcelBytesPath;
+	public static string mHotFixCommonPath;
 	public static bool parse(string configPath)
 	{
 		openTxtFileLines(configPath, out string[] lines);
 		if(lines == null)
 		{
-			Console.WriteLine("找不到配置文件Config.txt");
+			Console.WriteLine("找不到配置文件ExcelConverterConfig.txt,或者配置文件内容为空");
 			return false;
 		}
 		for(int i = 0; i < lines.Length; ++i)
 		{
+			if (lines[i].StartsWith("//"))
+			{
+				continue;
+			}
 			string[] param = split(lines[i], true, "=");
 			if (param.Length != 2)
 			{
 				Console.WriteLine("配置文件读取错误:" + lines[i]);
 				return false;
 			}
-			if (param[0] == "ScriptPath")
+			if (param[0] == "ProjectPath")
 			{
-				SCRIPT_PATH = param[1];
-				validPath(ref SCRIPT_PATH);
-				rightToLeft(ref SCRIPT_PATH);
+				mClientProjectPath = param[1];
+				validPath(ref mClientProjectPath);
+				rightToLeft(ref mClientProjectPath);
 			}
-			else if(param[0] == "DataPath")
+			if (param[0] == "ExcelPath")
 			{
-				DATA_PATH = param[1];
-				validPath(ref DATA_PATH);
-				rightToLeft(ref DATA_PATH);
-			}
-			else if (param[0] == "ExcelPath")
-			{
-				EXCEL_PATH = param[1];
-				validPath(ref EXCEL_PATH);
-				rightToLeft(ref EXCEL_PATH);
+				mExcelPath = param[1];
+				validPath(ref mExcelPath);
+				rightToLeft(ref mExcelPath);
 			}
 		}
+		if (isEmpty(mClientProjectPath))
+		{
+			Console.WriteLine("路径解析错误,找不到ProjectPath的配置");
+			return false;
+		}
+		if (isEmpty(mExcelPath))
+		{
+			Console.WriteLine("路径解析错误,找不到ExcelPath的配置");
+			return false;
+		}
+		string hotfixGamePath = mClientProjectPath + "Assets/Scripts/HotFix/";
+		mExcelDataHotFixPath = hotfixGamePath + "DataBase/Excel/Data/";
+		mExcelTableHotFixPath = hotfixGamePath + "DataBase/Excel/Table/";
+		mExcelBytesPath = mClientProjectPath + "Assets/GameResources/Excel/";
+		mHotFixCommonPath = hotfixGamePath + "Common/";
 		return true;
 	}
 }

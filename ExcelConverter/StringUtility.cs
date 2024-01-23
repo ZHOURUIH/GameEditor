@@ -1,5 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Text;
+using static MathUtility;
+
+public struct Vector2Int
+{
+	public int x;
+	public int y;
+	public static Vector2Int zero = new Vector2Int();
+}
 
 public class StringUtility : BinaryUtility
 {
@@ -7,6 +17,8 @@ public class StringUtility : BinaryUtility
 	private static List<float> mTempFloatList = new List<float>();
 	private static List<string> mTempStringList = new List<string>();
 	private static string[] mFloatConvertPercision = new string[] { "f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7" };
+	private static char[] mHexUpperChar = new char[] { 'A', 'B', 'C', 'D', 'E', 'F' };  // 十六进制中的大写字母
+	private static char[] mHexLowerChar = new char[] { 'a', 'b', 'c', 'd', 'e', 'f' };  // 十六进制中的小写字母
 	public const string EMPTY = "";
 	// 使用Length == 0判断是否为空字符串是最快的
 	public static bool isEmpty(string str)
@@ -185,6 +197,73 @@ public class StringUtility : BinaryUtility
 		}
 		return uint.Parse(str);
 	}
+	public static Vector2 SToVector2(string value, string seperate = ",")
+	{
+		if (isEmpty(value) || value == "0,0")
+		{
+			return Vector2.Zero;
+		}
+		string[] splitList = split(value, true, seperate);
+		if (splitList == null || splitList.Length < 2)
+		{
+			return Vector2.Zero;
+		}
+		Vector2 v = new Vector2();
+		v.X = SToF(splitList[0]);
+		v.Y = SToF(splitList[1]);
+		return v;
+	}
+	public static Vector2Int SToVector2Int(string value, string seperate = ",")
+	{
+		if (isEmpty(value) || value == "0,0")
+		{
+			return Vector2Int.zero;
+		}
+		string[] splitList = split(value, true, seperate);
+		if (splitList == null || splitList.Length < 2)
+		{
+			return Vector2Int.zero;
+		}
+		Vector2Int v = new Vector2Int();
+		v.x = SToI(splitList[0]);
+		v.y = SToI(splitList[1]);
+		return v;
+	}
+	public static Vector3 SToVector3(string value, string seperate = ",")
+	{
+		if (isEmpty(value) || value == "0,0,0")
+		{
+			return Vector3.Zero;
+		}
+		string[] splitList = split(value, true, seperate);
+		if (splitList == null || splitList.Length < 3)
+		{
+			return Vector3.Zero;
+		}
+		Vector3 v = new Vector3();
+		v.X = SToF(splitList[0]);
+		v.Y = SToF(splitList[1]);
+		v.Z = SToF(splitList[2]);
+		return v;
+	}
+	public static Vector4 SToVector4(string value, string seperate = ",")
+	{
+		if (isEmpty(value) || value == "0,0,0,0")
+		{
+			return Vector4.Zero;
+		}
+		string[] splitList = split(value, true, seperate);
+		if (splitList == null || splitList.Length < 4)
+		{
+			return Vector4.Zero;
+		}
+		Vector4 v = new Vector4();
+		v.X = SToF(splitList[0]);
+		v.Y = SToF(splitList[1]);
+		v.Z = SToF(splitList[2]);
+		v.W = SToF(splitList[3]);
+		return v;
+	}
 	// 如果originStr以endString为结尾,则移除originStr结尾的endString
 	public static void removeEndString(ref string originStr, string endString, bool sensitive = true)
 	{
@@ -280,7 +359,7 @@ public class StringUtility : BinaryUtility
 	public static string getFilePath(string fileName)
 	{
 		fileName = rightToLeft(fileName);
-		int lastPos = fileName.LastIndexOf('/');
+		int lastPos = fileName.LastIndexOf('/', fileName.Length - 2);
 		if (lastPos != -1)
 		{
 			return fileName.Remove(lastPos);
@@ -373,6 +452,42 @@ public class StringUtility : BinaryUtility
 		}
 		return str.Split(keyword, removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
 	}
+	public static void splitLine(string str, out string[] lines, bool removeEmpty = true)
+	{
+		if (isEmpty(str))
+		{
+			lines = null;
+			return;
+		}
+		if (str.IndexOf('\n') >= 0)
+		{
+			lines = split(str, removeEmpty, "\n");
+			if (lines == null)
+			{
+				return;
+			}
+			for (int i = 0; i < lines.Length; ++i)
+			{
+				lines[i] = removeAll(lines[i], "\r");
+			}
+		}
+		else if (str.IndexOf('\r') >= 0)
+		{
+			lines = split(str, removeEmpty, "\r");
+			if (lines == null)
+			{
+				return;
+			}
+			for (int i = 0; i < lines.Length; ++i)
+			{
+				lines[i] = removeAll(lines[i], "\n");
+			}
+		}
+		else
+		{
+			lines = new string[1] { str };
+		}
+	}
 	// 在使用返回值期间禁止再调用splitNonAlloc
 	public static List<string> splitNonAlloc(string str, bool removeEmpty, params string[] keyword)
 	{
@@ -407,10 +522,7 @@ public class StringUtility : BinaryUtility
 		{
 			return;
 		}
-		if (values == null)
-		{
-			values = new float[len];
-		}
+		values ??= new float[len];
 		for (int i = 0; i < len; ++i)
 		{
 			values[i] = SToF(rangeList[i]);
@@ -502,10 +614,7 @@ public class StringUtility : BinaryUtility
 		{
 			return;
 		}
-		if (values == null)
-		{
-			values = new int[len];
-		}
+		values ??= new int[len];
 		for (int i = 0; i < len; ++i)
 		{
 			values[i] = SToI(rangeList[i]);
@@ -685,13 +794,12 @@ public class StringUtility : BinaryUtility
 	}
 	public static List<string> stringToStrings(string str, string seperate = ",")
 	{
-		List<string> strList = new List<string>();
 		string[] strArray = split(str, true, seperate);
 		if (strArray != null)
 		{
-			strList.AddRange(strArray);
+			return new List<string>(strArray);
 		}
-		return strList;
+		return new List<string>();
 	}
 	public static void stringToStrings(string str, List<string> values, string seperate = ",")
 	{
@@ -911,6 +1019,23 @@ public class StringUtility : BinaryUtility
 	{
 		return checkString(str, "0123456789" + valid);
 	}
+	public static int getCharCount(string str, char key)
+	{
+		int count = 0;
+		int length = str.Length;
+		for (int i = 0; i < length; ++i)
+		{
+			if (str[i] == key)
+			{
+				++count;
+			}
+		}
+		return count;
+	}
+	public static int getStringWidth(string str)
+	{
+		return str.Length + getCharCount(str, '\t') * 3;
+	}
 	public static string fileSizeString(long size)
 	{
 		// 不足1KB
@@ -1086,5 +1211,51 @@ public class StringUtility : BinaryUtility
 				k = next[k];
 			}
 		}
+	}
+	public static void byteToHEXString(StringBuilder builder, byte value, bool upperOrLower = true)
+	{
+		char[] hexChar = upperOrLower ? mHexUpperChar : mHexLowerChar;
+		// 等效于int high = value / 16;
+		// 等效于int low = value % 16;
+		int high = value >> 4;
+		int low = value & 15;
+		if (high < 10)
+		{
+			builder.Append((char)('0' + high));
+		}
+		else
+		{
+			builder.Append(hexChar[high - 10]);
+		}
+		if (low < 10)
+		{
+			builder.Append((char)('0' + low));
+		}
+		else
+		{
+			builder.Append(hexChar[low - 10]);
+		}
+	}
+	public static string bytesToHEXString(byte[] byteList, int offset = 0, int count = 0, bool addSpace = true, bool upperOrLower = true)
+	{
+		StringBuilder builder = new StringBuilder();
+		int byteCount = count > 0 ? count : byteList.Length - offset;
+		clamp(ref byteCount, 0, byteList.Length - offset);
+		for (int i = 0; i < byteCount; ++i)
+		{
+			if (addSpace)
+			{
+				byteToHEXString(builder, byteList[i + offset], upperOrLower);
+				if (i != byteCount - 1)
+				{
+					builder.Append(' ');
+				}
+			}
+			else
+			{
+				byteToHEXString(builder, byteList[i + offset], upperOrLower);
+			}
+		}
+		return builder.ToString();
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Security.Cryptography;
 
 public class FileUtility : StringUtility
 {
@@ -18,17 +19,46 @@ public class FileUtility : StringUtility
 		}
 	}
 	// 打开一个文本文件,fileName为绝对路径
-	public static string openTxtFile(string fileName)
+	public static byte[] openFile(string fileName)
 	{
-		StreamReader streamReader = File.OpenText(fileName);
-		if (streamReader == null)
+		try
+		{
+			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+			{
+				if (fs == null)
+				{
+					return null;
+				}
+				int fileSize = (int)fs.Length;
+				byte[] fileBuffer = new byte[fileSize];
+				fs.Read(fileBuffer, 0, fileSize);
+				return fileBuffer;
+			}
+		}
+		catch
 		{
 			return null;
 		}
-		string fileBuffer = streamReader.ReadToEnd();
-		streamReader.Close();
-		streamReader.Dispose();
-		return fileBuffer;
+	}
+	// 打开一个文本文件,fileName为绝对路径
+	public static string openTxtFile(string fileName)
+	{
+		try
+		{
+			StreamReader streamReader = File.OpenText(fileName);
+			if (streamReader == null)
+			{
+				return null;
+			}
+			string fileBuffer = streamReader.ReadToEnd();
+			streamReader.Close();
+			streamReader.Dispose();
+			return fileBuffer;
+		}
+		catch
+		{
+			return null;
+		}
 	}
 	public static void openTxtFileLines(string filePath, out string[] fileLines)
 	{
@@ -47,7 +77,7 @@ public class FileUtility : StringUtility
 	{
 		// 检测路径是否存在,如果不存在就创建一个
 		createDir(getFilePath(fileName));
-		FileStream file = null;
+		FileStream file;
 		if(appendData)
 		{
 			file = new FileStream(fileName, FileMode.Append, FileAccess.Write);
@@ -69,6 +99,19 @@ public class FileUtility : StringUtility
 		{
 			writeFile(fileName, bytes, bytes.Length, appendData);
 		}
+	}
+	public static void writeTxtFileBOM(string fileName, string content, bool appendData = false)
+	{
+		byte[] bytes = stringToBytes(content, Encoding.UTF8);
+		byte[] newBytes = new byte[bytes.Length + 3];
+		newBytes[0] = 0xEF;
+		newBytes[1] = 0xBB;
+		newBytes[2] = 0xBF;
+		if (bytes != null)
+		{
+			memcpy(newBytes, bytes, 3, 0, bytes.Length);
+		}
+		writeFile(fileName, newBytes, newBytes.Length, appendData);
 	}
 	public static void deleteFolder(string path)
 	{
@@ -179,5 +222,30 @@ public class FileUtility : StringUtility
 		AndroidAssetLoader.deleteFile(path);
 #endif
 		File.Delete(path);
+	}
+	// 计算一个文件的MD5,fileName为绝对路径
+	public static string generateFileMD5(string fileName, bool upperOrLower = true)
+	{
+		byte[] fileContent = openFile(fileName);
+		if (fileContent == null)
+		{
+			return EMPTY;
+		}
+		return generateMD5(fileContent, fileContent.Length, upperOrLower);
+	}
+	// 计算一个文件的MD5,fileName为绝对路径
+	public static string generateMD5(string str, bool upperOrLower = true)
+	{
+		return generateMD5(stringToBytes(str), -1, upperOrLower);
+	}
+	// 计算一个文件的MD5
+	public static string generateMD5(byte[] fileContent, int length = -1, bool upperOrLower = true)
+	{
+		if (length < 0)
+		{
+			length = fileContent.Length;
+		}
+		HashAlgorithm algorithm = MD5.Create();
+		return bytesToHEXString(algorithm.ComputeHash(fileContent, 0, length), 0, 0, false, upperOrLower);
 	}
 }

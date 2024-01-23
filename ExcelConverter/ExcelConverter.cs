@@ -1,234 +1,560 @@
 ﻿using System;
 using System.Collections.Generic;
+using static MathUtility;
+
+public enum OWNER : byte
+{
+	NONE,
+	CLIENT,
+	SERVER,
+	BOTH,
+}
+
+public class ExcelInfo
+{
+	public string mName;
+	public string mComment;
+	public ExcelTable mTable;
+	public List<MemberInfo> mMemberList = new List<MemberInfo>();
+	public OWNER mOwner;
+}
 
 public class MemberInfo
 {
 	public string mMemberName;
 	public string mMemberType;
+	public string mComment;
+	public string mSeperate;        // 如果是列表类型,则表示列表类型的分隔符
+	public OWNER mOwner;
 }
 
 public class ExcelConverter : FileUtility
 {
-	public static int ROW_HEADER = 3;		// 前3行不是数据区域
-	public static void generateTableData(List<ExcelReader> readerList)
+	public const int ROW_HEADER = 7;        // 前7行不是数据区域
+	public static void generate(List<ExcelReader> readerList)
 	{
+		// 解析
+		List<ExcelInfo> allExcelInfo = new List<ExcelInfo>();
 		for (int i = 0; i < readerList.Count; ++i)
 		{
-			ExcelReader reader = readerList[i];
-			int tableCount = reader.getTableCount();
-			for (int j = 0; j < tableCount; ++j)
-			{
-				convertTable(reader.getTable(j));
-			}
-		}
-	}
-	public static void generateRegister(List<ExcelReader> readerList)
-	{
-		// 生成ExcelRegister.cs
-		string registerFile = "";
-		line(ref registerFile, "using System;");
-		line(ref registerFile, "using UnityEngine;");
-		line(ref registerFile, "using System.Collections;");
-		line(ref registerFile, "using System.Collections.Generic;");
-		line(ref registerFile, "");
-		line(ref registerFile, "public class ExcelRegister : FrameBase");
-		line(ref registerFile, "{");
-		line(ref registerFile, "\tpublic static void registeAll()");
-		line(ref registerFile, "\t{");
-		for (int i = 0; i < readerList.Count; ++i)
-		{
-			ExcelReader reader = readerList[i];
-			int tableCount = reader.getTableCount();
-			for (int j = 0; j < tableCount; ++j)
-			{
-				string tableName = reader.getTable(j).getTableName();
-
-				line(ref registerFile, "\t\tregiste<" + tableName + ">(EXCEL_DATA." + nameToUpper(tableName, false) + ", \"" + tableName + "\");");
-			}
-		}
-		line(ref registerFile, "\t}");
-		line(ref registerFile, "\t//------------------------------------------------------------------------------------------------------------------------------");
-		line(ref registerFile, "\tprotected static void registe<T>(int type, string name) where T : ExcelData");
-		line(ref registerFile, "\t{");
-		line(ref registerFile, "\t\tmExcelManager.registe(type, name, typeof(T));");
-		line(ref registerFile, "\t}");
-		line(ref registerFile, "}", false);
-		writeTxtFile(Config.SCRIPT_PATH + "../" + "ExcelRegister.cs", registerFile);
-	}
-	public static void generateExcelDefine(List<ExcelReader> readerList)
-	{
-		List<string> nameList = new List<string>();
-		nameList.Add("NONE");
-		for (int i = 0; i < readerList.Count; ++i)
-		{
-			ExcelReader reader = readerList[i];
-			int tableCount = reader.getTableCount();
-			for (int j = 0; j < tableCount; ++j)
-			{
-				nameList.Add(nameToUpper(reader.getTable(j).getTableName(), false));
-			}
+			allExcelInfo.Add(parseTableMemberInfo(readerList[i].getTable(0)));
 		}
 
-		string registerFile = "";
-		line(ref registerFile, "using System;");
-		line(ref registerFile, "");
-		line(ref registerFile, "// Excel数据表格的表格定义");
-		line(ref registerFile, "public class EXCEL_DATA");
-		line(ref registerFile, "{");
-		for (int i = 0; i < nameList.Count; ++i)
+		foreach (var item in allExcelInfo)
 		{
-			line(ref registerFile, "\tpublic static int " + nameList[i] + " = " + IToS(i) + ";");
+			if (item.mOwner == OWNER.SERVER || item.mOwner == OWNER.NONE)
+			{
+				continue;
+			}
+			// 转换表格文件
+			if (!convertTable(Config.mExcelBytesPath, item.mTable, item.mMemberList))
+			{
+				Console.ReadKey();
+			}
+			// 生成ExcelData.cs
+			generateExcelDataFile(item, Config.mExcelDataHotFixPath);
+			// 生成ExcelTable.cs
+			generateExcelTableFile(item.mName, Config.mExcelTableHotFixPath);
 		}
-		line(ref registerFile, "}", false);
-		writeTxtFile(Config.SCRIPT_PATH + "../" + "ExcelDefine.cs", registerFile);
+
+		// 在上一层目录生成ExcelRegister.cs
+		generateCSharpExcelRegisteFileFile(allExcelInfo, getFilePath(Config.mExcelDataHotFixPath) + "/");
+		generateCSharpExcelDeclare(allExcelInfo, Config.mHotFixCommonPath);
+	}
+	// ExcelTable.cs
+	protected static void generateExcelTableFile(string tableName, string path)
+	{
+		string dataClassName = "ED" + tableName;
+		string tableClassName = "Excel" + tableName;
+		string table = "";
+		line(ref table, "using System;");
+		line(ref table, "using System.Collections.Generic;");
+		line(ref table, "");
+		line(ref table, "public partial class " + tableClassName + " : ExcelTable");
+		line(ref table, "{");
+		line(ref table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
+		line(ref table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
+		line(ref table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
+		line(ref table, "\tprotected List<" + dataClassName + "> mDataList;");
+		line(ref table, "\tprotected bool mDataAvailable;");
+		line(ref table, "\tpublic " + tableClassName + "()");
+		line(ref table, "\t{");
+		line(ref table, "\t\tmDataList = new List<" + dataClassName + ">();");
+		line(ref table, "\t\tmDataAvailable = false;");
+		line(ref table, "\t}");
+		line(ref table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
+		line(ref table, "\t{");
+		line(ref table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
+		line(ref table, "\t}");
+		line(ref table, "\tpublic List<" + dataClassName + "> queryAll()");
+		line(ref table, "\t{");
+		line(ref table, "\t\tif (!mDataAvailable)");
+		line(ref table, "\t\t{");
+		line(ref table, "\t\t\tforeach (var item in getDataList())");
+		line(ref table, "\t\t\t{");
+		line(ref table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
+		line(ref table, "\t\t\t}");
+		line(ref table, "\t\t\tmDataAvailable = true;");
+		line(ref table, "\t\t}");
+		line(ref table, "\t\treturn mDataList;");
+		line(ref table, "\t}");
+		line(ref table, "}", false);
+		writeTxtFileBOM(path + tableClassName + ".cs", GB2312ToUTF8(table));
+	}
+	// ExcelData.cs
+	protected static void generateExcelDataFile(ExcelInfo info, string path)
+	{
+		string file = "";
+		string dataClassName = "ED" + info.mName;
+		line(ref file, "using System;");
+		line(ref file, "using System.Collections.Generic;");
+		line(ref file, "using UnityEngine;");
+		line(ref file, "");
+		line(ref file, "// " + info.mComment);
+		line(ref file, "public class " + dataClassName + " : ExcelData");
+		line(ref file, "{");
+		int memberCount = info.mMemberList.Count;
+		HashSet<string> listMemberSet = new HashSet<string>();
+		List<KeyValuePair<string, string>> listMemberList = new List<KeyValuePair<string, string>>();
+		for (int i = 0; i < memberCount; ++i)
+		{
+			MemberInfo member = info.mMemberList[i];
+			if (member.mMemberName == "ID")
+			{
+				continue;
+			}
+			if (member.mOwner == OWNER.SERVER || member.mOwner == OWNER.NONE)
+			{
+				continue;
+			}
+			string typeName = member.mMemberType;
+			// 列表类型的成员变量存储到单独的列表,因为需要分配内存
+			if (typeName.Contains("List"))
+			{
+				listMemberList.Add(new KeyValuePair<string, string>(typeName, member.mMemberName));
+				listMemberSet.Add(member.mMemberName);
+			}
+			string memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
+			int tabCount = generateAlignTableCount(memberLine, 44);
+			for (int j = 0; j < tabCount; ++j)
+			{
+				memberLine += '\t';
+			}
+			memberLine += "// " + info.mMemberList[i].mComment;
+			line(ref file, memberLine);
+		}
+		if (listMemberList.Count > 0)
+		{
+			line(ref file, "\tpublic " + dataClassName + "()");
+			line(ref file, "\t{");
+			foreach (var item in listMemberList)
+			{
+				line(ref file, "\t\tm" + item.Value + " = new " + item.Key + "();");
+			}
+			line(ref file, "\t}");
+		}
+		line(ref file, "\tpublic override void read(SerializerRead reader)");
+		line(ref file, "\t{");
+		line(ref file, "\t\tbase.read(reader);");
+		for (int i = 0; i < memberCount; ++i)
+		{
+			MemberInfo memberInfo = info.mMemberList[i];
+			if (memberInfo.mMemberName == "ID")
+			{
+				continue;
+			}
+			if (memberInfo.mOwner == OWNER.SERVER || memberInfo.mOwner == OWNER.NONE)
+			{
+				continue;
+			}
+			string typeName = memberInfo.mMemberType;
+			if (typeName == "string")
+			{
+				line(ref file, "\t\treader.readString(out m" + memberInfo.mMemberName + ");");
+			}
+			else if (listMemberSet.Contains(memberInfo.mMemberName))
+			{
+				line(ref file, "\t\treader.readList(m" + memberInfo.mMemberName + ");");
+			}
+			else
+			{
+				line(ref file, "\t\treader.read(out m" + memberInfo.mMemberName + ");");
+			}
+		}
+		line(ref file, "\t}");
+		line(ref file, "}", false);
+		writeTxtFileBOM(path + dataClassName + ".cs", GB2312ToUTF8(file));
+	}
+	// ExcelRegister.cs文件
+	protected static void generateCSharpExcelRegisteFileFile(List<ExcelInfo> excelInfoList, string path)
+	{
+		string hotFixfile = "";
+		line(ref hotFixfile, "using System;");
+		line(ref hotFixfile, "using static GBR;");
+		line(ref hotFixfile, "using static FrameBase;");
+		line(ref hotFixfile, "");
+		line(ref hotFixfile, "public class ExcelRegisterILR");
+		line(ref hotFixfile, "{");
+		line(ref hotFixfile, "\tpublic static void registeAll()");
+		line(ref hotFixfile, "\t{");
+		foreach (var item in excelInfoList)
+		{
+			if (item.mOwner == OWNER.SERVER || item.mOwner == OWNER.NONE)
+			{
+				continue;
+			}
+			string lineStr = "\t\tregisteTable(out mExcel%s, typeof(ED%s), \"%s\");";
+			lineStr = replaceAll(lineStr, "%s", item.mName);
+			line(ref hotFixfile, lineStr);
+		}
+		line(ref hotFixfile, "");
+		line(ref hotFixfile, "\t\t// 进入热更以后,所有资源都处于可用状态");
+		line(ref hotFixfile, "\t\tmExcelManager.resourceAvailable();");
+		line(ref hotFixfile, "\t}");
+		line(ref hotFixfile, "\t//------------------------------------------------------------------------------------------------------------------------------");
+		line(ref hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
+		line(ref hotFixfile, "\t{");
+		line(ref hotFixfile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
+		line(ref hotFixfile, "\t}");
+		line(ref hotFixfile, "}", false);
+
+		writeTxtFileBOM(path + "ExcelRegisterILR.cs", GB2312ToUTF8(hotFixfile));
+	}
+	// GameBaseExcel.cs文件
+	protected static void generateCSharpExcelDeclare(List<ExcelInfo> infoList, string path)
+	{
+		// 热更工程中的表格注册
+		string hotFixfile = "";
+		line(ref hotFixfile, "using System;");
+		line(ref hotFixfile, "");
+		line(ref hotFixfile, "// FrameBase的部分类,用于定义Excel表格的对象");
+		line(ref hotFixfile, "public partial class GBR");
+		line(ref hotFixfile, "{");
+		foreach (ExcelInfo info in infoList)
+		{
+			if (info.mOwner == OWNER.SERVER || info.mOwner == OWNER.NONE)
+			{
+				continue;
+			}
+			line(ref hotFixfile, "\tpublic static Excel" + info.mName + " mExcel" + info.mName + ";");
+		}
+		line(ref hotFixfile, "}", false);
+
+		writeTxtFileBOM(path + "GameBaseExcelILR.cs", GB2312ToUTF8(hotFixfile));
 	}
 	//------------------------------------------------------------------------------------------------------------------------------------------------------
-	protected static void convertTable(ExcelTable table)
+	protected static OWNER stringToOwner(string str)
 	{
-		string tableName = table.getTableName();
+		if (str == "Client")
+		{
+			return OWNER.CLIENT;
+		}
+		if (str == "Server")
+		{
+			return OWNER.SERVER;
+		}
+		if (str == "Both")
+		{
+			return OWNER.BOTH;
+		}
+		if (str == "None")
+		{
+			return OWNER.NONE;
+		}
+		Console.WriteLine("归属转换错误:" + str);
+		Console.ReadKey();
+		return OWNER.NONE;
+	}
+	protected static ExcelInfo parseTableMemberInfo(ExcelTable table)
+	{
+		ExcelInfo excelInfo = new ExcelInfo();
+		excelInfo.mTable = table;
+		excelInfo.mName = table.getTableName();
 		int rowCount = table.getRowCount();
 		int colCount = table.getColumnCount();
 		if (rowCount <= ROW_HEADER || colCount <= 1)
 		{
-			Console.WriteLine("表格错误:行数:" + rowCount + ", 列数:" + colCount + ", 表名:" + tableName);
-			return;
+			Console.WriteLine("表格错误:行数:" + rowCount + ", 列数:" + colCount + ", 表名:" + excelInfo.mName);
+			Console.ReadKey();
+			return null;
 		}
 
-		List<MemberInfo> memberList = new List<MemberInfo>();
-		for (int i = 0; i < colCount; ++i)
+		try
 		{
-			// 第0行是每一列数据的类型(服务器使用),第1行是每一列数据的类型(客户端使用),第2行是字段类型
-			MemberInfo info = new MemberInfo();
-			info.mMemberName = (string)table.getCell(1, i);
-			info.mMemberType = (string)table.getCell(2, i);
-			memberList.Add(info);
-		}
-
-		// 生成二进制的data文件
-		SerializerWrite fileWriter = new SerializerWrite();
-		for (int i = ROW_HEADER; i < rowCount; ++i)
-		{
-			for (int j = 0; j < colCount; ++j)
+			excelInfo.mComment = (string)table.getCell(0, 0);
+			excelInfo.mOwner = stringToOwner((string)table.getCell(0, 1));
+			for (int i = 0; i < colCount; ++i)
 			{
-				object value = table.getCell(i, j);
-				string colType = memberList[j].mMemberType;
-				if (colType == "int")
+				// 第0行是每一列数据的类型,第1行是字段类型
+				MemberInfo info = new MemberInfo();
+				info.mOwner = stringToOwner((string)table.getCell(1, i));
+				if (info.mOwner == OWNER.SERVER || info.mOwner == OWNER.NONE)
 				{
-					if (value is DBNull)
-					{
-						value = 0;
-					}
-					else if(value is double)
-					{
-						value = (int)(double)value;
-					}
-					fileWriter.write((int)value);
+					info.mComment = (string)table.getCell(6, i);
+					excelInfo.mMemberList.Add(info);
+					continue;
 				}
-				else if (colType == "float")
+				info.mMemberName = (string)table.getCell(2, i);
+				string memberType = (string)table.getCell(3, i);
+				if (memberType.StartsWith("List<"))
 				{
-					if (value is DBNull)
+					// 没有填则是以换行符为分隔
+					if (memberType[memberType.Length - 1] == '>')
 					{
-						value = 0.0f;
+						info.mMemberType = memberType;
+						info.mSeperate = "\n";
 					}
-					else if (value is double)
+					else
 					{
-						value = (float)(double)value;
+						int preIndex = memberType.IndexOf('(');
+						int endIndex = memberType.IndexOf(')');
+						if (preIndex >= 0 && endIndex >= 0)
+						{
+							info.mMemberType = memberType.Substring(0, preIndex);
+							info.mSeperate = memberType.Substring(preIndex + 1, endIndex - preIndex - 1);
+						}
+						else
+						{
+							Console.WriteLine("列表分隔符错误: column:" + i + ", table:" + excelInfo.mName);
+							Console.ReadKey();
+						}
 					}
-					fileWriter.write((float)value);
 				}
-				else if (colType == "string")
+				else
 				{
-					if (value is DBNull)
-					{
-						value = null;
-					}
-					fileWriter.writeString(value?.ToString());
+					info.mMemberType = memberType;
+					info.mSeperate = null;
 				}
+				info.mComment = (string)table.getCell(6, i);
+				excelInfo.mMemberList.Add(info);
 			}
 		}
-		if (fileWriter.getBuffer() != null)
+		catch (Exception e)
 		{
-			writeFile(Config.DATA_PATH + tableName + ".data", fileWriter.getBuffer(), fileWriter.getDataSize());
+			Console.WriteLine("解析表头时错误,表格:" + table.getTableName() + ", info:" + e.Message);
+			Console.ReadKey();
 		}
-		else
+		return excelInfo;
+	}
+	protected static bool convertTable(string path, ExcelTable table, List<MemberInfo> memberInfoList)
+	{
+		try
 		{
-			Console.WriteLine("表格数据为空:" + tableName);
-		}
-
-		// 生成TableData.cs文件
-		string csFile = "";
-		line(ref csFile, "using System;");
-		line(ref csFile, "using System.Collections.Generic;");
-		line(ref csFile, "");
-		line(ref csFile, "public class " + tableName + " : ExcelData");
-		line(ref csFile, "{");
-		for (int i = 1; i < memberList.Count; ++i)
-		{
-			line(ref csFile, "\tpublic " + memberList[i].mMemberType + " m" + memberList[i].mMemberName + ";");
-		}
-		line(ref csFile, "\tpublic override void read(SerializerRead reader)");
-		line(ref csFile, "\t{");
-		line(ref csFile, "\t\tbase.read(reader);");
-		for (int i = 1; i < memberList.Count; ++i)
-		{
-			MemberInfo info = memberList[i];
-			if (info.mMemberType == "string")
+			string tableName = table.getTableName();
+			int rowCount = table.getRowCount();
+			int colCount = table.getColumnCount();
+			// 生成二进制的data文件
+			SerializerWrite fileWriter = new SerializerWrite();
+			for (int i = ROW_HEADER; i < rowCount; ++i)
 			{
-				line(ref csFile, "\t\treader.readString(out m" + info.mMemberName + ");");
+				for (int j = 0; j < colCount; ++j)
+				{
+					object value = table.getCell(i, j);
+					MemberInfo member = memberInfoList[j];
+					if (member.mOwner == OWNER.SERVER || member.mOwner == OWNER.NONE)
+					{
+						continue;
+					}
+					string colType = member.mMemberType;
+					if (colType == "int")
+					{
+						if (value is DBNull)
+						{
+							value = 0;
+						}
+						else if (value is double)
+						{
+							value = (int)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToI((string)value);
+						}
+						fileWriter.write((int)value);
+					}
+					else if (colType == "float")
+					{
+						if (value is DBNull)
+						{
+							value = 0.0f;
+						}
+						else if (value is double)
+						{
+							value = (float)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToF((string)value);
+						}
+						fileWriter.write((float)value);
+					}
+					else if (colType == "bool")
+					{
+						if (value is DBNull)
+						{
+							value = 0;
+						}
+						else if (value is double)
+						{
+							value = (int)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToI((string)value);
+						}
+						fileWriter.write((int)value > 0);
+					}
+					else if (colType == "List<int>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						string str = value?.ToString();
+						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
+						{
+							str = str.Remove(0, 1);
+							str = str.Remove(str.Length - 1, 1);
+						}
+						fileWriter.writeList(stringToInts(str));
+					}
+					else if (colType == "List<float>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						string str = value?.ToString();
+						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
+						{
+							str = str.Remove(0, 1);
+							str = str.Remove(str.Length - 1, 1);
+						}
+						fileWriter.writeList(stringToFloats(str));
+					}
+					else if (colType == "List<string>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (member.mSeperate == "\n")
+						{
+							splitLine(GB2312ToUTF8(value?.ToString()), out string[] lines);
+							if (lines != null)
+							{
+								fileWriter.writeList(new List<string>(lines));
+							}
+							else
+							{
+								fileWriter.writeList(new List<string>());
+							}
+						}
+						else
+						{
+							fileWriter.writeList(stringToStrings(GB2312ToUTF8(value?.ToString()), member.mSeperate));
+						}
+					}
+					else if (colType == "Vector2")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (!(value is string))
+						{
+							Console.WriteLine("Vector2单元格的格式必须为string");
+							return false;
+						}
+						string[] splitList = split((string)value, true, ",");
+						if (splitList == null || splitList.Length != 2)
+						{
+							Console.WriteLine("Vector2单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							return false;
+						}
+						fileWriter.write(SToVector2(value?.ToString()));
+					}
+					else if (colType == "Vector2Int")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (!(value is string))
+						{
+							Console.WriteLine("Vector2Int单元格的格式必须为string");
+							return false;
+						}
+						string[] splitList = split((string)value, true, ",");
+						if (splitList == null || splitList.Length != 2)
+						{
+							Console.WriteLine("Vector2Int单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							return false;
+						}
+						fileWriter.write(SToVector2Int(value?.ToString()));
+					}
+					else if (colType == "Vector3")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (!(value is string))
+						{
+							Console.WriteLine("Vector3单元格的格式必须为string");
+							return false;
+						}
+						string[] splitList = split((string)value, true, ",");
+						if (splitList == null || splitList.Length != 3)
+						{
+							Console.WriteLine("Vector3单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							return false;
+						}
+						fileWriter.write(SToVector3(value?.ToString()));
+					}
+					else if (colType == "string")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						fileWriter.writeString(GB2312ToUTF8(value?.ToString()));
+					}
+				}
 			}
-			else
+			if (fileWriter.getBuffer() == null)
 			{
-				line(ref csFile, "\t\treader.read(out m" + info.mMemberName + ");");
+				Console.WriteLine("表格数据为空:" + tableName);
+				return false;
 			}
-		}
-		line(ref csFile, "\t}");
-		line(ref csFile, "}", false);
-		writeTxtFile(Config.SCRIPT_PATH + tableName + ".cs", csFile);
+			// 重新计算密钥
+			string key = generateMD5("ASLD" + tableName) + "23y35y983";
+			byte[] buffer = fileWriter.getBuffer();
+			int dataSize = fileWriter.getDataSize();
+			for (int i = 0; i < dataSize; ++i)
+			{
+				buffer[i] = (byte)((buffer[i] - ((i << 1) & 0xFF)) ^ key[i % key.Length]);
+			}
 
-		Console.WriteLine("已转换:" + tableName);
+			writeFile(path + tableName + ".bytes", buffer, dataSize);
+			Console.WriteLine("已转换:" + tableName);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("转换表格内容时报错,表格:" + table.getTableName() + ", info:" + e.Message);
+			return false;
+		}
+		return true;
 	}
 	protected static void line(ref string line, string text, bool returnLine = true)
 	{
 		if (returnLine)
 		{
-			line += text + "\n";
+			line += text + "\r\n";
 		}
 		else
 		{
 			line += text;
 		}
-	}
-	protected static string nameToUpper(string sqliteName, bool preUnderLine)
-	{
-		// 根据大写字母拆分
-		List<string> macroList = new List<string>();
-		int length = sqliteName.Length;
-		int lastIndex = 0;
-		// 从1开始,因为第0个始终都是大写,会截取出空字符串,最后一个字母也肯不会被分割
-		for (int i = 1; i<length; ++i)
-		{
-			// 以大写字母为分隔符,但是连续的大写字符不能被分隔
-			// 非连续数字也会分隔
-			char curChar = sqliteName[i];
-			char lastChar = sqliteName[i - 1];
-			char nextChar = i + 1 < length ? sqliteName[i + 1] : '\0';
-			if (isUpper(curChar) && (!isUpper(lastChar) || (nextChar != '\0' && !isUpper(nextChar))) ||
-				isNumber(curChar) && (!isNumber(lastChar) || (nextChar != '\0' && !isNumber(nextChar))))
-			{
-				macroList.Add(sqliteName.Substring(lastIndex, i - lastIndex));
-				lastIndex = i;
-			}
-		}
-		macroList.Add(sqliteName.Substring(lastIndex, length - lastIndex));
-		string headerMacro = "";
-		for(int i = 0; i < macroList.Count; ++i)
-		{
-			headerMacro += "_" + toUpper(macroList[i]);
-		}
-		if (!preUnderLine)
-		{
-			headerMacro = headerMacro.Remove(0, 1);
-		}
-		return headerMacro;
 	}
 }
