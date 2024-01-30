@@ -190,7 +190,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		line(header, "class MICRO_LEGEND_CORE_API " + className + " : public MySQLData");
 	}
 	line(header, "{");
-	line(header, "\ttypedef MySQLData base;");
+	line(header, "\tBASE(" + className + ", MySQLData);");
 	line(header, "public:");
 	line(header, "\tstatic const int ID;");
 	const uint memberCount = mysqlInfo.mMemberList.size();
@@ -913,7 +913,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		line(header, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public MySQLTable");
 	}
 	line(header, "{");
-	line(header, "\ttypedef MySQLTable base;");
+	line(header, "\tBASE(" + tableClassName + ", MySQLTable);");
 	line(header, "public:");
 	line(header, "\texplicit " + tableClassName + "(const char* tableName);");
 	line(header, "\tvoid init() override;");

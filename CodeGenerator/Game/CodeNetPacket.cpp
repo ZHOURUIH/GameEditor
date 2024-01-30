@@ -864,7 +864,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		generateCodes.push_back("class " + packetName + " : public Packet");
 	}
 	generateCodes.push_back("{");
-	generateCodes.push_back("\tBASE(Packet);");
+	generateCodes.push_back("\tBASE(" + packetName + ", Packet);");
 	if (hasOptional)
 	{
 		generateCodes.push_back("public:");
@@ -984,7 +984,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		headerCodeList.push_back("class " + structName + " : public SerializableBitData");
 	}
 	headerCodeList.push_back("{");
-	headerCodeList.push_back("\tBASE(SerializableBitData);");
+	headerCodeList.push_back("\tBASE(" + structName + ", SerializableBitData);");
 	// 是否有可选字段
 	if (hasOptional)
 	{
@@ -1896,7 +1896,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		generateCodes.push_back("class " + packetName + " : public Packet");
 	}
 	generateCodes.push_back("{");
-	generateCodes.push_back("\tBASE(Packet);");
+	generateCodes.push_back("\tBASE(" + packetName + ", Packet);");
 	if (hasOptional)
 	{
 		generateCodes.push_back("public:");

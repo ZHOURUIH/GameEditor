@@ -362,7 +362,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	}
 	
 	line(header, "{");
-	line(header, "\tBASE(SQLiteData);");
+	line(header, "\tBASE(" + dataClassName + ", SQLiteData);");
 	if (memberUsedInServerNoIDList.size() > 0)
 	{
 		line(header, "public:");
