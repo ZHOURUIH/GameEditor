@@ -1135,28 +1135,27 @@ public class BinaryUtility
 			return null;
 		}
 		// 默认为UTF8
-		if (encoding == null)
-		{
-			encoding = Encoding.UTF8;
-		}
+		encoding ??= Encoding.UTF8;
 		return encoding.GetBytes(str);
 	}
 	public static string bytesToString(byte[] bytes, Encoding encoding = null)
 	{
-		// 默认为UTF8
-		if (encoding == null)
+		if (bytes == null)
 		{
-			encoding = Encoding.UTF8;
+			return null;
 		}
+		// 默认为UTF8
+		encoding ??= Encoding.UTF8;
 		return removeLastZero(encoding.GetString(bytes));
 	}
 	public static string bytesToString(byte[] bytes, int startIndex, int count, Encoding encoding = null)
 	{
-		// 默认为UTF8
-		if (encoding == null)
+		if (bytes == null)
 		{
-			encoding = Encoding.UTF8;
+			return null;
 		}
+		// 默认为UTF8
+		encoding ??= Encoding.UTF8;
 		return removeLastZero(encoding.GetString(bytes, startIndex, count));
 	}
 	public static string convertStringFormat(string str, Encoding source, Encoding target)

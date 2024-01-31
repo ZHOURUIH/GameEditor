@@ -5,20 +5,16 @@ class Program : FileUtility
 {
 	static void Main(string[] args)
 	{
-		if (!Config.parse("./Config.txt"))
+		if (!Config.parse("./ExcelConverterConfig.txt"))
 		{
 			Console.ReadKey();
 			return;
 		}
 
-		// 先删除本地的文件
-		deleteFolder(Config.SCRIPT_PATH);
-		deleteFolder(Config.DATA_PATH);
-
 		List<ExcelReader> readerList = new List<ExcelReader>();
 
 		List<string> files = new List<string>();
-		findFiles(Config.EXCEL_PATH, files, ".xlsx");
+		findFiles(Config.mExcelPath, files, ".xlsx");
 		for (int i = 0; i < files.Count; ++i)
 		{
 			// ~开头的是临时文件,不处理
@@ -29,15 +25,37 @@ class Program : FileUtility
 			ExcelReader reader = new ExcelReader(files[i]);
 			if (!reader.isValid())
 			{
+				Console.WriteLine("打开文件错误:" + files[i]);
 				Console.ReadKey();
 				return;
 			}
 			readerList.Add(reader);
 		}
 
-		ExcelConverter.generateTableData(readerList);
-		ExcelConverter.generateRegister(readerList);
-		ExcelConverter.generateExcelDefine(readerList);
+		// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
+		List<string> csDataFileList = new List<string>();
+		findFiles(Config.mExcelDataHotFixPath, csDataFileList, ".cs");
+		foreach (string str in csDataFileList)
+		{
+			deleteFile(str);
+		}
+		List<string> csTableFileList = new List<string>();
+		findFiles(Config.mExcelTableHotFixPath, csTableFileList, ".cs");
+		foreach (string str in csTableFileList)
+		{
+			deleteFile(str);
+		}
+
+		// 删除生成的bytes文件,不删除meta
+		List<string> bytesList = new List<string>();
+		findFiles(Config.mExcelBytesPath, bytesList, ".bytes");
+		foreach (string str in bytesList)
+		{
+			deleteFile(str);
+		}
+
+		// 生成表格二进制文件
+		ExcelConverter.generate(readerList);
 
 		for (int i = 0; i < readerList.Count; ++i)
 		{
@@ -45,6 +63,5 @@ class Program : FileUtility
 		}
 
 		Console.WriteLine("共" + files.Count + "个文件");
-		Console.ReadKey();
     }
 }

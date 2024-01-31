@@ -17,7 +17,7 @@ public class ExcelReader
 		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 		try
 		{
-			mStream = File.OpenRead(filePath);
+			mStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		}
 		catch
 		{
