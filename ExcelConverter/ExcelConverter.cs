@@ -2,30 +2,36 @@
 using System.Collections.Generic;
 using static MathUtility;
 
+// 字段或者表格是客户端用还是服务器用
 public enum OWNER : byte
 {
-	NONE,
-	CLIENT,
-	SERVER,
-	BOTH,
+	NONE,		// 客户端和服务器都不使用,一般是辅助填表的,方便阅读的
+	CLIENT,		// 仅客户端用
+	SERVER,		// 仅服务器用
+	BOTH,		// 客户端和服务器都要用
 }
 
+// 表格信息
 public class ExcelInfo
 {
-	public string mName;
-	public string mComment;
-	public ExcelTable mTable;
-	public List<MemberInfo> mMemberList = new List<MemberInfo>();
-	public OWNER mOwner;
+	public string mName;		// 表格名
+	public string mComment;		// 表格注释
+	public ExcelTable mTable;	// 表格对象
+	public List<MemberInfo> mMemberList = new List<MemberInfo>();	// 表格字段列表
+	public OWNER mOwner;		// 表格是客户端用还是服务器用
 }
 
+// 字段信息
 public class MemberInfo
 {
-	public string mMemberName;
-	public string mMemberType;
-	public string mComment;
-	public string mSeperate;        // 如果是列表类型,则表示列表类型的分隔符
-	public OWNER mOwner;
+	public string mMemberName;				// 字段名
+	public string mMemberType;				// 字段类型,可以是枚举
+	public string mMemberListElementType;	// 如果字段是列表类型的,则表示列表的元素类型,可以是枚举
+	public string mMemberListWithEnumRealElementType;	// 如果字段是枚举的列表类型的,则表示转换以后的实际整数类型的列表类型比如List<byte>
+	public string mEnumRealType;            // 如果mMemberType或者mMemberListElementType是枚举类型,则表示此枚举的实际整数类型
+	public string mComment;					// 字段注释
+	public string mSeperate;				// 如果是字符串的列表类型,则表示列表类型的分隔符,其他数据类型的列表不需要此分隔符,都是以逗号分隔
+	public OWNER mOwner;					// 字段是客户端用还是服务器用
 }
 
 public class ExcelConverter : FileUtility
@@ -37,7 +43,12 @@ public class ExcelConverter : FileUtility
 		List<ExcelInfo> allExcelInfo = new List<ExcelInfo>();
 		for (int i = 0; i < readerList.Count; ++i)
 		{
-			allExcelInfo.Add(parseTableMemberInfo(readerList[i].getTable(0)));
+			ExcelInfo info = parseTableMemberInfo(readerList[i].getTable(0));
+			if (info == null)
+			{
+				Console.ReadKey();
+			}
+			allExcelInfo.Add(info);
 		}
 
 		foreach (var item in allExcelInfo)
@@ -61,45 +72,99 @@ public class ExcelConverter : FileUtility
 		generateCSharpExcelRegisteFileFile(allExcelInfo, getFilePath(Config.mExcelDataHotFixPath) + "/");
 		generateCSharpExcelDeclare(allExcelInfo, Config.mHotFixCommonPath);
 	}
+	// 仅生成 bytes
+	public static void generateBytesOnly(ExcelReader reader)
+	{
+		ExcelInfo item = parseTableMemberInfo(reader.getTable(0));
+		if (item == null)
+		{
+			Console.ReadKey();
+			return;
+		}
+		if (item.mOwner == OWNER.SERVER || item.mOwner == OWNER.NONE)
+		{
+			return;
+		}
+		if (!convertTable(Config.mExcelBytesPath, item.mTable, item.mMemberList))
+		{
+			Console.WriteLine("Convert error!");
+			Console.ReadKey();
+		}
+	}
+	// 仅生成调试用的txt数据文件
+	public static void generateDataTxt(List<ExcelReader> readerList)
+	{
+		// 解析
+		List<ExcelInfo> allExcelInfo = new List<ExcelInfo>();
+		for (int i = 0; i < readerList.Count; ++i)
+		{
+			ExcelInfo info = parseTableMemberInfo(readerList[i].getTable(0));
+			if (info == null)
+			{
+				Console.ReadKey();
+				return;
+			}
+			allExcelInfo.Add(info);
+		}
+
+		foreach (var item in allExcelInfo)
+		{
+			if (item.mOwner == OWNER.SERVER || item.mOwner == OWNER.NONE)
+			{
+				continue;
+			}
+			// 转换表格文件
+			if (!convertTableToTxt(Config.mExcelBytesPath, item.mTable, item.mMemberList))
+			{
+				Console.ReadKey();
+			}
+		}
+	}
+	//------------------------------------------------------------------------------------------------------------------------------
 	// ExcelTable.cs
 	protected static void generateExcelTableFile(string tableName, string path)
 	{
 		string dataClassName = "ED" + tableName;
 		string tableClassName = "Excel" + tableName;
-		string table = "";
-		line(ref table, "using System;");
-		line(ref table, "using System.Collections.Generic;");
-		line(ref table, "");
-		line(ref table, "public partial class " + tableClassName + " : ExcelTable");
-		line(ref table, "{");
-		line(ref table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
-		line(ref table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
-		line(ref table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
-		line(ref table, "\tprotected List<" + dataClassName + "> mDataList;");
-		line(ref table, "\tprotected bool mDataAvailable;");
-		line(ref table, "\tpublic " + tableClassName + "()");
-		line(ref table, "\t{");
-		line(ref table, "\t\tmDataList = new List<" + dataClassName + ">();");
-		line(ref table, "\t\tmDataAvailable = false;");
-		line(ref table, "\t}");
-		line(ref table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
-		line(ref table, "\t{");
-		line(ref table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
-		line(ref table, "\t}");
-		line(ref table, "\tpublic List<" + dataClassName + "> queryAll()");
-		line(ref table, "\t{");
-		line(ref table, "\t\tif (!mDataAvailable)");
-		line(ref table, "\t\t{");
-		line(ref table, "\t\t\tforeach (var item in getDataList())");
-		line(ref table, "\t\t\t{");
-		line(ref table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
-		line(ref table, "\t\t\t}");
-		line(ref table, "\t\t\tmDataAvailable = true;");
-		line(ref table, "\t\t}");
-		line(ref table, "\t\treturn mDataList;");
-		line(ref table, "\t}");
-		line(ref table, "}", false);
-		writeTxtFileBOM(path + tableClassName + ".cs", GB2312ToUTF8(table));
+		string fileContent = "";
+		line(ref fileContent, "using System;");
+		line(ref fileContent, "using System.Collections.Generic;");
+		line(ref fileContent, "");
+		line(ref fileContent, "public partial class " + tableClassName + " : ExcelTable");
+		line(ref fileContent, "{");
+		line(ref fileContent, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
+		line(ref fileContent, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
+		line(ref fileContent, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
+		line(ref fileContent, "\tprotected List<" + dataClassName + "> mDataList;");
+		line(ref fileContent, "\tprotected bool mDataAvailable;");
+		line(ref fileContent, "\tpublic " + tableClassName + "()");
+		line(ref fileContent, "\t{");
+		line(ref fileContent, "\t\tmDataList = new List<" + dataClassName + ">();");
+		line(ref fileContent, "\t\tmDataAvailable = false;");
+		line(ref fileContent, "\t}");
+		line(ref fileContent, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
+		line(ref fileContent, "\t{");
+		line(ref fileContent, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
+		line(ref fileContent, "\t}");
+		line(ref fileContent, "\tpublic List<" + dataClassName + "> queryAll()");
+		line(ref fileContent, "\t{");
+		line(ref fileContent, "\t\tif (!mDataAvailable)");
+		line(ref fileContent, "\t\t{");
+		line(ref fileContent, "\t\t\tforeach (var item in getDataList())");
+		line(ref fileContent, "\t\t\t{");
+		line(ref fileContent, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
+		line(ref fileContent, "\t\t\t}");
+		line(ref fileContent, "\t\t\tmDataAvailable = true;");
+		line(ref fileContent, "\t\t}");
+		line(ref fileContent, "\t\treturn mDataList;");
+		line(ref fileContent, "\t}");
+		line(ref fileContent, "\tpublic override void clear()");
+		line(ref fileContent, "\t{");
+		line(ref fileContent, "\t\tmDataAvailable = false;");
+		line(ref fileContent, "\t\tmDataList.Clear();");
+		line(ref fileContent, "\t}");
+		line(ref fileContent, "}", false);
+		writeTxtFileBOM(path + tableClassName + ".cs", GB2312ToUTF8(fileContent));
 	}
 	// ExcelData.cs
 	protected static void generateExcelDataFile(ExcelInfo info, string path)
@@ -114,8 +179,7 @@ public class ExcelConverter : FileUtility
 		line(ref file, "public class " + dataClassName + " : ExcelData");
 		line(ref file, "{");
 		int memberCount = info.mMemberList.Count;
-		HashSet<string> listMemberSet = new HashSet<string>();
-		List<KeyValuePair<string, string>> listMemberList = new List<KeyValuePair<string, string>>();
+		var listMemberList = new List<KeyValuePair<string, string>>();
 		for (int i = 0; i < memberCount; ++i)
 		{
 			MemberInfo member = info.mMemberList[i];
@@ -129,17 +193,12 @@ public class ExcelConverter : FileUtility
 			}
 			string typeName = member.mMemberType;
 			// 列表类型的成员变量存储到单独的列表,因为需要分配内存
-			if (typeName.Contains("List"))
+			if (typeName.StartsWith("List<"))
 			{
 				listMemberList.Add(new KeyValuePair<string, string>(typeName, member.mMemberName));
-				listMemberSet.Add(member.mMemberName);
 			}
 			string memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
-			int tabCount = generateAlignTableCount(memberLine, 44);
-			for (int j = 0; j < tabCount; ++j)
-			{
-				memberLine += '\t';
-			}
+			memberLine += EMPTY.PadRight(generateAlignTableCount(memberLine, 52), '\t');
 			memberLine += "// " + info.mMemberList[i].mComment;
 			line(ref file, memberLine);
 		}
@@ -168,14 +227,91 @@ public class ExcelConverter : FileUtility
 				continue;
 			}
 			string typeName = memberInfo.mMemberType;
-			if (typeName == "string")
+			// 列表类型
+			if (typeName.StartsWith("List<"))
+			{
+				if (!isEmpty(memberInfo.mEnumRealType))
+				{
+					if (memberInfo.mEnumRealType == "sbyte")
+					{
+						line(ref file, "\t\treader.readEnumSByteList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "byte")
+					{
+						line(ref file, "\t\treader.readEnumByteList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "short")
+					{
+						line(ref file, "\t\treader.readEnumShortList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "ushort")
+					{
+						line(ref file, "\t\treader.readEnumUShortList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "int")
+					{
+						line(ref file, "\t\treader.readEnumIntList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "uint")
+					{
+						line(ref file, "\t\treader.readEnumUIntList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "long")
+					{
+						line(ref file, "\t\treader.readEnumLongList(m" + memberInfo.mMemberName + ");");
+					}
+					else if (memberInfo.mEnumRealType == "ulong")
+					{
+						line(ref file, "\t\treader.readEnumULongList(m" + memberInfo.mMemberName + ");");
+					}
+				}
+				else
+				{
+					line(ref file, "\t\treader.readList(m" + memberInfo.mMemberName + ");");
+				}
+			}
+			// 枚举类型
+			else if (!isEmpty(memberInfo.mEnumRealType))
+			{
+				if (memberInfo.mEnumRealType == "sbyte")
+				{
+					line(ref file, "\t\treader.readEnumSByte(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "byte")
+				{
+					line(ref file, "\t\treader.readEnumByte(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "short")
+				{
+					line(ref file, "\t\treader.readEnumShort(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "ushort")
+				{
+					line(ref file, "\t\treader.readEnumUShort(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "int")
+				{
+					line(ref file, "\t\treader.readEnumInt(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "uint")
+				{
+					line(ref file, "\t\treader.readEnumUInt(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "long")
+				{
+					line(ref file, "\t\treader.readEnumLong(out m" + memberInfo.mMemberName + ");");
+				}
+				else if (memberInfo.mEnumRealType == "ulong")
+				{
+					line(ref file, "\t\treader.readEnumULong(out m" + memberInfo.mMemberName + ");");
+				}
+			}
+			// string
+			else if (typeName == "string")
 			{
 				line(ref file, "\t\treader.readString(out m" + memberInfo.mMemberName + ");");
 			}
-			else if (listMemberSet.Contains(memberInfo.mMemberName))
-			{
-				line(ref file, "\t\treader.readList(m" + memberInfo.mMemberName + ");");
-			}
+			// 其他类型
 			else
 			{
 				line(ref file, "\t\treader.read(out m" + memberInfo.mMemberName + ");");
@@ -242,7 +378,6 @@ public class ExcelConverter : FileUtility
 
 		writeTxtFileBOM(path + "GameBaseExcelILR.cs", GB2312ToUTF8(hotFixfile));
 	}
-	//------------------------------------------------------------------------------------------------------------------------------------------------------
 	protected static OWNER stringToOwner(string str)
 	{
 		if (str == "Client")
@@ -275,7 +410,6 @@ public class ExcelConverter : FileUtility
 		if (rowCount <= ROW_HEADER || colCount <= 1)
 		{
 			Console.WriteLine("表格错误:行数:" + rowCount + ", 列数:" + colCount + ", 表名:" + excelInfo.mName);
-			Console.ReadKey();
 			return null;
 		}
 
@@ -298,43 +432,149 @@ public class ExcelConverter : FileUtility
 				string memberType = (string)table.getCell(3, i);
 				if (memberType.StartsWith("List<"))
 				{
-					// 没有填则是以换行符为分隔
-					if (memberType[memberType.Length - 1] == '>')
+					// 解析列表类型以及列表的元素类型
+					string mainPart = memberType.Substring(0, memberType.IndexOf('>') + 1);
+					string listElementType = mainPart.Substring(mainPart.IndexOf('<') + 1, mainPart.IndexOf('>') - mainPart.IndexOf('<') - 1);
+					// 列表元素是带括号的枚举类型
+					if (listElementType.Contains('('))
 					{
-						info.mMemberType = memberType;
+						int preIndex = listElementType.IndexOf('(');
+						int endIndex = listElementType.IndexOf(')');
+						info.mMemberListElementType = listElementType.Substring(0, preIndex);
+						info.mEnumRealType = listElementType.Substring(preIndex + 1, endIndex - preIndex - 1);
+						info.mMemberType = "List<" + info.mMemberListElementType + ">";
+						info.mMemberListWithEnumRealElementType = "List<" + info.mEnumRealType + ">";
+					}
+					// 列表元素是其他类型
+					else
+					{
+						info.mMemberType = mainPart;
+						info.mMemberListElementType = listElementType;
+					}
+
+					// 解析分隔符
+					string endPart = memberType.Substring(memberType.IndexOf('>') + 1);
+					// 没有填则是以换行符为分隔
+					if (isEmpty(endPart))
+					{
 						info.mSeperate = "\n";
 					}
 					else
 					{
-						int preIndex = memberType.IndexOf('(');
-						int endIndex = memberType.IndexOf(')');
+						int preIndex = endPart.IndexOf('(');
+						int endIndex = endPart.IndexOf(')');
 						if (preIndex >= 0 && endIndex >= 0)
 						{
-							info.mMemberType = memberType.Substring(0, preIndex);
-							info.mSeperate = memberType.Substring(preIndex + 1, endIndex - preIndex - 1);
+							info.mSeperate = endPart.Substring(preIndex + 1, endIndex - preIndex - 1);
 						}
 						else
 						{
 							Console.WriteLine("列表分隔符错误: column:" + i + ", table:" + excelInfo.mName);
-							Console.ReadKey();
+							return null;
 						}
 					}
 				}
 				else
 				{
-					info.mMemberType = memberType;
+					// 带括号的是枚举类型
+					if (memberType.Contains('('))
+					{
+						int preIndex = memberType.IndexOf('(');
+						int endIndex = memberType.IndexOf(')');
+						info.mMemberType = memberType.Substring(0, preIndex);
+						info.mEnumRealType = memberType.Substring(preIndex + 1, endIndex - preIndex - 1);
+					}
+					// 不带括号的是其他类型
+					else
+					{
+						info.mMemberType = memberType;
+					}
 					info.mSeperate = null;
 				}
 				info.mComment = (string)table.getCell(6, i);
 				excelInfo.mMemberList.Add(info);
+				checkType(info);
 			}
 		}
 		catch (Exception e)
 		{
 			Console.WriteLine("解析表头时错误,表格:" + table.getTableName() + ", info:" + e.Message);
-			Console.ReadKey();
+			return null;
 		}
 		return excelInfo;
+	}
+	protected static void checkType(MemberInfo info)
+	{
+		bool isValid;
+		if (info.mMemberType.StartsWith("List<"))
+		{
+			if (isEmpty(info.mEnumRealType))
+			{
+				isValid = info.mMemberListElementType == "sbyte" ||
+						  info.mMemberListElementType == "byte" ||
+						  info.mMemberListElementType == "short" ||
+						  info.mMemberListElementType == "ushort" ||
+						  info.mMemberListElementType == "int" ||
+						  info.mMemberListElementType == "uint" ||
+						  info.mMemberListElementType == "long" ||
+						  info.mMemberListElementType == "ulong" || 
+						  info.mMemberListElementType == "bool" || 
+						  info.mMemberListElementType == "string" || 
+						  info.mMemberListElementType == "Vector2" || 
+						  info.mMemberListElementType == "Vector3" || 
+						  info.mMemberListElementType == "Vector2Int" || 
+						  info.mMemberListElementType == "Vector3Int" || 
+						  info.mMemberListElementType == "float";
+			}
+			else
+			{
+				isValid = info.mEnumRealType == "sbyte" ||
+						  info.mEnumRealType == "byte" ||
+						  info.mEnumRealType == "short" ||
+						  info.mEnumRealType == "ushort" ||
+						  info.mEnumRealType == "int" ||
+						  info.mEnumRealType == "uint" ||
+						  info.mEnumRealType == "long" ||
+						  info.mEnumRealType == "ulong";
+			}
+		}
+		else
+		{
+			if (isEmpty(info.mEnumRealType))
+			{
+				isValid = info.mMemberType == "sbyte" ||
+						  info.mMemberType == "byte" ||
+						  info.mMemberType == "short" ||
+						  info.mMemberType == "ushort" ||
+						  info.mMemberType == "int" ||
+						  info.mMemberType == "uint" ||
+						  info.mMemberType == "long" ||
+						  info.mMemberType == "ulong" ||
+						  info.mMemberType == "bool" ||
+						  info.mMemberType == "string" ||
+						  info.mMemberType == "Vector2" ||
+						  info.mMemberType == "Vector3" ||
+						  info.mMemberType == "Vector2Int" ||
+						  info.mMemberType == "Vector3Int" ||
+						  info.mMemberType == "float";
+			}
+			else
+			{
+				isValid = info.mEnumRealType == "sbyte" ||
+						  info.mEnumRealType == "byte" ||
+						  info.mEnumRealType == "short" ||
+						  info.mEnumRealType == "ushort" ||
+						  info.mEnumRealType == "int" ||
+						  info.mEnumRealType == "uint" ||
+						  info.mEnumRealType == "long" ||
+						  info.mEnumRealType == "ulong";
+			}
+		}
+		if (!isValid)
+		{
+			Console.WriteLine("字段类型错误:" + info.mMemberType);
+			Console.ReadKey();
+		}
 	}
 	protected static bool convertTable(string path, ExcelTable table, List<MemberInfo> memberInfoList)
 	{
@@ -355,7 +595,22 @@ public class ExcelConverter : FileUtility
 					{
 						continue;
 					}
-					string colType = member.mMemberType;
+					string colType;
+					// 枚举的列表类型
+					if (!isEmpty(member.mMemberListWithEnumRealElementType))
+					{
+						colType = member.mMemberListWithEnumRealElementType;
+					}
+					// 枚举类型
+					else if (!isEmpty(member.mEnumRealType))
+					{
+						colType = member.mEnumRealType;
+					}
+					// 其他类型
+					else
+					{
+						colType = member.mMemberType;
+					}
 					if (colType == "int")
 					{
 						if (value is DBNull)
@@ -403,6 +658,38 @@ public class ExcelConverter : FileUtility
 							value = SToI((string)value);
 						}
 						fileWriter.write((int)value > 0);
+					}
+					else if (colType == "byte")
+					{
+						if (value is DBNull)
+						{
+							value = 0;
+						}
+						else if (value is double)
+						{
+							value = (int)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToI((string)value);
+						}
+						fileWriter.write((byte)(int)value);
+					}
+					else if (colType == "List<byte>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						string str = value?.ToString();
+						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
+						{
+							str = str.Remove(0, 1);
+							str = str.Remove(str.Length - 1, 1);
+						}
+						List<byte> bytes = new List<byte>();
+						stringToBytes(str, bytes);
+						fileWriter.writeList(bytes);
 					}
 					else if (colType == "List<int>")
 					{
@@ -520,6 +807,11 @@ public class ExcelConverter : FileUtility
 						}
 						fileWriter.writeString(GB2312ToUTF8(value?.ToString()));
 					}
+					else
+					{
+						Console.WriteLine("类型错误:" + colType);
+						return false;
+					}
 				}
 			}
 			if (fileWriter.getBuffer() == null)
@@ -537,6 +829,203 @@ public class ExcelConverter : FileUtility
 			}
 
 			writeFile(path + tableName + ".bytes", buffer, dataSize);
+			Console.WriteLine("已转换:" + tableName);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("转换表格内容时报错,表格:" + table.getTableName() + ", info:" + e.Message);
+			return false;
+		}
+		return true;
+	}
+	protected static bool convertTableToTxt(string path, ExcelTable table, List<MemberInfo> memberInfoList)
+	{
+		try
+		{
+			string tableName = table.getTableName();
+			int rowCount = table.getRowCount();
+			int colCount = table.getColumnCount();
+			// 生成二进制的data文件
+			string fileContent = EMPTY;
+			for (int i = ROW_HEADER; i < rowCount; ++i)
+			{
+				for (int j = 0; j < colCount; ++j)
+				{
+					object value = table.getCell(i, j);
+					MemberInfo member = memberInfoList[j];
+					if (member.mOwner == OWNER.SERVER || member.mOwner == OWNER.NONE)
+					{
+						continue;
+					}
+					string colType = member.mMemberType;
+					if (colType == "int")
+					{
+						if (value is DBNull)
+						{
+							value = 0;
+						}
+						else if (value is double)
+						{
+							value = (int)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToI((string)value);
+						}
+						fileContent += IToS((int)value) + "\t";
+					}
+					else if (colType == "float")
+					{
+						if (value is DBNull)
+						{
+							value = 0.0f;
+						}
+						else if (value is double)
+						{
+							value = (float)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToF((string)value);
+						}
+						fileContent += FToS((float)value) + "\t";
+					}
+					else if (colType == "bool")
+					{
+						if (value is DBNull)
+						{
+							value = 0;
+						}
+						else if (value is double)
+						{
+							value = (int)(double)value;
+						}
+						else if (value is string)
+						{
+							value = SToI((string)value);
+						}
+						fileContent += ((int)value > 0 ? "true" : "false") + "\t";
+					}
+					else if (colType == "List<int>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						string str = value?.ToString();
+						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
+						{
+							str = str.Remove(0, 1);
+							str = str.Remove(str.Length - 1, 1);
+						}
+						fileContent += str + "\t";
+					}
+					else if (colType == "List<float>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						string str = value?.ToString();
+						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
+						{
+							str = str.Remove(0, 1);
+							str = str.Remove(str.Length - 1, 1);
+						}
+						fileContent += str + "\t";
+					}
+					else if (colType == "List<string>")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (member.mSeperate == "\n")
+						{
+							splitLine(GB2312ToUTF8(value?.ToString()), out string[] lines);
+							if (lines != null)
+							{
+								fileContent += GB2312ToUTF8(value?.ToString()) + "\t";
+							}
+							else
+							{
+								fileContent += "\t";
+							}
+						}
+						else
+						{
+							fileContent += GB2312ToUTF8(value?.ToString()) + "\t";
+						}
+					}
+					else if (colType == "Vector2")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (!(value is string))
+						{
+							Console.WriteLine("Vector2单元格的格式必须为string");
+							return false;
+						}
+						string[] splitList = split((string)value, true, ",");
+						if (splitList == null || splitList.Length != 2)
+						{
+							Console.WriteLine("Vector2单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							return false;
+						}
+						fileContent += value?.ToString() + "\t";
+					}
+					else if (colType == "Vector2Int")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (!(value is string))
+						{
+							Console.WriteLine("Vector2Int单元格的格式必须为string");
+							return false;
+						}
+						string[] splitList = split((string)value, true, ",");
+						if (splitList == null || splitList.Length != 2)
+						{
+							Console.WriteLine("Vector2Int单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							return false;
+						}
+						fileContent += value?.ToString() + "\t";
+					}
+					else if (colType == "Vector3")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						if (!(value is string))
+						{
+							Console.WriteLine("Vector3单元格的格式必须为string");
+							return false;
+						}
+						string[] splitList = split((string)value, true, ",");
+						if (splitList == null || splitList.Length != 3)
+						{
+							Console.WriteLine("Vector3单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							return false;
+						}
+						fileContent += value?.ToString() + "\t";
+					}
+					else if (colType == "string")
+					{
+						if (value is DBNull)
+						{
+							value = null;
+						}
+						fileContent += GB2312ToUTF8(value?.ToString()) + "\t";
+					}
+				}
+				fileContent += "\n";
+			}
+			writeTxtFile(path + tableName + ".txt", fileContent);
 			Console.WriteLine("已转换:" + tableName);
 		}
 		catch (Exception e)
