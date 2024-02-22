@@ -25,10 +25,12 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 				   findClassName(line) != "ClassBaseTypePool" &&
 				   findClassName(line) != "ClassBaseTypePoolThread" &&
 				   findClassName(line) != "ClassKeyPool" && 
-				   findClassName(line) != "ClassKeyPoolThread";
+				   findClassName(line) != "ClassKeyPoolThread" &&
+				   findClassName(line) != "ArrayPool" &&
+				   findClassName(line) != "ArrayPoolThread";
 		});
 	myVector<string> classPoolList = findTargetHeaderFile(cppPath,
-		[](const string& fileName) { return endWith(fileName, "Pool"); },
+		[](const string& fileName) { return endWith(fileName, "Pool") || endWith(fileName, "PoolThread"); },
 		[](const string& line)
 		{
 			return findSubstr(line, " : public ClassPool<") ||
@@ -38,7 +40,9 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 				   findSubstr(line, " : public ClassBaseTypePool<") ||
 				   findSubstr(line, " : public ClassBaseTypePoolThread<") ||
 				   findSubstr(line, " : public ClassKeyPool<") ||
-				   findSubstr(line, " : public ClassKeyPoolThread<");
+				   findSubstr(line, " : public ClassKeyPoolThread<") ||
+				   findSubstr(line, " ArrayPool ") ||
+				   findSubstr(line, " ArrayPoolThread ");
 		});
 	myVector<string> factoryList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "FactoryManager"); },

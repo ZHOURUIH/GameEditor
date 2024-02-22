@@ -868,7 +868,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	if (hasOptional)
 	{
 		generateCodes.push_back("public:");
-		generateCodes.push_back("\tenum class FieldFlag : byte");
+		generateCodes.push_back("\tenum class Field : byte");
 		generateCodes.push_back("\t{");
 		FOR_I(packetInfo.mMemberList.size())
 		{
@@ -989,7 +989,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	if (hasOptional)
 	{
 		headerCodeList.push_back("public:");
-		headerCodeList.push_back("\tenum class FieldFlag : byte");
+		headerCodeList.push_back("\tenum class Field : byte");
 		headerCodeList.push_back("\t{");
 		FOR_I (structInfo.mMemberList.size())
 		{
@@ -1085,7 +1085,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		{
 			if (item.mOptional)
 			{
-				headerCodeList.push_back("\t\tUtility::setBitOne(fieldFlag, (byte)FieldFlag::" + item.mMemberNameNoPrefix + ");");
+				headerCodeList.push_back("\t\tUtility::setBitOne(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + ");");
 			}
 		}
 		headerCodeList.push_back("\t\treturn fieldFlag;");
@@ -1222,7 +1222,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		string preTable = "\t";
 		if (item.mOptional)
 		{
-			sourceCodeList.push_back("\tif (Utility::hasBit(fieldFlag, (byte)FieldFlag::" + item.mMemberNameNoPrefix + "))");
+			sourceCodeList.push_back("\tif (Utility::hasBit(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + "))");
 			sourceCodeList.push_back("\t{");
 			preTable += "\t";
 		}
@@ -1341,7 +1341,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		string preTable = "\t";
 		if (item.mOptional)
 		{
-			sourceCodeList.push_back("\tif (isFieldValid((byte)FieldFlag::" + item.mMemberNameNoPrefix + "))");
+			sourceCodeList.push_back("\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
 			sourceCodeList.push_back("\t{");
 			preTable += "\t";
 		}
@@ -1582,7 +1582,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			string preTable = "\t\t";
 			if (item.mOptional)
 			{
-				generateCodes.push_back("\t\tif (isFieldValid((byte)FieldFlag::" + item.mMemberNameNoPrefix + "))");
+				generateCodes.push_back("\t\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
 				generateCodes.push_back("\t\t{");
 				preTable += "\t";
 			}
@@ -1705,7 +1705,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 			string preTable = "\t\t";
 			if (item.mOptional)
 			{
-				generateCodes.push_back("\t\tif (isFieldValid((byte)FieldFlag::" + item.mMemberNameNoPrefix + "))");
+				generateCodes.push_back("\t\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
 				generateCodes.push_back("\t\t{");
 				preTable += "\t";
 			}
@@ -1900,7 +1900,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	if (hasOptional)
 	{
 		generateCodes.push_back("public:");
-		generateCodes.push_back("\tenum class FieldFlag : byte");
+		generateCodes.push_back("\tenum class Field : byte");
 		generateCodes.push_back("\t{");
 		FOR_I(packetInfo.mMemberList.size())
 		{
