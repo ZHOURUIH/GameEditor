@@ -431,11 +431,11 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 		{
 			if (startWith(member.mTypeName, "Vector<"))
 			{
-				line(header, "\t\tregisteEnumListParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
+				line(header, "\t\tregisteEnumListParam<" + member.mEnumRealType + ">(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
 			}
 			else
 			{
-				line(header, "\t\tregisteEnumParam<" + member.mTypeName + ", " + member.mEnumRealType + ">(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
+				line(header, "\t\tregisteEnumParam<" + member.mEnumRealType + ">(m" + name + ", " + StringUtility::intToString(i + 1) + ");");
 			}
 		}
 	}
