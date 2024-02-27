@@ -380,21 +380,24 @@ public class ExcelConverter : FileUtility
 	}
 	protected static OWNER stringToOwner(string str)
 	{
-		if (str == "Client")
+		if (str != null)
 		{
-			return OWNER.CLIENT;
-		}
-		if (str == "Server")
-		{
-			return OWNER.SERVER;
-		}
-		if (str == "Both")
-		{
-			return OWNER.BOTH;
-		}
-		if (str == "None")
-		{
-			return OWNER.NONE;
+			if (str == "Client")
+			{
+				return OWNER.CLIENT;
+			}
+			if (str == "Server")
+			{
+				return OWNER.SERVER;
+			}
+			if (str == "Both")
+			{
+				return OWNER.BOTH;
+			}
+			if (str == "None")
+			{
+				return OWNER.NONE;
+			}
 		}
 		Console.WriteLine("归属转换错误:" + str);
 		Console.ReadKey();
@@ -415,21 +418,22 @@ public class ExcelConverter : FileUtility
 
 		try
 		{
-			excelInfo.mComment = (string)table.getCell(0, 0);
-			excelInfo.mOwner = stringToOwner((string)table.getCell(0, 1));
+			excelInfo.mComment = table.getCellString(0, 0, true);
+			excelInfo.mOwner = stringToOwner(table.getCellString(0, 1, true));
 			for (int i = 0; i < colCount; ++i)
 			{
 				// 第0行是每一列数据的类型,第1行是字段类型
 				MemberInfo info = new MemberInfo();
-				info.mOwner = stringToOwner((string)table.getCell(1, i));
+				info.mOwner = stringToOwner(table.getCellString(1, i, true));
 				if (info.mOwner == OWNER.SERVER || info.mOwner == OWNER.NONE)
 				{
-					info.mComment = (string)table.getCell(6, i);
+					info.mComment = table.getCellString(6, i, true);
 					excelInfo.mMemberList.Add(info);
 					continue;
 				}
-				info.mMemberName = (string)table.getCell(2, i);
-				string memberType = (string)table.getCell(3, i);
+				info.mMemberName = table.getCellString(2, i, true);
+				string memberType = table.getCellString(3, i, true);
+				info.mComment = table.getCellString(6, i, true);
 				if (memberType.StartsWith("List<"))
 				{
 					// 解析列表类型以及列表的元素类型
@@ -491,7 +495,6 @@ public class ExcelConverter : FileUtility
 					}
 					info.mSeperate = null;
 				}
-				info.mComment = (string)table.getCell(6, i);
 				excelInfo.mMemberList.Add(info);
 				checkType(info);
 			}
@@ -517,13 +520,13 @@ public class ExcelConverter : FileUtility
 						  info.mMemberListElementType == "int" ||
 						  info.mMemberListElementType == "uint" ||
 						  info.mMemberListElementType == "long" ||
-						  info.mMemberListElementType == "ulong" || 
-						  info.mMemberListElementType == "bool" || 
-						  info.mMemberListElementType == "string" || 
-						  info.mMemberListElementType == "Vector2" || 
-						  info.mMemberListElementType == "Vector3" || 
-						  info.mMemberListElementType == "Vector2Int" || 
-						  info.mMemberListElementType == "Vector3Int" || 
+						  info.mMemberListElementType == "ulong" ||
+						  info.mMemberListElementType == "bool" ||
+						  info.mMemberListElementType == "string" ||
+						  info.mMemberListElementType == "Vector2" ||
+						  info.mMemberListElementType == "Vector3" ||
+						  info.mMemberListElementType == "Vector2Int" ||
+						  info.mMemberListElementType == "Vector3Int" ||
 						  info.mMemberListElementType == "float";
 			}
 			else
@@ -589,7 +592,6 @@ public class ExcelConverter : FileUtility
 			{
 				for (int j = 0; j < colCount; ++j)
 				{
-					object value = table.getCell(i, j);
 					MemberInfo member = memberInfoList[j];
 					if (member.mOwner == OWNER.SERVER || member.mOwner == OWNER.NONE)
 					{
@@ -613,91 +615,35 @@ public class ExcelConverter : FileUtility
 					}
 					if (colType == "int")
 					{
-						if (value is DBNull)
-						{
-							value = 0;
-						}
-						else if (value is double)
-						{
-							value = (int)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToI((string)value);
-						}
-						fileWriter.write((int)value);
+						fileWriter.write(table.getCellInt(i, j));
 					}
 					else if (colType == "float")
 					{
-						if (value is DBNull)
-						{
-							value = 0.0f;
-						}
-						else if (value is double)
-						{
-							value = (float)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToF((string)value);
-						}
-						fileWriter.write((float)value);
+						fileWriter.write(table.getCellFloat(i, j));
 					}
 					else if (colType == "bool")
 					{
-						if (value is DBNull)
-						{
-							value = 0;
-						}
-						else if (value is double)
-						{
-							value = (int)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToI((string)value);
-						}
-						fileWriter.write((int)value > 0);
+						fileWriter.write(table.getCellInt(i, j) > 0);
 					}
 					else if (colType == "byte")
 					{
-						if (value is DBNull)
-						{
-							value = 0;
-						}
-						else if (value is double)
-						{
-							value = (int)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToI((string)value);
-						}
-						fileWriter.write((byte)(int)value);
+						fileWriter.write((byte)table.getCellInt(i, j));
 					}
 					else if (colType == "List<byte>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						string str = value?.ToString();
+						string str = table.getCellString(i, j);
 						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
 						{
 							str = str.Remove(0, 1);
 							str = str.Remove(str.Length - 1, 1);
 						}
-						List<byte> bytes = new List<byte>();
+						var bytes = new List<byte>();
 						stringToBytes(str, bytes);
 						fileWriter.writeList(bytes);
 					}
 					else if (colType == "List<int>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						string str = value?.ToString();
+						string str = table.getCellString(i, j);
 						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
 						{
 							str = str.Remove(0, 1);
@@ -707,11 +653,7 @@ public class ExcelConverter : FileUtility
 					}
 					else if (colType == "List<float>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						string str = value?.ToString();
+						string str = table.getCellString(i, j);
 						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
 						{
 							str = str.Remove(0, 1);
@@ -721,13 +663,10 @@ public class ExcelConverter : FileUtility
 					}
 					else if (colType == "List<string>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
+						string str = GB2312ToUTF8(table.getCellString(i, j));
 						if (member.mSeperate == "\n")
 						{
-							splitLine(GB2312ToUTF8(value?.ToString()), out string[] lines);
+							splitLine(str, out string[] lines);
 							if (lines != null)
 							{
 								fileWriter.writeList(new List<string>(lines));
@@ -739,73 +678,45 @@ public class ExcelConverter : FileUtility
 						}
 						else
 						{
-							fileWriter.writeList(stringToStrings(GB2312ToUTF8(value?.ToString()), member.mSeperate));
+							fileWriter.writeList(stringToStrings(str, member.mSeperate));
 						}
 					}
 					else if (colType == "Vector2")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						if (!(value is string))
-						{
-							Console.WriteLine("Vector2单元格的格式必须为string");
-							return false;
-						}
-						string[] splitList = split((string)value, true, ",");
+						string str = table.getCellString(i, j);
+						string[] splitList = split(str, true, ",");
 						if (splitList == null || splitList.Length != 2)
 						{
-							Console.WriteLine("Vector2单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							Console.WriteLine("Vector2单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + table.getCellInt(i, 0));
 							return false;
 						}
-						fileWriter.write(SToVector2(value?.ToString()));
+						fileWriter.write(SToVector2(str));
 					}
 					else if (colType == "Vector2Int")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						if (!(value is string))
-						{
-							Console.WriteLine("Vector2Int单元格的格式必须为string");
-							return false;
-						}
-						string[] splitList = split((string)value, true, ",");
+						string str = table.getCellString(i, j);
+						string[] splitList = split(str, true, ",");
 						if (splitList == null || splitList.Length != 2)
 						{
-							Console.WriteLine("Vector2Int单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							Console.WriteLine("Vector2Int单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + table.getCellInt(i, 0));
 							return false;
 						}
-						fileWriter.write(SToVector2Int(value?.ToString()));
+						fileWriter.write(SToVector2Int(str));
 					}
 					else if (colType == "Vector3")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						if (!(value is string))
-						{
-							Console.WriteLine("Vector3单元格的格式必须为string");
-							return false;
-						}
-						string[] splitList = split((string)value, true, ",");
+						string str = table.getCellString(i, j);
+						string[] splitList = split(str, true, ",");
 						if (splitList == null || splitList.Length != 3)
 						{
-							Console.WriteLine("Vector3单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							Console.WriteLine("Vector3单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + table.getCellInt(i, 0));
 							return false;
 						}
-						fileWriter.write(SToVector3(value?.ToString()));
+						fileWriter.write(SToVector3(str));
 					}
 					else if (colType == "string")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						fileWriter.writeString(GB2312ToUTF8(value?.ToString()));
+						fileWriter.writeString(GB2312ToUTF8(table.getCellString(i, j)));
 					}
 					else
 					{
@@ -851,7 +762,6 @@ public class ExcelConverter : FileUtility
 			{
 				for (int j = 0; j < colCount; ++j)
 				{
-					object value = table.getCell(i, j);
 					MemberInfo member = memberInfoList[j];
 					if (member.mOwner == OWNER.SERVER || member.mOwner == OWNER.NONE)
 					{
@@ -860,168 +770,90 @@ public class ExcelConverter : FileUtility
 					string colType = member.mMemberType;
 					if (colType == "int")
 					{
-						if (value is DBNull)
-						{
-							value = 0;
-						}
-						else if (value is double)
-						{
-							value = (int)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToI((string)value);
-						}
-						fileContent += IToS((int)value) + "\t";
+						fileContent += IToS(table.getCellInt(i, j));
 					}
 					else if (colType == "float")
 					{
-						if (value is DBNull)
-						{
-							value = 0.0f;
-						}
-						else if (value is double)
-						{
-							value = (float)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToF((string)value);
-						}
-						fileContent += FToS((float)value) + "\t";
+						fileContent += FToS(table.getCellFloat(i, j));
 					}
 					else if (colType == "bool")
 					{
-						if (value is DBNull)
-						{
-							value = 0;
-						}
-						else if (value is double)
-						{
-							value = (int)(double)value;
-						}
-						else if (value is string)
-						{
-							value = SToI((string)value);
-						}
-						fileContent += ((int)value > 0 ? "true" : "false") + "\t";
+						fileContent += (table.getCellInt(i, j) > 0 ? "true" : "false");
 					}
 					else if (colType == "List<int>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						string str = value?.ToString();
+						string str = table.getCellString(i, j);
 						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
 						{
 							str = str.Remove(0, 1);
 							str = str.Remove(str.Length - 1, 1);
 						}
-						fileContent += str + "\t";
+						fileContent += str;
 					}
 					else if (colType == "List<float>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						string str = value?.ToString();
+						string str = table.getCellString(i, j);
 						if (str != null && str[0] == '[' && str[str.Length - 1] == ']')
 						{
 							str = str.Remove(0, 1);
 							str = str.Remove(str.Length - 1, 1);
 						}
-						fileContent += str + "\t";
+						fileContent += str;
 					}
 					else if (colType == "List<string>")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
+						string str = GB2312ToUTF8(table.getCellString(i, j));
 						if (member.mSeperate == "\n")
 						{
-							splitLine(GB2312ToUTF8(value?.ToString()), out string[] lines);
+							splitLine(str, out string[] lines);
 							if (lines != null)
 							{
-								fileContent += GB2312ToUTF8(value?.ToString()) + "\t";
-							}
-							else
-							{
-								fileContent += "\t";
+								fileContent += str;
 							}
 						}
 						else
 						{
-							fileContent += GB2312ToUTF8(value?.ToString()) + "\t";
+							fileContent += str;
 						}
 					}
 					else if (colType == "Vector2")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						if (!(value is string))
-						{
-							Console.WriteLine("Vector2单元格的格式必须为string");
-							return false;
-						}
-						string[] splitList = split((string)value, true, ",");
+						string str = table.getCellString(i, j);
+						string[] splitList = split(str, true, ",");
 						if (splitList == null || splitList.Length != 2)
 						{
-							Console.WriteLine("Vector2单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							Console.WriteLine("Vector2单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + table.getCellInt(i, 0));
 							return false;
 						}
-						fileContent += value?.ToString() + "\t";
+						fileContent += str;
 					}
 					else if (colType == "Vector2Int")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						if (!(value is string))
-						{
-							Console.WriteLine("Vector2Int单元格的格式必须为string");
-							return false;
-						}
-						string[] splitList = split((string)value, true, ",");
+						string str = table.getCellString(i, j);
+						string[] splitList = split(str, true, ",");
 						if (splitList == null || splitList.Length != 2)
 						{
-							Console.WriteLine("Vector2Int单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							Console.WriteLine("Vector2Int单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + table.getCellInt(i, 0));
 							return false;
 						}
-						fileContent += value?.ToString() + "\t";
+						fileContent += str;
 					}
 					else if (colType == "Vector3")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						if (!(value is string))
-						{
-							Console.WriteLine("Vector3单元格的格式必须为string");
-							return false;
-						}
-						string[] splitList = split((string)value, true, ",");
+						string str = table.getCellString(i, j);
+						string[] splitList = split(str, true, ",");
 						if (splitList == null || splitList.Length != 3)
 						{
-							Console.WriteLine("Vector3单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + (int)table.getCell(i, 0));
+							Console.WriteLine("Vector3单元格的内容错误,字段名:" + member.mMemberName + ", 表格:" + tableName + ", ID:" + table.getCellInt(i, 0));
 							return false;
 						}
-						fileContent += value?.ToString() + "\t";
+						fileContent += str;
 					}
 					else if (colType == "string")
 					{
-						if (value is DBNull)
-						{
-							value = null;
-						}
-						fileContent += GB2312ToUTF8(value?.ToString()) + "\t";
+						fileContent += GB2312ToUTF8(table.getCellString(i, j));
 					}
+					fileContent += "\t";
 				}
 				fileContent += "\n";
 			}
