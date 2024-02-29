@@ -87,9 +87,10 @@ SQLiteMember parseSQLiteMemberLine(const string& line, bool ignoreClientServer)
 	// 枚举类型的实际基础数据类型
 	int leftPos = 0;
 	int rightPos = 0;
-	if (StringUtility::findString(memberInfo.mMemberName, "(", &leftPos) && StringUtility::findString(memberInfo.mMemberName, ")", &rightPos))
+	if (StringUtility::findString(memberInfo.mTypeName, "(", &leftPos) && 
+		StringUtility::findString(memberInfo.mTypeName, ")", &rightPos))
 	{
-		string realType = memberInfo.mMemberName.substr(leftPos + 1, rightPos - leftPos - 1);
+		string realType = memberInfo.mTypeName.substr(leftPos + 1, rightPos - leftPos - 1);
 		// 列表类型,则替换列表的元素类型
 		int leftListPos = 0;
 		int rightListPos = 0;
