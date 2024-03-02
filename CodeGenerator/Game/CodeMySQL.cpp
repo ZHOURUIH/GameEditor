@@ -137,7 +137,7 @@ void CodeMySQL::generate()
 	{
 		newGameList.push_back("MD" + info.mMySQLClassName);
 	}
-	generateMySQLInstanceDeclare(gameMySQLInfoList, gameBaseHeaderPath);
+	generateMySQLInstanceDeclare(gameMySQLInfoList, gameBaseHeaderPath, "");
 	generateMySQLInstanceDefine(gameMySQLInfoList, gameBaseSourcePath);
 	generateMySQLInstanceClear(gameMySQLInfoList, gameBaseSourcePath);
 
@@ -163,7 +163,7 @@ void CodeMySQL::generate()
 	{
 		newCoreGameList.push_back("MD" + info.mMySQLClassName);
 	}
-	generateMySQLInstanceDeclare(gameCoreMySQLInfoList, gameCoreBaseHeaderPath);
+	generateMySQLInstanceDeclare(gameCoreMySQLInfoList, gameCoreBaseHeaderPath, "MICRO_LEGEND_CORE_API ");
 	generateMySQLInstanceDefine(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
 	generateMySQLInstanceClear(gameCoreMySQLInfoList, gameCoreBaseSourcePath);
 	print("完成生成MySQL");
@@ -339,7 +339,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	// paramList函数
 	line(source, "void " + className + "::paramList(string& params) const");
 	line(source, "{");
-	line(source, "\tUtility::sqlAddLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
+	line(source, "\tsqlAddLLong(params, mID, " + (memberCount > 0 ? string("true") : string("false")) + ");");
 	FOR_I(memberCount)
 	{
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
@@ -350,48 +350,48 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\tUtility::sqlAddStringUTF8(params, m" + memberName + ", " + addComma + ");");
+				line(source, "\tsqlAddStringUTF8(params, m" + memberName + ", " + addComma + ");");
 			}
 			else
 			{
-				line(source, "\tUtility::sqlAddString(params, m" + memberName + ", " + addComma + ");");
+				line(source, "\tsqlAddString(params, m" + memberName + ", " + addComma + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + " ? 1 : 0, " + addComma + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tUtility::sqlAddInt(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddInt(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tUtility::sqlAddFloat(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddFloat(params, m" + memberName + ", " + addComma + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tUtility::sqlAddLLong(params, m" + memberName + ", " + addComma + ");");
+			line(source, "\tsqlAddLLong(params, m" + memberName + ", " + addComma + ");");
 		}
 	}
 	line(source, "}");
@@ -405,54 +405,54 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		const MySQLMember& memberInfo = mysqlInfo.mMemberList[i];
 		const string& typeName = memberInfo.mTypeName;
 		const string& memberName = memberInfo.mMemberName;
-		line(source, "\tif (Utility::hasBit(flag, " + memberName + "))");
+		line(source, "\tif (hasBit(flag, " + memberName + "))");
 		line(source, "\t{");
 		if (typeName == "string")
 		{
 			if (memberInfo.mUTF8)
 			{
-				line(source, "\t\tUtility::sqlUpdateStringUTF8(params, Name_" + memberName + ", m" + memberName + ");");
+				line(source, "\t\tsqlUpdateStringUTF8(params, Name_" + memberName + ", m" + memberName + ");");
 			}
 			else
 			{
-				line(source, "\t\tUtility::sqlUpdateString(params, Name_" + memberName + ", m" + memberName + ");");
+				line(source, "\t\tsqlUpdateString(params, Name_" + memberName + ", m" + memberName + ");");
 			}
 		}
 		else if (typeName == "int")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\t\tUtility::sqlUpdateBool(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateBool(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\t\tUtility::sqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateInt(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\t\tUtility::sqlUpdateFloat(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateFloat(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\t\tUtility::sqlUpdateLLong(params, Name_" + memberName + ", m" + memberName + ");");
+			line(source, "\t\tsqlUpdateLLong(params, Name_" + memberName + ", m" + memberName + ");");
 		}
 		line(source, "\t}");
 	}
@@ -491,7 +491,7 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 		FOR_I(memberCount)
 		{
 			const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
-			line(source, "\tif (Utility::hasBit(flag, " + memberName + "))");
+			line(source, "\tif (hasBit(flag, " + memberName + "))");
 			line(source, "\t{");
 			line(source, "\t\ttargetData->m" + memberName + " = m" + memberName + ";");
 			line(source, "\t}");
@@ -954,11 +954,11 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	}
 	line(source, "MySQLData* " + tableClassName + "::createData()");
 	line(source, "{");
-	line(source, "\treturn FrameBase::mMySQLDataPool->newClass<" + dataClassName + ">();");
+	line(source, "\treturn mMySQLDataPool->newClass<" + dataClassName + ">();");
 	line(source, "}");
 	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
 	line(source, "{");
-	line(source, "\treturn FrameBase::mMySQLDataPool->newClassList<" + dataClassName + ">(dataList, count);");
+	line(source, "\treturn mMySQLDataPool->newClassList<" + dataClassName + ">(dataList, count);");
 	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
@@ -990,7 +990,7 @@ void CodeMySQL::generateCppMySQLGameRegisteFile(const myVector<MySQLInfo>& mysql
 	FOR_I(count)
 	{
 		const string& mysqlClassName = mysqlList[i].mMySQLClassName;
-		line(str1, "\tGameBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
+		line(str1, "\tmMySQL" + mysqlClassName + " = mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "GameMySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
@@ -1020,13 +1020,13 @@ void CodeMySQL::generateCppMySQLGameCoreRegisteFile(const myVector<MySQLInfo>& m
 	FOR_I(count)
 	{
 		const string& mysqlClassName = mysqlList[i].mMySQLClassName;
-		line(str1, "\tGameCoreBase::mMySQL" + mysqlClassName + " = FrameBase::mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
+		line(str1, "\tmMySQL" + mysqlClassName + " = mMySQLManager->registeTable<MySQL" + mysqlClassName + ">(\"" + mysqlList[i].mMySQLTableName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "GameCoreMySQLRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
-void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& gameBaseHeaderFile)
+void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& gameBaseHeaderFile, const string& exprtMacro)
 {
 	// 更新GameBase.h的特定部分
 	myVector<string> codeList;
@@ -1039,15 +1039,13 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	}
 	for (const MySQLInfo& info : mysqlList)
 	{
-		codeList.insert(++lineStart, "\tstatic MySQL" + info.mMySQLClassName + "* mMySQL" + info.mMySQLClassName + ";");
+		codeList.insert(++lineStart, "\t" + exprtMacro + "extern MySQL" + info.mMySQLClassName + "* mMySQL" + info.mMySQLClassName + ";");
 	}
 	writeFile(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList, const string& gameBaseSourceFile)
 {
-	// GameBase的类名与文件名一致
-	const string gameBaseClassName = getFileNameNoSuffix(gameBaseSourceFile, true);
 	// 更新GameBase.cpp的特定部分
 	myVector<string> codeList;
 	int lineStart = -1;
@@ -1059,7 +1057,7 @@ void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList
 	}
 	for (const MySQLInfo& info : mysqlList)
 	{
-		codeList.insert(++lineStart, "MySQL" + info.mMySQLClassName + "* " + gameBaseClassName + "::mMySQL" + info.mMySQLClassName + ";");
+		codeList.insert(++lineStart, "\tMySQL" + info.mMySQLClassName + "* mMySQL" + info.mMySQLClassName + ";");
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -1078,7 +1076,7 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 
 	for (const MySQLInfo& info : mysqlList)
 	{
-		codeList.insert(++lineStart, "\tmMySQL" + info.mMySQLClassName + " = nullptr;");
+		codeList.insert(++lineStart, "\t\tmMySQL" + info.mMySQLClassName + " = nullptr;");
 	}
 	writeFile(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

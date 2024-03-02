@@ -62,7 +62,7 @@ void CodeComponent::generateGameComponentRegister(const myVector<string>& compon
 	line(source, "{");
 	FOR_VECTOR(componentList)
 	{
-		line(source, "\tFrameBase::mGameComponentFactoryManager->addFactory<" + componentList[i] + ">();");
+		line(source, "\tmGameComponentFactoryManager->addFactory<" + componentList[i] + ">();");
 	}
 	line(source, "}", false);
 	writeFile(filePath + "GameComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));
@@ -78,7 +78,7 @@ void CodeComponent::generateGameCoreComponentRegister(const myVector<string>& co
 	line(source, "{");
 	FOR_VECTOR(componentList)
 	{
-		line(source, "\tFrameBase::mGameComponentFactoryManager->addFactory<" + componentList[i] + ">();");
+		line(source, "\tmGameComponentFactoryManager->addFactory<" + componentList[i] + ">();");
 	}
 	line(source, "}", false);
 	writeFile(filePath + "GameCoreComponentRegister.cpp", ANSIToUTF8(source.c_str(), true));

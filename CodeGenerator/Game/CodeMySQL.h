@@ -13,7 +13,7 @@ protected:
 	static void generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const string& filePath);
 	static void generateCppMySQLGameRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath);
 	static void generateCppMySQLGameCoreRegisteFile(const myVector<MySQLInfo>& mysqlList, const string& filePath);
-	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& gameBaseHeaderFile);
+	static void generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlList, const string& gameBaseHeaderFile, const string& exprtMacro);
 	static void generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList, const string& gameBaseSourceFile);
 	static void generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList, const string& gameBaseSourceFile);
 protected:

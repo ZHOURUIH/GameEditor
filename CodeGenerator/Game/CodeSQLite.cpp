@@ -193,7 +193,7 @@ void CodeSQLite::generate()
 	const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
 	const string gameSTLPoolSourcePath = cppGamePath + "Common/GameSTLPoolRegister.cpp";
 	generateCppGameSQLiteRegisteFile(serverGameSQLiteList, getFilePath(cppGameDataPath) + "/");
-	generateCppSQLiteInstanceDeclare(serverGameSQLiteList, gameBaseHeaderPath);
+	generateCppSQLiteInstanceDeclare(serverGameSQLiteList, gameBaseHeaderPath, "");
 	generateCppSQLiteInstanceDefine(serverGameSQLiteList, gameBaseSourcePath);
 	generateCppSQLiteSTLPoolRegister(serverGameSQLiteList, gameSTLPoolSourcePath);
 	generateCppSQLiteInstanceClear(serverGameSQLiteList, gameBaseSourcePath);
@@ -243,7 +243,7 @@ void CodeSQLite::generate()
 	const string gameCoreBaseSourcePath = cppGameCorePath + "Common/GameCoreBase.cpp";
 	const string gameCoreSTLPoolSourcePath = cppGameCorePath + "Common/GameCoreSTLPoolRegister.cpp";
 	generateCppGameCoreSQLiteRegisteFile(serverGameCoreSQLiteList, getFilePath(cppGameCoreDataPath) + "/");
-	generateCppSQLiteInstanceDeclare(serverGameCoreSQLiteList, gameCoreBaseHeaderPath);
+	generateCppSQLiteInstanceDeclare(serverGameCoreSQLiteList, gameCoreBaseHeaderPath, "MICRO_LEGEND_CORE_API ");
 	generateCppSQLiteInstanceDefine(serverGameCoreSQLiteList, gameCoreBaseSourcePath);
 	generateCppSQLiteSTLPoolRegister(serverGameCoreSQLiteList, gameCoreSTLPoolSourcePath);
 	generateCppSQLiteInstanceClear(serverGameCoreSQLiteList, gameCoreBaseSourcePath);
@@ -528,13 +528,13 @@ void CodeSQLite::generateCppGameSQLiteRegisteFile(const myVector<SQLiteInfo>& sq
 	FOR_I(count)
 	{
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tGameBase::mSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
+		line(str1, "\tmSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
 	}
 	line(str1, "");
 	FOR_I(count)
 	{
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tFrameBase::mSQLiteManager->addSQLiteTable(GameBase::mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
+		line(str1, "\tmSQLiteManager->addSQLiteTable(mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "GameSQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
@@ -569,7 +569,7 @@ void CodeSQLite::generateCppGameCoreSQLiteRegisteFile(const myVector<SQLiteInfo>
 			continue;
 		}
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tGameCoreBase::mSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
+		line(str1, "\tmSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
 	}
 	line(str1, "");
 	FOR_I(count)
@@ -579,13 +579,13 @@ void CodeSQLite::generateCppGameCoreSQLiteRegisteFile(const myVector<SQLiteInfo>
 			continue;
 		}
 		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tFrameBase::mSQLiteManager->addSQLiteTable(GameCoreBase::mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
+		line(str1, "\tmSQLiteManager->addSQLiteTable(mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
 	}
 	line(str1, "}", false);
 	writeFile(filePath + "GameCoreSQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
-void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseHeaderFileName)
+void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseHeaderFileName, const string& exprtMacro)
 {
 	// 更新GameBase.h的特定部分代码
 	myVector<string> codeList;
@@ -599,15 +599,13 @@ void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sq
 
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		codeList.insert(++lineStart, "\tstatic SQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
+		codeList.insert(++lineStart, "\t" + exprtMacro + "extern SQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
 	}
 	writeFile(gameBaseHeaderFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 void CodeSQLite::generateCppSQLiteInstanceDefine(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseCppFileName)
 {
-	// GameBase的类名与文件名一致
-	const string gameBaseClassName = getFileNameNoSuffix(gameBaseCppFileName, true);
 	// 更新GameBase.cpp的特定部分代码
 	myVector<string> codeList;
 	int lineStart = -1;
@@ -619,7 +617,7 @@ void CodeSQLite::generateCppSQLiteInstanceDefine(const myVector<SQLiteInfo>& sql
 	}
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		codeList.insert(++lineStart, "SQLite" + info.mSQLiteName + "* " + gameBaseClassName + "::mSQLite" + info.mSQLiteName + ";");
+		codeList.insert(++lineStart, "\tSQLite" + info.mSQLiteName + "* mSQLite" + info.mSQLiteName + ";");
 	}
 	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -638,7 +636,7 @@ void CodeSQLite::generateCppSQLiteSTLPoolRegister(const myVector<SQLiteInfo>& sq
 	}
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		codeList.insert(++lineStart, "\tFrameBase::mVectorPoolManager->registeVectorPool<TD" + info.mSQLiteName + "*>();");
+		codeList.insert(++lineStart, "\tmVectorPoolManager->registeVectorPool<TD" + info.mSQLiteName + "*>();");
 	}
 	writeFile(gameSTLPoolFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
@@ -657,7 +655,7 @@ void CodeSQLite::generateCppSQLiteInstanceClear(const myVector<SQLiteInfo>& sqli
 
 	for (const SQLiteInfo& info : sqliteList)
 	{
-		codeList.insert(++lineStart, "\tmSQLite" + info.mSQLiteName + " = nullptr;");
+		codeList.insert(++lineStart, "\t\tmSQLite" + info.mSQLiteName + " = nullptr;");
 	}
 	writeFile(gameBaseCppFileName, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }

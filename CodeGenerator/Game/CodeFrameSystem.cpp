@@ -3,14 +3,14 @@
 void CodeFrameSystem::generate()
 {
 	print("正在生成框架组件");
-	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase");
-	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "GameCore/GameCore.cpp", "GameCoreBase");
-	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase");
+	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase", "");
+	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "GameCore/GameCore.cpp", "GameCoreBase", "MICRO_LEGEND_CORE_API ");
+	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase", "MICRO_LEGEND_FRAME_API ");
 	print("完成生成框架组件");
 	print("");
 }
 
-void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& baseFilePathNoSuffix, const string& gameFilePath, const string& baseClassName)
+void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& baseFilePathNoSuffix, const string& gameFilePath, const string& baseClassName, const string& exportMacro)
 {
 	myVector<string> frameSystemList = findTargetHeaderFile(cppPath,
 		[](const string& fileName) { return endWith(fileName, "System") || endWith(fileName, "Manager"); },
@@ -55,9 +55,9 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 	frameSystemList.addRange(classPoolList);
 	frameSystemList.addRange(factoryList);
 	generateFrameSystemRegister(frameSystemList, cppPath + gameFilePath);
-	generateFrameSystemDeclare(frameSystemList, cppPath + baseFilePathNoSuffix);
+	generateFrameSystemDeclare(frameSystemList, cppPath + baseFilePathNoSuffix, exportMacro);
 	const string gameBaseSource = cppPath + replaceSuffix(baseFilePathNoSuffix, ".cpp");
-	generateFrameSystemDefine(frameSystemList, gameBaseSource, baseClassName);
+	generateFrameSystemDefine(frameSystemList, gameBaseSource);
 	generateFrameSystemGet(frameSystemList, gameBaseSource);
 	generateFrameSystemClear(frameSystemList, gameBaseSource);
 }
@@ -110,7 +110,7 @@ void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSyst
 		{
 			codeList.insert(++lineStart, "#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\tm" + item + " = nullptr;");
+		codeList.insert(++lineStart, "\t\tm" + item + " = nullptr;");
 		if (startWith(item, "MySQL"))
 		{
 			codeList.insert(++lineStart, "#endif");
@@ -119,7 +119,7 @@ void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSyst
 	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSystemList, const string& gameBaseHeaderFile)
+void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSystemList, const string& gameBaseHeaderFile, const string& exportMacro)
 {
 	// 更新GameBase.h的特定部分代码
 	myVector<string> codeList;
@@ -136,7 +136,7 @@ void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSy
 		{
 			codeList.insert(++lineStart, "#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\tstatic " + item + "* m" + item + ";");
+		codeList.insert(++lineStart, "\t" + exportMacro + "extern " + item + "* m" + item + ";");
 		if (startWith(item, "MySQL"))
 		{
 			codeList.insert(++lineStart, "#endif");
@@ -145,7 +145,7 @@ void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSy
 	writeFileIfChanged(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
-void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile, const string& baseClassName)
+void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
 {
 	// 更新GameBase.cpp的特定部分代码
 	myVector<string> codeList;
@@ -163,7 +163,7 @@ void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSys
 		{
 			codeList.insert(++lineStart, "#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, item + "* " + baseClassName + "::m" + item + ";");
+		codeList.insert(++lineStart, "\t" + item + "* m" + item + ";");
 		if (startWith(item, "MySQL"))
 		{
 			codeList.insert(++lineStart, "#endif");
@@ -192,11 +192,11 @@ void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystem
 		}
 		if (item == "ServerFramework")
 		{
-			codeList.insert(++lineStart, "\tmServerFramework = ServerFramework::getSingleton();");
+			codeList.insert(++lineStart, "\t\tmServerFramework = ServerFramework::getSingleton();");
 		}
 		else
 		{
-			codeList.insert(++lineStart, "\tFrameBase::mServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+			codeList.insert(++lineStart, "\t\tmServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 		}
 		if (startWith(item, "MySQL"))
 		{

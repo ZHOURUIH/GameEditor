@@ -720,7 +720,7 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
+		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
 	}
 	line(str, "");
 	myVector<PacketInfo> udpSCList;
@@ -742,14 +742,14 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
+		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE::" + packetName + ");");
 	}
 	if (udpCSList.size() > 0)
 	{
 		line(str, "");
 		for (const auto& info : udpCSList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + info.mPacketName + "); ");
+			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + info.mPacketName + "); ");
 		}
 	}
 	if (udpSCList.size() > 0)
@@ -757,7 +757,7 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 		line(str, "");
 		for (const auto& info : udpSCList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + info.mPacketName + "); ");
+			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE::" + info.mPacketName + "); ");
 		}
 	}
 	line(str, "};", false);
@@ -789,7 +789,7 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
+		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
 	}
 	line(str, "");
 	myVector<PacketInfo> udpSCList;
@@ -811,14 +811,14 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 		{
 			continue;
 		}
-		line(str, "\tFrameBase::mPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
+		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
 	}
 	if (udpCSList.size() > 0)
 	{
 		line(str, "");
 		for (const auto& info : udpCSList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
+			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
 		}
 	}
 	if (udpSCList.size() > 0)
@@ -826,7 +826,7 @@ void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketIn
 		line(str, "");
 		for (const auto& info : udpSCList)
 		{
-			line(str, "\tFrameBase::mPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
+			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
 		}
 	}
 	line(str, "};", false);
@@ -1085,7 +1085,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		{
 			if (item.mOptional)
 			{
-				headerCodeList.push_back("\t\tUtility::setBitOne(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + ");");
+				headerCodeList.push_back("\t\tsetBitOne(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + ");");
 			}
 		}
 		headerCodeList.push_back("\t\treturn fieldFlag;");
@@ -1222,7 +1222,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		string preTable = "\t";
 		if (item.mOptional)
 		{
-			sourceCodeList.push_back("\tif (Utility::hasBit(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + "))");
+			sourceCodeList.push_back("\tif (hasBit(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + "))");
 			sourceCodeList.push_back("\t{");
 			preTable += "\t";
 		}
@@ -1527,7 +1527,7 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
-		line(source, "\tCharacterPlayer* player = GameCoreUtility::getPlayer(mClient->getPlayerGUID());");
+		line(source, "\tCharacterPlayer* player = getPlayer(mClient->getPlayerGUID());");
 		line(source, "\tif (player == nullptr)");
 		line(source, "\t{");
 		line(source, "\t\treturn;");
