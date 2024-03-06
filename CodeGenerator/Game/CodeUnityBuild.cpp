@@ -3,7 +3,7 @@
 void CodeUnityBuild::generate()
 {
 	print("正在生成UnityBuild");
-	if (ServerProjectPath.length() == 0)
+	if (ServerGameProjectPath.length() == 0)
 	{
 		return;
 	}

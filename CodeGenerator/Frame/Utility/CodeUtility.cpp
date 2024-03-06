@@ -1,13 +1,12 @@
 ﻿#include "CodeUtility.h"
 #include "Utility.h"
 
-string CodeUtility::ServerProjectPath;
+string CodeUtility::ServerGameProjectPath;
+string CodeUtility::ServerGameCoreProjectPath;
+string CodeUtility::ServerFrameProjectPath;
 string CodeUtility::ClientProjectPath;
 string CodeUtility::VirtualClientProjectPath;
 myVector<string> CodeUtility::ServerExcludeIncludePath;
-string CodeUtility::cppGameProjectPath;
-string CodeUtility::cppGameCoreProjectPath;
-string CodeUtility::cppFrameProjectPath;
 string CodeUtility::cppGamePath;
 string CodeUtility::cppGameCorePath;
 string CodeUtility::cppFramePath;
@@ -35,13 +34,21 @@ bool CodeUtility::initPath()
 		{
 			continue;
 		}
-		if (params[0] == "SERVER_PROJECT_PATH")
-		{
-			ServerProjectPath = params[1];
-		}
-		else if (params[0] == "CLIENT_PROJECT_PATH")
+		if (params[0] == "CLIENT_PROJECT_PATH")
 		{
 			ClientProjectPath = params[1];
+		}
+		else if (params[0] == "SERVER_GAME_PROJECT_PATH")
+		{
+			ServerGameProjectPath = params[1];
+		}
+		else if (params[0] == "SERVER_GAMECORE_PROJECT_PATH")
+		{
+			ServerGameCoreProjectPath = params[1];
+		}
+		else if (params[0] == "SERVER_FRAME_PROJECT_PATH")
+		{
+			ServerFrameProjectPath = params[1];
 		}
 		else if (params[0] == "SERVER_EXCLUDE_INCLUDE_PATH")
 		{
@@ -54,21 +61,22 @@ bool CodeUtility::initPath()
 		}
 	}
 
-	if (ServerProjectPath.empty() && ClientProjectPath.empty() && VirtualClientProjectPath.empty())
+	if (ServerGameProjectPath.empty() && ClientProjectPath.empty() && VirtualClientProjectPath.empty())
 	{
 		return false;
 	}
 
-	if (!ServerProjectPath.empty())
+	if (!ServerGameProjectPath.empty())
 	{
-		rightToLeft(ServerProjectPath);
-		validPath(ServerProjectPath);
-		cppGameProjectPath = ServerProjectPath + "MicroLegend_Server/";
-		cppGameCoreProjectPath = ServerProjectPath + "MicroLegend_Server_GameCore/";
-		cppFrameProjectPath = ServerProjectPath + "MicroLegend_Server_Frame/";
-		cppGamePath = cppGameProjectPath + "Game/";
-		cppGameCorePath = cppGameCoreProjectPath + "GameCore/";
-		cppFramePath = cppFrameProjectPath + "Frame/";
+		rightToLeft(ServerGameProjectPath);
+		rightToLeft(ServerGameCoreProjectPath);
+		rightToLeft(ServerFrameProjectPath);
+		validPath(ServerGameProjectPath);
+		validPath(ServerGameCoreProjectPath);
+		validPath(ServerFrameProjectPath);
+		cppGamePath = ServerGameProjectPath + "Game/";
+		cppGameCorePath = ServerGameCoreProjectPath + "GameCore/";
+		cppFramePath = ServerFrameProjectPath + "Frame/";
 		cppGameCoreStringDefineHeaderFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
 		cppGameStringDefineHeaderFile = cppGamePath + "Common/GameStringDefine.h";
 	}

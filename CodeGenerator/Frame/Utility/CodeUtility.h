@@ -9,13 +9,12 @@ typedef std::function<bool(const string& line)> LineMatchCallback;
 class CodeUtility : public SystemUtility
 {
 protected:
-	static string ServerProjectPath;
+	static string ServerGameProjectPath;
+	static string ServerGameCoreProjectPath;
+	static string ServerFrameProjectPath;
 	static string ClientProjectPath;
 	static string VirtualClientProjectPath;
 	static myVector<string> ServerExcludeIncludePath;
-	static string cppGameProjectPath;
-	static string cppGameCoreProjectPath;
-	static string cppFrameProjectPath;
 	static string cppGamePath;
 	static string cppGameCorePath;
 	static string cppFramePath;

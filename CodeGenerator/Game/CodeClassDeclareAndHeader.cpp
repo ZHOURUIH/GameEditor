@@ -3,7 +3,7 @@
 void CodeClassDeclareAndHeader::generate()
 {
 	print("正在生成类声明");
-	generateCppFrameClassAndHeader(cppFrameProjectPath, cppFramePath + "Common/");
+	generateCppFrameClassAndHeader(ServerFrameProjectPath, cppFramePath + "Common/");
 	generateCppGameClassAndHeader(cppGamePath, cppGamePath + "Common/");
 	generateCppGameCoreClassAndHeader(cppGameCorePath, cppGameCorePath + "Common/");
 	print("完成生成类声明");
