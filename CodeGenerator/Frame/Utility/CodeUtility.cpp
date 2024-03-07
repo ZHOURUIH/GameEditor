@@ -16,6 +16,7 @@ string CodeUtility::cppGameCoreStringDefineHeaderFile;
 string CodeUtility::csGamePath;
 string CodeUtility::VirtualClientSocketPath;
 string CodeUtility::START_FALG = "#start";
+bool CodeUtility::mUseILRuntime = true;
 
 bool CodeUtility::initPath()
 {
@@ -62,6 +63,10 @@ bool CodeUtility::initPath()
 		else if (params[0] == "VIRTUAL_CLIENT_PROJECT_PATH")
 		{
 			VirtualClientProjectPath = params[1];
+		}
+		else if (params[0] == "USE_ILRUNTIME")
+		{
+			mUseILRuntime = stringToBool(params[1]);
 		}
 	}
 

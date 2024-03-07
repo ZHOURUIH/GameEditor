@@ -24,6 +24,7 @@ protected:
 	static string csGamePath;
 	static string VirtualClientSocketPath;
 	static string START_FALG;
+	static bool mUseILRuntime;
 public:
 	static bool initPath();
 	static bool isPod(const string& type)
