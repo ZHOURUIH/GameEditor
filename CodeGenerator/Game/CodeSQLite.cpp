@@ -253,16 +253,16 @@ void CodeSQLite::generate()
 	if (!csGamePath.empty())
 	{
 		string csExcelDataGamePath = csGamePath + "DataBase/Excel/Data/";
-		string csExcelDataHotFixPath = csHotfixGamePath + "DataBase/Excel/Data/";
+		string csExcelDataHotFixPath = ClientHotFixPath + "DataBase/Excel/Data/";
 		string csExcelTableGamePath = csGamePath + "DataBase/Excel/Table/";
-		string csExcelTableHotFixPath = csHotfixGamePath + "DataBase/Excel/Table/";
+		string csExcelTableHotFixPath = ClientHotFixPath + "DataBase/Excel/Table/";
 		string csExcelTableDeclareGamePath = csGamePath + "Common/";
-		string csExcelTableDeclareHotFixPath = csHotfixGamePath + "Common/";
+		string csExcelTableDeclareHotFixPath = ClientHotFixPath + "Common/";
 
 		string csSQLiteDataGamePath = csGamePath + "DataBase/SQLite/Data/";
-		string csSQLiteDataHotFixPath = csHotfixGamePath + "DataBase/SQLite/Data/";
+		string csSQLiteDataHotFixPath = ClientHotFixPath + "DataBase/SQLite/Data/";
 		string csSQLiteTableGamePath = csGamePath + "DataBase/SQLite/Table/";
-		string csSQLiteTableHotFixPath = csHotfixGamePath + "DataBase/SQLite/Table/";
+		string csSQLiteTableHotFixPath = ClientHotFixPath + "DataBase/SQLite/Table/";
 		// 筛选出Client的表格
 		myVector<SQLiteInfo> clientSQLiteList;
 		for (const SQLiteInfo& info : sqliteInfoList)

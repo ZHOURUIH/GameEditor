@@ -362,12 +362,12 @@ void CodeNetPacket::generateCpp(const myVector<PacketStruct>& structInfoList, co
 void CodeNetPacket::generateCSharp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, const int packetVersion)
 {
 	string csharpCSGamePath = csGamePath + "Socket/ClientServer/";
-	string csharpCSHotfixPath = csHotfixGamePath + "Socket/ClientServer/";
+	string csharpCSHotfixPath = ClientHotFixPath + "Socket/ClientServer/";
 	string csharpSCGamePath = csGamePath + "Socket/ServerClient/";
-	string csharpSCHotfixPath = csHotfixGamePath + "Socket/ServerClient/";
+	string csharpSCHotfixPath = ClientHotFixPath + "Socket/ServerClient/";
 	string csharpStructGamePath = csGamePath + "Socket/Struct/";
-	string csharpStructHotfixPath = csHotfixGamePath + "Socket/Struct/";
-	string csharpPacketDefinePath = csHotfixGamePath + "Socket/";
+	string csharpStructHotfixPath = ClientHotFixPath + "Socket/Struct/";
+	string csharpPacketDefinePath = ClientHotFixPath + "Socket/";
 
 	myVector<PacketInfo> gamePacketList;
 	myVector<PacketInfo> gameCorePacketList;

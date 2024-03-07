@@ -13,6 +13,7 @@ protected:
 	static string ServerGameCoreProjectPath;
 	static string ServerFrameProjectPath;
 	static string ClientProjectPath;
+	static string ClientHotFixPath;
 	static string VirtualClientProjectPath;
 	static myVector<string> ServerExcludeIncludePath;
 	static string cppGamePath;
@@ -21,7 +22,6 @@ protected:
 	static string cppGameStringDefineHeaderFile;
 	static string cppGameCoreStringDefineHeaderFile;
 	static string csGamePath;
-	static string csHotfixGamePath;
 	static string VirtualClientSocketPath;
 	static string START_FALG;
 public:

@@ -5,6 +5,7 @@ string CodeUtility::ServerGameProjectPath;
 string CodeUtility::ServerGameCoreProjectPath;
 string CodeUtility::ServerFrameProjectPath;
 string CodeUtility::ClientProjectPath;
+string CodeUtility::ClientHotFixPath;
 string CodeUtility::VirtualClientProjectPath;
 myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::cppGamePath;
@@ -13,7 +14,6 @@ string CodeUtility::cppFramePath;
 string CodeUtility::cppGameStringDefineHeaderFile;
 string CodeUtility::cppGameCoreStringDefineHeaderFile;
 string CodeUtility::csGamePath;
-string CodeUtility::csHotfixGamePath;
 string CodeUtility::VirtualClientSocketPath;
 string CodeUtility::START_FALG = "#start";
 
@@ -37,6 +37,10 @@ bool CodeUtility::initPath()
 		if (params[0] == "CLIENT_PROJECT_PATH")
 		{
 			ClientProjectPath = params[1];
+		}
+		else if (params[0] == "CLIENT_HOTFIX_PATH")
+		{
+			ClientHotFixPath = params[1];
 		}
 		else if (params[0] == "SERVER_GAME_PROJECT_PATH")
 		{
@@ -83,9 +87,10 @@ bool CodeUtility::initPath()
 	if (!ClientProjectPath.empty())
 	{
 		rightToLeft(ClientProjectPath);
+		rightToLeft(ClientHotFixPath);
 		validPath(ClientProjectPath);
+		validPath(ClientHotFixPath);
 		csGamePath = ClientProjectPath + "Assets/Scripts/Game/";
-		csHotfixGamePath = ClientProjectPath + "HotFix/Game/";
 	}
 	if (!VirtualClientProjectPath.empty())
 	{
