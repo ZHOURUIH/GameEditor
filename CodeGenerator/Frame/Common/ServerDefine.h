@@ -182,6 +182,10 @@ if (thread != NULL_THREAD)		\
 #define IS_DOUBLE(value) value & 1 == 0
 #define IS_POW2(value) value & (value - 1) == 0
 #define _FILE_LINE_ "File : " + string(__FILE__) + ", Line : " + LINE_STR(__LINE__)
+// 通过定义多个宏的方式,改变宏的展开顺序,从而使__LINE__宏先展开,再进行拼接,达到自动根据行号定义一个唯一标识符的功能
+#define MAKE_LABEL2(label, L) label##L
+#define MAKE_LABEL1(label, L) MAKE_LABEL2(label, L)
+#define UNIQUE_IDENTIFIER(label) MAKE_LABEL1(label, __LINE__)
 // 创建一个消息对象
 #define PACKET(classType, packet) classType* packet = mNetServer->createPacket(packet, NAME(classType))
 #define PACKET_DONT_DESTROY(classType, packet) classType* packet = mNetServer->createPacket(packet, NAME(classType));packet->setAutoDestroy(false)
@@ -191,7 +195,7 @@ auto iter = stl.begin();\
 auto iter##End = stl.end();\
 for(; iter != iter##End; ++iter)
 
-#define FOR_VECTOR(stl) int stl##Count = stl.size(); for(int i = 0; i < stl##Count; ++i)
+#define FOR_VECTOR(stl)			const int UNIQUE_IDENTIFIER(Count) = (stl).size(); for(int i = 0; i < UNIQUE_IDENTIFIER(Count); ++i)
 // 简单的for循环
 #define FOR_I(count) for (int i = 0; i < (int)count; ++i)
 #define FOR_J(count) for (int j = 0; j < (int)count; ++j)

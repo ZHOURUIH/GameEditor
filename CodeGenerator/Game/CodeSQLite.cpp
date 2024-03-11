@@ -441,6 +441,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	}
 	line(header, "\t}");
 	line(header, "\tvoid clone(SQLiteData* target) override;");
+	line(header, "\tvoid checkAllColName(SQLiteTableBase* table) override;");
 	line(header, "};", false);
 	writeFile(dataFilePath + dataClassName + ".h", ANSIToUTF8(header.c_str(), true));
 
@@ -467,6 +468,19 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 				line(source, "\ttargetData->m" + member.mMemberName + " = m" + member.mMemberName + ";");
 			}
 		}
+	}
+	line(source, "}");
+	line(source, "");
+	line(source, "void " + dataClassName + "::checkAllColName(SQLiteTableBase* table)");
+	line(source, "{");
+	FOR_VECTOR(memberNoIDList)
+	{
+		const SQLiteMember& member = memberNoIDList[i];
+		if (member.mOwner != SQLITE_OWNER::SERVER_ONLY && member.mOwner != SQLITE_OWNER::BOTH)
+		{
+			continue;
+		}
+		line(source, "\ttable->checkColName(\"" + member.mMemberName + "\", " + StringUtility::intToString(i + 1) + ");");
 	}
 	line(source, "}", false);
 	writeFile(dataFilePath + dataClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
