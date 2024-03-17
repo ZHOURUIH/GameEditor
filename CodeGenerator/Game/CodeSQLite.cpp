@@ -958,110 +958,161 @@ void CodeSQLite::generateCSharpSQLiteTableFile(const SQLiteInfo& sqliteInfo, con
 // ExcelRegister.cs文件
 void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, const string& fileHotFixPath, const string& fileGamePath)
 {
-	// 主工程中的表格注册
-	string mainFile;
-	line(mainFile, "using System;");
-	line(mainFile, "using static GB;");
-	line(mainFile, "using static FrameBase;");
-	line(mainFile, "");
-	line(mainFile, "public class ExcelRegisterMain");
-	line(mainFile, "{");
-	line(mainFile, "\tpublic static void registeAll()");
-	line(mainFile, "\t{");
+	bool hasMainMember = false;
 	for (const SQLiteInfo& info : sqliteInfo)
 	{
 		if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && !info.mHotFix)
 		{
-			string lineStr = "\t\tregisteTable(out mExcel%s, typeof(ED%s), \"%s\");";
-			replaceAll(lineStr, "%s", info.mSQLiteName);
-			line(mainFile, lineStr);
+			hasMainMember = true;
+			break;
 		}
 	}
-	line(mainFile, "\t}");
-	line(mainFile, "\t//------------------------------------------------------------------------------------------------------------------------------");
-	line(mainFile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
-	line(mainFile, "\t{");
-	line(mainFile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
-	line(mainFile, "\t}");
-	line(mainFile, "}", false);
 
-	writeFile(fileGamePath + "ExcelRegisterMain.cs", ANSIToUTF8(mainFile.c_str(), true));
+	if (hasMainMember)
+	{
+		// 主工程中的表格注册
+		string mainFile;
+		line(mainFile, "using System;");
+		line(mainFile, "using static GB;");
+		line(mainFile, "using static FrameBase;");
+		line(mainFile, "");
+		line(mainFile, "public class ExcelRegisterMain");
+		line(mainFile, "{");
+		line(mainFile, "\tpublic static void registeAll()");
+		line(mainFile, "\t{");
+		for (const SQLiteInfo& info : sqliteInfo)
+		{
+			if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && !info.mHotFix)
+			{
+				string lineStr = "\t\tregisteTable(out mExcel%s, typeof(ED%s), \"%s\");";
+				replaceAll(lineStr, "%s", info.mSQLiteName);
+				line(mainFile, lineStr);
+			}
+		}
+		line(mainFile, "\t}");
+		line(mainFile, "\t//------------------------------------------------------------------------------------------------------------------------------");
+		line(mainFile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
+		line(mainFile, "\t{");
+		line(mainFile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
+		line(mainFile, "\t}");
+		line(mainFile, "}", false);
 
-	// 热更工程中的表格注册
-	string hotFixfile;
-	line(hotFixfile, "using System;");
-	line(hotFixfile, "using static GBR;");
-	line(hotFixfile, "using static FrameBase;");
-	line(hotFixfile, "");
-	line(hotFixfile, "public class ExcelRegisterILR");
-	line(hotFixfile, "{");
-	line(hotFixfile, "\tpublic static void registeAll()");
-	line(hotFixfile, "\t{");
+		writeFile(fileGamePath + "ExcelRegisterMain.cs", ANSIToUTF8(mainFile.c_str(), true));
+	}
+	else
+	{
+		deleteFile(fileGamePath + "ExcelRegisterMain.cs");
+	}
+
+	bool hasHotFixMember = false;
 	for (const SQLiteInfo& info : sqliteInfo)
 	{
 		if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && info.mHotFix)
 		{
-			string lineStr = "\t\tregisteTable(out mExcel%s, typeof(ED%s), \"%s\");";
-			replaceAll(lineStr, "%s", info.mSQLiteName);
-			line(hotFixfile, lineStr);
+			hasHotFixMember = true;
+			break;
 		}
 	}
-	line(hotFixfile, "");
-	line(hotFixfile, "\t\t// 进入热更以后,所有资源都处于可用状态");
-	line(hotFixfile, "\t\tmExcelManager.resourceAvailable();");
-	line(hotFixfile, "\t}");
-	line(hotFixfile, "\t//------------------------------------------------------------------------------------------------------------------------------");
-	line(hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
-	line(hotFixfile, "\t{");
-	line(hotFixfile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
-	line(hotFixfile, "\t}");
-	line(hotFixfile, "}", false);
 
-	writeFile(fileHotFixPath + "ExcelRegisterILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+	if (hasHotFixMember)
+	{
+		// 热更工程中的表格注册
+		string hotFixfile;
+		line(hotFixfile, "using System;");
+		line(hotFixfile, "using static GBR;");
+		line(hotFixfile, "using static FrameBase;");
+		line(hotFixfile, "");
+		line(hotFixfile, "public class ExcelRegisterILR");
+		line(hotFixfile, "{");
+		line(hotFixfile, "\tpublic static void registeAll()");
+		line(hotFixfile, "\t{");
+		for (const SQLiteInfo& info : sqliteInfo)
+		{
+			if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && info.mHotFix)
+			{
+				string lineStr = "\t\tregisteTable(out mExcel%s, typeof(ED%s), \"%s\");";
+				replaceAll(lineStr, "%s", info.mSQLiteName);
+				line(hotFixfile, lineStr);
+			}
+		}
+		line(hotFixfile, "");
+		line(hotFixfile, "\t\t// 进入热更以后,所有资源都处于可用状态");
+		line(hotFixfile, "\t\tmExcelManager.resourceAvailable();");
+		line(hotFixfile, "\t}");
+		line(hotFixfile, "\t//------------------------------------------------------------------------------------------------------------------------------");
+		line(hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : ExcelTable");
+		line(hotFixfile, "\t{");
+		line(hotFixfile, "\t\ttable = mExcelManager.registe(tableName, typeof(T), dataType) as T;");
+		line(hotFixfile, "\t}");
+		line(hotFixfile, "}", false);
+
+		writeFile(fileHotFixPath + "ExcelRegisterILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+	}
+	else
+	{
+		deleteFile(fileHotFixPath + "ExcelRegisterILR.cs");
+	}
 }
 
 // SQLiteRegister.cs文件
 void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>& sqliteInfo, const string& fileHotFixPath, const string& fileGamePath)
 {
-	// 主工程中的表格注册
-	string mainFile;
-	line(mainFile, "using System;");
-	line(mainFile, "using static GB;");
-	line(mainFile, "using static FrameBase;");
-	line(mainFile, "");
-	line(mainFile, "public class SQLiteRegisterMain");
-	line(mainFile, "{");
-	line(mainFile, "\tpublic static void registeAll()");
-	line(mainFile, "\t{");
+	bool hasMainMember = false;
 	for (const SQLiteInfo& info : sqliteInfo)
 	{
 		if (info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && !info.mHotFix)
 		{
-			string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(SD%s), \"%s\");";
-			replaceAll(lineStr, "%s", info.mSQLiteName);
-			line(mainFile, lineStr);
+			hasMainMember = true;
+			break;
 		}
 	}
-	line(mainFile, "\t}");
-	line(mainFile, "\t//-------------------------------------------------------------------------------------------------------------");
-	line(mainFile, "\tprotected static void registeTable<T>(out T sqliteTable, Type dataType, string tableName) where T : SQLiteTable");
-	line(mainFile, "\t{");
-	line(mainFile, "\t\tsqliteTable = mSQLiteManager.registeTable(typeof(T), dataType, tableName) as T;");
-	line(mainFile, "\t}");
-	line(mainFile, "}", false);
 
-	writeFile(fileGamePath + "SQLiteRegisterMain.cs", ANSIToUTF8(mainFile.c_str(), true));
+	if (hasMainMember)
+	{
+		// 主工程中的表格注册
+		string mainFile;
+		line(mainFile, "using System;");
+		line(mainFile, "using static GB;");
+		line(mainFile, "using static FrameBase;");
+		line(mainFile, "");
+		line(mainFile, "public class SQLiteRegisterMain");
+		line(mainFile, "{");
+		line(mainFile, "\tpublic static void registeAll()");
+		line(mainFile, "\t{");
+		for (const SQLiteInfo& info : sqliteInfo)
+		{
+			if (info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && !info.mHotFix)
+			{
+				string lineStr = "\t\tregisteTable(out mSQLite%s, typeof(SD%s), \"%s\");";
+				replaceAll(lineStr, "%s", info.mSQLiteName);
+				line(mainFile, lineStr);
+			}
+		}
+		line(mainFile, "\t}");
+		line(mainFile, "\t//-------------------------------------------------------------------------------------------------------------");
+		line(mainFile, "\tprotected static void registeTable<T>(out T sqliteTable, Type dataType, string tableName) where T : SQLiteTable");
+		line(mainFile, "\t{");
+		line(mainFile, "\t\tsqliteTable = mSQLiteManager.registeTable(typeof(T), dataType, tableName) as T;");
+		line(mainFile, "\t}");
+		line(mainFile, "}", false);
+
+		writeFile(fileGamePath + "SQLiteRegisterMain.cs", ANSIToUTF8(mainFile.c_str(), true));
+	}
+	else
+	{
+		deleteFile(fileGamePath + "SQLiteRegisterMain.cs");
+	}
 
 	// 热更工程中的表格注册
-	bool hasSQLite = false;
+	bool hasHotFixSQLite = false;
 	for (const SQLiteInfo& info : sqliteInfo)
 	{
 		if (info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && info.mHotFix)
 		{
-			hasSQLite = true;
+			hasHotFixSQLite = true;
 		}
 	}
-	if (hasSQLite)
+	if (hasHotFixSQLite)
 	{
 		string hotFixfile;
 		line(hotFixfile, "using System;");
@@ -1094,44 +1145,82 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 
 		writeFile(fileHotFixPath + "SQLiteRegisterILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 	}
+	else
+	{
+		deleteFile(fileHotFixPath + "SQLiteRegisterILR.cs");
+	}
 }
 
 // GameBaseExcel.cs文件
 void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteInfo, const string& fileHotFixPath, const string& fileGamePath)
 {
-	// 主工程中的表格注册
-	string mainFile;
-	line(mainFile, "using System;");
-	line(mainFile, "");
-	line(mainFile, "// GameBase的部分类,用于定义Excel表格的对象");
-	line(mainFile, "public partial class GB");
-	line(mainFile, "{");
+	bool hasMainMember = false;
 	for (const SQLiteInfo& info : sqliteInfo)
 	{
 		if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && !info.mHotFix)
 		{
-			line(mainFile, "\tpublic static Excel" + info.mSQLiteName + " mExcel" + info.mSQLiteName + ";");
+			hasMainMember = true;
+			break;
 		}
 	}
-	line(mainFile, "}", false);
 
-	writeFile(fileGamePath + "GameBaseExcel.cs", ANSIToUTF8(mainFile.c_str(), true));
+	if (hasMainMember)
+	{
+		// 主工程中的表格注册
+		string mainFile;
+		line(mainFile, "using System;");
+		line(mainFile, "");
+		line(mainFile, "// GameBase的部分类,用于定义Excel表格的对象");
+		line(mainFile, "public partial class GB");
+		line(mainFile, "{");
+		for (const SQLiteInfo& info : sqliteInfo)
+		{
+			if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && !info.mHotFix)
+			{
+				line(mainFile, "\tpublic static Excel" + info.mSQLiteName + " mExcel" + info.mSQLiteName + ";");
+			}
+		}
+		line(mainFile, "}", false);
 
-	// 热更工程中的表格注册
-	string hotFixfile;
-	line(hotFixfile, "using System;");
-	line(hotFixfile, "");
-	line(hotFixfile, "// FrameBase的部分类,用于定义Excel表格的对象");
-	line(hotFixfile, "public partial class GBR");
-	line(hotFixfile, "{");
+		writeFile(fileGamePath + "GameBaseExcel.cs", ANSIToUTF8(mainFile.c_str(), true));
+	}
+	else
+	{
+		deleteFile(fileGamePath + "GameBaseExcel.cs");
+	}
+
+	bool hasHotfixMember = false;
 	for (const SQLiteInfo& info : sqliteInfo)
 	{
 		if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && info.mHotFix)
 		{
-			line(hotFixfile, "\tpublic static Excel" + info.mSQLiteName + " mExcel" + info.mSQLiteName + ";");
+			hasHotfixMember = true;
+			break;
 		}
 	}
-	line(hotFixfile, "}", false);
 
-	writeFile(fileHotFixPath + "GameBaseExcelILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+	if (hasHotfixMember)
+	{
+		// 热更工程中的表格注册
+		string hotFixfile;
+		line(hotFixfile, "using System;");
+		line(hotFixfile, "");
+		line(hotFixfile, "// FrameBase的部分类,用于定义Excel表格的对象");
+		line(hotFixfile, "public partial class GBR");
+		line(hotFixfile, "{");
+		for (const SQLiteInfo& info : sqliteInfo)
+		{
+			if (!info.mClientSQLite && info.mOwner != SQLITE_OWNER::SERVER_ONLY && info.mOwner != SQLITE_OWNER::NONE && info.mHotFix)
+			{
+				line(hotFixfile, "\tpublic static Excel" + info.mSQLiteName + " mExcel" + info.mSQLiteName + ";");
+			}
+		}
+		line(hotFixfile, "}", false);
+
+		writeFile(fileHotFixPath + "GameBaseExcelILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+	}
+	else
+	{
+		deleteFile(fileHotFixPath + "GameBaseExcelILR.cs");
+	}
 }
