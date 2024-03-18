@@ -446,6 +446,24 @@ bool FileUtility::createFolder(const string& path)
 	return true;
 }
 
+bool FileUtility::writeEmptyFile(const string& fileName)
+{
+	const char* accesMode = "wb+";
+#if RUN_PLATFORM == PLATFORM_WINDOWS
+	FILE* pFile = nullptr;
+	fopen_s(&pFile, fileName.c_str(), accesMode);
+#elif RUN_PLATFORM == PLATFORM_LINUX
+	FILE* pFile = fopen(fileName.c_str(), accesMode);
+#endif
+	if (pFile == nullptr)
+	{
+		ERROR("can not write file, name : " + fileName);
+		return false;
+	}
+	fclose(pFile);
+	return true;
+}
+
 bool FileUtility::writeFile(const string& filePath, const string& text, bool append)
 {
 	return writeFile(filePath, text.c_str(), (uint)text.length(), append);

@@ -81,8 +81,13 @@ void Serializer::readString(char* str, uint bufferSize)
 void Serializer::writeToFile(const string& fullName)
 {
 	// 确保是只写的,并且数据不为空
-	if (!mWriteFlag || mBuffer == nullptr || mIndex == 0)
+	if (!mWriteFlag)
 	{
+		return;
+	}
+	if (mBuffer == nullptr || mIndex == 0)
+	{
+		writeEmptyFile(fullName);
 		return;
 	}
 	writeFile(fullName, mBuffer, mIndex);
