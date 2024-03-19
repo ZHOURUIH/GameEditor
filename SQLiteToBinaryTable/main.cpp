@@ -446,7 +446,7 @@ int main()
 						reader->getString(j, value);
 						Vector<short> shorts;
 						StringUtility::stringToShorts(value, shorts);
-						if (shorts.size() == 0)
+						if (shorts.size() != 2)
 						{
 							llong id = reader->getLLong(0);
 							cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
@@ -462,7 +462,7 @@ int main()
 						reader->getString(j, value);
 						Vector<ushort> ushorts;
 						StringUtility::stringToUShorts(value, ushorts);
-						if (ushorts.size() == 0)
+						if (ushorts.size() != 2)
 						{
 							llong id = reader->getLLong(0);
 							cout << "字段内容错误,类型Vector2Short,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
@@ -478,7 +478,7 @@ int main()
 						reader->getString(j, value);
 						Vector<int> ints;
 						StringUtility::stringToInts(value, ints);
-						if (ints.size() == 0)
+						if (ints.size() != 2)
 						{
 							llong id = reader->getLLong(0);
 							cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
@@ -494,7 +494,7 @@ int main()
 						reader->getString(j, value);
 						Vector<uint> uints;
 						StringUtility::stringToUInts(value, uints);
-						if (uints.size() == 0)
+						if (uints.size() != 2)
 						{
 							llong id = reader->getLLong(0);
 							cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
@@ -504,6 +504,23 @@ int main()
 						serializer.write(uints[0]);
 						serializer.write(uints[1]);
 					}
+					else if (typeName == "Vector3")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<float> values;
+						StringUtility::stringToFloats(value, values);
+						if (values.size() != 3)
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector3,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.write(values[0]);
+						serializer.write(values[1]);
+						serializer.write(values[2]);
+						}
 					else
 					{
 						cout << "无法识别的字段类型:" << typeName << endl;
