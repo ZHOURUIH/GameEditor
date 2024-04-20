@@ -109,130 +109,119 @@ SQLiteMember parseSQLiteMemberLine(const string& line, bool ignoreClientServer)
 	return memberInfo;
 }
 
-void parseSQLiteTemplate(const string& filePath, Map<string, SQLiteInfo>& sqliteInfoList)
+void parseSQLiteDescription(const string& filePath, Map<string, SQLiteInfo>& sqliteInfoList)
 {
-	// 解析模板文件
-	string fileContent;
-	FileUtility::openTxtFile(filePath, fileContent, true);
-	if (fileContent.length() == 0)
+	Vector<string> files;
+	FileUtility::findFiles(filePath, files, ".db");
+	FOR_VECTOR(files)
 	{
-		cout << "未找到表格格式文件SQLite.txt" << endl;
-		system("pause");
-		return;
-	}
-	Vector<string> lines;
-	StringUtility::split(fileContent.c_str(), "\r\n", lines);
-	if (lines.size() == 0)
-	{
-		return;
-	}
-	bool ignoreClientServer = false;
-	if (lines[0] == "IgnoreClientServer")
-	{
-		lines.eraseAt(0);
-		ignoreClientServer = true;
-	}
-
-	bool packetStart = false;
-	SQLiteInfo tempInfo;
-	bool fileStart = false;
-	FOR_CONST(lines)
-	{
-		if (lines[i] == START_FALG)
+		SQLiteTableBase table;
+		table.setTableName("Z_Description");
+		table.init(files[i]);
+		SQLiteDataReader* reader = table.doSelect();
+		if (reader == nullptr)
 		{
-			fileStart = true;
-			continue;
+			cout << "加载表格失败:" << files[i] << endl;
+			system("pause");
+			return;
 		}
-		if (!fileStart)
+		SQLiteInfo info;
+		info.mSQLiteName = StringUtility::getFileNameNoSuffix(files[i], true);
+		FOR_J(5)
 		{
-			continue;
-		}
-		string line = lines[i];
-		// 表格注释
-		if (StringUtility::startWith(line, "//"))
-		{
-			string comment = line.substr(strlen("//"));
-			StringUtility::removeStartAll(comment, ' ');
-			tempInfo.mComment += comment;
-			continue;
-		}
-		// 去除所有制表符,分号
-		StringUtility::removeAll(line, '\t', ';');
-		// 成员变量列表起始
-		if (line == "{")
-		{
-			packetStart = true;
-			string lastLine = lines[i - 1];
-			int tagStartIndex = 0;
-			int startIndex = -1;
-			int endIndex = -1;
-			// 查找标签
-			Vector<string> tagList;
-			while (true)
+			reader->read();
+			string value;
+			reader->getString(2, value);
+			if (j == 0)
 			{
-				if (!StringUtility::findString(lastLine.c_str(), "[", &startIndex, tagStartIndex))
+				info.mComment = value;
+			}
+			else if (j == 1)
+			{
+				info.mHotFix = StringUtility::stringToBool(value);
+			}
+			else if (j == 2)
+			{
+				// 服务器层级
+			}
+			else if (j == 3)
+			{
+				if (value == "All")
 				{
-					break;
+					info.mOwner = SQLITE_OWNER::BOTH;
 				}
-				if (!StringUtility::findString(lastLine.c_str(), "]", &endIndex, startIndex))
+				else if (value == "Client")
 				{
-					break;
+					info.mOwner = SQLITE_OWNER::CLIENT_ONLY;
 				}
-				tagList.push_back(lastLine.substr(startIndex, endIndex - startIndex + 1));
-				tagStartIndex = endIndex;
+				else if (value == "Server")
+				{
+					info.mOwner = SQLITE_OWNER::SERVER_ONLY;
+				}
+				else if (value == "None")
+				{
+					info.mOwner = SQLITE_OWNER::NONE;
+				}
 			}
-
-			// 判断标签
-			if (tagList.contains("[Client]"))
+			else if (j == 4)
 			{
-				tempInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+				info.mClientSQLite = StringUtility::stringToBool(value);
 			}
-			else if (tagList.contains("[Server]"))
-			{
-				tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
-			}
-			else
-			{
-				tempInfo.mOwner = SQLITE_OWNER::BOTH;
-			}
-			tempInfo.mHotFix = tagList.contains("[HotFix]");
-			tempInfo.mClientSQLite = tagList.contains("[ClientSQLite]");
-
-			// 获取原始的表格名称
-			int firstTagPos = -1;
-			if (StringUtility::findString(lastLine.c_str(), "[", &firstTagPos))
-			{
-				tempInfo.mSQLiteName = lastLine.substr(0, firstTagPos);
-			}
-			else
-			{
-				tempInfo.mSQLiteName = lastLine;
-			}
-
-			tempInfo.mMemberList.clear();
-			// 添加默认的ID字段
-			SQLiteMember idMember;
-			idMember.mMemberName = "ID";
-			idMember.mOwner = SQLITE_OWNER::BOTH;
-			idMember.mTypeName = "int";
-			idMember.mComment = "唯一ID";
-			tempInfo.mMemberList.push_back(idMember);
-			continue;
 		}
-		// 成员变量列表结束
-		if (line == "}")
+		while (reader->read())
 		{
-			sqliteInfoList.insert(tempInfo.mSQLiteName, tempInfo);
-			tempInfo.mComment = "";
-			packetStart = false;
-			continue;
+			SQLiteMember member;
+			string value;
+			reader->getString(1, value);
+			if (value == "All")
+			{
+				member.mOwner = SQLITE_OWNER::BOTH;
+			}
+			else if (value == "Client")
+			{
+				member.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+			}
+			else if (value == "Server")
+			{
+				member.mOwner = SQLITE_OWNER::SERVER_ONLY;
+			}
+			else if (value == "None")
+			{
+				member.mOwner = SQLITE_OWNER::NONE;
+			}
+			reader->getString(2, value);
+			member.mMemberName = value;
+			reader->getString(3, value);
+			member.mTypeName = value;
+			// 枚举类型的实际基础数据类型
+			int leftPos = 0;
+			int rightPos = 0;
+			if (StringUtility::findString(member.mTypeName, "(", &leftPos) &&
+				StringUtility::findString(member.mTypeName, ")", &rightPos))
+			{
+				string realType = member.mTypeName.substr(leftPos + 1, rightPos - leftPos - 1);
+				// 列表类型,则替换列表的元素类型
+				int leftListPos = 0;
+				int rightListPos = 0;
+				if (StringUtility::findString(member.mTypeName, "Vector<", &leftListPos) &&
+					StringUtility::findString(member.mTypeName, ">", &rightListPos))
+				{
+					StringUtility::replace(member.mTypeName, strlen("Vector<") + leftListPos, rightListPos, realType);
+				}
+				// 非列表,则直接替换类型
+				else
+				{
+					member.mTypeName = realType;
+				}
+			}
+			reader->getString(4, value);
+			member.mComment = value;
+			info.mMemberList.push_back(member);
 		}
-		if (packetStart)
-		{
-			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line, ignoreClientServer));
-		}
+		sqliteInfoList.insert(info.mSQLiteName, info);
+		table.releaseReader(reader);
 	}
-	END_CONST();
+	END(files);
 }
 
 int main()
@@ -240,7 +229,6 @@ int main()
 	string dataBasePath;
 	string destPath;
 	Vector<string> destSQLitePath;
-	string typeDefinePath;
 	Vector<string> lines;
 	FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true);
 	for (const string& line : lines)
@@ -264,17 +252,20 @@ int main()
 		{
 			destSQLitePath.push_back(params[1]);
 		}
-		else if (paramName == "TypeDefPath")
-		{
-			typeDefinePath = params[1];
-		}
 	}
 
 	Map<string, SQLiteInfo> sqliteInfoList;
-	parseSQLiteTemplate(typeDefinePath, sqliteInfoList);
+	parseSQLiteDescription(dataBasePath, sqliteInfoList);
 	if (sqliteInfoList.size() == 0)
 	{
 		return 0;
+	}
+
+	Vector<string> tempBytesFiles;
+	FileUtility::findFiles(destPath, tempBytesFiles, ".bytes");
+	for (const string& file : tempBytesFiles)
+	{
+		FileUtility::deleteFile(file);
 	}
 
 	Vector<string> files;
@@ -520,10 +511,10 @@ int main()
 						serializer.write(values[0]);
 						serializer.write(values[1]);
 						serializer.write(values[2]);
-						}
+					}
 					else
 					{
-						cout << "无法识别的字段类型:" << typeName << endl;
+						cout << "无法识别的字段类型:" << typeName << ",表格:" << tableName << endl;
 						system("pause");
 						return 0;
 					}
