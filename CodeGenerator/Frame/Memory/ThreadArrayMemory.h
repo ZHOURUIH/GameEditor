@@ -1,7 +1,7 @@
 ﻿#ifndef _THREAD_ARRAY_MEMORY_H_
 #define _THREAD_ARRAY_MEMORY_H_
 
-#include "ServerDefine.h"
+#include "FrameDefine.h"
 #include "SystemUtility.h"
 
 class ThreadArrayMemory : public SystemUtility

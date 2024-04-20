@@ -1,5 +1,4 @@
-﻿#ifndef _VECTOR2_USHORT_H_
-#define _VECTOR2_USHORT_H_
+﻿#pragma once
 
 struct Vector2UShort
 {
@@ -7,32 +6,26 @@ public:
 	ushort x;
 	ushort y;
 public:
-	Vector2UShort()
+	Vector2UShort():
+		x(0),
+		y(0)
+	{}
+	Vector2UShort(const ushort xx, const ushort yy):
+		x(xx),
+		y(yy)
+	{}
+	void clear()
 	{
 		x = 0;
 		y = 0;
 	}
-	Vector2UShort(ushort xx, ushort yy)
-	{
-		x = xx;
-		y = yy;
-	}
-	Vector2UShort operator*(ushort that) const
-	{
-		return Vector2UShort(x * that, y * that);
-	}
-	Vector2UShort operator+(const Vector2UShort& that) const
-	{
-		return Vector2UShort(x + that.x, y + that.y);
-	}
-	Vector2UShort operator-(const Vector2UShort& that) const
-	{
-		return Vector2UShort(x - that.x, y - that.y);
-	}
+	Vector2UShort operator*(const short that) const { return { (ushort)(x * that), (ushort)(y * that) }; }
+	Vector2UShort operator+(const Vector2UShort& that) const { return { (ushort)(x + that.x), (ushort)(y + that.y) }; }
+	Vector2UShort operator-(const Vector2UShort& that) const { return { (ushort)(x - that.x), (ushort)(y - that.y) }; }
 	Vector2UShort& operator+=(const Vector2UShort& that)
 	{
-		x -= that.x;
-		y -= that.y;
+		x += that.x;
+		y += that.y;
 		return *this;
 	}
 	Vector2UShort& operator-=(const Vector2UShort& that)
@@ -41,10 +34,8 @@ public:
 		y -= that.y;
 		return *this;
 	}
-	Vector2UShort operator-()
-	{
-		return Vector2UShort(-x, -y);
-	}
+	Vector2UShort operator-()const { return { (ushort)(-x), (ushort)(-y) }; }
+	bool operator<(const Vector2UShort& other) const { return x + y < other.x + other.y; }
+	bool operator==(const Vector2UShort& other) const { return x == other.x && y == other.y; }
+	bool operator!=(const Vector2UShort& other) const { return x != other.x || y != other.y; }
 };
-
-#endif

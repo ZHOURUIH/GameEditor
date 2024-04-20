@@ -15,6 +15,7 @@ string CodeUtility::cppGameStringDefineHeaderFile;
 string CodeUtility::cppGameCoreStringDefineHeaderFile;
 string CodeUtility::csGamePath;
 string CodeUtility::VirtualClientSocketPath;
+string CodeUtility::SQLitePath;
 string CodeUtility::START_FALG = "#start";
 bool CodeUtility::mUseILRuntime = true;
 
@@ -68,6 +69,10 @@ bool CodeUtility::initPath()
 		{
 			mUseILRuntime = stringToBool(params[1]);
 		}
+		else if (params[0] == "SQLITE_PATH")
+		{
+			SQLitePath = params[1];
+		}
 	}
 
 	if (ServerGameProjectPath.empty() && ClientProjectPath.empty() && VirtualClientProjectPath.empty())
@@ -75,14 +80,22 @@ bool CodeUtility::initPath()
 		return false;
 	}
 
+	rightToLeft(ServerGameProjectPath);
+	rightToLeft(ServerGameCoreProjectPath);
+	rightToLeft(ServerFrameProjectPath);
+	rightToLeft(SQLitePath);
+	rightToLeft(ClientProjectPath);
+	rightToLeft(ClientHotFixPath);
+	rightToLeft(VirtualClientProjectPath);
+	validPath(ServerGameProjectPath);
+	validPath(ServerGameCoreProjectPath);
+	validPath(ServerFrameProjectPath);
+	validPath(SQLitePath);
+	validPath(ClientProjectPath);
+	validPath(ClientHotFixPath);
+	validPath(VirtualClientProjectPath);
 	if (!ServerGameProjectPath.empty())
 	{
-		rightToLeft(ServerGameProjectPath);
-		rightToLeft(ServerGameCoreProjectPath);
-		rightToLeft(ServerFrameProjectPath);
-		validPath(ServerGameProjectPath);
-		validPath(ServerGameCoreProjectPath);
-		validPath(ServerFrameProjectPath);
 		cppGamePath = ServerGameProjectPath + "Game/";
 		cppGameCorePath = ServerGameCoreProjectPath + "GameCore/";
 		cppFramePath = ServerFrameProjectPath + "Frame/";
@@ -91,16 +104,10 @@ bool CodeUtility::initPath()
 	}
 	if (!ClientProjectPath.empty())
 	{
-		rightToLeft(ClientProjectPath);
-		rightToLeft(ClientHotFixPath);
-		validPath(ClientProjectPath);
-		validPath(ClientHotFixPath);
 		csGamePath = ClientProjectPath + "Assets/Scripts/Game/";
 	}
 	if (!VirtualClientProjectPath.empty())
 	{
-		rightToLeft(VirtualClientProjectPath);
-		validPath(VirtualClientProjectPath);
 		VirtualClientSocketPath = VirtualClientProjectPath + "Assets/Scripts/Game/Socket/";
 	}
 	return true;
@@ -412,7 +419,14 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = cSharpTypeToWrapType(cppTypeToCSharpType(memberInfo.mTypeName));
-	return "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+	if (mUseILRuntime)
+	{
+		return "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
+	}
+	else
+	{
+		return "public " + typeName + " " + memberInfo.mMemberName + " = new();";
+	}
 }
 
 myVector<string> CodeUtility::parseTagList(const string& line, string& newLine)

@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./Frame;./Frame/Common;./Frame/Math;./Frame/Memory;./Frame/Serialize;./Frame/STL;./Frame/Thread;./Frame/Utility;./Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Frame;./Frame/Common;./Frame/Math;./Frame/Memory;./Frame/Serialize;./Frame/STL;./Frame/Thread;./Frame/Utility;./Frame/SQLite;./Frame/Dependency/sqlite3;./Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./Frame;./Frame/Common;./Frame/Math;./Frame/Memory;./Frame/Serialize;./Frame/STL;./Frame/Thread;./Frame/Utility;./Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./Frame;./Frame/Common;./Frame/Math;./Frame/Memory;./Frame/Serialize;./Frame/STL;./Frame/Thread;./Frame/SQLite;./Frame/Utility;./Frame/Dependency/sqlite3;./Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,8 +143,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Frame\Common\ServerDefine.cpp" />
+    <ClCompile Include="Frame\Common\FrameDefine.cpp" />
     <ClCompile Include="Frame\Common\StreamBuffer.cpp" />
+    <ClCompile Include="Frame\Dependency\sqlite3\sqlite3.c" />
     <ClCompile Include="Frame\Math\Color.cpp" />
     <ClCompile Include="Frame\Math\Vector2.cpp" />
     <ClCompile Include="Frame\Math\Vector3.cpp" />
@@ -152,6 +153,10 @@
     <ClCompile Include="Frame\Memory\ThreadArrayMemory.cpp" />
     <ClCompile Include="Frame\Serialize\SerializedData.cpp" />
     <ClCompile Include="Frame\Serialize\Serializer.cpp" />
+    <ClCompile Include="Frame\SQLite\SQLiteData.cpp" />
+    <ClCompile Include="Frame\SQLite\SQLiteDataReader.cpp" />
+    <ClCompile Include="Frame\SQLite\SQLiteManager.cpp" />
+    <ClCompile Include="Frame\SQLite\SQLiteTableBase.cpp" />
     <ClCompile Include="Frame\STL\mySTL.cpp" />
     <ClCompile Include="Frame\Thread\ThreadLock.cpp" />
     <ClCompile Include="Frame\Utility\BinaryUtility.cpp" />
@@ -170,14 +175,19 @@
     <ClCompile Include="Game\CodeNetPacket.cpp" />
     <ClCompile Include="Game\CodeSQLite.cpp" />
     <ClCompile Include="Game\CodeState.cpp" />
+    <ClCompile Include="Game\SQLiteDescription.cpp" />
+    <ClCompile Include="Game\TDDescription.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Frame\Common\ServerDefine.h" />
+    <ClInclude Include="Frame\Common\FrameDefine.h" />
     <ClInclude Include="Frame\Common\ServerEnum.h" />
     <ClInclude Include="Frame\Common\StreamBuffer.h" />
+    <ClInclude Include="Frame\Dependency\sqlite3\sqlite3.h" />
+    <ClInclude Include="Frame\Dependency\sqlite3\sqlite3ext.h" />
     <ClInclude Include="Frame\Math\Color.h" />
     <ClInclude Include="Frame\Math\Vector2.h" />
     <ClInclude Include="Frame\Math\Vector2Int.h" />
+    <ClInclude Include="Frame\Math\Vector2Short.h" />
     <ClInclude Include="Frame\Math\Vector2UShort.h" />
     <ClInclude Include="Frame\Math\Vector3.h" />
     <ClInclude Include="Frame\Math\Vector4.h" />
@@ -186,6 +196,14 @@
     <ClInclude Include="Frame\Memory\ThreadArrayMemory.h" />
     <ClInclude Include="Frame\Serialize\SerializedData.h" />
     <ClInclude Include="Frame\Serialize\Serializer.h" />
+    <ClInclude Include="Frame\SQLite\SelectCount.h" />
+    <ClInclude Include="Frame\SQLite\SQLiteData.h" />
+    <ClInclude Include="Frame\SQLite\SQLiteDataReader.h" />
+    <ClInclude Include="Frame\SQLite\SQLiteManager.h" />
+    <ClInclude Include="Frame\SQLite\SQLiteTable.h" />
+    <ClInclude Include="Frame\SQLite\SQLiteTableBase.h" />
+    <ClInclude Include="Frame\SQLite\SQLiteTableParam.h" />
+    <ClInclude Include="Frame\STL\Array.h" />
     <ClInclude Include="Frame\STL\myMap.h" />
     <ClInclude Include="Frame\STL\mySet.h" />
     <ClInclude Include="Frame\STL\mySTL.h" />
@@ -194,9 +212,12 @@
     <ClInclude Include="Frame\Utility\BinaryUtility.h" />
     <ClInclude Include="Frame\Utility\CodeUtility.h" />
     <ClInclude Include="Frame\Utility\FileUtility.h" />
+    <ClInclude Include="Frame\Utility\IsPODType.h" />
+    <ClInclude Include="Frame\Utility\IsSubClassOf.h" />
     <ClInclude Include="Frame\Utility\MathUtility.h" />
     <ClInclude Include="Frame\Utility\StringUtility.h" />
     <ClInclude Include="Frame\Utility\SystemUtility.h" />
+    <ClInclude Include="Frame\Utility\TypeUtility.h" />
     <ClInclude Include="Frame\Utility\Utility.h" />
     <ClInclude Include="Game\CodeClassDeclareAndHeader.h" />
     <ClInclude Include="Game\CodeComponent.h" />
@@ -208,6 +229,8 @@
     <ClInclude Include="Game\CodeNetPacket.h" />
     <ClInclude Include="Game\CodeSQLite.h" />
     <ClInclude Include="Game\CodeState.h" />
+    <ClInclude Include="Game\SQLiteDescription.h" />
+    <ClInclude Include="Game\TDDescription.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

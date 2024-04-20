@@ -8,6 +8,35 @@ class StringUtility : public BinaryUtility
 public:
 	static string removeStartString(const string& fileName, const string& startStr);
 	static string removeSuffix(const string& str);
+	static int strlength(const char* str, const int maxLength)
+	{
+		FOR_I(maxLength)
+		{
+			if (str[i] == '\0')
+			{
+				return i;
+			}
+		}
+		return maxLength;
+	}
+	static int strlength(const char* str)
+	{
+		int index = 0;
+		while (true)
+		{
+			if (str[index] == '\0')
+			{
+				return index;
+			}
+			// 当字符串长度超过1MB时,认为是错误的字符串
+			if (++index >= 1024 * 1024)
+			{
+				ERROR("字符串长度太长");
+				break;
+			}
+		}
+		return 0;
+	}
 	// 去掉从开始出现的连续指定字符
 	static void removeStartAll(string& stream, char key);
 	// 去掉第一个出现的指定字符
@@ -101,7 +130,7 @@ public:
 						break;
 					}
 				}
-				stringBuffer[curCount++] = curString;
+				stringBuffer[curCount++] = string(curString);
 			}
 			if (!ret)
 			{
@@ -287,6 +316,121 @@ public:
 			++index;
 		}
 	}
+	// 将source拼接到destBuffer后面
+	static void strcat_s(char* destBuffer, int size, const char* source);
+	static void strcat_s(char* destBuffer, int size, const char* source, int length);
+	template<int Length>
+	static void strcat_s(Array<Length>& destBuffer, const string& source)
+	{
+		const int destIndex = destBuffer.length();
+		destBuffer.copy(destIndex, source);
+		destBuffer[destIndex + (int)source.length()] = '\0';
+	}
+	template<int Length>
+	static void strcat_s(Array<Length>& destBuffer, const string& source, const int length)
+	{
+		const int destIndex = destBuffer.length();
+		destBuffer.copy(destIndex, source, length);
+		destBuffer[destIndex + length] = '\0';
+	}
+	template<int Length>
+	static void strcat_s(Array<Length>& destBuffer, const char* source)
+	{
+		const int destIndex = destBuffer.length();
+		const int length = strlength(source);
+		destBuffer.copy(destIndex, source, length);
+		destBuffer[destIndex + length] = '\0';
+	}
+	template<int Length>
+	static void strcat_s(Array<Length>& destBuffer, const char* source, const int length)
+	{
+		const int destIndex = destBuffer.length();
+		destBuffer.copy(destIndex, source, length);
+		destBuffer[destIndex + length] = '\0';
+	}
+	template<int Length>
+	static void strcat_s(Array<Length>& destBuffer, const char** sourceArray, const int sourceCount)
+	{
+		int destIndex = destBuffer.length();
+		FOR_I(sourceCount)
+		{
+			const char* curSource = sourceArray[i];
+			if (curSource == nullptr)
+			{
+				continue;
+			}
+			const int length = strlength(curSource);
+			destBuffer.copy(destIndex, curSource, length);
+			destIndex += length;
+		}
+		destBuffer[destIndex] = '\0';
+	}
+	template<int SourceLength>
+	static void strcat_s(char* destBuffer, const int destSize, const Array<SourceLength, const char*>& sourceArray)
+	{
+		int destIndex = strlength(destBuffer, destSize);
+		FOR_I(SourceLength)
+		{
+			const char* curSource = sourceArray[i];
+			if (curSource == nullptr)
+			{
+				continue;
+			}
+			const int length = strlength(curSource);
+			if (destIndex + length >= destSize)
+			{
+				ERROR("strcat_s buffer is too small");
+				break;
+			}
+			MEMCPY(destBuffer + destIndex, destSize - destIndex, curSource, length);
+			destIndex += length;
+		}
+		destBuffer[destIndex] = '\0';
+	}
+	template<typename... TypeList>
+	static void strcat_t(char* destBuffer, const int destSize, TypeList&&... params)
+	{
+		strcat_s(destBuffer, destSize, Array<sizeof...(params), const char*>{ forward<TypeList>(params)... });
+	}
+	template<int Length, int SourceLength>
+	static void strcat_s(Array<Length>& destBuffer, const Array<SourceLength, const char*>& sourceArray)
+	{
+		int destIndex = destBuffer.length();
+		FOR_I(SourceLength)
+		{
+			const char* curSource = sourceArray[i];
+			if (curSource == nullptr)
+			{
+				continue;
+			}
+			const int length = strlength(curSource);
+			destBuffer.copy(destIndex, curSource, length);
+			destIndex += length;
+		}
+		destBuffer[destIndex] = '\0';
+	}
+	template<int Length, typename... TypeList>
+	static void strcat_t(Array<Length>& destBuffer, TypeList&&... params)
+	{
+		strcat_s(destBuffer, Array<sizeof...(params), const char*>{ forward<TypeList>(params)... });
+	}
+	static void strcpy_s(char* destBuffer, int size, const char* source);
+	// 以string类型返回count个0
+	static string zeroString(int zeroCount);
+	template<int Length>
+	static void zeroString(Array<Length>& charArray, const int zeroCount)
+	{
+		if ((int)Length <= zeroCount)
+		{
+			ERROR("buffer is too small");
+			return;
+		}
+		FOR_I(zeroCount)
+		{
+			charArray[i] = '0';
+		}
+		charArray[zeroCount] = '\0';
+	}
 	// 返回string类型的数字字符串,速度较慢,limitLen是字符串的最小长度,如果整数的位数不足最小长度,则会在前面加0
 	static string intToString(int value, uint limitLen = 0);
 	// 传入存放字符串的数组,速度较快
@@ -438,6 +582,300 @@ public:
 		INT_TO_STRING(yStr, value.y);
 		STR_APPEND3(buffer, xStr, seperate, yStr);
 	}
+	static void stringToBytes(const string& str, myVector<byte>& valueList, const char* seperate = ",");
+	static int stringToBytes(const char* str, byte* buffer, int bufferSize, const char* seperate = ",");
+	template<int Length>
+	static int stringToBytes(const char* str, Array<Length, byte>& buffer, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = 0;
+		const int keyLen = strlength(seperate);
+		const int sourceLen = strlength(str);
+		Array<4> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("int buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToInt(curString.str());
+		}
+		return curCount;
+	}
+	static void stringToUShorts(const string& str, myVector<ushort>& valueList, const char* seperate = ",");
+	static int stringToUShorts(const char* str, ushort* buffer, int bufferSize, const char* seperate = ",");
+	template<int Length>
+	static int stringToUShorts(const char* str, Array<Length, ushort>& buffer, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = 0;
+		const int sourceLen = strlength(str);
+		const int keyLen = strlength(seperate);
+		Array<8> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("int buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToInt(curString.str());
+		}
+		return curCount;
+	}
+	static void stringToInts(const string& str, myVector<int>& valueList, const char* seperate = ",");
+	static int stringToInts(const char* str, int* buffer, int bufferSize, const char* seperate = ",");
+	template<int Length>
+	static int stringToInts(const string& str, Array<Length, int>& buffer, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = 0;
+		const int sourceLen = (int)str.length();
+		const int keyLen = strlength(seperate);
+		Array<16> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str, startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("int buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToInt(curString.str());
+		}
+		return curCount;
+	}
+	static void stringToUInts(const string& str, myVector<uint>& valueList, const char* seperate = ",");
+	static int stringToUInts(const char* str, uint* buffer, int bufferSize, const char* seperate = ",");
+	template<int Length>
+	static int stringToUInts(const char* str, Array<Length, uint>& buffer, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = 0;
+		const int sourceLen = strlength(str);
+		const int keyLen = strlength(seperate);
+		Array<16> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为长整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("uint buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToInt(curString.str());
+		}
+		return curCount;
+	}
+	static void stringToULLongs(const char* str, myVector<ullong>& valueList, const char* seperate = ",");
+	static int stringToULLongs(const char* str, ullong* buffer, int bufferSize, const char* seperate = ",");
+	template<int Length>
+	static int stringToULLongs(const char* str, Array<Length, ullong>& buffer, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = 0;
+		const int sourceLen = strlength(str);
+		const int keyLen = strlength(seperate);
+		Array<32> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为长整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("ullong buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToULLong(curString.str());
+		}
+		return curCount;
+	}
+	static void stringToLLongs(const char* str, myVector<llong>& valueList, const char* seperate = ",");
+	static void stringToLLongs(const string& str, myVector<llong>& valueList, const char* seperate = ",");
+	static int stringToLLongs(const char* str, llong* buffer, int bufferSize, const char* seperate = ",");
+	template<int Length>
+	static int stringToLLongs(const string& str, Array<Length, llong>& buffer, int destOffset = 0, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = destOffset;
+		const int sourceLen = (int)str.length();
+		const int keyLen = strlength(seperate);
+		Array<32> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str, startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为长整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					LOG("llong buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToLLong(curString.str());
+		}
+		return curCount;
+	}
+	template<int Length>
+	static int stringToLLongs(const char* str, Array<Length, llong>& buffer, int destOffset = 0, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = destOffset;
+		const int sourceLen = strlength(str);
+		const int keyLen = strlength(seperate);
+		Array<32> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为长整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("llong buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToLLong(curString.str());
+		}
+		return curCount;
+	}
+	static void stringToFloats(const string& str, myVector<float>& valueList, const char* seperate = ",");
+	template<int Length>
+	static int stringToFloats(const char* str, Array<Length, float>& buffer, const char* seperate = ",", const bool showError = true)
+	{
+		int startPos = 0;
+		int curCount = 0;
+		const int sourceLen = strlength(str);
+		const int keyLen = strlength(seperate);
+		Array<32> curString{ 0 };
+		int devidePos = -1;
+		bool ret = true;
+		while (ret)
+		{
+			ret = findString(str, seperate, &devidePos, startPos);
+			// 无论是否查找到,都将前面一段字符串截取出来
+			devidePos = ret ? devidePos : sourceLen;
+			curString.copy(str + startPos, devidePos - startPos);
+			curString[devidePos - startPos] = '\0';
+			startPos = devidePos + keyLen;
+			// 转换为长整数放入列表
+			if (curString[0] == '\0')
+			{
+				continue;
+			}
+			if (curCount >= (int)Length)
+			{
+				if (showError)
+				{
+					ERROR("float buffer size is too small, bufferSize:" + intToString(Length));
+				}
+				break;
+			}
+			buffer[curCount++] = stringToFloat(curString.str());
+		}
+		return curCount;
+	}
 	//-----------------------------------------------------------------------------------------------------------------------------
 	// 字符串转换为基础数据类型
 	//-----------------------------------------------------------------------------------------------------------------------------
@@ -447,11 +885,14 @@ public:
 	static int stringToInt(const char* str) { return atoi(str); }
 	static ullong stringToULLong(const string& str) { return atoll(str.c_str()); }
 	static ullong stringToULLong(const char* str) { return atoll(str); }
+	static llong stringToLLong(const string& str) { return atoll(str.c_str()); }
+	static llong stringToLLong(const char* str) { return atoll(str); }
 	static float stringToFloat(const string& str) { return (float)atof(str.c_str()); }
 	static float stringToFloat(const char* str) { return (float)atof(str); }
 	static Vector2 stringToVector2(const string& str, const char* seperate = ",");
 	static Vector2Int stringToVector2Int(const string& str, const char* seperate = ",");
 	static Vector2UShort stringToVector2UShort(const string& str, const char* seperate = ",");
+	static Vector2Short stringToVector2Short(const string& str, const char* seperate = ",");
 	static Vector3 stringToVector3(const string& str, const char* seperate = ",");
 	//-----------------------------------------------------------------------------------------------------------------------------
 	// 基础数据类型数组转换为字符串
@@ -891,12 +1332,19 @@ public:
 	// 移除字符串首部的数字
 	static string removePreNumber(const string& str);
 	static wstring ANSIToUnicode(const char* str);
+	static void ANSIToUnicode(const char* str, wchar_t* output, int maxLength);
 	static string UnicodeToANSI(const wchar_t* str);
+	static void UnicodeToANSI(const wchar_t* str, char* output, int maxLength);
 	static string UnicodeToUTF8(const wchar_t* str);
+	static void UnicodeToUTF8(const wchar_t* str, char* output, int maxLength);
 	static wstring UTF8ToUnicode(const char* str);
+	static void UTF8ToUnicode(const char* str, wchar_t* output, int maxLength);
 	static string ANSIToUTF8(const char* str, bool addBOM = false);
+	static void ANSIToUTF8(const char* str, char* output, int maxLength, bool addBOM = false);
 	static string UTF8ToANSI(const char* str, bool eraseBOM = false);
+	static void UTF8ToANSI(const char* str, char* output, int maxLength, bool eraseBOM = false);
 	static void removeBOM(string& str);
+	static void removeBOM(char* str, int length = 0);
 	// json
 	static void jsonStartArray(string& str, uint preTableCount = 0, bool returnLine = false);
 	static void jsonEndArray(string& str, uint preTableCount = 0, bool returnLine = false);

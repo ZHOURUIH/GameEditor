@@ -23,6 +23,7 @@ protected:
 	static string cppGameCoreStringDefineHeaderFile;
 	static string csGamePath;
 	static string VirtualClientSocketPath;
+	static string SQLitePath;
 	static string START_FALG;
 	static bool mUseILRuntime;
 public:

@@ -114,9 +114,8 @@ public:
 		}
 		return true;
 	}
-	uint size() const {return mMap.size();}
-	const Value& operator[](const Key& k) const { return mMap[k]; }
-	Value& operator[](const Key& k) {return mMap[k];}
+	int size() const { return (int)mMap.size(); }
+	Value& operator[](const Key& k) { return mMap[k]; }
 	void clone(myMap<Key, Value>& target) const
 	{
 		target.mMap.clear();

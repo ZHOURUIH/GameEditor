@@ -1,149 +1,117 @@
 #include "CodeSQLite.h"
+#include "SQLiteDescription.h"
 
 void CodeSQLite::generate()
 {
 	print("正在生成SQLite");
-	// 解析模板文件
-	myVector<string> lines = openTxtFileLines("SQLite.txt");
-	if (lines.size() == 0)
-	{
-		ERROR("未找到表格格式文件SQLite.txt");
-		return;
-	}
-	bool ignoreClientServer = false;
-	if (lines[0] == "IgnoreClientServer")
-	{
-		lines.erase(0);
-		ignoreClientServer = true;
-	}
 
-	bool packetStart = false;
+	// 先读取表格描述
 	myVector<SQLiteInfo> sqliteInfoList;
-	SQLiteInfo tempInfo;
-	bool fileStart = false;
-	FOR_VECTOR(lines)
+	myVector<string> dbFiles;
+	findFiles(SQLitePath, dbFiles, ".db");
+	FOR_VECTOR(dbFiles)
 	{
-		if (lines[i] == START_FALG)
+		SQLiteDescription table;
+		table.setTableName("Z_Description");
+		table.init(dbFiles[i]);
+		const myMap<int, TDDescription*>& list = table.queryAll();
+		if (list.size() == 0)
 		{
-			fileStart = true;
 			continue;
 		}
-		if (!fileStart)
+		SQLiteInfo info;
+		info.mMemberList.clear();
+		info.mSQLiteName = getFileNameNoSuffix(dbFiles[i], true);
+		FOREACH(item, list)
 		{
-			continue;
-		}
-		string line = lines[i];
-		// 表格注释
-		if (startWith(line, "//"))
-		{
-			string comment = line.substr(strlen("//"));
-			removeStartAll(comment, ' ');
-			tempInfo.mComment += comment;
-			continue;
-		}
-		// 去除所有制表符,分号
-		removeAll(line, '\t', ';');
-		// 成员变量列表起始
-		if (line == "{")
-		{
-			packetStart = true;
-			string lastLine = lines[i - 1];
-			int tagStartIndex = 0;
-			int startIndex = -1;
-			int endIndex = -1;
-			// 查找标签
-			myVector<string> tagList;
-			while (true)
+			TDDescription* data = item->second;
+			if (item->first == 1)
 			{
-				findString(lastLine.c_str(), "[", &startIndex, tagStartIndex);
-				findString(lastLine.c_str(), "]", &endIndex, startIndex);
-				if (startIndex < 0 || endIndex < 0)
+				info.mComment = data->mName;
+			}
+			else if (item->first == 2)
+			{
+				info.mHotFix = StringUtility::stringToBool(data->mName);
+			}
+			else if (item->first == 3)
+			{
+				if (data->mName == "Game")
 				{
-					break;
+					info.mServerOwner = SQLITE_SERVER_OWNER::GAME;
 				}
-				tagList.push_back(lastLine.substr(startIndex, endIndex - startIndex + 1));
-				tagStartIndex = endIndex;
+				else if (data->mName == "GameCore")
+				{
+					info.mServerOwner = SQLITE_SERVER_OWNER::GAME_CORE;
+				}
+				else
+				{
+					ERROR("需要指定服务器层级:" + info.mSQLiteName);
+				}
 			}
-
-			// 判断标签
-			if (tagList.contains("[Client]"))
+			else if (item->first == 4)
 			{
-				tempInfo.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+				if (data->mName == "All")
+				{
+					info.mOwner = SQLITE_OWNER::BOTH;
+				}
+				else if (data->mName == "Client")
+				{
+					info.mOwner = SQLITE_OWNER::CLIENT_ONLY;
+				}
+				else if (data->mName == "Server")
+				{
+					info.mOwner = SQLITE_OWNER::SERVER_ONLY;
+				}
+				else if (data->mName == "None")
+				{
+					info.mOwner = SQLITE_OWNER::NONE;
+				}
+				else
+				{
+					ERROR("表格所属错误:" + info.mSQLiteName);
+				}
 			}
-			else if (tagList.contains("[Server]"))
+			else if (item->first == 5)
 			{
-				tempInfo.mOwner = SQLITE_OWNER::SERVER_ONLY;
-			}
-			else if (tagList.contains("[None]"))
-			{
-				tempInfo.mOwner = SQLITE_OWNER::NONE;
+				info.mClientSQLite = StringUtility::stringToBool(data->mName);
 			}
 			else
 			{
-				tempInfo.mOwner = SQLITE_OWNER::BOTH;
-			}
-			// 如果是服务器会用到的表格,需要指定是Game层还是GameCore层
-			SQLITE_SERVER_OWNER serverOwner = SQLITE_SERVER_OWNER::NONE;
-			if (tempInfo.mOwner == SQLITE_OWNER::BOTH || tempInfo.mOwner == SQLITE_OWNER::SERVER_ONLY)
-			{
-				if (tagList.contains("[Game]"))
+				SQLiteMember member;
+				if (data->mOwner == "All")
 				{
-					if (serverOwner != SQLITE_SERVER_OWNER::NONE)
-					{
-						ERROR("不能重复设置标签," + lastLine);
-					}
-					serverOwner = SQLITE_SERVER_OWNER::GAME;
+					member.mOwner = SQLITE_OWNER::BOTH;
 				}
-				else if (tagList.contains("[GameCore]"))
+				else if (data->mOwner == "Client")
 				{
-					if (serverOwner != SQLITE_SERVER_OWNER::NONE)
-					{
-						ERROR("不能重复设置标签," + lastLine);
-					}
-					serverOwner = SQLITE_SERVER_OWNER::GAME_CORE;
+					member.mOwner = SQLITE_OWNER::CLIENT_ONLY;
 				}
-				if (serverOwner == SQLITE_SERVER_OWNER::NONE)
+				else if (data->mOwner == "Server")
 				{
-					ERROR("服务器用到的SQLite表格必须设置所属层标签," + lastLine);
+					member.mOwner = SQLITE_OWNER::SERVER_ONLY;
 				}
+				else if (data->mOwner == "None")
+				{
+					member.mOwner = SQLITE_OWNER::NONE;
+				}
+				else
+				{
+					ERROR("owner错误:" + info.mSQLiteName);
+				}
+				member.mMemberName = data->mName;
+				member.mComment = data->mDesc;
+				member.mTypeName = data->mType;
+				int leftPos = 0;
+				int rightPos = 0;
+				if (findSubstr(member.mTypeName, "(", &leftPos) && findSubstr(member.mTypeName, ")", &rightPos))
+				{
+					member.mEnumRealType = member.mTypeName.substr(leftPos + 1, rightPos - leftPos - 1);
+					member.mTypeName = member.mTypeName.erase(leftPos, rightPos - leftPos + 1);
+				}
+				info.mMemberList.push_back(member);
 			}
-			tempInfo.mHotFix = tagList.contains("[HotFix]");
-			tempInfo.mClientSQLite = tagList.contains("[ClientSQLite]");
-			tempInfo.mServerOwner = serverOwner;
-
-			// 去除名字中的标签,获取原始的表格名称
-			int firstTagPos = -1;
-			if (findString(lastLine.c_str(), "[", &firstTagPos))
-			{
-				tempInfo.mSQLiteName = lastLine.substr(0, firstTagPos);
-			}
-			else
-			{
-				tempInfo.mSQLiteName = lastLine;
-			}
-			
-			tempInfo.mMemberList.clear();
-			// 添加默认的ID字段
-			SQLiteMember idMember;
-			idMember.mMemberName = "ID";
-			idMember.mOwner = SQLITE_OWNER::BOTH;
-			idMember.mTypeName = "int";
-			idMember.mComment = "唯一ID";
-			tempInfo.mMemberList.push_back(idMember);
-			continue;
 		}
-		// 成员变量列表结束
-		if (line == "}")
-		{
-			sqliteInfoList.push_back(tempInfo);
-			tempInfo.mComment = "";
-			packetStart = false;
-			continue;
-		}
-		if (packetStart)
-		{
-			tempInfo.mMemberList.push_back(parseSQLiteMemberLine(line, ignoreClientServer));
-		}
+		sqliteInfoList.push_back(info);
 	}
 	
 	// cpp
@@ -721,13 +689,22 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 			}
 		}
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
-		if (findString(typeName.c_str(), "List", nullptr))
+		bool isList = findString(typeName.c_str(), "List", nullptr);
+		if (isList)
 		{
 			listMemberList.push_back(make_pair(typeName, member.mMemberName));
 			listMemberSet.insert(member.mMemberName);
 		}
-		string memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
-		uint tabCount = generateAlignTableCount(memberLine, 44);
+		string memberLine;
+		if (mUseILRuntime || !isList)
+		{
+			memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
+		}
+		else
+		{
+			memberLine = "\tpublic " + typeName + " m" + member.mMemberName + " = new();";
+		}
+		uint tabCount = generateAlignTableCount(memberLine, 52);
 		FOR_I(tabCount)
 		{
 			memberLine += '\t';
@@ -735,7 +712,7 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
 		line(file, memberLine);
 	}
-	if (listMemberList.size() > 0)
+	if (mUseILRuntime && listMemberList.size() > 0)
 	{
 		line(file, "\tpublic " + dataClassName + "()");
 		line(file, "\t{");
@@ -799,13 +776,22 @@ void CodeSQLite::generateCSharpExcelTableFile(const SQLiteInfo& sqliteInfo, cons
 	line(table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
 	line(table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
 	line(table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
-	line(table, "\tprotected List<" + dataClassName + "> mDataList;");
+	if (mUseILRuntime)
+	{
+		line(table, "\tprotected List<" + dataClassName + "> mDataList;");
+	}
+	else
+	{
+		line(table, "\tprotected List<" + dataClassName + "> mDataList = new();");
+	}
 	line(table, "\tprotected bool mDataAvailable;");
-	line(table, "\tpublic " + tableClassName + "()");
-	line(table, "\t{");
-	line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
-	line(table, "\t\tmDataAvailable = false;");
-	line(table, "\t}");
+	if (mUseILRuntime)
+	{
+		line(table, "\tpublic " + tableClassName + "()");
+		line(table, "\t{");
+		line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
+		line(table, "\t}");
+	}
 	line(table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
 	line(table, "\t{");
 	line(table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
@@ -891,8 +877,16 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 			publicType = "protected";
 		}
 
-		string memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
-		uint tabCount = generateAlignTableCount(memberLine, 44);
+		string memberLine;
+		if (mUseILRuntime)
+		{
+			memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
+		}
+		else
+		{
+			memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + " = new();";
+		}
+		uint tabCount = generateAlignTableCount(memberLine, 52);
 		FOR_I(tabCount)
 		{
 			memberLine += '\t';
@@ -900,7 +894,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		memberLine += "// " + member.mComment;
 		line(file, memberLine);
 	}
-	if (listMemberList.size() > 0)
+	if (mUseILRuntime && listMemberList.size() > 0)
 	{
 		line(file, "\tpublic " + dataClassName + "()");
 		line(file, "\t{");

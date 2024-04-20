@@ -1,7 +1,7 @@
 ﻿#ifndef _THREAD_LOCK_H_
 #define _THREAD_LOCK_H_
 
-#include "ServerDefine.h"
+#include "FrameDefine.h"
 
 class ThreadLock
 {

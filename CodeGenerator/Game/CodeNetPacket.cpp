@@ -2263,7 +2263,14 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("");
 	codeList.push_back("public class " + structInfo.mStructName + "_List : SerializableBit");
 	codeList.push_back("{");
-	codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new List<" + structInfo.mStructName + ">();");
+	if (mUseILRuntime)
+	{
+		codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new List<" + structInfo.mStructName + ">();");
+	}
+	else
+	{
+		codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new();");
+	}
 	codeList.push_back("\tpublic " + structInfo.mStructName + " this[int index]");
 	codeList.push_back("\t{");
 	codeList.push_back("\t\tget { return mList[index]; }");

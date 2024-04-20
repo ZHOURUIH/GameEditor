@@ -1,7 +1,7 @@
 ﻿#ifndef _SERIALIZER_H_
 #define _SERIALIZER_H_
 
-#include "ServerDefine.h"
+#include "FrameDefine.h"
 #include "Utility.h"
 
 // 用于生成二进制文件的

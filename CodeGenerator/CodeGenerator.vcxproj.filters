@@ -34,9 +34,18 @@
     <Filter Include="Frame\Memory">
       <UniqueIdentifier>{1ea47135-a194-471c-bab3-505020a56063}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Frame\SQLite">
+      <UniqueIdentifier>{55d2eeb7-426b-41ed-869d-5e6eaadc802e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frame\Dependency">
+      <UniqueIdentifier>{945c73f1-d7e7-4a53-a5f0-5c386013d4fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frame\Dependency\sqlite3">
+      <UniqueIdentifier>{4e62a2c1-6f9b-4058-9a47-1bbb9ac5898b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Frame\Common\ServerDefine.cpp">
+    <ClCompile Include="Frame\Common\FrameDefine.cpp">
       <Filter>Frame\Common</Filter>
     </ClCompile>
     <ClCompile Include="Frame\Common\StreamBuffer.cpp">
@@ -117,12 +126,33 @@
     <ClCompile Include="Game\CodeEnumCheck.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Frame\SQLite\SQLiteData.cpp">
+      <Filter>Frame\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame\SQLite\SQLiteDataReader.cpp">
+      <Filter>Frame\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame\SQLite\SQLiteManager.cpp">
+      <Filter>Frame\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame\SQLite\SQLiteTableBase.cpp">
+      <Filter>Frame\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame\Dependency\sqlite3\sqlite3.c">
+      <Filter>Frame\Dependency\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SQLiteDescription.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TDDescription.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frame\Common\StreamBuffer.h">
       <Filter>Frame\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Frame\Common\ServerDefine.h">
+    <ClInclude Include="Frame\Common\FrameDefine.h">
       <Filter>Frame\Common</Filter>
     </ClInclude>
     <ClInclude Include="Frame\Common\ServerEnum.h">
@@ -226,6 +256,54 @@
     </ClInclude>
     <ClInclude Include="Game\CodeEnumCheck.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SelectCount.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SQLiteData.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SQLiteDataReader.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SQLiteManager.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SQLiteTable.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SQLiteTableBase.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\SQLite\SQLiteTableParam.h">
+      <Filter>Frame\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Dependency\sqlite3\sqlite3.h">
+      <Filter>Frame\Dependency\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Dependency\sqlite3\sqlite3ext.h">
+      <Filter>Frame\Dependency\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\STL\Array.h">
+      <Filter>Frame\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Math\Vector2Short.h">
+      <Filter>Frame\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SQLiteDescription.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TDDescription.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Utility\IsSubClassOf.h">
+      <Filter>Frame\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Utility\IsPODType.h">
+      <Filter>Frame\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Utility\TypeUtility.h">
+      <Filter>Frame\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

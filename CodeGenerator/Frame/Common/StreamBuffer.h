@@ -1,7 +1,7 @@
 ﻿#ifndef _STREAM_BUFFER_H_
 #define _STREAM_BUFFER_H_
 
-#include "ServerDefine.h"
+#include "FrameDefine.h"
 
 class StreamBuffer
 {

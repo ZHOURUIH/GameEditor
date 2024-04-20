@@ -506,7 +506,7 @@ void FileUtility::openFile(const string& filePath, FileContent& fileContent, boo
 	fileContent.createBuffer(bufferLen);
 	if (fread(fileContent.mBuffer, sizeof(char), fileSize, pFile) != fileSize)
 	{
-		INFO("read count error!");
+		LOG("read count error!");
 	}
 	fclose(pFile);
 	if (addZero)

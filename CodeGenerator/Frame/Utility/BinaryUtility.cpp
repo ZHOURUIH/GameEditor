@@ -45,6 +45,7 @@ uint BinaryUtility::mUShortType = (uint)typeid(ushort).hash_code();
 uint BinaryUtility::mIntType = (uint)typeid(int).hash_code();
 uint BinaryUtility::mUIntType = (uint)typeid(uint).hash_code();
 uint BinaryUtility::mFloatType = (uint)typeid(float).hash_code();
+uint BinaryUtility::mLLongType = (uint)typeid(llong).hash_code();
 uint BinaryUtility::mULLongType = (uint)typeid(ullong).hash_code();
 uint BinaryUtility::mBoolArrayType = (uint)typeid(bool*).hash_code();
 uint BinaryUtility::mCharArrayType = (uint)typeid(char*).hash_code();
@@ -66,6 +67,7 @@ uint BinaryUtility::mFloatListType = (uint)typeid(myVector<float>).hash_code();
 uint BinaryUtility::mULLongListType = (uint)typeid(myVector<ullong>).hash_code();
 uint BinaryUtility::mVector2IntType = (uint)typeid(Vector2Int).hash_code();
 uint BinaryUtility::mVector2UShortType = (uint)typeid(Vector2UShort).hash_code();
+uint BinaryUtility::mVector2ShortType = (uint)typeid(Vector2Short).hash_code();
 
 // 计算 16进制的c中1的个数
 uint BinaryUtility::crc_check(char c)

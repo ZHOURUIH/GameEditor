@@ -49,7 +49,7 @@ void main()
 	{
 		CodeNetPacket::generateVirtualClient();
 	}
-	if (ServerDefine::mHasError)
+	if (FrameDefine::mHasError)
 	{
 		system("pause");
 	}

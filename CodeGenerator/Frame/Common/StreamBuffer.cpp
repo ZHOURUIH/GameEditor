@@ -1,11 +1,11 @@
-﻿#include "ServerDefine.h"
+﻿#include "FrameDefine.h"
 #include "Utility.h"
 #include "StreamBuffer.h"
 
 StreamBuffer::StreamBuffer(uint bufferSize)
 {
 	mBufferSize = 0;
-	mBuffer = NULL;
+	mBuffer = nullptr;
 	mDataLength = 0;
 	mDataStart = 0;
 	resizeBuffer(bufferSize);
@@ -44,7 +44,7 @@ void StreamBuffer::addData(const char* data, uint count, bool clearIfFull)
 		}
 		else
 		{
-			INFO("缓冲区太小");
+			LOG("缓冲区太小");
 		}
 	}
 }
@@ -57,7 +57,7 @@ void StreamBuffer::removeData(uint count)
 	}
 	else
 	{
-		INFO("删除数据失败!数据量不足");
+		LOG("删除数据失败!数据量不足");
 	}
 }
 void StreamBuffer::clear()

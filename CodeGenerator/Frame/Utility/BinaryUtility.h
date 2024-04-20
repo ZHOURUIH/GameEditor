@@ -1,9 +1,10 @@
 ﻿#ifndef _BINARY_UTILITY_H_
 #define _BINARY_UTILITY_H_
 
-#include "ServerDefine.h"
+#include "FrameDefine.h"
+#include "Array.h"
 
-class BinaryUtility : public ServerDefine
+class BinaryUtility : public FrameDefine
 {
 public:
 	// 计算 16进制的c中1的个数
@@ -116,6 +117,7 @@ public:
 	static uint mIntType;
 	static uint mUIntType;
 	static uint mFloatType;
+	static uint mLLongType;
 	static uint mULLongType;
 	static uint mBoolArrayType;
 	static uint mCharArrayType;
@@ -137,6 +139,7 @@ public:
 	static uint mULLongListType;
 	static uint mVector2IntType;
 	static uint mVector2UShortType;
+	static uint mVector2ShortType;
 };
 
 #endif

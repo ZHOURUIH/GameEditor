@@ -168,6 +168,10 @@ string StringUtility::getFileNameNoSuffix(string str, bool removePath)
 
 string StringUtility::getFilePath(const string& dir)
 {
+	if (dir.length() == 0)
+	{
+		return dir;
+	}
 	string tempDir = dir;
 	rightToLeft(tempDir);
 	if (tempDir[tempDir.length() - 1] == '/')
@@ -242,6 +246,10 @@ void StringUtility::replace(char* str, int strBufferSize, int begin, int end, co
 
 void StringUtility::replace(string& str, int begin, int end, const string& reStr)
 {
+	if (begin < 0 || end < 0)
+	{
+		return;
+	}
 	string sub1 = str.substr(0, begin);
 	string sub2 = str.substr(end, str.length() - end);
 	str = sub1 + reStr + sub2;
@@ -1463,6 +1471,18 @@ Vector2UShort StringUtility::stringToVector2UShort(const string& str, const char
 	return value;
 }
 
+Vector2Short StringUtility::stringToVector2Short(const string& str, const char* seperate)
+{
+	Vector2Short value;
+	array<string, 2> valueList;
+	if (split(str.c_str(), seperate, valueList) == valueList.size())
+	{
+		value.x = stringToInt(valueList[0]);
+		value.y = stringToInt(valueList[1]);
+	}
+	return value;
+}
+
 string StringUtility::vector3ToString(const Vector3& vec, const char* seperate)
 {
 	return floatToString(vec.x) + seperate + floatToString(vec.y) + seperate + floatToString(vec.z);
@@ -1595,43 +1615,93 @@ wstring StringUtility::ANSIToUnicode(const char* str)
 	{
 		return L"";
 	}
-	int unicodeLen = MultiByteToWideChar(CP_ACP, 0, str, -1, nullptr, 0);
-	int allocSize = MathUtility::getGreaterPower2(unicodeLen + 1);
-	wchar_t* pUnicode = ArrayPool::newArray<wchar_t>(allocSize);
+	const int unicodeLen = MultiByteToWideChar(CP_ACP, 0, str, -1, nullptr, 0);
+	wchar_t* pUnicode = new wchar_t[MathUtility::getGreaterPower2(unicodeLen + 1)];
 	MultiByteToWideChar(CP_ACP, 0, str, -1, (LPWSTR)pUnicode, unicodeLen);
-	wstring rt(pUnicode);
-	ArrayPool::deleteArray(pUnicode);
-	return rt;
+	wstring finalStr = pUnicode;
+	delete[] pUnicode;
+	return finalStr;
+}
+
+void StringUtility::ANSIToUnicode(const char* str, wchar_t* output, const int maxLength)
+{
+	if (str == nullptr || str[0] == 0)
+	{
+		output[0] = L'\0';
+		return;
+	}
+	const int unicodeLen = MultiByteToWideChar(CP_ACP, 0, str, -1, nullptr, 0);
+	if (unicodeLen >= maxLength)
+	{
+		ERROR("buffer is too small");
+		output[0] = L'\0';
+		return;
+	}
+	MultiByteToWideChar(CP_ACP, 0, str, -1, (LPWSTR)output, unicodeLen);
 }
 
 string StringUtility::UnicodeToANSI(const wchar_t* str)
 {
 	if (str == nullptr || str[0] == 0)
 	{
-		"";
+		return FrameDefine::EMPTY_STRING;
 	}
-	int iTextLen = WideCharToMultiByte(CP_ACP, 0, str, -1, nullptr, 0, nullptr, nullptr);
-	int allocSize = MathUtility::getGreaterPower2(iTextLen + 1);
-	char* pElementText = ArrayPool::newArray<char>(allocSize);
+	const int iTextLen = WideCharToMultiByte(CP_ACP, 0, str, -1, nullptr, 0, nullptr, nullptr);
+	char* pElementText = new char[MathUtility::getGreaterPower2(iTextLen + 1)];
 	WideCharToMultiByte(CP_ACP, 0, str, -1, pElementText, iTextLen, nullptr, nullptr);
-	string strText(pElementText);
-	ArrayPool::deleteArray(pElementText);
-	return strText;
+	string finalStr = pElementText;
+	delete[] pElementText;
+	return finalStr;
 }
+
+void StringUtility::UnicodeToANSI(const wchar_t* str, char* output, const int maxLength)
+{
+	if (str == nullptr || str[0] == 0)
+	{
+		output[0] = '\0';
+		return;
+	}
+	const int iTextLen = WideCharToMultiByte(CP_ACP, 0, str, -1, nullptr, 0, nullptr, nullptr);
+	if (iTextLen >= maxLength)
+	{
+		ERROR("buffer is too small");
+		output[0] = '\0';
+		return;
+	}
+	WideCharToMultiByte(CP_ACP, 0, str, -1, output, iTextLen, nullptr, nullptr);
+}
+
 string StringUtility::UnicodeToUTF8(const wchar_t* str)
 {
 	if (str == nullptr || str[0] == 0)
 	{
-		return "";
+		return FrameDefine::EMPTY_STRING;
 	}
 	// wide char to multi char
-	int iTextLen = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
-	int allocSize = MathUtility::getGreaterPower2(iTextLen + 1);
-	char* pElementText = ArrayPool::newArray<char>(allocSize);
+	const int iTextLen = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
+	char* pElementText = new char[MathUtility::getGreaterPower2(iTextLen + 1)];
 	WideCharToMultiByte(CP_UTF8, 0, str, -1, pElementText, iTextLen, nullptr, nullptr);
-	string strText(pElementText);
-	ArrayPool::deleteArray(pElementText);
-	return strText;
+	string finalStr = pElementText;
+	delete[] pElementText;
+	return finalStr;
+}
+
+void StringUtility::UnicodeToUTF8(const wchar_t* str, char* output, const int maxLength)
+{
+	if (str == nullptr || str[0] == 0)
+	{
+		output[0] = '\0';
+		return;
+	}
+	// wide char to multi char
+	const int iTextLen = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
+	if (iTextLen >= maxLength)
+	{
+		ERROR("buffer is too small");
+		output[0] = '\0';
+		return;
+	}
+	WideCharToMultiByte(CP_UTF8, 0, str, -1, output, iTextLen, nullptr, nullptr);
 }
 
 wstring StringUtility::UTF8ToUnicode(const char* str)
@@ -1640,13 +1710,29 @@ wstring StringUtility::UTF8ToUnicode(const char* str)
 	{
 		return L"";
 	}
-	int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
-	int allocSize = MathUtility::getGreaterPower2(unicodeLen + 1);
-	wchar_t* pUnicode = ArrayPool::newArray<wchar_t>(allocSize);
+	const int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
+	wchar_t* pUnicode = new wchar_t[MathUtility::getGreaterPower2(unicodeLen + 1)];
 	MultiByteToWideChar(CP_UTF8, 0, str, -1, (LPWSTR)pUnicode, unicodeLen);
-	wstring rt(pUnicode);
-	ArrayPool::deleteArray(pUnicode);
-	return rt;
+	wstring finalStr = pUnicode;
+	delete[] pUnicode;
+	return finalStr;
+}
+
+void StringUtility::UTF8ToUnicode(const char* str, wchar_t* output, const int maxLength)
+{
+	if (str == nullptr || str[0] == 0)
+	{
+		output[0] = L'\0';
+		return;
+	}
+	const int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
+	if (unicodeLen >= maxLength)
+	{
+		ERROR("buffer is too small");
+		output[0] = L'\0';
+		return;
+	}
+	MultiByteToWideChar(CP_UTF8, 0, str, -1, (LPWSTR)output, unicodeLen);
 }
 
 #elif RUN_PLATFORM == PLATFORM_LINUX
@@ -1765,6 +1851,23 @@ string StringUtility::ANSIToUTF8(const char* str, bool addBOM)
 	return utf8Str;
 }
 
+void StringUtility::ANSIToUTF8(const char* str, char* output, const int maxLength, const bool addBOM)
+{
+	const int unicodeLength = MathUtility::getGreaterPower2((maxLength + 1) << 1);
+	wchar_t* unicodeStr = new wchar_t[unicodeLength];
+	ANSIToUnicode(str, unicodeStr, unicodeLength);
+	if (addBOM)
+	{
+		MEMCPY(output, maxLength, BOM, 3);
+		UnicodeToUTF8(unicodeStr, output + 3, maxLength - 3);
+	}
+	else
+	{
+		UnicodeToUTF8(unicodeStr, output, maxLength);
+	}
+	delete[] unicodeStr;
+}
+
 string StringUtility::UTF8ToANSI(const char* str, bool eraseBOM)
 {
 	wstring unicodeStr;
@@ -1781,11 +1884,45 @@ string StringUtility::UTF8ToANSI(const char* str, bool eraseBOM)
 	return UnicodeToANSI(unicodeStr.c_str());
 }
 
+void StringUtility::UTF8ToANSI(const char* str, char* output, const int maxLength, const bool eraseBOM)
+{
+	const int unicodeLength = MathUtility::getGreaterPower2((maxLength + 1) << 1);
+	wchar_t* unicodeStr = new wchar_t[unicodeLength];
+	if (eraseBOM)
+	{
+		const char* newInput = str;
+		const int length = strlength(str);
+		if (length >= 3 && str[0] == BOM[0] && str[1] == BOM[1] && str[2] == BOM[2])
+		{
+			newInput += 3;
+		}
+		UTF8ToUnicode(newInput, unicodeStr, unicodeLength);
+	}
+	else
+	{
+		UTF8ToUnicode(str, unicodeStr, unicodeLength);
+	}
+	UnicodeToANSI(unicodeStr, output, maxLength);
+	delete[] unicodeStr;
+}
+
 void StringUtility::removeBOM(string& str)
 {
 	if (str.length() >= 3 && str[0] == BOM[0] && str[1] == BOM[1] && str[2] == BOM[2])
 	{
 		str = str.erase(0, 3);
+	}
+}
+
+void StringUtility::removeBOM(char* str, int length)
+{
+	if (length == 0)
+	{
+		length = strlength(str);
+	}
+	if (length >= 3 && str[0] == BOM[0] && str[1] == BOM[1] && str[2] == BOM[2])
+	{
+		memmove(str, str + 3, length - 3 + 1);
 	}
 }
 
@@ -2439,4 +2576,410 @@ void StringUtility::appendUpdateVector2UShort(char* updateInfo, uint size, const
 	array<char, 16> temp;
 	vector2UShortToString(temp, value);
 	appendUpdateString(updateInfo, size, col, temp._Elems, false, addComma);
+}
+
+void StringUtility::stringToFloats(const string& str, myVector<float>& valueList, const char* seperate)
+{
+	myVector<string> strList;
+	split(str.c_str(), seperate, strList);
+	const int count = strList.size();
+	valueList.clear();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		const string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToFloat(curStr));
+		}
+	}
+}
+
+void StringUtility::stringToBytes(const string& str, myVector<byte>& valueList, const char* seperate)
+{
+	myVector<string> strList;
+	split(str.c_str(), seperate, strList);
+	const int count = strList.size();
+	valueList.clear();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		const string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToInt(curStr));
+		}
+	}
+}
+
+int StringUtility::stringToBytes(const char* str, byte* buffer, const int bufferSize, const char* seperate)
+{
+	int curCount = 0;
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<4> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("int buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToInt(curString.str());
+	}
+	return curCount;
+}
+
+void StringUtility::stringToUShorts(const string& str, myVector<ushort>& valueList, const char* seperate)
+{
+	myVector<string> strList;
+	split(str.c_str(), seperate, strList);
+	const int count = strList.size();
+	valueList.clear();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		const string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToInt(curStr));
+		}
+	}
+}
+
+int StringUtility::stringToUShorts(const char* str, ushort* buffer, const int bufferSize, const char* seperate)
+{
+	int curCount = 0;
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<8> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("int buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToInt(curString.str());
+	}
+	return curCount;
+}
+
+void StringUtility::stringToInts(const string& str, myVector<int>& valueList, const char* seperate)
+{
+	myVector<string> strList;
+	split(str.c_str(), seperate, strList);
+	const int count = strList.size();
+	valueList.clear();
+	valueList.reserve(strList.size());
+	FOR_I(count)
+	{
+		const string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToInt(curStr));
+		}
+	}
+}
+
+int StringUtility::stringToInts(const char* str, int* buffer, const int bufferSize, const char* seperate)
+{
+	int curCount = 0;
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<16> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("int buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToInt(curString.str());
+	}
+	return curCount;
+}
+
+void StringUtility::stringToUInts(const string& str, myVector<uint>& valueList, const char* seperate)
+{
+	myVector<string> strList;
+	split(str.c_str(), seperate, strList);
+	const int count = strList.size();
+	valueList.clear();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		const string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back((uint)stringToInt(curStr));
+		}
+	}
+}
+
+int StringUtility::stringToUInts(const char* str, uint* buffer, const int bufferSize, const char* seperate)
+{
+	int curCount = 0;
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<16> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为长整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("uint buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToInt(curString.str());
+	}
+	return curCount;
+}
+
+void StringUtility::strcat_s(char* destBuffer, const int size, const char* source)
+{
+	if (source == nullptr || destBuffer == nullptr)
+	{
+		return;
+	}
+	const int destIndex = strlength(destBuffer, size);
+	if (destIndex >= size)
+	{
+		ERROR("strcat_s buffer is too small");
+		return;
+	}
+	const int length = strlength(source);
+	MEMCPY(destBuffer + destIndex, size - destIndex, source, length);
+	destBuffer[destIndex + length] = '\0';
+}
+
+void StringUtility::strcat_s(char* destBuffer, const int size, const char* source, const int length)
+{
+	if (source == nullptr || destBuffer == nullptr)
+	{
+		return;
+	}
+	const int destIndex = strlength(destBuffer, size);
+	if (destIndex >= size)
+	{
+		ERROR("strcat_s buffer is too small");
+		return;
+	}
+	MEMCPY(destBuffer + destIndex, size - destIndex, source, length);
+	destBuffer[destIndex + length] = '\0';
+}
+
+void StringUtility::strcpy_s(char* destBuffer, const int size, const char* source)
+{
+	if (source == nullptr)
+	{
+		return;
+	}
+	const int length = strlength(source);
+	if (length >= size)
+	{
+		ERROR("strcat_s buffer is too small");
+		return;
+	}
+	MEMCPY(destBuffer, size, source, length);
+	destBuffer[length] = '\0';
+}
+
+string StringUtility::zeroString(const int zeroCount)
+{
+	Array<16> charArray{ 0 };
+	FOR_I(zeroCount)
+	{
+		charArray[i] = '0';
+	}
+	charArray[zeroCount] = '\0';
+	return charArray.str();
+}
+
+void StringUtility::stringToULLongs(const char* str, myVector<ullong>& valueList, const char* seperate)
+{
+	myVector<string> strList;
+	split(str, seperate, strList);
+	const int count = strList.size();
+	valueList.clear();
+	valueList.reserve(count);
+	FOR_I(count)
+	{
+		const string& curStr = strList[i];
+		if (curStr.length() > 0)
+		{
+			valueList.push_back(stringToULLong(curStr));
+		}
+	}
+}
+
+int StringUtility::stringToULLongs(const char* str, ullong* buffer, const int bufferSize, const char* seperate)
+{
+	int curCount = 0;
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<32> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为长整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("ullong buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToULLong(curString.str());
+	}
+	return curCount;
+}
+
+void StringUtility::stringToLLongs(const char* str, myVector<llong>& valueList, const char* seperate)
+{
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<32> curString{ 0 };
+	int devidePos = -1;
+	valueList.clear();
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为长整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		valueList.push_back(stringToLLong(curString.str()));
+	}
+}
+
+void StringUtility::stringToLLongs(const string& str, myVector<llong>& valueList, const char* seperate)
+{
+	int startPos = 0;
+	const int keyLen = strlength(seperate);
+	const int sourceLen = (int)str.length();
+	Array<32> curString{ 0 };
+	int devidePos = -1;
+	valueList.clear();
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str.c_str(), seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str.c_str() + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为长整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		valueList.push_back(stringToLLong(curString.str()));
+	}
+}
+
+int StringUtility::stringToLLongs(const char* str, llong* buffer, const int bufferSize, const char* seperate)
+{
+	int curCount = 0;
+	int startPos = 0;
+	const int sourceLen = strlength(str);
+	const int keyLen = strlength(seperate);
+	Array<32> curString{ 0 };
+	int devidePos = -1;
+	bool ret = true;
+	while (ret)
+	{
+		ret = findString(str, seperate, &devidePos, startPos);
+		// 无论是否查找到,都将前面一段字符串截取出来
+		devidePos = ret ? devidePos : sourceLen;
+		curString.copy(str + startPos, devidePos - startPos);
+		curString[devidePos - startPos] = '\0';
+		startPos = devidePos + keyLen;
+		// 转换为长整数放入列表
+		if (curString[0] == '\0')
+		{
+			continue;
+		}
+		if (curCount >= bufferSize)
+		{
+			ERROR("llong buffer size is too small, bufferSize:" + intToString(bufferSize));
+			break;
+		}
+		buffer[curCount++] = stringToLLong(curString.str());
+	}
+	return curCount;
 }

@@ -1,7 +1,7 @@
 ﻿#ifndef _SERIALIZED_DATA_H_
 #define _SERIALIZED_DATA_H_
 
-#include "ServerDefine.h"
+#include "FrameDefine.h"
 #include "SystemUtility.h"
 
 struct DataParameter
@@ -15,8 +15,8 @@ struct DataParameter
 	bool mVariableLength;
 	DataParameter()
 	{
-		mDataPtr = NULL;
-		mTypeName = NULL;
+		mDataPtr = nullptr;
+		mTypeName = nullptr;
 		mDataSize = 0;
 		mRealSize = 0;
 		mElementSize = 0;

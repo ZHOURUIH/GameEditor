@@ -1,5 +1,4 @@
-﻿#ifndef _VECTOR4_INT_H_
-#define _VECTOR4_INT_H_
+﻿#pragma once
 
 struct Vector4Int
 {
@@ -9,34 +8,33 @@ public:
 	int z;
 	int w;
 public:
-	Vector4Int()
+	Vector4Int():
+		x(0),
+		y(0),
+		z(0),
+		w(0)
+	{}
+	Vector4Int(const int xx, const int yy, const int zz, const int ww):
+		x(xx),
+		y(yy),
+		z(zz),
+		w(ww)
+	{}
+	void clear()
 	{
 		x = 0;
 		y = 0;
 		z = 0;
 		w = 0;
 	}
-	Vector4Int(int xx, int yy, int zz, int ww)
-	{
-		x = xx;
-		y = yy;
-		z = zz;
-		w = ww;
-	}
-	Vector4Int operator+(const Vector4Int& that)
-	{
-		return Vector4Int(x + that.x, y + that.y, z + that.z, w + that.w);
-	}
-	Vector4Int operator-(const Vector4Int& that)
-	{
-		return Vector4Int(x - that.x, y - that.y, z - that.z, w - that.w);
-	}
+	Vector4Int operator+(const Vector4Int& that) const { return { x + that.x, y + that.y, z + that.z, w + that.w }; }
+	Vector4Int operator-(const Vector4Int& that) const { return { x - that.x, y - that.y, z - that.z, w - that.w }; }
 	Vector4Int& operator+=(const Vector4Int& that)
 	{
-		x -= that.x;
-		y -= that.y;
-		z -= that.z;
-		w -= that.w;
+		x += that.x;
+		y += that.y;
+		z += that.z;
+		w += that.w;
 		return *this;
 	}
 	Vector4Int& operator-=(const Vector4Int& that)
@@ -47,10 +45,5 @@ public:
 		w -= that.w;
 		return *this;
 	}
-	Vector4Int operator-()
-	{
-		return Vector4Int(-x, -y, -z, -w);
-	}
+	Vector4Int operator-() const { return { -x, -y, -z, -w }; }
 };
-
-#endif
