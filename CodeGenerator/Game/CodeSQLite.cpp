@@ -674,20 +674,20 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 			continue;
 		}
 		string typeName = convertToCSharpType(member.mTypeName);
-		if (!member.mEnumRealType.empty())
-		{
-			int pos0;
-			if (findString(typeName.c_str(), "List<", &pos0))
-			{
-				int pos1;
-				findString(typeName.c_str(), ">", &pos1);
-				replace(typeName, pos0 + (int)strlen("List<"), pos1, member.mEnumRealType);
-			}
-			else
-			{
-				typeName = convertToCSharpType(member.mEnumRealType);
-			}
-		}
+		//if (!member.mEnumRealType.empty())
+		//{
+		//	int pos0;
+		//	if (findString(typeName.c_str(), "List<", &pos0))
+		//	{
+		//		int pos1;
+		//		findString(typeName.c_str(), ">", &pos1);
+		//		replace(typeName, pos0 + (int)strlen("List<"), pos1, member.mEnumRealType);
+		//	}
+		//	else
+		//	{
+		//		typeName = member.mTypeName;
+		//	}
+		//}
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
 		bool isList = findString(typeName.c_str(), "List", nullptr);
 		if (isList)
@@ -744,7 +744,18 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		}
 		else if (listMemberSet.contains(memberInfo.mMemberName))
 		{
-			line(file, "\t\treader.readList(m" + memberInfo.mMemberName + ");");
+			if (memberInfo.mEnumRealType == "byte")
+			{
+				line(file, "\t\treader.readEnumByteList(m" + memberInfo.mMemberName + ");");
+			}
+			else
+			{
+				line(file, "\t\treader.readList(m" + memberInfo.mMemberName + ");");
+			}
+		}
+		else if (memberInfo.mEnumRealType == "byte")
+		{
+			line(file, "\t\treader.readEnumByte(out m" + memberInfo.mMemberName + ");");
 		}
 		else
 		{
