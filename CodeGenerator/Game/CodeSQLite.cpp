@@ -872,11 +872,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 				typeName = convertToCSharpType(member.mEnumRealType);
 			}
 		}
-		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
-		if (findString(typeName.c_str(), "List", nullptr))
-		{
-			listMemberList.push_back(make_pair(typeName, member.mMemberName));
-		}
 
 		string publicType;
 		if (member.mOwner == SQLITE_OWNER::CLIENT_ONLY || member.mOwner == SQLITE_OWNER::BOTH)
@@ -887,9 +882,15 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		{
 			publicType = "protected";
 		}
+		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
+		bool isList = findString(typeName.c_str(), "List", nullptr);
+		if (isList)
+		{
+			listMemberList.push_back(make_pair(typeName, member.mMemberName));
+		}
 
 		string memberLine;
-		if (mUseILRuntime)
+		if (mUseILRuntime || !isList)
 		{
 			memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
 		}
@@ -1027,7 +1028,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		line(hotFixfile, "using static GBR;");
 		line(hotFixfile, "using static FrameBase;");
 		line(hotFixfile, "");
-		line(hotFixfile, "public class ExcelRegisterILR");
+		line(hotFixfile, "public class ExcelRegister");
 		line(hotFixfile, "{");
 		line(hotFixfile, "\tpublic static void registeAll()");
 		line(hotFixfile, "\t{");
@@ -1051,11 +1052,11 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		line(hotFixfile, "\t}");
 		line(hotFixfile, "}", false);
 
-		writeFile(fileHotFixPath + "ExcelRegisterILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+		writeFile(fileHotFixPath + "ExcelRegister.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 	}
 	else
 	{
-		deleteFile(fileHotFixPath + "ExcelRegisterILR.cs");
+		deleteFile(fileHotFixPath + "ExcelRegister.cs");
 	}
 }
 
@@ -1124,7 +1125,7 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 		line(hotFixfile, "using static GBR;");
 		line(hotFixfile, "using static FrameBase;");
 		line(hotFixfile, "");
-		line(hotFixfile, "public class SQLiteRegisterILR");
+		line(hotFixfile, "public class SQLiteRegister");
 		line(hotFixfile, "{");
 		line(hotFixfile, "\tpublic static void registeAll()");
 		line(hotFixfile, "\t{");
@@ -1144,15 +1145,15 @@ void CodeSQLite::generateCSharpSQLiteRegisteFileFile(const myVector<SQLiteInfo>&
 		line(hotFixfile, "\t//------------------------------------------------------------------------------------------------------------------------------");
 		line(hotFixfile, "\tprotected static void registeTable<T>(out T table, Type dataType, string tableName) where T : SQLiteTable");
 		line(hotFixfile, "\t{");
-		line(hotFixfile, "\t\ttable = mSQLiteManager.registe(tableName, typeof(T), dataType) as T;");
+		line(hotFixfile, "\t\ttable = mSQLiteManager.registeTable(typeof(T), dataType, tableName) as T;");
 		line(hotFixfile, "\t}");
 		line(hotFixfile, "}", false);
 
-		writeFile(fileHotFixPath + "SQLiteRegisterILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+		writeFile(fileHotFixPath + "SQLiteRegister.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 	}
 	else
 	{
-		deleteFile(fileHotFixPath + "SQLiteRegisterILR.cs");
+		deleteFile(fileHotFixPath + "SQLiteRegister.cs");
 	}
 }
 

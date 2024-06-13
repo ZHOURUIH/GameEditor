@@ -2113,7 +2113,14 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		{
 			continue;
 		}
-		line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+		if (mUseILRuntime)
+		{
+			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+		}
+		else
+		{
+			line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+		}
 		if (packetList[i].mUDP)
 		{
 			udpCSList.push_back(packetList[i]);
@@ -2127,7 +2134,14 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		{
 			continue;
 		}
-		line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+		if (mUseILRuntime)
+		{
+			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+		}
+		else
+		{
+			line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
+		}
 		if (packetList[i].mUDP)
 		{
 			udpSCList.push_back(packetList[i]);
@@ -2150,9 +2164,9 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		}
 	}
 	line(str, "\t}");
-	line(str, "\tprotected static void registePacket(Type classType, ushort type)");
+	line(str, "\tprotected static void registePacket<T>(ushort type) where T : NetPacketFrame");
 	line(str, "\t{");
-	line(str, "\t\tmNetPacketTypeManager.registePacket(classType, type);");
+	line(str, "\t\tmNetPacketTypeManager.registePacket(typeof(T), type);");
 	line(str, "\t}");
 	line(str, "\tprotected static void registeUDP(ushort type, string packetName)");
 	line(str, "\t{");
