@@ -219,7 +219,7 @@ PacketMember CodeUtility::parseMemberLine(const string& line)
 	strReplaceAll(memberStrList[0], "\t", "");
 	PacketMember memberInfo;
 	myVector<string> tagList = parseTagList(memberStrList[0], memberInfo.mTypeName);
-	memberInfo.mOptional = tagList.contains("[Option]");
+	memberInfo.mOptional = tagList.contains("[Optional]");
 	memberInfo.mMemberName = memberStrList[1];
 	memberInfo.mMemberNameNoPrefix = memberInfo.mMemberName;
 	if (memberInfo.mMemberNameNoPrefix[0] == 'm')
