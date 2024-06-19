@@ -115,7 +115,13 @@ void CodeNetPacket::parsePacketConfig(myVector<PacketStruct>& structInfoList, my
 		}
 		if (structStart)
 		{
-			tempStructMemberList.push_back(parseMemberLine(line));
+			PacketMember member = parseMemberLine(line);
+			member.mIndex = tempStructMemberList.size();
+			tempStructMemberList.push_back(member);
+			if (tempStructMemberList.size() >= 64 && tempStructMemberList[tempStructMemberList.size() - 1].mOptional)
+			{
+				ERROR("仅支持前64个字段允许设置为可选字段,包名:" + structLines[tempStructNameLine]);
+			}
 		}
 	}
 
@@ -184,7 +190,13 @@ void CodeNetPacket::parsePacketConfig(myVector<PacketStruct>& structInfoList, my
 		}
 		if (packetStart)
 		{
-			tempMemberList.push_back(parseMemberLine(line));
+			PacketMember member = parseMemberLine(line);
+			member.mIndex = tempMemberList.size();
+			tempMemberList.push_back(member);
+			if (tempMemberList.size() >= 64 && tempMemberList[tempMemberList.size() - 1].mOptional)
+			{
+				ERROR("仅支持前64个字段允许设置为可选字段,包名:" + allLines[tempPacketNameLine]);
+			}
 		}
 	}
 }
@@ -1095,6 +1107,9 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back("};");
 	writeFile(headerFullPath, ANSIToUTF8(codeListToString(headerCodeList).c_str(), true));
 	
+	myVector<myVector<PacketMember>> memberGroupList;
+	generateMemberGroup(structInfo.mMemberList, memberGroupList);
+
 	// PacketStruct.cpp
 	string sourceFullPath = filePath + structName + ".cpp";
 	myVector<string> sourceCodeList;
@@ -1216,101 +1231,34 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		sourceCodeList.push_back("\t// 再根据位标记读取字段数据");
 	}
 	sourceCodeList.push_back("\tbool success = true;");
-	for (const PacketMember& item : structInfo.mMemberList)
+	FOR_VECTOR(memberGroupList)
 	{
-		// 可选字段需要特别判断一下
-		string preTable = "\t";
-		if (item.mOptional)
+		const myVector<PacketMember>& memberGroup = memberGroupList[i];
+		if (memberGroup.size() == 1)
 		{
-			sourceCodeList.push_back("\tif (hasBit(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + "))");
-			sourceCodeList.push_back("\t{");
-			preTable += "\t";
-		}
-		if (item.mTypeName == "string")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readString(" + item.mMemberName + ");");
-		}
-		else if (startWith(item.mTypeName, "Vector<"))
-		{
-			int lastPos;
-			findSubstr(item.mTypeName, ">", &lastPos);
-			const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
-			if (elementType == "string")
+			const PacketMember& item = memberGroup[0];
+			// 可选字段需要特别判断一下
+			if (item.mOptional)
 			{
-				sourceCodeList.push_back(preTable + "success = success && reader->readStringList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "bool")
-			{
-				ERROR("不支持bool的列表");
-			}
-			else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
-			{
-				sourceCodeList.push_back(preTable + "success = success && reader->readSignedList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
-			{
-				sourceCodeList.push_back(preTable + "success = success && reader->readUnsignedList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "float")
-			{
-				sourceCodeList.push_back(preTable + "success = success && reader->readFloatList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "double")
-			{
-				sourceCodeList.push_back(preTable + "success = success && reader->readFloatList(" + item.mMemberName + ");");
+				sourceCodeList.push_back("\tif (hasBit(fieldFlag, (byte)Field::" + item.mMemberNameNoPrefix + "))");
+				sourceCodeList.push_back("\t{");
+				sourceCodeList.push_back("\t\t" + singleMemberReadLine(item.mMemberName, item.mTypeName, false));
+				sourceCodeList.push_back("\t}");
 			}
 			else
 			{
-				ERROR("结构体中不支持自定义结构体:" + elementType);
+				sourceCodeList.push_back("\t" + singleMemberReadLine(item.mMemberName, item.mTypeName, false));
 			}
-		}
-		else if (item.mTypeName == "bool")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readBool(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readSigned(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readUnsigned(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "float")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readFloat(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "double")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readDouble(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector2")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readVector2(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector2UShort")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readVector2UShort(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector2Int")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readVector2Int(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector3")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readVector3(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector4")
-		{
-			sourceCodeList.push_back(preTable + "success = success && reader->readVector4(" + item.mMemberName + ");");
 		}
 		else
 		{
-			ERROR("结构体中不支持自定义结构体:" + item.mTypeName);
-		}
-		if (item.mOptional)
-		{
-			sourceCodeList.push_back("\t}");
+			myVector<string> nameList;
+			string groupTypeName = expandMembersInGroup(memberGroup, nameList);
+			myVector<string> list = multiMemberReadLine(nameList, groupTypeName, false);
+			FOR_VECTOR(list)
+			{
+				sourceCodeList.push_back("\t" + list[i]);
+			}
 		}
 	}
 	sourceCodeList.push_back("\treturn success;");
@@ -1335,105 +1283,34 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 		sourceCodeList.push_back("\t// 再根据位标记将字段数据写入缓冲区");
 	}
 	sourceCodeList.push_back("\tbool success = true;");
-	for (const PacketMember& item : structInfo.mMemberList)
+	FOR_VECTOR(memberGroupList)
 	{
-		// 可选字段需要特别判断一下
-		string preTable = "\t";
-		if (item.mOptional)
+		const myVector<PacketMember>& memberGroup = memberGroupList[i];
+		if (memberGroup.size() == 1)
 		{
-			sourceCodeList.push_back("\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
-			sourceCodeList.push_back("\t{");
-			preTable += "\t";
-		}
-		if (item.mTypeName == "string")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeString(" + item.mMemberName + ");");
-		}
-		else if (startWith(item.mTypeName, "Vector<"))
-		{
-			int lastPos;
-			findSubstr(item.mTypeName, ">", &lastPos);
-			const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
-			if (elementType == "string")
+			const PacketMember& item = memberGroup[0];
+			// 可选字段需要特别判断一下
+			if (item.mOptional)
 			{
-				sourceCodeList.push_back(preTable + "success = success && serializer->writeStringList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "bool")
-			{
-				ERROR("不支持bool的列表");
-			}
-			else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
-			{
-				sourceCodeList.push_back(preTable + "success = success && serializer->writeSignedList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
-			{
-				sourceCodeList.push_back(preTable + "success = success && serializer->writeUnsignedList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "float")
-			{
-				sourceCodeList.push_back(preTable + "success = success && serializer->writeFloatList(" + item.mMemberName + ");");
-			}
-			else if (elementType == "double")
-			{
-				sourceCodeList.push_back(preTable + "success = success && serializer->writeDoubleList(" + item.mMemberName + ");");
+				sourceCodeList.push_back("\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
+				sourceCodeList.push_back("\t{");
+				sourceCodeList.push_back("\t\t" + singleMemberWriteLine(item.mMemberName, item.mTypeName, false));
+				sourceCodeList.push_back("\t}");
 			}
 			else
 			{
-				ERROR("结构体中不支持自定义结构体:" + elementType);
+				sourceCodeList.push_back("\t" + singleMemberWriteLine(item.mMemberName, item.mTypeName, false));
 			}
-		}
-		else if (item.mTypeName == "bool")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeBool(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeSigned(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeUnsigned(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "bool")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeBool(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "float")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeFloat(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "double")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeDouble(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector2")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeVector2(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector2Int")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeVector2Int(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector2UShort")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeVector2UShort(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector3")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeVector3(" + item.mMemberName + ");");
-		}
-		else if (item.mTypeName == "Vector4")
-		{
-			sourceCodeList.push_back(preTable + "success = success && serializer->writeVector4(" + item.mMemberName + ");");
 		}
 		else
 		{
-			ERROR("结构体中不支持自定义结构体:" + item.mTypeName);
-		}
-		if (item.mOptional)
-		{
-			sourceCodeList.push_back("\t}");
+			myVector<string> nameList;
+			string groupTypeName = expandMembersInGroup(memberGroup, nameList);
+			myVector<string> list = multiMemberWriteLine(nameList, groupTypeName, false);
+			FOR_VECTOR(list)
+			{
+				sourceCodeList.push_back("\t" + list[i]);
+			}
 		}
 	}
 	sourceCodeList.push_back("\treturn success;");
@@ -1569,128 +1446,909 @@ void CodeNetPacket::generateCppPacketMemberDeclare(const myVector<PacketMember>&
 	}
 }
 
+string CodeNetPacket::singleMemberReadLine(const string& memberName, const string& memberType, bool supportCustom)
+{
+	if (memberType == "string")
+	{
+		return "success = success && reader->readString(" + memberName + ");";
+	}
+	else if (startWith(memberType, "Vector<"))
+	{
+		int lastPos;
+		findSubstr(memberType, ">", &lastPos);
+		const string elementType = memberType.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+		if (elementType == "string")
+		{
+			return "success = success && reader->readStringList(" + memberName + ");";
+		}
+		else if (elementType == "bool")
+		{
+			ERROR("不支持bool的列表");
+			return "";
+		}
+		else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+		{
+			return "success = success && reader->readSignedList(" + memberName + ");";
+		}
+		else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+		{
+			return "success = success && reader->readUnsignedList(" + memberName + ");";
+		}
+		else if (elementType == "float")
+		{
+			return "success = success && reader->readFloatList(" + memberName + ");";
+		}
+		else if (elementType == "double")
+		{
+			return "success = success && reader->readDoubleList(" + memberName + ");";
+		}
+		else if (elementType == "Vector2")
+		{
+			return "success = success && reader->readVector2(" + memberName + ");";
+		}
+		else if (elementType == "Vector2UShort")
+		{
+			return "success = success && reader->readVector2UShort(" + memberName + ");";
+		}
+		else if (elementType == "Vector2Int")
+		{
+			return "success = success && reader->readVector2Int(" + memberName + ");";
+		}
+		else if (elementType == "Vector3")
+		{
+			return "success = success && reader->readVector3(" + memberName + ");";
+		}
+		else if (elementType == "Vector4")
+		{
+			return "success = success && reader->readVector4(" + memberName + ");";
+		}
+		else
+		{
+			if (supportCustom)
+			{
+				return "success = success && reader->readCustomList(" + memberName + ");";
+			}
+			else
+			{
+				ERROR("不支持自定义结构体:" + memberType);
+			}
+		}
+	}
+	else if (memberType == "bool")
+	{
+		return "success = success && reader->readBool(" + memberName + ");";
+	}
+	else if (memberType == "char" || memberType == "short" || memberType == "int" || memberType == "llong")
+	{
+		return "success = success && reader->readSigned(" + memberName + ");";
+	}
+	else if (memberType == "byte" || memberType == "ushort" || memberType == "uint" || memberType == "ullong")
+	{
+		return "success = success && reader->readUnsigned(" + memberName + ");";
+	}
+	else if (memberType == "float")
+	{
+		return "success = success && reader->readFloat(" + memberName + ");";
+	}
+	else if (memberType == "double")
+	{
+		return "success = success && reader->readDouble(" + memberName + ");";
+	}
+	else if (memberType == "Vector2")
+	{
+		return "success = success && reader->readVector2(" + memberName + ");";
+	}
+	else if (memberType == "Vector2UShort")
+	{
+		return "success = success && reader->readVector2UShort(" + memberName + ");";
+	}
+	else if (memberType == "Vector2Int")
+	{
+		return "success = success && reader->readVector2Int(" + memberName + ");";
+	}
+	else if (memberType == "Vector3")
+	{
+		return "success = success && reader->readVector3(" + memberName + ");";
+	}
+	else if (memberType == "Vector4")
+	{
+		return "success = success && reader->readVector4(" + memberName + ");";
+	}
+	if (supportCustom)
+	{
+		return "success = success && reader->readCustom(" + memberName + ");";
+	}
+	else
+	{
+		ERROR("不支持自定义结构体:" + memberType);
+		return "";
+	}
+}
+
+myVector<string> CodeNetPacket::multiMemberReadLine(const myVector<string>& memberNameList, const string& memberType, bool supportCustom)
+{
+	string members;
+	FOR_VECTOR(memberNameList)
+	{
+		members += memberNameList[i];
+		if (i < memberNameList.size() - 1)
+		{
+			members += ", ";
+		}
+	}
+
+	myVector<string> list;
+	if (memberType == "string")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("success = success && reader->readString(" + memberNameList[i] + ");");
+		}
+	}
+	else if (startWith(memberType, "Vector<"))
+	{
+		int lastPos;
+		findSubstr(memberType, ">", &lastPos);
+		const string elementType = memberType.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+		FOR_VECTOR(memberNameList)
+		{
+			if (elementType == "string")
+			{
+				list.push_back("success = success && reader->readStringList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "bool")
+			{
+				ERROR("不支持bool的列表");
+			}
+			else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+			{
+				list.push_back("success = success && reader->readSignedList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+			{
+				list.push_back("success = success && reader->readUnsignedList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "float")
+			{
+				list.push_back("success = success && reader->readFloatList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "double")
+			{
+				list.push_back("success = success && reader->readDoubleList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2")
+			{
+				list.push_back("success = success && reader->readVector2List(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2UShort")
+			{
+				list.push_back("success = success && reader->readVector2UShortList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2Int")
+			{
+				list.push_back("success = success && reader->readVector2IntList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector3")
+			{
+				list.push_back("success = success && reader->readVector3List(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector4")
+			{
+				list.push_back("success = success && reader->readVector4List(" + memberNameList[i] + ");");
+			}
+			else
+			{
+				if (supportCustom)
+				{
+					list.push_back("success = success && reader->readCustomList(" + memberNameList[i] + ");");
+				}
+				else
+				{
+					ERROR("不支持自定义结构体:" + memberType);
+				}
+			}
+		}
+	}
+	else if (memberType == "bool")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("success = success && reader->readBool(" + memberNameList[i] + ");");
+		}
+	}
+	else if (memberType == "char" || memberType == "short" || memberType == "int" || memberType == "llong")
+	{
+		list.push_back("success = success && reader->readSigned(" + members + ");");
+	}
+	else if (memberType == "byte" || memberType == "ushort" || memberType == "uint" || memberType == "ullong")
+	{
+		list.push_back("success = success && reader->readUnsigned(" + members + ");");
+	}
+	else if (memberType == "float")
+	{
+		list.push_back("success = success && reader->readFloat(" + members + ");");
+	}
+	else if (memberType == "double")
+	{
+		list.push_back("success = success && reader->readDouble(" + members + ");");
+	}
+	else
+	{
+		if (supportCustom)
+		{
+			FOR_VECTOR(memberNameList)
+			{
+				list.push_back("success = success && reader->readCustom(" + memberNameList[i] + ");");
+			}
+		}
+		else
+		{
+			ERROR("不支持自定义结构体:" + memberType);
+		}
+	}
+	return list;
+}
+
+myVector<string> CodeNetPacket::multiMemberWriteLine(const myVector<string>& memberNameList, const string& memberType, bool supportCustom)
+{
+	string members;
+	FOR_VECTOR(memberNameList)
+	{
+		members += memberNameList[i];
+		if (i < memberNameList.size() - 1)
+		{
+			members += ", ";
+		}
+	}
+
+	myVector<string> list;
+	if (memberType == "string")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("success = success && serializer->writeString(" + memberNameList[i] + ");");
+		}
+	}
+	else if (startWith(memberType, "Vector<"))
+	{
+		int lastPos;
+		findSubstr(memberType, ">", &lastPos);
+		const string elementType = memberType.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+		FOR_VECTOR(memberNameList)
+		{
+			if (elementType == "string")
+			{
+				list.push_back("success = success && serializer->writeStringList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "bool")
+			{
+				ERROR("不支持bool的列表");
+			}
+			else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+			{
+				list.push_back("success = success && serializer->writeSignedList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+			{
+				list.push_back("success = success && serializer->writeUnsignedList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "float")
+			{
+				list.push_back("success = success && serializer->writeFloatList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "double")
+			{
+				list.push_back("success = success && serializer->writeDoubleList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2")
+			{
+				list.push_back("success = success && serializer->writeVector2List(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2UShort")
+			{
+				list.push_back("success = success && serializer->writeVector2UShortList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2Int")
+			{
+				list.push_back("success = success && serializer->writeVector2IntList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector3")
+			{
+				list.push_back("success = success && serializer->writeVector3List(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector4")
+			{
+				list.push_back("success = success && serializer->writeVector4List(" + memberNameList[i] + ");");
+			}
+			else
+			{
+				if (supportCustom)
+				{
+					list.push_back("success = success && serializer->readCustomList(" + memberNameList[i] + ");");
+				}
+				else
+				{
+					ERROR("不支持自定义结构体:" + memberType);
+				}
+			}
+		}
+	}
+	else if (memberType == "bool")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("success = success && serializer->writeBool(" + memberNameList[i] + ");");
+		}
+	}
+	else if (memberType == "char" || memberType == "short" || memberType == "int" || memberType == "llong")
+	{
+		list.push_back("success = success && serializer->writeSigned(" + members + ");");
+	}
+	else if (memberType == "byte" || memberType == "ushort" || memberType == "uint" || memberType == "ullong")
+	{
+		list.push_back("success = success && serializer->writeUnsigned(" + members + ");");
+	}
+	else if (memberType == "float")
+	{
+		list.push_back("success = success && serializer->writeFloat(" + members + ");");
+	}
+	else if (memberType == "double")
+	{
+		list.push_back("success = success && serializer->writeDouble(" + members + ");");
+	}
+	else
+	{
+		if (supportCustom)
+		{
+			FOR_VECTOR(memberNameList)
+			{
+				list.push_back("success = success && serializer->writeCustom(" + memberNameList[i] + ");");
+			}
+		}
+		else
+		{
+			ERROR("不支持自定义结构体:" + memberType);
+		}
+	}
+	return list;
+}
+
+string CodeNetPacket::singleMemberReadLineCSharp(const string& memberName, const string& memberType)
+{
+	if (memberType == "string")
+	{
+		return "success = success && reader.readString(out " + memberName + ".mValue);";
+	}
+	else if (startWith(memberType, "Vector<"))
+	{
+		return "success = success && reader.readList(" + memberName + ".mValue);";
+	}
+	else
+	{
+		return "success = success && reader.read(out " + memberName + ".mValue);";
+	}
+}
+
+string CodeNetPacket::singleMemberWriteLineCSharp(const string& memberName, const string& memberType)
+{
+	if (memberType == "string")
+	{
+		return "writer.writeString(" + memberName + ".mValue);";
+	}
+	else if (startWith(memberType, "Vector<"))
+	{
+		return "writer.writeList(" + memberName + ".mValue);";
+	}
+	if (memberType == "bool" || memberType == "char" || memberType == "byte" || memberType == "sbyte" || memberType == "short" || 
+		memberType == "ushort" || memberType == "int" || memberType == "uint" || memberType == "llong" || memberType == "ullong" || 
+		memberType == "float" || memberType == "double" || memberType == "Vector2" || memberType == "Vector2UShort" || 
+		memberType == "Vector2Int" || memberType == "Vector3" || memberType == "Vector3Int" || memberType == "Vector4")
+	{
+		return "writer.write(" + memberName + ".mValue);";
+	}
+	ERROR("不支持的类型:" + memberType);
+	return "";
+}
+
+myVector<string> CodeNetPacket::multiMemberReadLineCSharp(const myVector<string>& memberNameList, const string& memberType, bool supportCustom)
+{
+	myVector<string> list;
+	if (memberType == "string")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("success = success && reader.readString(out " + memberNameList[i] + ");");
+		}
+		return list;
+	}
+	if (memberType == "bool")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("success = success && reader.read(out " + memberNameList[i] + ");");
+		}
+		return list;
+	}
+	if (startWith(memberType, "Vector<"))
+	{
+		int lastPos;
+		findSubstr(memberType, ">", &lastPos);
+		const string elementType = memberType.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+		FOR_VECTOR(memberNameList)
+		{
+			if (elementType == "string" || elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong" || 
+				elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong" || elementType == "float" || 
+				elementType == "double" || elementType == "Vector2" || elementType == "Vector2UShort" || elementType == "Vector2Int" || 
+				elementType == "Vector3" || elementType == "Vector3Int" || elementType == "Vector4")
+			{
+				list.push_back("success = success && reader.readList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "bool")
+			{
+				ERROR("不支持bool的列表");
+			}
+			else
+			{
+				if (supportCustom)
+				{
+					list.push_back("success = success && reader.readCustomList(" + memberNameList[i] + ");");
+				}
+				else
+				{
+					ERROR("不支持自定义结构体:" + memberType);
+				}
+			}
+		}
+		return list;
+	}
+	if (memberType == "byte" || memberType == "sbyte" || memberType == "short" || memberType == "ushort" || memberType == "int" || 
+		memberType == "uint" || memberType == "llong" || memberType == "ullong" || memberType == "float" || memberType == "double" || 
+		memberType == "Vector2" || memberType == "Vector2UShort" || memberType == "Vector2Int" || memberType == "Vector3" ||
+		memberType == "Vector3Int" || memberType == "Vector4")
+	{
+		const int memberCount = memberNameList.size();
+		if (memberCount <= 4)
+		{
+			string members;
+			FOR_I(memberCount)
+			{
+				members += "out " + memberNameList[i];
+				if (i < memberCount - 1)
+				{
+					members += ", ";
+				}
+			}
+			list.push_back("success = success && reader.read(" + members + ");");
+		}
+		else
+		{
+			string tempVarName = "values" + memberNameList[0].substr(1, memberNameList[0].find_first_of('.') - 1);
+			string csharpType = cppTypeToCSharpType(memberType);
+			list.push_back("Span<" + csharpType + "> " + tempVarName + " = stackalloc " + csharpType + "[" + intToString(memberCount) + "];");
+			list.push_back("success = success && reader.read(ref " + tempVarName + ");");
+			for (int i = 0; i < memberCount; ++i)
+			{
+				list.push_back(memberNameList[i] + " = " + tempVarName + "[" + intToString(i) + "];");
+			}
+		}
+	}
+	else
+	{
+		if (supportCustom)
+		{
+			FOR_VECTOR(memberNameList)
+			{
+				list.push_back("success = success && reader.readCustomList(" + memberNameList[i] + ");");
+			}
+		}
+		else
+		{
+			ERROR("不支持自定义结构体:" + memberType);
+		}
+	}
+	return list;
+}
+
+myVector<string> CodeNetPacket::multiMemberWriteLineCSharp(const myVector<string>& memberNameList, const string& memberType, bool supportCustom)
+{
+	myVector<string> list;
+	if (memberType == "string")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("writer.writeString(out " + memberNameList[i] + ");");
+		}
+		return list;
+	}
+	if (memberType == "bool")
+	{
+		FOR_VECTOR(memberNameList)
+		{
+			list.push_back("writer.write(out " + memberNameList[i] + ");");
+		}
+		return list;
+	}
+	if (startWith(memberType, "Vector<"))
+	{
+		int lastPos;
+		findSubstr(memberType, ">", &lastPos);
+		const string elementType = memberType.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+		FOR_VECTOR(memberNameList)
+		{
+			if (elementType == "string" || elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong" ||
+				elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong" || elementType == "float" ||
+				elementType == "double" || elementType == "Vector2" || elementType == "Vector2UShort" || elementType == "Vector2Int" ||
+				elementType == "Vector3" || elementType == "Vector4")
+			{
+				list.push_back("writer.writeList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "bool")
+			{
+				ERROR("不支持bool的列表");
+			}
+			else
+			{
+				if (supportCustom)
+				{
+					list.push_back("writer.writeCustomList(" + memberNameList[i] + ");");
+				}
+				else
+				{
+					ERROR("不支持自定义结构体:" + memberType);
+				}
+			}
+		}
+		return list;
+	}
+	if (memberType == "byte" || memberType == "sbyte" || memberType == "short" || memberType == "ushort" || memberType == "int" || 
+		memberType == "uint" || memberType == "llong" || memberType == "ullong" || memberType == "float" || memberType == "double")
+	{
+		string members;
+		FOR_VECTOR(memberNameList)
+		{
+			members += memberNameList[i];
+			if (i < memberNameList.size() - 1)
+			{
+				members += ", ";
+			}
+		}
+		list.push_back("writer.write(stackalloc " + cppTypeToCSharpType(memberType) + "[" + intToString(memberNameList.size()) + "]{ " + members + " });");
+	}
+	else
+	{
+		if (supportCustom)
+		{
+			FOR_VECTOR(memberNameList)
+			{
+				list.push_back("writer.writeCustom(" + memberNameList[i] + ");");
+			}
+		}
+		else
+		{
+			ERROR("不支持自定义结构体:" + memberType);
+		}
+	}
+	return list;
+}
+
+string CodeNetPacket::singleMemberWriteLine(const string& memberName, const string& memberType, bool supportCustom)
+{
+	if (memberType == "string")
+	{
+		return "success = success && serializer->writeString(" + memberName + ");";
+	}
+	else if (startWith(memberType, "Vector<"))
+	{
+		int lastPos;
+		findSubstr(memberType, ">", &lastPos);
+		const string elementType = memberType.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
+		if (elementType == "string")
+		{
+			return "success = success && serializer->writeStringList(" + memberName + ");";
+		}
+		else if (elementType == "bool")
+		{
+			ERROR("不支持bool的列表");
+			return "";
+		}
+		else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
+		{
+			return "success = success && serializer->writeSignedList(" + memberName + ");";
+		}
+		else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
+		{
+			return "success = success && serializer->writeUnsignedList(" + memberName + ");";
+		}
+		else if (elementType == "float")
+		{
+			return "success = success && serializer->writeFloatList(" + memberName + ");";
+		}
+		else if (elementType == "double")
+		{
+			return "success = success && serializer->writeDoubleList(" + memberName + ");";
+		}
+		else if (elementType == "Vector2")
+		{
+			return "success = success && serializer->writeVector2List(" + memberName + ");";
+		}
+		else if (elementType == "Vector2Int")
+		{
+			return "success = success && serializer->writeVector2IntList(" + memberName + ");";
+		}
+		else if (elementType == "Vector2UShort")
+		{
+			return "success = success && serializer->writeVector2UShortList(" + memberName + ");";
+		}
+		else if (elementType == "Vector3")
+		{
+			return "success = success && serializer->writeVector3List(" + memberName + ");";
+		}
+		else if (elementType == "Vector4")
+		{
+			return "success = success && serializer->writeVector4List(" + memberName + ");";
+		}
+		else
+		{
+			if (supportCustom)
+			{
+				return "success = success && serializer->writeCustomList(" + memberName + ");";
+			}
+			else
+			{
+				ERROR("不支持自定义结构体:" + memberName);
+			}
+		}
+	}
+	else if (memberType == "bool")
+	{
+		return "success = success && serializer->writeBool(" + memberName + ");";
+	}
+	else if (memberType == "char" || memberType == "short" || memberType == "int" || memberType == "llong")
+	{
+		return "success = success && serializer->writeSigned(" + memberName + ");";
+	}
+	else if (memberType == "byte" || memberType == "ushort" || memberType == "uint" || memberType == "ullong")
+	{
+		return "success = success && serializer->writeUnsigned(" + memberName + ");";
+	}
+	else if (memberType == "float")
+	{
+		return "success = success && serializer->writeFloat(" + memberName + ");";
+	}
+	else if (memberType == "double")
+	{
+		return "success = success && serializer->writeDouble(" + memberName + ");";
+	}
+	else if (memberType == "Vector2")
+	{
+		return "success = success && serializer->writeVector2(" + memberName + ");";
+	}
+	else if (memberType == "Vector2Int")
+	{
+		return "success = success && serializer->writeVector2Int(" + memberName + ");";
+	}
+	else if (memberType == "Vector2UShort")
+	{
+		return "success = success && serializer->writeVector2UShort(" + memberName + ");";
+	}
+	else if (memberType == "Vector3")
+	{
+		return "success = success && serializer->writeVector3(" + memberName + ");";
+	}
+	else if (memberType == "Vector4")
+	{
+		return "success = success && serializer->writeVector4(" + memberName + ");";
+	}
+	if (supportCustom)
+	{
+		return "success = success && serializer->writeCustom(" + memberName + ");";
+	}
+	else
+	{
+		ERROR("不支持自定义结构体:" + memberName);
+		return "";
+	}
+}
+
+bool CodeNetPacket::isSameType(const string& sourceType, const string& curType)
+{
+	// string和bool类型不合并
+	if (sourceType == "string" || sourceType == "bool" || curType == "string" || curType == "bool")
+	{
+		return false;
+	}
+	if (sourceType == curType)
+	{
+		return true;
+	}
+	if (sourceType == "float")
+	{
+		return curType == "Vector2" || curType == "Vector3" || curType == "Vector4";
+	}
+	if (sourceType == "ushort")
+	{
+		return curType == "Vector2UShort";
+	}
+	if (sourceType == "int")
+	{
+		return curType == "Vector2Int" || curType == "Vector3Int";
+	}
+	if (sourceType == "uint")
+	{
+		return curType == "Vector2UInt" || curType == "Vector3UInt";
+	}
+	return false;
+}
+
+string CodeNetPacket::toPODType(const string& type)
+{
+	if (type == "Vector2" || type == "Vector3" || type == "Vector4")
+	{
+		return "float";
+	}
+	if (type == "Vector2UShort")
+	{
+		return "ushort";
+	}
+	if (type == "Vector2Int" || type == "Vector3Int")
+	{
+		return "int";
+	}
+	if (type == "Vector2UInt" || type == "Vector3UInt")
+	{
+		return "uint";
+	}
+	return type;
+}
+
+void CodeNetPacket::generateMemberGroup(const myVector<PacketMember>& memberList, myVector<myVector<PacketMember>>& memberNameList)
+{
+	myVector<PacketMember> sameTypeMemberList;
+	FOR_VECTOR(memberList)
+	{
+		const PacketMember& item = memberList[i];
+		if (i > 0)
+		{
+			const PacketMember& lastItem = memberList[i - 1];
+			// 如果上一个成员变量与当前的类型不一致,或者当前是一个optional变量,则将之前的变量写入
+			if (item.mOptional || lastItem.mOptional || !isSameType(toPODType(item.mTypeName), toPODType(lastItem.mTypeName)))
+			{
+				memberNameList.push_back(sameTypeMemberList);
+				sameTypeMemberList.clear();
+			}
+			// 继续向后遍历
+			sameTypeMemberList.push_back(item);
+		}
+		// 特殊判断第0个元素,因为没有上一个可以做比较
+		else
+		{
+			if (item.mOptional)
+			{
+				memberNameList.push_back(myVector<PacketMember>{ item });
+			}
+			else
+			{
+				sameTypeMemberList.push_back(item);
+			}
+		}
+	}
+	if (sameTypeMemberList.size() > 0)
+	{
+		memberNameList.push_back(sameTypeMemberList);
+	}
+}
+
+string CodeNetPacket::expandMembersInGroup(const myVector<PacketMember>& memberList, myVector<string>& memberNameList)
+{
+	if (memberList.size() == 0)
+	{
+		return "";
+	}
+	FOR_VECTOR(memberList)
+	{
+		const string& typeName = memberList[i].mTypeName;
+		const string& memberName = memberList[i].mMemberName;
+		if (typeName == "Vector2" || typeName == "Vector2UShort" || typeName == "Vector2Int")
+		{
+			memberNameList.push_back(memberName + ".x");
+			memberNameList.push_back(memberName + ".y");
+		}
+		else if (typeName == "Vector3" || typeName == "Vector3Int")
+		{
+			memberNameList.push_back(memberName + ".x");
+			memberNameList.push_back(memberName + ".y");
+			memberNameList.push_back(memberName + ".z");
+		}
+		else if (typeName == "Vector4")
+		{
+			memberNameList.push_back(memberName + ".x");
+			memberNameList.push_back(memberName + ".y");
+			memberNameList.push_back(memberName + ".z");
+			memberNameList.push_back(memberName + ".w");
+		}
+		else
+		{
+			memberNameList.push_back(memberName);
+		}
+	}
+	return toPODType(memberList[0].mTypeName);
+}
+
+string CodeNetPacket::expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList)
+{
+	if (memberList.size() == 0)
+	{
+		return "";
+	}
+	FOR_VECTOR(memberList)
+	{
+		const string& typeName = memberList[i].mTypeName;
+		const string& memberName = memberList[i].mMemberName;
+		if (typeName == "Vector2" || typeName == "Vector2UShort" || typeName == "Vector2Int")
+		{
+			memberNameList.push_back(memberName + ".mValue.x");
+			memberNameList.push_back(memberName + ".mValue.y");
+		}
+		else if (typeName == "Vector3" || typeName == "Vector3Int")
+		{
+			memberNameList.push_back(memberName + ".mValue.x");
+			memberNameList.push_back(memberName + ".mValue.y");
+			memberNameList.push_back(memberName + ".mValue.z");
+		}
+		else if (typeName == "Vector4")
+		{
+			memberNameList.push_back(memberName + ".mValue.x");
+			memberNameList.push_back(memberName + ".mValue.y");
+			memberNameList.push_back(memberName + ".mValue.z");
+			memberNameList.push_back(memberName + ".mValue.w");
+		}
+		else
+		{
+			memberNameList.push_back(memberName + ".mValue");
+		}
+	}
+	return toPODType(memberList[0].mTypeName);
+}
+
 void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myVector<string>& generateCodes)
 {
 	if (packetInfo.mMemberList.size() > 0)
 	{
+		myVector<myVector<PacketMember>> memberGroupList;
+		generateMemberGroup(packetInfo.mMemberList, memberGroupList);
+
 		// readFromBuffer
 		generateCodes.push_back("\tbool readFromBuffer(SerializerBitRead* reader) override");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbool success = true;");
-		for (const PacketMember& item : packetInfo.mMemberList)
+		FOR_VECTOR(memberGroupList)
 		{
-			string preTable = "\t\t";
-			if (item.mOptional)
+			const myVector<PacketMember>& memberList = memberGroupList[i];
+			// 该组中只有一个成员,才有可能是optional
+			if (memberList.size() == 1)
 			{
-				generateCodes.push_back("\t\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
-				generateCodes.push_back("\t\t{");
-				preTable += "\t";
-			}
-			if (item.mTypeName == "string")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readString(" + item.mMemberName + ");");
-			}
-			else if (startWith(item.mTypeName, "Vector<"))
-			{
-				int lastPos;
-				findSubstr(item.mTypeName, ">", &lastPos);
-				const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
-				if (elementType == "string")
+				const PacketMember& item = memberList[0];
+				if (item.mOptional)
 				{
-					generateCodes.push_back(preTable + "success = success && reader->readStringList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "bool")
-				{
-					ERROR("不支持bool的列表");
-				}
-				else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readSignedList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readUnsignedList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "float")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readFloatList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "double")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readDoubleList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector2")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readVector2(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector2UShort")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readVector2UShort(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector2Int")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readVector2Int(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector3")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readVector3(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector4")
-				{
-					generateCodes.push_back(preTable + "success = success && reader->readVector4(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
+					generateCodes.push_back("\t\t{");
+					generateCodes.push_back("\t\t\t" + singleMemberReadLine(item.mMemberName, item.mTypeName, true));
+					generateCodes.push_back("\t\t}");
 				}
 				else
 				{
-					generateCodes.push_back(preTable + "success = success && reader->readCustomList(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\t" + singleMemberReadLine(item.mMemberName, item.mTypeName, true));
 				}
-			}
-			else if (item.mTypeName == "bool")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readBool(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readSigned(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readUnsigned(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "float")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readFloat(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "double")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readDouble(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector2")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readVector2(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector2UShort")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readVector2UShort(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector2Int")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readVector2Int(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector3")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readVector3(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector4")
-			{
-				generateCodes.push_back(preTable + "success = success && reader->readVector4(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back(preTable + "success = success && reader->readCustom(" + item.mMemberName + ");");
-			}
-			if (item.mOptional)
-			{
-				generateCodes.push_back("\t\t}");
+				myVector<string> nameList;
+				string groupTypeName = expandMembersInGroup(memberList, nameList);
+				myVector<string> list = multiMemberReadLine(nameList, groupTypeName, true);
+				FOR_VECTOR(list)
+				{
+					generateCodes.push_back("\t\t" + list[i]);
+				}
 			}
 		}
 		generateCodes.push_back("\t\treturn success;");
@@ -1700,120 +2358,34 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 		generateCodes.push_back("\tbool writeToBuffer(SerializerBitWrite* serializer) const override");
 		generateCodes.push_back("\t{");
 		generateCodes.push_back("\t\tbool success = true;");
-		for (const PacketMember& item : packetInfo.mMemberList)
+		FOR_VECTOR(memberGroupList)
 		{
-			string preTable = "\t\t";
-			if (item.mOptional)
+			const myVector<PacketMember>& memberList = memberGroupList[i];
+			// 该组中只有一个成员,才有可能是optional
+			if (memberList.size() == 1)
 			{
-				generateCodes.push_back("\t\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
-				generateCodes.push_back("\t\t{");
-				preTable += "\t";
-			}
-			if (item.mTypeName == "string")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeString(" + item.mMemberName + ");");
-			}
-			else if (startWith(item.mTypeName, "Vector<"))
-			{
-				int lastPos;
-				findSubstr(item.mTypeName, ">", &lastPos);
-				const string elementType = item.mTypeName.substr(strlen("Vector<"), lastPos - strlen("Vector<"));
-				if (elementType == "string")
+				const PacketMember& item = memberList[0];
+				if (item.mOptional)
 				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeStringList(" + item.mMemberName + ") success;");
-				}
-				else if (elementType == "bool")
-				{
-					ERROR("不支持bool的列表");
-				}
-				else if (elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeSignedList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeUnsignedList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "float")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeFloatList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "double")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeDoubleList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector2")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeVector2List(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector2Int")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeVector2IntList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector2UShort")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeVector2UShortList(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector3")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeVector3List(" + item.mMemberName + ");");
-				}
-				else if (elementType == "Vector4")
-				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeVector4List(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\tif (isFieldValid(Field::" + item.mMemberNameNoPrefix + "))");
+					generateCodes.push_back("\t\t{");
+					generateCodes.push_back("\t\t\t" + singleMemberWriteLine(item.mMemberName, item.mTypeName, true));
+					generateCodes.push_back("\t\t}");
 				}
 				else
 				{
-					generateCodes.push_back(preTable + "success = success && serializer->writeCustomList(" + item.mMemberName + ");");
+					generateCodes.push_back("\t\t" + singleMemberWriteLine(item.mMemberName, item.mTypeName, true));
 				}
-			}
-			else if (item.mTypeName == "bool")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeBool(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "char" || item.mTypeName == "short" || item.mTypeName == "int" || item.mTypeName == "llong")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeSigned(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "byte" || item.mTypeName == "ushort" || item.mTypeName == "uint" || item.mTypeName == "ullong")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeUnsigned(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "float")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeFloat(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "double")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeDouble(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector2")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeVector2(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector2Int")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeVector2Int(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector2UShort")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeVector2UShort(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector3")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeVector3(" + item.mMemberName + ");");
-			}
-			else if (item.mTypeName == "Vector4")
-			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeVector4(" + item.mMemberName + ");");
 			}
 			else
 			{
-				generateCodes.push_back(preTable + "success = success && serializer->writeCustom(" + item.mMemberName + ");");
-			}
-			if (item.mOptional)
-			{
-				generateCodes.push_back("\t\t}");
+				myVector<string> nameList;
+				string groupTypeName = expandMembersInGroup(memberList, nameList);
+				myVector<string> list = multiMemberWriteLine(nameList, groupTypeName, true);
+				FOR_VECTOR(list)
+				{
+					generateCodes.push_back("\t\t" + list[i]);
+				}
 			}
 		}
 		generateCodes.push_back("\t\treturn success;");
@@ -2198,6 +2770,9 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		fullPath = packetInfo.mHotFix ? scFileHotfixPath + packetName + ".cs" : scFileGamePath + packetName + ".cs";
 	}
 
+	myVector<myVector<PacketMember>> memberGroupList;
+	generateMemberGroup(packetInfo.mMemberList, memberGroupList);
+
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
 	generateCodes.push_back("public class " + packetName + " : NetPacketFrame");
@@ -2214,6 +2789,80 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		for (const PacketMember& item : packetInfo.mMemberList)
 		{
 			generateCodes.push_back("\t\taddParam(" + item.mMemberName + ", " + (item.mOptional ? "true" : "false") + ");");
+		}
+		generateCodes.push_back("\t}");
+
+		// read
+		generateCodes.push_back("\tpublic override bool read(SerializerBitRead reader, ulong fieldFlag)");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbool success = true;");
+		FOR_VECTOR(memberGroupList)
+		{
+			const myVector<PacketMember>& memberGroup = memberGroupList[i];
+			if (memberGroup.size() == 1)
+			{
+				const PacketMember& item = memberGroup[0];
+				// 可选字段需要特别判断一下
+				if (item.mOptional)
+				{
+					generateCodes.push_back("\t\tif (hasBit(fieldFlag, " + intToString(item.mIndex) + "))");
+					generateCodes.push_back("\t\t{");
+					generateCodes.push_back("\t\t\tsuccess = success && " + item.mMemberName + ".read(reader);");
+					generateCodes.push_back("\t\t}");
+				}
+				else
+				{
+					generateCodes.push_back("\t\tsuccess = success && " + item.mMemberName + ".read(reader);");
+				}
+			}
+			else
+			{
+				myVector<string> nameList;
+				string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+				myVector<string> list = multiMemberReadLineCSharp(nameList, groupTypeName, true);
+				FOR_VECTOR(list)
+				{
+					generateCodes.push_back("\t\t" + list[i]);
+				}
+			}
+		}
+		generateCodes.push_back("\t\treturn success;");
+		generateCodes.push_back("\t}");
+
+		// write
+		generateCodes.push_back("\tpublic override void write(SerializerBitWrite writer, out ulong fieldFlag)");
+		generateCodes.push_back("\t{");
+		generateCodes.push_back("\t\tbase.write(writer, out fieldFlag);");
+		FOR_VECTOR(memberGroupList)
+		{
+			const myVector<PacketMember>& memberGroup = memberGroupList[i];
+			if (memberGroup.size() == 1)
+			{
+				const PacketMember& item = memberGroup[0];
+				// 可选字段需要特别判断一下
+				if (item.mOptional)
+				{
+					generateCodes.push_back("if (" + item.mMemberName + ".mValid)");
+					generateCodes.push_back("{");
+					generateCodes.push_back("setBitOne(ref fieldFlag, " + intToString(item.mIndex) + ");");
+					generateCodes.push_back("\t\t" + item.mMemberName + ".write(writer);");
+					generateCodes.push_back("}");
+				}
+				else
+				{
+					generateCodes.push_back("\t\t" + item.mMemberName + ".write(writer);");
+				}
+			}
+			else
+			{
+				myVector<string> nameList;
+				string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+				myVector<string> list = multiMemberWriteLineCSharp(nameList, groupTypeName, true);
+				FOR_VECTOR(list)
+				{
+					generateCodes.push_back("\t\t" + list[i]);
+				}
+			}
 		}
 		generateCodes.push_back("\t}");
 	}
@@ -2254,11 +2903,20 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 
 void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const string& gamePath, const string& hotFixPath)
 {
+	bool hasOptional = false;
+	for (const PacketMember& item : structInfo.mMemberList)
+	{
+		hasOptional |= item.mOptional;
+	}
 	myVector<string> codeList;
 	codeList.push_back("using System;");
 	codeList.push_back("using UnityEngine;");
 	codeList.push_back("using System.Collections.Generic;");
 	codeList.push_back("using static FrameUtility;");
+	if (hasOptional)
+	{
+		codeList.push_back("using static BinaryUtility;");
+	}
 	codeList.push_back("");
 	codeList.push_back("public class " + structInfo.mStructName + " : NetStruct");
 	codeList.push_back("{");
@@ -2266,6 +2924,8 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	{
 		codeList.push_back("\t" + cSharpMemberDeclareString(item));
 	}
+
+	// 构造
 	codeList.push_back("\tpublic " + structInfo.mStructName + "()");
 	codeList.push_back("\t{");
 	for (const PacketMember& item : structInfo.mMemberList)
@@ -2273,8 +2933,84 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		codeList.push_back("\t\taddParam(" + item.mMemberName + ", " + (item.mOptional ? "true" : "false") + ");");
 	}
 	codeList.push_back("\t}");
+	
+	myVector<myVector<PacketMember>> memberGroupList;
+	generateMemberGroup(structInfo.mMemberList, memberGroupList);
+
+	// readInternal
+	codeList.push_back("\tprotected override bool readInternal(ulong fieldFlag, SerializerBitRead reader)");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\tbool success = true;");
+	FOR_VECTOR(memberGroupList)
+	{
+		const myVector<PacketMember>& memberGroup = memberGroupList[i];
+		if (memberGroup.size() == 1)
+		{
+			const PacketMember& member = memberGroup[0];
+			if (member.mOptional)
+			{
+				codeList.push_back("\t\tif (" + member.mMemberName + ".mValid = hasBit(fieldFlag, " + intToString(member.mIndex) + "))");
+				codeList.push_back("\t\t{");
+				codeList.push_back("\t\t\t" + singleMemberReadLineCSharp(member.mMemberName, member.mTypeName));
+				codeList.push_back("\t\t}");
+			}
+			else
+			{
+				codeList.push_back("\t\t" + singleMemberReadLineCSharp(member.mMemberName, member.mTypeName));
+			}
+		}
+		else
+		{
+			myVector<string> nameList;
+			string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+			myVector<string> list = multiMemberReadLineCSharp(nameList, groupTypeName, false);
+			FOR_VECTOR(list)
+			{
+				codeList.push_back("\t\t" + list[i]);
+			}
+		}
+	}
+	codeList.push_back("\t\treturn success;");
+	codeList.push_back("\t}");
+
+	// write
+	codeList.push_back("\tpublic override void write(SerializerBitWrite writer)");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\tbase.write(writer);");
+	FOR_VECTOR(memberGroupList)
+	{
+		const myVector<PacketMember>& memberGroup = memberGroupList[i];
+		if (memberGroup.size() == 1)
+		{
+			const PacketMember& member = memberGroup[0];
+			if (member.mOptional)
+			{
+				codeList.push_back("\t\tif (" + member.mMemberName + ".mValid)");
+				codeList.push_back("\t\t{");
+				codeList.push_back("\t\t\t" + singleMemberWriteLineCSharp(member.mMemberName, member.mTypeName));
+				codeList.push_back("\t\t}");
+			}
+			else
+			{
+				codeList.push_back("\t\t" + singleMemberWriteLineCSharp(member.mMemberName, member.mTypeName));
+			}
+		}
+		else
+		{
+			myVector<string> nameList;
+			string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+			myVector<string> list = multiMemberWriteLineCSharp(nameList, groupTypeName, false);
+			FOR_VECTOR(list)
+			{
+				codeList.push_back("\t\t" + list[i]);
+			}
+		}
+	}
+	codeList.push_back("\t}");
 	codeList.push_back("}");
 	codeList.push_back("");
+
+	// StructList
 	codeList.push_back("public class " + structInfo.mStructName + "_List : SerializableBit");
 	codeList.push_back("{");
 	if (mUseILRuntime)

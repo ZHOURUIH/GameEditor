@@ -41,6 +41,7 @@ struct PacketMember
 	string mTypeName;
 	string mMemberName;
 	string mMemberNameNoPrefix;
+	int mIndex;
 	bool mOptional = false;
 };
 
