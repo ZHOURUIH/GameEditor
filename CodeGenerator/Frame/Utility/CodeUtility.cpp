@@ -396,6 +396,10 @@ string CodeUtility::cSharpTypeToWrapType(const string& csharpType)
 	{
 		return "VECTOR2INT";
 	}
+	if (csharpType == "Vector2UInt")
+	{
+		return "VECTOR2UINT";
+	}
 	if (csharpType == "Vector3")
 	{
 		return "VECTOR3";

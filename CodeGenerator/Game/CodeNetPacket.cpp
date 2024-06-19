@@ -1038,6 +1038,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 				startWith(member.mTypeName, "Vector<") || 
 				member.mTypeName == "Vector2" || 
 				member.mTypeName == "Vector2UShort" || 
+				member.mTypeName == "Vector2UInt" || 
 				member.mTypeName == "Vector2Int" || 
 				member.mTypeName == "Vector3" || 
 				member.mTypeName == "Vector4")
@@ -1331,6 +1332,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 			startWith(item.mTypeName, "Vector<") || 
 			item.mTypeName == "Vector2" || 
 			item.mTypeName == "Vector2UShort" || 
+			item.mTypeName == "Vector2UInt" || 
 			item.mTypeName == "Vector2Int" || 
 			item.mTypeName == "Vector3" || 
 			item.mTypeName == "Vector4")
@@ -1490,6 +1492,10 @@ string CodeNetPacket::singleMemberReadLine(const string& memberName, const strin
 		{
 			return "success = success && reader->readVector2UShort(" + memberName + ");";
 		}
+		else if (elementType == "Vector2UInt")
+		{
+			return "success = success && reader->readVector2UInt(" + memberName + ");";
+		}
 		else if (elementType == "Vector2Int")
 		{
 			return "success = success && reader->readVector2Int(" + memberName + ");";
@@ -1541,6 +1547,10 @@ string CodeNetPacket::singleMemberReadLine(const string& memberName, const strin
 	else if (memberType == "Vector2UShort")
 	{
 		return "success = success && reader->readVector2UShort(" + memberName + ");";
+	}
+	else if (memberType == "Vector2UInt")
+	{
+		return "success = success && reader->readVector2UInt(" + memberName + ");";
 	}
 	else if (memberType == "Vector2Int")
 	{
@@ -1623,6 +1633,10 @@ myVector<string> CodeNetPacket::multiMemberReadLine(const myVector<string>& memb
 			else if (elementType == "Vector2UShort")
 			{
 				list.push_back("success = success && reader->readVector2UShortList(" + memberNameList[i] + ");");
+			}
+			else if (elementType == "Vector2UInt")
+			{
+				list.push_back("success = success && reader->readVector2UIntList(" + memberNameList[i] + ");");
 			}
 			else if (elementType == "Vector2Int")
 			{
@@ -1748,6 +1762,10 @@ myVector<string> CodeNetPacket::multiMemberWriteLine(const myVector<string>& mem
 			{
 				list.push_back("success = success && serializer->writeVector2UShortList(" + memberNameList[i] + ");");
 			}
+			else if (elementType == "Vector2UInt")
+			{
+				list.push_back("success = success && serializer->writeVector2UIntList(" + memberNameList[i] + ");");
+			}
 			else if (elementType == "Vector2Int")
 			{
 				list.push_back("success = success && serializer->writeVector2IntList(" + memberNameList[i] + ");");
@@ -1842,7 +1860,7 @@ string CodeNetPacket::singleMemberWriteLineCSharp(const string& memberName, cons
 	if (memberType == "bool" || memberType == "char" || memberType == "byte" || memberType == "sbyte" || memberType == "short" || 
 		memberType == "ushort" || memberType == "int" || memberType == "uint" || memberType == "llong" || memberType == "ullong" || 
 		memberType == "float" || memberType == "double" || memberType == "Vector2" || memberType == "Vector2UShort" || 
-		memberType == "Vector2Int" || memberType == "Vector3" || memberType == "Vector3Int" || memberType == "Vector4")
+		memberType == "Vector2Int" || memberType == "Vector2UInt" || memberType == "Vector3" || memberType == "Vector3Int" || memberType == "Vector4")
 	{
 		return "writer.write(" + memberName + ".mValue);";
 	}
@@ -1878,7 +1896,7 @@ myVector<string> CodeNetPacket::multiMemberReadLineCSharp(const myVector<string>
 		{
 			if (elementType == "string" || elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong" || 
 				elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong" || elementType == "float" || 
-				elementType == "double" || elementType == "Vector2" || elementType == "Vector2UShort" || elementType == "Vector2Int" || 
+				elementType == "double" || elementType == "Vector2" || elementType == "Vector2UShort" || elementType == "Vector2Int" || elementType == "Vector2UInt" ||
 				elementType == "Vector3" || elementType == "Vector3Int" || elementType == "Vector4")
 			{
 				list.push_back("success = success && reader.readList(" + memberNameList[i] + ");");
@@ -1903,7 +1921,7 @@ myVector<string> CodeNetPacket::multiMemberReadLineCSharp(const myVector<string>
 	}
 	if (memberType == "byte" || memberType == "sbyte" || memberType == "short" || memberType == "ushort" || memberType == "int" || 
 		memberType == "uint" || memberType == "llong" || memberType == "ullong" || memberType == "float" || memberType == "double" || 
-		memberType == "Vector2" || memberType == "Vector2UShort" || memberType == "Vector2Int" || memberType == "Vector3" ||
+		memberType == "Vector2" || memberType == "Vector2UShort" || memberType == "Vector2Int" || memberType == "Vector2UInt" || memberType == "Vector3" ||
 		memberType == "Vector3Int" || memberType == "Vector4")
 	{
 		const int memberCount = memberNameList.size();
@@ -1977,7 +1995,7 @@ myVector<string> CodeNetPacket::multiMemberWriteLineCSharp(const myVector<string
 		{
 			if (elementType == "string" || elementType == "char" || elementType == "short" || elementType == "int" || elementType == "llong" ||
 				elementType == "byte" || elementType == "ushort" || elementType == "uint" || elementType == "ullong" || elementType == "float" ||
-				elementType == "double" || elementType == "Vector2" || elementType == "Vector2UShort" || elementType == "Vector2Int" ||
+				elementType == "double" || elementType == "Vector2" || elementType == "Vector2UShort" || elementType == "Vector2Int" || elementType == "Vector2UInt" ||
 				elementType == "Vector3" || elementType == "Vector4")
 			{
 				list.push_back("writer.writeList(" + memberNameList[i] + ");");
@@ -2071,6 +2089,10 @@ string CodeNetPacket::singleMemberWriteLine(const string& memberName, const stri
 		{
 			return "success = success && serializer->writeVector2List(" + memberName + ");";
 		}
+		else if (elementType == "Vector2UInt")
+		{
+			return "success = success && serializer->writeVector2UIntList(" + memberName + ");";
+		}
 		else if (elementType == "Vector2Int")
 		{
 			return "success = success && serializer->writeVector2IntList(" + memberName + ");";
@@ -2122,6 +2144,10 @@ string CodeNetPacket::singleMemberWriteLine(const string& memberName, const stri
 	else if (memberType == "Vector2")
 	{
 		return "success = success && serializer->writeVector2(" + memberName + ");";
+	}
+	else if (memberType == "Vector2UInt")
+	{
+		return "success = success && serializer->writeVector2UInt(" + memberName + ");";
 	}
 	else if (memberType == "Vector2Int")
 	{
@@ -2248,7 +2274,7 @@ string CodeNetPacket::expandMembersInGroup(const myVector<PacketMember>& memberL
 	{
 		const string& typeName = memberList[i].mTypeName;
 		const string& memberName = memberList[i].mMemberName;
-		if (typeName == "Vector2" || typeName == "Vector2UShort" || typeName == "Vector2Int")
+		if (typeName == "Vector2" || typeName == "Vector2UShort" || typeName == "Vector2Int" || typeName == "Vector2UInt")
 		{
 			memberNameList.push_back(memberName + ".x");
 			memberNameList.push_back(memberName + ".y");
@@ -2284,7 +2310,7 @@ string CodeNetPacket::expandMembersInGroupCSharp(const myVector<PacketMember>& m
 	{
 		const string& typeName = memberList[i].mTypeName;
 		const string& memberName = memberList[i].mMemberName;
-		if (typeName == "Vector2" || typeName == "Vector2UShort" || typeName == "Vector2Int")
+		if (typeName == "Vector2" || typeName == "Vector2UShort" || typeName == "Vector2Int" || typeName == "Vector2UInt")
 		{
 			memberNameList.push_back(memberName + ".mValue.x");
 			memberNameList.push_back(memberName + ".mValue.y");
@@ -2402,6 +2428,7 @@ void CodeNetPacket::generateCppPacketReadWrite(const PacketInfo& packetInfo, myV
 				startWith(item.mTypeName, "Vector<") || 
 				item.mTypeName == "Vector2" || 
 				item.mTypeName == "Vector2UShort" || 
+				item.mTypeName == "Vector2UInt" || 
 				item.mTypeName == "Vector2Int" || 
 				item.mTypeName == "Vector3" || 
 				item.mTypeName == "Vector4")
@@ -2842,11 +2869,11 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 				// 可选字段需要特别判断一下
 				if (item.mOptional)
 				{
-					generateCodes.push_back("if (" + item.mMemberName + ".mValid)");
-					generateCodes.push_back("{");
-					generateCodes.push_back("setBitOne(ref fieldFlag, " + intToString(item.mIndex) + ");");
-					generateCodes.push_back("\t\t" + item.mMemberName + ".write(writer);");
-					generateCodes.push_back("}");
+					generateCodes.push_back("\t\tif (" + item.mMemberName + ".mValid)");
+					generateCodes.push_back("\t\t{");
+					generateCodes.push_back("\t\t\tsetBitOne(ref fieldFlag, " + intToString(item.mIndex) + ");");
+					generateCodes.push_back("\t\t\t" + item.mMemberName + ".write(writer);");
+					generateCodes.push_back("\t\t}");
 				}
 				else
 				{
