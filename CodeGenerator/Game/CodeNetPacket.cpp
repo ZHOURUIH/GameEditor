@@ -2938,6 +2938,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	myVector<string> codeList;
 	codeList.push_back("using System;");
 	codeList.push_back("using UnityEngine;");
+	codeList.push_back("using System.Collections;");
 	codeList.push_back("using System.Collections.Generic;");
 	codeList.push_back("using static FrameUtility;");
 	if (hasOptional)
@@ -3038,7 +3039,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("");
 
 	// StructList
-	codeList.push_back("public class " + structInfo.mStructName + "_List : SerializableBit");
+	codeList.push_back("public class " + structInfo.mStructName + "_List : SerializableBit, IEnumerable<" + structInfo.mStructName + ">");
 	codeList.push_back("{");
 	if (mUseILRuntime)
 	{
@@ -3074,6 +3075,8 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("\t\tbase.resetProperty();");
 	codeList.push_back("\t\tUN_CLASS_LIST(mList);");
 	codeList.push_back("\t}");
+	codeList.push_back("\tpublic IEnumerator<" + structInfo.mStructName + "> GetEnumerator(){ return mList.GetEnumerator(); }");
+	codeList.push_back("\tIEnumerator IEnumerable.GetEnumerator() { return mList.GetEnumerator(); }");
 	codeList.push_back("}");
 
 	const string fullPath = (structInfo.mHotFix ? hotFixPath : gamePath) + structInfo.mStructName + ".cs";
