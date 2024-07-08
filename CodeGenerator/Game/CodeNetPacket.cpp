@@ -1851,18 +1851,39 @@ string CodeNetPacket::singleMemberWriteLineCSharp(const string& memberName, cons
 {
 	if (memberType == "string")
 	{
-		return "writer.writeString(" + memberName + ".mValue);";
+		if (mUseILRuntime)
+		{
+			return "writer.writeString(" + memberName + ".mValue);";
+		}
+		else
+		{
+			return "writer.writeString(" + memberName + ");";
+		}
 	}
 	else if (startWith(memberType, "Vector<"))
 	{
-		return "writer.writeList(" + memberName + ".mValue);";
+		if (mUseILRuntime)
+		{
+			return "writer.writeList(" + memberName + ".mValue);";
+		}
+		else
+		{
+			return "writer.writeList(" + memberName + ");";
+		}
 	}
 	if (memberType == "bool" || memberType == "char" || memberType == "byte" || memberType == "sbyte" || memberType == "short" || 
 		memberType == "ushort" || memberType == "int" || memberType == "uint" || memberType == "llong" || memberType == "ullong" || 
 		memberType == "float" || memberType == "double" || memberType == "Vector2" || memberType == "Vector2UShort" || 
 		memberType == "Vector2Int" || memberType == "Vector2UInt" || memberType == "Vector3" || memberType == "Vector3Int" || memberType == "Vector4")
 	{
-		return "writer.write(" + memberName + ".mValue);";
+		if (mUseILRuntime)
+		{
+			return "writer.write(" + memberName + ".mValue);";
+		}
+		else
+		{
+			return "writer.write(" + memberName + ");";
+		}
 	}
 	ERROR("不支持的类型:" + memberType);
 	return "";
@@ -2300,7 +2321,7 @@ string CodeNetPacket::expandMembersInGroup(const myVector<PacketMember>& memberL
 	return toPODType(memberList[0].mTypeName);
 }
 
-string CodeNetPacket::expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList)
+string CodeNetPacket::expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList, bool supportSimplify)
 {
 	if (memberList.size() == 0)
 	{
@@ -2330,7 +2351,14 @@ string CodeNetPacket::expandMembersInGroupCSharp(const myVector<PacketMember>& m
 		}
 		else
 		{
-			memberNameList.push_back(memberName + ".mValue");
+			if (mUseILRuntime || !supportSimplify)
+			{
+				memberNameList.push_back(memberName + ".mValue");
+			}
+			else
+			{
+				memberNameList.push_back(memberName);
+			}
 		}
 	}
 	return toPODType(memberList[0].mTypeName);
@@ -2845,7 +2873,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 			else
 			{
 				myVector<string> nameList;
-				string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+				string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList, false);
 				myVector<string> list = multiMemberReadLineCSharp(nameList, groupTypeName, true);
 				FOR_VECTOR(list)
 				{
@@ -2883,7 +2911,7 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 			else
 			{
 				myVector<string> nameList;
-				string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+				string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList, true);
 				myVector<string> list = multiMemberWriteLineCSharp(nameList, groupTypeName, true);
 				FOR_VECTOR(list)
 				{
@@ -2990,7 +3018,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		else
 		{
 			myVector<string> nameList;
-			string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+			string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList, false);
 			myVector<string> list = multiMemberReadLineCSharp(nameList, groupTypeName, false);
 			FOR_VECTOR(list)
 			{
@@ -3026,7 +3054,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		else
 		{
 			myVector<string> nameList;
-			string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList);
+			string groupTypeName = expandMembersInGroupCSharp(memberGroup, nameList, true);
 			myVector<string> list = multiMemberWriteLineCSharp(nameList, groupTypeName, false);
 			FOR_VECTOR(list)
 			{

@@ -40,7 +40,7 @@ protected:
 	static string toPODType(const string& type);
 	static void generateMemberGroup(const myVector<PacketMember>& memberList, myVector<myVector<PacketMember>>& memberNameList);
 	static string expandMembersInGroup(const myVector<PacketMember>& memberList, myVector<string>& memberNameList);
-	static string expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList);
+	static string expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList, bool supportSimplify);
 	static void generateCpp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int& packetVersion);
 	static void generateCSharp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int packetVersion);
 	static void generateCSharpVirtualClient(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int packetVersion);
