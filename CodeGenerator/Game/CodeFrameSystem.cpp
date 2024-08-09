@@ -41,6 +41,7 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 				   findSubstr(line, " : public ClassBaseTypePoolThread<") ||
 				   findSubstr(line, " : public ClassKeyPool<") ||
 				   findSubstr(line, " : public ClassKeyPoolThread<") ||
+				   findSubstr(line, " : public PodPoolThread<") ||
 				   findSubstr(line, " ArrayPool ") ||
 				   findSubstr(line, " ArrayPoolThread ");
 		});

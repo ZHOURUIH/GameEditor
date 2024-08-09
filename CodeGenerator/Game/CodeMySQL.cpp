@@ -902,43 +902,30 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 	string header;
 	line(header, "#pragma once");
 	line(header, "");
-	line(header, "#include \"MySQLTable.h\"");
+	line(header, "#include \"MySQLTableT.h\"");
+	line(header, "#include \"" + dataClassName + ".h\"");
 	line(header, "");
 	if (mysqlInfo.mOwner == MYSQL_SERVER_OWNER::GAME)
 	{
-		line(header, "class " + tableClassName + " : public MySQLTable");
+		line(header, "class " + tableClassName + " : public MySQLTableT<" + dataClassName + ">");
 	}
 	else
 	{
-		line(header, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public MySQLTable");
+		line(header, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public MySQLTableT<" + dataClassName + ">");
 	}
 	line(header, "{");
-	line(header, "\tBASE(" + tableClassName + ", MySQLTable);");
+	line(header, "\tBASE(" + tableClassName + ", MySQLTableT);");
 	line(header, "public:");
-	line(header, "\texplicit " + tableClassName + "(const char* tableName);");
-	line(header, "\tvoid init() override;");
+	line(header, "\texplicit " + tableClassName + "(const char* tableName) :base(tableName) {}");
 	if (mysqlInfo.mIndexList.size() > 0)
 	{
 		line(header, "\tvoid lateInit() override;");
 	}
-	line(header, "\tMySQLData* createData() override;");
-	line(header, "\tvoid createDataList(Vector<MySQLData*>& dataList, const int count) override;");
-	line(header, "protected:");
 	line(header, "};", false);
 
 	// Ô´ÎÄ¼þ
 	string source;
 	line(source, "#include \"GameCoreHeader.h\"");
-	line(source, "");
-	line(source, tableClassName + "::" + tableClassName + "(const char* tableName):");
-	line(source, "\tMySQLTable(tableName)");
-	line(source, "{}");
-	line(source, "");
-	line(source, "void " + tableClassName + "::init()");
-	line(source, "{");
-	line(source, "\tbase::init();");
-	line(source, "\t" + dataClassName + "::fillColName(this);");
-	line(source, "}");
 	line(source, "");
 	if (mysqlInfo.mIndexList.size() > 0)
 	{
@@ -949,17 +936,8 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		{
 			line(source, "\texecuteNonQuery((string(\"ALTER TABLE \") + mTableName + \" ADD INDEX " + indexName + "(\" + " + dataClassName + "::Name_" + indexName + " + \")\").c_str(), false, true);");
 		}
-		line(source, "}");
-		line(source, "");
+		line(source, "}", false);
 	}
-	line(source, "MySQLData* " + tableClassName + "::createData()");
-	line(source, "{");
-	line(source, "\treturn mMySQLDataPool->newClass<" + dataClassName + ">();");
-	line(source, "}");
-	line(source, "void " + tableClassName + "::createDataList(Vector<MySQLData*>& dataList, const int count)");
-	line(source, "{");
-	line(source, "\treturn mMySQLDataPool->newClassList<" + dataClassName + ">(dataList, count);");
-	line(source, "}", false);
 
 	writeFile(filePath + tableClassName + ".h", ANSIToUTF8(header.c_str(), true));
 	writeFile(filePath + tableClassName + ".cpp", ANSIToUTF8(source.c_str(), true));
