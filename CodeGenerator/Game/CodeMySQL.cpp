@@ -287,50 +287,50 @@ void CodeMySQL::generateCppMySQLDataFile(const MySQLInfo& mysqlInfo, const strin
 	// parseResultº¯Êý
 	line(source, "void " + className + "::parseResult(const HashMap<int, char*>& resultRow)");
 	line(source, "{");
-	line(source, "\tparseLLong(mID, resultRow.get(ID, nullptr));");
+	line(source, "\tparseLLong(mID, resultRow.tryGet(ID));");
 	FOR_I(memberCount)
 	{
 		const string& typeName = mysqlInfo.mMemberList[i].mTypeName;
 		const string& memberName = mysqlInfo.mMemberList[i].mMemberName;
 		if (typeName == "int")
 		{
-			line(source, "\tparseInt(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseInt(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "uint")
 		{
-			line(source, "\tparseUInt(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseUInt(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "bool")
 		{
-			line(source, "\tparseBool(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseBool(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "byte")
 		{
-			line(source, "\tparseByte(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseByte(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "char")
 		{
-			line(source, "\tparseChar(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseChar(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "short")
 		{
-			line(source, "\tparseShort(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseShort(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "ushort")
 		{
-			line(source, "\tparseUShort(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseUShort(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "float")
 		{
-			line(source, "\tparseFloat(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseFloat(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "llong")
 		{
-			line(source, "\tparseLLong(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseLLong(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 		else if (typeName == "string")
 		{
-			line(source, "\tparseString(m" + memberName + ", resultRow.get(" + memberName + ", nullptr));");
+			line(source, "\tparseString(m" + memberName + ", resultRow.tryGet(" + memberName + "));");
 		}
 	}
 	line(source, "}");
