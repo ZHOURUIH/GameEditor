@@ -423,7 +423,7 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	// 先检查一下有没有需要拷贝的属性
 	if (memberUsedInServerNoIDList.size() > 0)
 	{
-		line(source, "\tauto* targetData = static_cast<" + dataClassName + "*>(target);");
+		line(source, "\tauto* targetData = static_cast<This*>(target);");
 		for (const SQLiteMember& member : memberUsedInServerNoIDList)
 		{
 			// 如果是列表则调用列表的clone
