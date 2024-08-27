@@ -782,44 +782,42 @@ void CodeSQLite::generateCSharpExcelTableFile(const SQLiteInfo& sqliteInfo, cons
 	line(table, "using System;");
 	line(table, "using System.Collections.Generic;");
 	line(table, "");
-	line(table, "public partial class " + tableClassName + " : ExcelTable");
-	line(table, "{");
-	line(table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
-	line(table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
-	line(table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
 	if (mUseILRuntime)
 	{
+		line(table, "public partial class " + tableClassName + " : ExcelTable");
+		line(table, "{");
+		line(table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
+		line(table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
+		line(table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
 		line(table, "\tprotected List<" + dataClassName + "> mDataList;");
-	}
-	else
-	{
-		line(table, "\tprotected List<" + dataClassName + "> mDataList = new();");
-	}
-	line(table, "\tprotected bool mDataAvailable;");
-	if (mUseILRuntime)
-	{
+		line(table, "\tprotected bool mDataAvailable;");
 		line(table, "\tpublic " + tableClassName + "()");
 		line(table, "\t{");
 		line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
 		line(table, "\t}");
+		line(table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
+		line(table, "\t{");
+		line(table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
+		line(table, "\t}");
+		line(table, "\tpublic List<" + dataClassName + "> queryAll()");
+		line(table, "\t{");
+		line(table, "\t\tif (!mDataAvailable)");
+		line(table, "\t\t{");
+		line(table, "\t\t\tforeach (var item in getDataList())");
+		line(table, "\t\t\t{");
+		line(table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
+		line(table, "\t\t\t}");
+		line(table, "\t\t\tmDataAvailable = true;");
+		line(table, "\t\t}");
+		line(table, "\t\treturn mDataList;");
+		line(table, "\t}");
+		line(table, "}", false);
 	}
-	line(table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
-	line(table, "\t{");
-	line(table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
-	line(table, "\t}");
-	line(table, "\tpublic List<" + dataClassName + "> queryAll()");
-	line(table, "\t{");
-	line(table, "\t\tif (!mDataAvailable)");
-	line(table, "\t\t{");
-	line(table, "\t\t\tforeach (var item in getDataList())");
-	line(table, "\t\t\t{");
-	line(table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
-	line(table, "\t\t\t}");
-	line(table, "\t\t\tmDataAvailable = true;");
-	line(table, "\t\t}");
-	line(table, "\t\treturn mDataList;");
-	line(table, "\t}");
-	line(table, "}", false);
+	else
+	{
+		line(table, "public partial class " + tableClassName + " : ExcelTableT<" + dataClassName + ">");
+		line(table, "{}", false);
+	}
 	string tableFilePath = sqliteInfo.mHotFix ? tableFileHotFixPath : tableFileGamePath;
 	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
 }

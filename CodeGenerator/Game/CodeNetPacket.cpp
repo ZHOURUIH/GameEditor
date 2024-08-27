@@ -2847,6 +2847,12 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		}
 		generateCodes.push_back("\t}");
 
+		// get
+		if (startWith(packetName, "CS"))
+		{
+			generateCodes.push_back("\tpublic static " + packetName + " get() { return PACKET<" + packetName + ">(); }");
+		}
+
 		// read
 		generateCodes.push_back("\tpublic override bool read(SerializerBitRead reader, ulong fieldFlag)");
 		generateCodes.push_back("\t{");
@@ -2921,7 +2927,14 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		}
 		generateCodes.push_back("\t}");
 	}
-	
+	else
+	{
+		// get
+		if (startWith(packetName, "CS"))
+		{
+			generateCodes.push_back("\tpublic static " + packetName + " get() { return PACKET<" + packetName + ">(); }");
+		}
+	}
 	if (isFileExist(fullPath))
 	{
 		myVector<string> codeList;
