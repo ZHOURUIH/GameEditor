@@ -1132,6 +1132,40 @@ uint StringUtility::stringToUShorts(const char* str, ushort* buffer, uint buffer
 	return curCount;
 }
 
+bool StringUtility::stringToVector2Ints(const string& str, Vector<Vector2Int>& valueList, const char* seperate)
+{
+	Vector<string> strList;
+	split(str, seperate, strList);
+	uint count = strList.size();
+	valueList.reserve(strList.size());
+	FOR_I(count)
+	{
+		bool result = false;
+		Vector2Int v2Value = stringToVector2Int(strList[i], ",", &result);
+		if (!result)
+		{
+			return false;
+		}
+		valueList.push_back(v2Value);
+	}
+	return true;
+}
+
+Vector2Int StringUtility::stringToVector2Int(const string& str, const char* seperate, bool* result)
+{
+	Vector<string> valueList;
+	split(str, seperate, valueList);
+	if (result != nullptr)
+	{
+		*result = valueList.size() == 2;
+	}
+	if (valueList.size() != 2)
+	{
+		return {0, 0};
+	}
+	return { stringToInt(valueList[0]), stringToInt(valueList[1]) };
+}
+
 void StringUtility::stringToInts(const string& str, Vector<int>& valueList, const char* seperate)
 {
 	Vector<string> strList;
@@ -1140,7 +1174,7 @@ void StringUtility::stringToInts(const string& str, Vector<int>& valueList, cons
 	valueList.reserve(strList.size());
 	FOR_I(count)
 	{
-		string& curStr = strList[i];
+		const string& curStr = strList[i];
 		if (curStr.length() > 0)
 		{
 			valueList.push_back(stringToInt(curStr));

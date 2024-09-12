@@ -2,6 +2,7 @@
 #define _STRING_UTILITY_H_
 
 #include "BinaryUtility.h"
+#include "Vector2Int.h"
 
 class StringUtility : public BinaryUtility
 {
@@ -745,6 +746,7 @@ public:
 	static bool stringToBool(const char* str) { return strcmp(str, "True") == 0 || strcmp(str, "true") == 0; }
 	static int stringToInt(const string& str) { return atoi(str.c_str()); }
 	static int stringToInt(const char* str) { return atoi(str); }
+	static Vector2Int stringToVector2Int(const string& str, const char* seperate = ",", bool* result = nullptr);
 	static ullong stringToULLong(const string& str) { return (ullong)atoll(str.c_str()); }
 	static ullong stringToULLong(const char* str) { return (ullong)atoll(str); }
 	static llong stringToLLong(const string& str) { return atoll(str.c_str()); }
@@ -1482,6 +1484,7 @@ public:
 		}
 		return curCount;
 	}
+	static bool stringToVector2Ints(const string& str, Vector<Vector2Int>& valueList, const char* seperate = ",");
 	static void stringToInts(const string& str, Vector<int>& valueList, const char* seperate = ",");
 	static uint stringToInts(const char* str, int* buffer, uint bufferSize, const char* seperate = ",");
 	template<size_t Length>

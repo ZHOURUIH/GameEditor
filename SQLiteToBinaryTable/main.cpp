@@ -1,6 +1,12 @@
 #include "SQLiteTableBase.h"
 #include "Serializer.h"
 #include "FileContent.h"
+#include "Vector2.h"
+#include "Vector2Int.h"
+#include "Vector2UInt.h"
+#include "Vector2UShort.h"
+#include "Vector2Short.h"
+#include "Vector3.h"
 
 string START_FALG = "#start";
 
@@ -423,6 +429,20 @@ int main()
 						StringUtility::stringToFloats(value, floats);
 						serializer.writeArray(floats);
 					}
+					else if (typeName == "Vector<Vector2Int>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<Vector2Int> ints;
+						if (!StringUtility::stringToVector2Ints(value, ints, "|"))
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector<Vector2Int>,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.writeArray(ints);
+					}
 					else if (typeName == "Vector<string>")
 					{
 						string value;
@@ -444,8 +464,7 @@ int main()
 							system("pause");
 							return 0;
 						}
-						serializer.write(shorts[0]);
-						serializer.write(shorts[1]);
+						serializer.write(Vector2Short(shorts[0], shorts[1]));
 					}
 					else if (typeName == "Vector2UShort")
 					{
@@ -460,8 +479,7 @@ int main()
 							system("pause");
 							return 0;
 						}
-						serializer.write(ushorts[0]);
-						serializer.write(ushorts[1]);
+						serializer.write(Vector2UShort(ushorts[0], ushorts[1]));
 					}
 					else if (typeName == "Vector2Int")
 					{
@@ -476,8 +494,7 @@ int main()
 							system("pause");
 							return 0;
 						}
-						serializer.write(ints[0]);
-						serializer.write(ints[1]);
+						serializer.write(Vector2Int(ints[0], ints[1]));
 					}
 					else if (typeName == "Vector2UInt")
 					{
@@ -488,12 +505,11 @@ int main()
 						if (uints.size() != 2)
 						{
 							llong id = reader->getLLong(0);
-							cout << "字段内容错误,类型Vector2Int,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							cout << "字段内容错误,类型Vector2UInt,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
 							system("pause");
 							return 0;
 						}
-						serializer.write(uints[0]);
-						serializer.write(uints[1]);
+						serializer.write(Vector2UInt(uints[0], uints[1]));
 					}
 					else if (typeName == "Vector3")
 					{
@@ -508,9 +524,7 @@ int main()
 							system("pause");
 							return 0;
 						}
-						serializer.write(values[0]);
-						serializer.write(values[1]);
-						serializer.write(values[2]);
+						serializer.write(Vector3(values[0], values[1], values[2]));
 					}
 					else
 					{
