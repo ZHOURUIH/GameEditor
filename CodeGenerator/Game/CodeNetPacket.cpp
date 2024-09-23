@@ -2954,7 +2954,8 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	else
 	{
 		myVector<string> codeList;
-		codeList.push_back("using System;");
+		codeList.push_back("using static FrameUtility;");
+		codeList.push_back("using static GU;");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -2963,6 +2964,13 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		{
 			codeList.push_back("\tpublic override void execute()");
 			codeList.push_back("\t{}");
+		}
+		else if (startWith(packetName, "CS"))
+		{
+			codeList.push_back("\tpublic static void send()");
+			codeList.push_back("\t{");
+			codeList.push_back("\t\tsendPacket(get());");
+			codeList.push_back("\t}");
 		}
 		codeList.push_back("}");
 		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
@@ -3076,6 +3084,17 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		}
 	}
 	codeList.push_back("\t}");
+
+	// resetProperty
+	codeList.push_back("\tpublic override void resetProperty()");
+	codeList.push_back("\t{");
+	codeList.push_back("\t\tbase.resetProperty();");
+	for (const PacketMember& item : structInfo.mMemberList)
+	{
+		codeList.push_back("\t\t" + item.mMemberName + ".resetProperty();");
+	}
+	codeList.push_back("\t}");
+
 	codeList.push_back("}");
 	codeList.push_back("");
 
