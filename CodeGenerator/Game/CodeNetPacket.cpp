@@ -2248,6 +2248,11 @@ string CodeNetPacket::toPODType(const string& type)
 	return type;
 }
 
+bool CodeNetPacket::isCustomStructType(const string& type)
+{
+	return startWith(type, "NetStruct");
+}
+
 void CodeNetPacket::generateMemberGroup(const myVector<PacketMember>& memberList, myVector<myVector<PacketMember>>& memberNameList)
 {
 	myVector<PacketMember> sameTypeMemberList;
@@ -2257,8 +2262,8 @@ void CodeNetPacket::generateMemberGroup(const myVector<PacketMember>& memberList
 		if (i > 0)
 		{
 			const PacketMember& lastItem = memberList[i - 1];
-			// 如果上一个成员变量与当前的类型不一致,或者当前是一个optional变量,则将之前的变量写入
-			if (item.mOptional || lastItem.mOptional || !isSameType(toPODType(item.mTypeName), toPODType(lastItem.mTypeName)))
+			// 如果上一个成员变量与当前的类型不一致,或者当前是一个optional变量,则将之前的变量写入,自定义的结构体类型的变量也不会归到一组
+			if (item.mOptional || lastItem.mOptional || !isSameType(toPODType(item.mTypeName), toPODType(lastItem.mTypeName)) || isCustomStructType(item.mTypeName))
 			{
 				memberNameList.push_back(sameTypeMemberList);
 				sameTypeMemberList.clear();
@@ -2851,6 +2856,10 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		if (startWith(packetName, "CS"))
 		{
 			generateCodes.push_back("\tpublic static " + packetName + " get() { return PACKET<" + packetName + ">(); }");
+		}
+		if (packetName == "SCPKSettlement")
+		{
+			int a = 0;
 		}
 
 		// read

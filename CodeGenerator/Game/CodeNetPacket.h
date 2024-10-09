@@ -38,6 +38,7 @@ protected:
 	static myVector<string> multiMemberWriteLineCSharp(const myVector<string>& memberNameList, const string& memberType, bool supportCustom);
 	static bool isSameType(const string& sourceType, const string& curType);
 	static string toPODType(const string& type);
+	static bool isCustomStructType(const string& type);
 	static void generateMemberGroup(const myVector<PacketMember>& memberList, myVector<myVector<PacketMember>>& memberNameList);
 	static string expandMembersInGroup(const myVector<PacketMember>& memberList, myVector<string>& memberNameList);
 	static string expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList, bool supportSimplify);
