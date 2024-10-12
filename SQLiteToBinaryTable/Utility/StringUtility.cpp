@@ -1136,7 +1136,7 @@ bool StringUtility::stringToVector2Ints(const string& str, Vector<Vector2Int>& v
 {
 	Vector<string> strList;
 	split(str, seperate, strList);
-	uint count = strList.size();
+	const uint count = strList.size();
 	valueList.reserve(strList.size());
 	FOR_I(count)
 	{
@@ -1151,19 +1151,90 @@ bool StringUtility::stringToVector2Ints(const string& str, Vector<Vector2Int>& v
 	return true;
 }
 
+bool StringUtility::stringToVector2s(const string& str, Vector<Vector2>& valueList, const char* seperate)
+{
+	Vector<string> strList;
+	split(str, seperate, strList);
+	const uint count = strList.size();
+	valueList.reserve(strList.size());
+	FOR_I(count)
+	{
+		bool result = false;
+		Vector2 v2Value = stringToVector2(strList[i], ",", &result);
+		if (!result)
+		{
+			return false;
+		}
+		valueList.push_back(v2Value);
+	}
+	return true;
+}
+
+bool StringUtility::stringToVector3s(const string& str, Vector<Vector3>& valueList, const char* seperate)
+{
+	Vector<string> strList;
+	split(str, seperate, strList);
+	const uint count = strList.size();
+	valueList.reserve(strList.size());
+	FOR_I(count)
+	{
+		bool result = false;
+		Vector3 v2Value = stringToVector3(strList[i], ",", &result);
+		if (!result)
+		{
+			return false;
+		}
+		valueList.push_back(v2Value);
+	}
+	return true;
+}
+
 Vector2Int StringUtility::stringToVector2Int(const string& str, const char* seperate, bool* result)
 {
+	constexpr int INT_COUNT = sizeof(Vector2Int) / sizeof(int);
 	Vector<string> valueList;
 	split(str, seperate, valueList);
 	if (result != nullptr)
 	{
-		*result = valueList.size() == 2;
+		*result = valueList.size() == INT_COUNT;
 	}
-	if (valueList.size() != 2)
+	if (valueList.size() != INT_COUNT)
 	{
 		return {0, 0};
 	}
 	return { stringToInt(valueList[0]), stringToInt(valueList[1]) };
+}
+
+Vector2 StringUtility::stringToVector2(const string& str, const char* seperate = ",", bool* result)
+{
+	constexpr int FLOAT_COUNT = sizeof(Vector2) / sizeof(float);
+	Vector<string> valueList;
+	split(str, seperate, valueList);
+	if (result != nullptr)
+	{
+		*result = valueList.size() == FLOAT_COUNT;
+	}
+	if (valueList.size() != FLOAT_COUNT)
+	{
+		return { 0, 0 };
+	}
+	return { stringToFloat(valueList[0]), stringToFloat(valueList[1]) };
+}
+
+Vector3 StringUtility::stringToVector3(const string& str, const char* seperate = ",", bool* result)
+{
+	constexpr int FLOAT_COUNT = sizeof(Vector3) / sizeof(float);
+	Vector<string> valueList;
+	split(str, seperate, valueList);
+	if (result != nullptr)
+	{
+		*result = valueList.size() == FLOAT_COUNT;
+	}
+	if (valueList.size() != FLOAT_COUNT)
+	{
+		return { 0, 0, 0 };
+	}
+	return { stringToFloat(valueList[0]), stringToFloat(valueList[1]), stringToFloat(valueList[2]) };
 }
 
 void StringUtility::stringToInts(const string& str, Vector<int>& valueList, const char* seperate)

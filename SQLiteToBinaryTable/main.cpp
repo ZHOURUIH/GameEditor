@@ -443,6 +443,34 @@ int main()
 						}
 						serializer.writeArray(ints);
 					}
+					else if (typeName == "Vector<Vector2>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<Vector2> floats;
+						if (!StringUtility::stringToVector2s(value, floats, "|"))
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector<Vector2>,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.writeArray(floats);
+					}
+					else if (typeName == "Vector<Vector3>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<Vector3> floats;
+						if (!StringUtility::stringToVector3s(value, floats, "|"))
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector<Vector3>,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.writeArray(floats);
+					}
 					else if (typeName == "Vector<string>")
 					{
 						string value;
