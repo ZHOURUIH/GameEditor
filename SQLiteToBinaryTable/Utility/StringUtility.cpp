@@ -1205,7 +1205,7 @@ Vector2Int StringUtility::stringToVector2Int(const string& str, const char* sepe
 	return { stringToInt(valueList[0]), stringToInt(valueList[1]) };
 }
 
-Vector2 StringUtility::stringToVector2(const string& str, const char* seperate = ",", bool* result)
+Vector2 StringUtility::stringToVector2(const string& str, const char* seperate, bool* result)
 {
 	constexpr int FLOAT_COUNT = sizeof(Vector2) / sizeof(float);
 	Vector<string> valueList;
@@ -1221,7 +1221,7 @@ Vector2 StringUtility::stringToVector2(const string& str, const char* seperate =
 	return { stringToFloat(valueList[0]), stringToFloat(valueList[1]) };
 }
 
-Vector3 StringUtility::stringToVector3(const string& str, const char* seperate = ",", bool* result)
+Vector3 StringUtility::stringToVector3(const string& str, const char* seperate, bool* result)
 {
 	constexpr int FLOAT_COUNT = sizeof(Vector3) / sizeof(float);
 	Vector<string> valueList;
