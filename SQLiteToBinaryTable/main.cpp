@@ -3,6 +3,7 @@
 #include "FileContent.h"
 #include "Vector2.h"
 #include "Vector2Int.h"
+#include "Vector3Int.h"
 #include "Vector2UInt.h"
 #include "Vector2UShort.h"
 #include "Vector2Short.h"
@@ -438,6 +439,20 @@ int main()
 						{
 							llong id = reader->getLLong(0);
 							cout << "字段内容错误,类型Vector<Vector2Int>,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
+							system("pause");
+							return 0;
+						}
+						serializer.writeArray(ints);
+					}
+					else if (typeName == "Vector<Vector3Int>")
+					{
+						string value;
+						reader->getString(j, value);
+						Vector<Vector3Int> ints;
+						if (!StringUtility::stringToVector3Ints(value, ints, "|"))
+						{
+							llong id = reader->getLLong(0);
+							cout << "字段内容错误,类型Vector<Vector3Int>,字段名" << memberList[j].mMemberName << ",表格:" << tableName + ",ID:" + StringUtility::llongToString(id) << endl;
 							system("pause");
 							return 0;
 						}
