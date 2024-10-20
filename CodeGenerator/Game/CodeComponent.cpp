@@ -19,7 +19,7 @@ void CodeComponent::generate()
 			   findSubstr(line, " : public COMCharacterGame") || 
 			   findSubstr(line, " : public COMPlayer") || 
 			   findSubstr(line, " : public COMNPC") || 
-			   findSubstr(line, " : public COMCharacterSkill<") || 
+			   findSubstr(line, " : public COMCharacterSkill") || 
 			   findSubstr(line, " : public GameComponent");
 	});
 	// 生成StringDefine文件
@@ -43,7 +43,7 @@ void CodeComponent::generate()
 			findSubstr(line, " : public COMCharacterGame") ||
 			findSubstr(line, " : public COMPlayer") ||
 			findSubstr(line, " : public COMNPC") ||
-			findSubstr(line, " : public COMCharacterSkill<") ||
+			findSubstr(line, " : public COMCharacterSkill") ||
 			findSubstr(line, " : public GameComponent");
 	});
 	// 生成StringDefine文件
