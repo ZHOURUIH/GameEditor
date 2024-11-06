@@ -116,7 +116,7 @@ void CodeClassDeclareAndHeader::generateCppGameClassAndHeader(const string& path
 	string str0;
 	line(str0, "#pragma once");
 	line(str0, "");
-	line(str0, "#include \"GameHeader.h\"");
+	line(str0, "#include \"FrameHeader.h\"");
 	uint count1 = gameHeaderList.size();
 	FOR_I(count1)
 	{
