@@ -518,6 +518,7 @@ void CodeUtility::replaceFileLines(const string& fullPath, const LineMatchCallba
 	{
 		codeList.insert(++lineStart, item);
 	}
+	writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 }
 
 myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch, myMap<string, myVector<string>>* fileContentList)
