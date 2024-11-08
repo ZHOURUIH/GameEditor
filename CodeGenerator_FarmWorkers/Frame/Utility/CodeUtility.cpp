@@ -480,7 +480,7 @@ string CodeUtility::convertToCSharpType(const string& cppType)
 bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, 
 								const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch)
 {
-	codeList = openTxtFileLines(fullPath);
+	codeList = openTxtFileLines(fullPath, true, false);
 	lineStart = -1;
 	int endCode = -1;
 	for (int i = 0; i < codeList.size(); ++i)
