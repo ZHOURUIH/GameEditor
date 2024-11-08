@@ -477,11 +477,10 @@ string CodeUtility::convertToCSharpType(const string& cppType)
 	return cppType;
 }
 
-bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, 
-								const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch)
+void CodeUtility::replaceFileLines(const string& fullPath, const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch, const myVector<string>& newLines)
 {
-	codeList = openTxtFileLines(fullPath, true, false);
-	lineStart = -1;
+	myVector<string> codeList = openTxtFileLines(fullPath, true, false);
+	int lineStart = -1;
 	int endCode = -1;
 	for (int i = 0; i < codeList.size(); ++i)
 	{
@@ -502,19 +501,23 @@ bool CodeUtility::findCustomCode(const string& fullPath, myVector<string>& codeL
 	if (lineStart < 0)
 	{
 		ERROR("找不到代码特定起始段,文件名:" + fullPath);
-		return false;
+		return;
 	}
 	if (endCode < 0)
 	{
 		ERROR("找不到代码特定结束段,文件名:" + fullPath);
-		return false;
+		return;
 	}
 	int removeLineCount = endCode - lineStart - 1;
 	for (int i = 0; i < removeLineCount; ++i)
 	{
 		codeList.erase(lineStart + 1);
 	}
-	return true;
+
+	for (const string& item : newLines)
+	{
+		codeList.insert(++lineStart, item);
+	}
 }
 
 myVector<string> CodeUtility::findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch, myMap<string, myVector<string>>* fileContentList)
@@ -590,19 +593,11 @@ string CodeUtility::findClassName(const string& line)
 void CodeUtility::generateStringDefine(const myVector<string>& defineList, int startID, const string& key, const string& stringDefineHeaderFile)
 {
 	// 更新StringDefine.h的特定部分
-	myVector<string> codeListHeader;
-	int lineStartHeader = -1;
-	if (!findCustomCode(stringDefineHeaderFile, codeListHeader, lineStartHeader,
-		[key](const string& codeLine) { return endWith(codeLine, key); },
-		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
+	myVector<string> newLine;
 	for (const string& item : defineList)
 	{
-		const string line = "\tstatic constexpr ushort " + item + " = " + intToString(++startID) + ";";
-		codeListHeader.insert(++lineStartHeader, line);
+		newLine.push_back("\tstatic constexpr ushort " + item + " = " + intToString(++startID) + ";");
 	}
-	writeFile(stringDefineHeaderFile, ANSIToUTF8(codeListToString(codeListHeader).c_str(), true));
+	replaceFileLines(stringDefineHeaderFile, [key](const string& codeLine) { return endWith(codeLine, key); },
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }, newLine);
 }

@@ -24,20 +24,12 @@ void CodeState::generate()
 
 void CodeState::generateStateRegister(const myVector<string>& stateList, const string& filePath)
 {
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(filePath, codeList, lineStart,
-		[](const string& codeLine) { return codeLine == "\t// auto generate start"; },
-		[](const string& codeLine) { return codeLine == "\t// auto generate end"; }))
-	{
-		return;
-	}
-	myVector<string> stateRegisteList;
+	myVector<string> newLines;
 	FOR_VECTOR(stateList)
 	{
-		codeList.insert(++lineStart, "\tSTATE_FACTORY(" + stateList[i] + ");");
+		newLines.push_back("\tSTATE_FACTORY(" + stateList[i] + ");");
 	}
-
-	// 生成新的文件
-	writeFile(filePath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	replaceFileLines(filePath,
+		[](const string& codeLine) { return codeLine == "\t// auto generate start"; },
+		[](const string& codeLine) { return codeLine == "\t// auto generate end"; }, newLines);
 }

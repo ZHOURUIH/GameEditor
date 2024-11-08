@@ -65,15 +65,7 @@ void CodeFrameSystem::generateFrameSystem(const string& cppPath, const string& b
 void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameSystemList, const string& gameCppPath)
 {
 	// 更新Game.cpp的特定部分代码
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(gameCppPath, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Register"); },
-		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
+	myVector<string> newLines;
 	for (const string& item : frameSystemList)
 	{
 		if (item == "ServerFramework")
@@ -82,126 +74,106 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 		}
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#ifdef _MYSQL");
+			newLines.push_back("#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\tregisteSystem<" + item + ">(STR(" + item + "));");
+		newLines.push_back("\tregisteSystem<" + item + ">(STR(" + item + "));");
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#endif");
+			newLines.push_back("#endif");
 		}
 	}
-	writeFileIfChanged(gameCppPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	replaceFileLines(gameCppPath,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Register"); },
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }, newLines);
 }
 
 void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
 {
 	// 更新GameBase.cpp的特定部分代码
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Clear"); },
-		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
+	myVector<string> newLines;
 	for (const string& item : frameSystemList)
 	{
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#ifdef _MYSQL");
+			newLines.push_back("#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\t\tm" + item + " = nullptr;");
+		newLines.push_back("\t\tm" + item + " = nullptr;");
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#endif");
+			newLines.push_back("#endif");
 		}
 	}
-	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	replaceFileLines(gameBaseSourceFile,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Clear"); },
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }, newLines);
 }
 
 void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSystemList, const string& gameBaseHeaderFile, const string& exportMacro)
 {
 	// 更新GameBase.h的特定部分代码
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem"); },
-		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "};"); }))
-	{
-		return;
-	}
+	myVector<string> newLines;
 	for (const string& item : frameSystemList)
 	{
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#ifdef _MYSQL");
+			newLines.push_back("#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\t" + exportMacro + "extern " + item + "* m" + item + ";");
+		newLines.push_back("\t" + exportMacro + "extern " + item + "* m" + item + ";");
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#endif");
+			newLines.push_back("#endif");
 		}
 	}
-	writeFileIfChanged(gameBaseHeaderFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	replaceFileLines(gameBaseHeaderFile, 
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem"); },
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "};"); }, newLines);
 }
 
 void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
 {
 	// 更新GameBase.cpp的特定部分代码
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Define"); },
-		[](const string& codeLine) { return isEmptyString(codeLine); }))
-	{
-		return;
-	}
-
+	myVector<string> newLines;
 	for (const string& item : frameSystemList)
 	{
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#ifdef _MYSQL");
+			newLines.push_back("#ifdef _MYSQL");
 		}
-		codeList.insert(++lineStart, "\t" + item + "* m" + item + ";");
+		newLines.push_back("\t" + item + "* m" + item + ";");
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#endif");
+			newLines.push_back("#endif");
 		}
 	}
-	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	replaceFileLines(gameBaseSourceFile, 
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Define"); },
+		[](const string& codeLine) { return isEmptyString(codeLine); }, newLines);
 }
 
 void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystemList, const string& gameBaseSourceFile)
 {
 	// 更新GameBase.cpp的特定部分代码
-	myVector<string> codeList;
-	int lineStart = -1;
-	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
-		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Get"); },
-		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
-	{
-		return;
-	}
-
+	myVector<string> newLines;
 	for (const string& item : frameSystemList)
 	{
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#ifdef _MYSQL");
+			newLines.push_back("#ifdef _MYSQL");
 		}
 		if (item == "ServerFramework")
 		{
-			codeList.insert(++lineStart, "\t\tmServerFramework = ServerFramework::getSingleton();");
+			newLines.push_back("\t\tmServerFramework = ServerFramework::getSingleton();");
 		}
 		else
 		{
-			codeList.insert(++lineStart, "\t\tmServerFramework->getSystem(STR(" + item + "), m" + item + ");");
+			newLines.push_back("\t\tmServerFramework->getSystem(STR(" + item + "), m" + item + ");");
 		}
 		if (startWith(item, "MySQL"))
 		{
-			codeList.insert(++lineStart, "#endif");
+			newLines.push_back("#endif");
 		}
 	}
-	writeFileIfChanged(gameBaseSourceFile, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+	replaceFileLines(gameBaseSourceFile,
+		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Get"); },
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }, newLines);
 }

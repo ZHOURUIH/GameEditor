@@ -497,19 +497,9 @@ void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& 
 	}
 	if (isFileExist(fullPath))
 	{
-		myVector<string> codeList;
-		int lineStart = -1;
-		if (!findCustomCode(fullPath, codeList, lineStart,
+		replaceFileLines(fullPath, 
 			[](const string& codeLine) { return endWith(codeLine, "// auto generate start"); },
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
-		{
-			return;
-		}
-		for (const string& line : generateList)
-		{
-			codeList.insert(++lineStart, line);
-		}
-		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }, generateList);
 	}
 	else
 	{
@@ -661,19 +651,9 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	string headerFullPath = filePath + packetName + ".h";
 	if (isFileExist(headerFullPath))
 	{
-		myVector<string> codeList;
-		int lineStart = -1;
-		if (!findCustomCode(headerFullPath, codeList, lineStart,
+		replaceFileLines(headerFullPath, 
 			[](const string& codeLine) { return codeLine == "// auto generate start"; },
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
-		{
-			return;
-		}
-		for (const string& line : generateCodes)
-		{
-			codeList.insert(++lineStart, line);
-		}
-		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }, generateCodes);
 	}
 	else
 	{
@@ -2285,19 +2265,9 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	string headerFullPath = filePath + packetName + ".h";
 	if (isFileExist(headerFullPath))
 	{
-		myVector<string> codeList;
-		int lineStart = -1;
-		if (!findCustomCode(headerFullPath, codeList, lineStart,
+		replaceFileLines(headerFullPath,
 			[](const string& codeLine) { return codeLine == "// auto generate start"; },
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
-		{
-			return;
-		}
-		for (const string& line : generateCodes)
-		{
-			codeList.insert(++lineStart, line);
-		}
-		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }, generateCodes);
 	}
 	else
 	{
@@ -2330,16 +2300,11 @@ void CodeNetPacket::generateCppSCPacketFileSource(const PacketInfo& packetInfo, 
 	string cppFullPath = filePath + packetName + ".cpp";
 	if (isFileExist(cppFullPath))
 	{
-		myVector<string> codeList;
-		int lineStart = -1;
-		if (!findCustomCode(cppFullPath, codeList, lineStart,
+		myVector<string> newLines;
+		newLines.push_back(packetName + " " + packetName + "::mStaticObject;");
+		replaceFileLines(cppFullPath,
 			[](const string& codeLine) { return codeLine == "// auto generate start"; },
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
-		{
-			return;
-		}
-		codeList.insert(++lineStart, packetName + " " + packetName + "::mStaticObject;");
-		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }, newLines);
 	}
 	else
 	{
@@ -2607,19 +2572,9 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 	}
 	if (isFileExist(fullPath))
 	{
-		myVector<string> codeList;
-		int lineStart = -1;
-		if (!findCustomCode(fullPath, codeList, lineStart,
+		replaceFileLines(fullPath, 
 			[](const string& codeLine) { return codeLine == "// auto generate start"; },
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
-		{
-			return;
-		}
-		for (const string& line : generateCodes)
-		{
-			codeList.insert(++lineStart, line);
-		}
-		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
+			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }, generateCodes);
 	}
 	else
 	{

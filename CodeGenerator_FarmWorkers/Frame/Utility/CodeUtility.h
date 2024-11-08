@@ -70,7 +70,7 @@ public:
 	static void parseStructName(const string& line, PacketStruct& structInfo);
 	static void parsePacketName(const string& line, PacketInfo& packetInfo);
 	static string convertToCSharpType(const string& cppType);
-	static bool findCustomCode(const string& fullPath, myVector<string>& codeList, int& lineStart, const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch);
+	static void replaceFileLines(const string& fullPath, const LineMatchCallback& startLineMatch, const LineMatchCallback& endLineMatch, const myVector<string>& newLines);
 	static string codeListToString(const myVector<string>& codeList);
 	static myVector<string> findTargetHeaderFile(const string& path, const LineMatchCallback& fileNameMatch, const LineMatchCallback& lineMatch, myMap<string, myVector<string>>* fileContentList = nullptr);
 	static string findClassName(const string& line);
