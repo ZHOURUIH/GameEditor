@@ -594,7 +594,7 @@ void CodeUtility::generateStringDefine(const myVector<string>& defineList, int s
 	int lineStartHeader = -1;
 	if (!findCustomCode(stringDefineHeaderFile, codeListHeader, lineStartHeader,
 		[key](const string& codeLine) { return endWith(codeLine, key); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
 	{
 		return;
 	}

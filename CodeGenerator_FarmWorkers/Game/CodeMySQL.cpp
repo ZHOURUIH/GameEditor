@@ -911,7 +911,7 @@ void CodeMySQL::generateMySQLInstanceDeclare(const myVector<MySQLInfo>& mysqlLis
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// MySQL"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "};"); }))
 	{
 		return;
 	}
@@ -929,7 +929,7 @@ void CodeMySQL::generateMySQLInstanceDefine(const myVector<MySQLInfo>& mysqlList
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// MySQL Define"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "};"); }))
 	{
 		return;
 	}
@@ -947,7 +947,7 @@ void CodeMySQL::generateMySQLInstanceClear(const myVector<MySQLInfo>& mysqlList,
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// MySQL Clear"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "};"); }))
 	{
 		return;
 	}

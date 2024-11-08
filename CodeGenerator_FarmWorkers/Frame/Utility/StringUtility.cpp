@@ -22,6 +22,19 @@ string StringUtility::removeSuffix(const string& str)
 	return str;
 }
 
+bool StringUtility::isEmptyString(const string& str)
+{
+	const int length = (int)str.length();
+	FOR_I(length)
+	{
+		if (str[i] != '\t' && str[i] != ' ' && !iscntrl(str[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 void StringUtility::removeStartAll(string& stream, char key)
 {
 	int firstNotPos = -1;

@@ -37,6 +37,8 @@ public:
 		}
 		return 0;
 	}
+	// 是否为不包含可显示字符的字符串
+	static bool isEmptyString(const string& str);
 	// 去掉从开始出现的连续指定字符
 	static void removeStartAll(string& stream, char key);
 	// 去掉第一个出现的指定字符

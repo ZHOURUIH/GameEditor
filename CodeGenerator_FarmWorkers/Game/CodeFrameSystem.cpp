@@ -69,7 +69,7 @@ void CodeFrameSystem::generateFrameSystemRegister(const myVector<string>& frameS
 	int lineStart = -1;
 	if (!findCustomCode(gameCppPath, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Register"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
 	{
 		return;
 	}
@@ -100,7 +100,7 @@ void CodeFrameSystem::generateFrameSystemClear(const myVector<string>& frameSyst
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Clear"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
 	{
 		return;
 	}
@@ -126,7 +126,7 @@ void CodeFrameSystem::generateFrameSystemDeclare(const myVector<string>& frameSy
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseHeaderFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "};"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "};"); }))
 	{
 		return;
 	}
@@ -152,7 +152,7 @@ void CodeFrameSystem::generateFrameSystemDefine(const myVector<string>& frameSys
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Define"); },
-		[](const string& codeLine) { return codeLine.length() == 0; }))
+		[](const string& codeLine) { return isEmptyString(codeLine); }))
 	{
 		return;
 	}
@@ -179,7 +179,7 @@ void CodeFrameSystem::generateFrameSystemGet(const myVector<string>& frameSystem
 	int lineStart = -1;
 	if (!findCustomCode(gameBaseSourceFile, codeList, lineStart,
 		[](const string& codeLine) { return endWith(codeLine, "// FrameSystem Get"); },
-		[](const string& codeLine) { return codeLine.length() == 0 || findSubstr(codeLine, "}"); }))
+		[](const string& codeLine) { return isEmptyString(codeLine) || findSubstr(codeLine, "}"); }))
 	{
 		return;
 	}
