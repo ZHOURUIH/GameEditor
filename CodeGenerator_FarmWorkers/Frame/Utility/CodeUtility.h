@@ -83,6 +83,7 @@ public:
 		}
 	}
 	static void generateStringDefine(const myVector<string>& defineList, int startID, const string& key, const string& stringDefineHeaderFile);
+	static string replaceVariable(const myMap<string, string>& variableDefine, const string& value);
 };
 
 #endif
