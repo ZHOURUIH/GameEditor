@@ -914,7 +914,7 @@ void CodeMySQL::generateCppMySQLTableFile(const MySQLInfo& mysqlInfo, const stri
 		line(header, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public MySQLTableT<" + dataClassName + ">");
 	}
 	line(header, "{");
-	line(header, "\tBASE(" + tableClassName + ", MySQLTableT);");
+	line(header, "\tBASE(" + tableClassName + ", MySQLTableT<" + dataClassName + ">);");
 	line(header, "public:");
 	line(header, "\texplicit " + tableClassName + "(const char* tableName) :base(tableName) {}");
 	if (mysqlInfo.mIndexList.size() > 0)
