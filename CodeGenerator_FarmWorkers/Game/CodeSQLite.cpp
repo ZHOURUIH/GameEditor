@@ -159,12 +159,12 @@ void CodeSQLite::generate()
 	// csharp
 	if (!csGamePath.empty())
 	{
-		string csExcelDataGamePath = csGamePath + "DataBase/Excel/Data/";
-		string csExcelDataHotFixPath = ClientHotFixPath + "DataBase/Excel/Data/";
-		string csExcelTableGamePath = csGamePath + "DataBase/Excel/Table/";
-		string csExcelTableHotFixPath = ClientHotFixPath + "DataBase/Excel/Table/";
-		string csExcelTableDeclareGamePath = csGamePath + "Common/";
-		string csExcelTableDeclareHotFixPath = ClientHotFixPath + "Common/";
+		string csSQLiteBytesDataGamePath = csGamePath + "DataBase/SQLiteBytes/Data/";
+		string csSQLiteBytesDataHotFixPath = ClientHotFixPath + "DataBase/SQLiteBytes/Data/";
+		string csSQLiteBytesTableGamePath = csGamePath + "DataBase/SQLiteBytes/Table/";
+		string csSQLiteBytesTableHotFixPath = ClientHotFixPath + "DataBase/SQLiteBytes/Table/";
+		string csSQLiteBytesTableDeclareGamePath = csGamePath + "Common/";
+		string csSQLiteBytesTableDeclareHotFixPath = ClientHotFixPath + "Common/";
 
 		string csSQLiteDataGamePath = csGamePath + "DataBase/SQLite/Data/";
 		string csSQLiteDataHotFixPath = ClientHotFixPath + "DataBase/SQLite/Data/";
@@ -181,8 +181,8 @@ void CodeSQLite::generate()
 		}
 		// 删除C#的代码文件,c#的只删除代码文件,不删除meta文件
 		myVector<string> csDataFileList;
-		findFiles(csExcelDataGamePath, csDataFileList, ".cs");
-		findFiles(csExcelDataHotFixPath, csDataFileList, ".cs");
+		findFiles(csSQLiteBytesDataGamePath, csDataFileList, ".cs");
+		findFiles(csSQLiteBytesDataHotFixPath, csDataFileList, ".cs");
 		findFiles(csSQLiteDataGamePath, csDataFileList, ".cs");
 		findFiles(csSQLiteDataHotFixPath, csDataFileList, ".cs");
 		for (const string& str : csDataFileList)
@@ -190,8 +190,8 @@ void CodeSQLite::generate()
 			deleteFile(str);
 		}
 		myVector<string> csTableFileList;
-		findFiles(csExcelTableGamePath, csTableFileList, ".cs");
-		findFiles(csExcelTableHotFixPath, csTableFileList, ".cs");
+		findFiles(csSQLiteBytesTableGamePath, csTableFileList, ".cs");
+		findFiles(csSQLiteBytesTableHotFixPath, csTableFileList, ".cs");
 		for (const string& str : csTableFileList)
 		{
 			deleteFile(str);
@@ -209,15 +209,15 @@ void CodeSQLite::generate()
 			// .cs代码的Excel格式
 			else
 			{
-				generateCSharpExcelDataFile(info, csExcelDataGamePath, csExcelDataHotFixPath);
-				generateCSharpExcelTableFile(info, csExcelTableGamePath, csExcelTableHotFixPath);
+				generateCSharpExcelDataFile(info, csSQLiteBytesDataGamePath, csSQLiteBytesDataHotFixPath);
+				generateCSharpExcelTableFile(info, csSQLiteBytesTableGamePath, csSQLiteBytesTableHotFixPath);
 			}
 		}
 
 		// 在上一层目录生成SQLiteRegister.cs和SQLiteRegister.cs文件
-		generateCSharpExcelRegisteFileFile(clientSQLiteList, getFilePath(csExcelDataHotFixPath) + "/", getFilePath(csExcelDataGamePath) + "/");
+		generateCSharpExcelRegisteFileFile(clientSQLiteList, getFilePath(csSQLiteBytesDataHotFixPath) + "/", getFilePath(csSQLiteBytesDataGamePath) + "/");
 		generateCSharpSQLiteRegisteFileFile(clientSQLiteList, getFilePath(csSQLiteDataHotFixPath) + "/", getFilePath(csSQLiteDataGamePath) + "/");
-		generateCSharpExcelDeclare(clientSQLiteList, csExcelTableDeclareHotFixPath, csExcelTableDeclareGamePath);
+		generateCSharpExcelDeclare(clientSQLiteList, csSQLiteBytesTableDeclareHotFixPath, csSQLiteBytesTableDeclareGamePath);
 	}
 	print("完成生成SQLite");
 	print("");
@@ -834,7 +834,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		line(mainFile, "using static GB;");
 		line(mainFile, "using static FrameBase;");
 		line(mainFile, "");
-		line(mainFile, "public class ExcelRegisterMain");
+		line(mainFile, "public class SQLiteBytesRegisterMain");
 		line(mainFile, "{");
 		line(mainFile, "\tpublic static void registeAll()");
 		line(mainFile, "\t{");
@@ -855,11 +855,11 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		line(mainFile, "\t}");
 		line(mainFile, "}", false);
 
-		writeFile(fileGamePath + "ExcelRegisterMain.cs", ANSIToUTF8(mainFile.c_str(), true));
+		writeFile(fileGamePath + "SQLiteBytesRegisterMain.cs", ANSIToUTF8(mainFile.c_str(), true));
 	}
 	else
 	{
-		deleteFile(fileGamePath + "ExcelRegisterMain.cs");
+		deleteFile(fileGamePath + "SQLiteBytesRegisterMain.cs");
 	}
 
 	bool hasHotFixMember = false;
@@ -880,7 +880,7 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		line(hotFixfile, "using static GBR;");
 		line(hotFixfile, "using static FrameBase;");
 		line(hotFixfile, "");
-		line(hotFixfile, "public class ExcelRegister");
+		line(hotFixfile, "public class SQLiteBytesRegister");
 		line(hotFixfile, "{");
 		line(hotFixfile, "\tpublic static void registeAll()");
 		line(hotFixfile, "\t{");
@@ -904,11 +904,11 @@ void CodeSQLite::generateCSharpExcelRegisteFileFile(const myVector<SQLiteInfo>& 
 		line(hotFixfile, "\t}");
 		line(hotFixfile, "}", false);
 
-		writeFile(fileHotFixPath + "ExcelRegister.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+		writeFile(fileHotFixPath + "SQLiteBytesRegister.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 	}
 	else
 	{
-		deleteFile(fileHotFixPath + "ExcelRegister.cs");
+		deleteFile(fileHotFixPath + "SQLiteBytesRegister.cs");
 	}
 }
 
@@ -1028,7 +1028,7 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 		string mainFile;
 		line(mainFile, "using System;");
 		line(mainFile, "");
-		line(mainFile, "// GameBase的部分类,用于定义Excel表格的对象");
+		line(mainFile, "// GameBase的部分类,用于定义SQLite自定义表格的对象");
 		line(mainFile, "public partial class GB");
 		line(mainFile, "{");
 		for (const SQLiteInfo& info : sqliteInfo)
@@ -1040,11 +1040,11 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 		}
 		line(mainFile, "}", false);
 
-		writeFile(fileGamePath + "GameBaseExcel.cs", ANSIToUTF8(mainFile.c_str(), true));
+		writeFile(fileGamePath + "GameBaseSQLiteBytes.cs", ANSIToUTF8(mainFile.c_str(), true));
 	}
 	else
 	{
-		deleteFile(fileGamePath + "GameBaseExcel.cs");
+		deleteFile(fileGamePath + "GameBaseSQLiteBytes.cs");
 	}
 
 	bool hasHotfixMember = false;
@@ -1063,7 +1063,7 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 		string hotFixfile;
 		line(hotFixfile, "using System;");
 		line(hotFixfile, "");
-		line(hotFixfile, "// FrameBase的部分类,用于定义Excel表格的对象");
+		line(hotFixfile, "// GameBase的部分类,用于定义SQLite自定义表格的对象");
 		line(hotFixfile, "public partial class GBR");
 		line(hotFixfile, "{");
 		for (const SQLiteInfo& info : sqliteInfo)
@@ -1075,10 +1075,10 @@ void CodeSQLite::generateCSharpExcelDeclare(const myVector<SQLiteInfo>& sqliteIn
 		}
 		line(hotFixfile, "}", false);
 
-		writeFile(fileHotFixPath + "GameBaseExcelILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
+		writeFile(fileHotFixPath + "GameBaseSQLiteBytesILR.cs", ANSIToUTF8(hotFixfile.c_str(), true));
 	}
 	else
 	{
-		deleteFile(fileHotFixPath + "GameBaseExcelILR.cs");
+		deleteFile(fileHotFixPath + "GameBaseSQLiteBytesILR.cs");
 	}
 }
