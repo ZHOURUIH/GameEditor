@@ -19,6 +19,19 @@ string CodeUtility::SQLitePath;
 string CodeUtility::START_FALG = "#start";
 bool CodeUtility::mUseILRuntime = true;
 
+string CodeUtility::replaceVariable(const myMap<string, string>& variableDefine, const string& value)
+{
+	string temp = value;
+	for (const auto& item : variableDefine)
+	{
+		if (findSubstr(temp, "{" + item.first + "}"))
+		{
+			replaceAll(temp, "{" + item.first + "}", item.second);
+		}
+	}
+	return temp;
+}
+
 bool CodeUtility::initPath()
 {
 	myVector<string> configLines = openTxtFileLines("./CodeGenerator_Config.txt");
@@ -27,8 +40,44 @@ bool CodeUtility::initPath()
 		ERROR("未找到配置文件CodeGenerator_Config.txt");
 		return false;
 	}
+	myMap<string, string> variableDefine;
+	for (const string& line : configLines)
+	{
+		if (startWith(line, "//") || line == "")
+		{
+			continue;
+		}
+		if (startWith(line, "#start"))
+		{
+			break;
+		}
+		if (line.find_first_of('=') >= 0)
+		{
+			myVector<string> pairs;
+			split(line.c_str(), "=", pairs);
+			if (pairs.size() != 2)
+			{
+				ERROR("配置错误:" + line);
+				return false;
+			}
+			// 检查是否有引用之前的变量定义
+			pairs[1] = replaceVariable(variableDefine, pairs[1]);
+			rightToLeft(pairs[1]);
+			variableDefine.insert(pairs[0], pairs[1], false);
+		}
+	}
+	bool startConfig = false;
 	FOR_VECTOR(configLines)
 	{
+		if (startWith(configLines[i], "//") || configLines[i] == "")
+		{
+			continue;
+		}
+		if (startWith(configLines[i], "#start"))
+		{
+			startConfig = true;
+			continue;
+		}
 		myVector<string> params;
 		removeAll(configLines[i], ' ', '\t');
 		split(configLines[i].c_str(), "=", params);
@@ -36,6 +85,8 @@ bool CodeUtility::initPath()
 		{
 			continue;
 		}
+		params[1] = replaceVariable(variableDefine, params[1]);
+		rightToLeft(params[1]);
 		if (params[0] == "CLIENT_PROJECT_PATH")
 		{
 			ClientProjectPath = params[1];
