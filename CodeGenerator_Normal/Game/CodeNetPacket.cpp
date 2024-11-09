@@ -1544,7 +1544,7 @@ void CodeNetPacket::generateServerSCPacketFileHeader(const PacketInfo& packetInf
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
 		codeList.push_back("\t// auto generate end");
-		codeList.push_back("\tvoid debugInfo(Array<1024>& buffer) override");
+		codeList.push_back("\tvoid debugInfo(MyString<1024>& buffer) override");
 		codeList.push_back("\t{");
 		codeList.push_back("\t\tdebug(buffer, "");");
 		codeList.push_back("\t}");
