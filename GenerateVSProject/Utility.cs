@@ -182,6 +182,14 @@ class Utility
 		}
 		return builder.ToString();
 	}
+	public static string rightToLeft(string path)
+	{
+		if (path == null)
+		{
+			return null;
+		}
+		return path.Replace('\\', '/');
+	}
 	public static XmlDocument openXML(string fileName)
 	{
 		if (!File.Exists(fileName))

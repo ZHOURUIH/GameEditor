@@ -7,6 +7,17 @@ using static Utility;
 
 class Program
 {
+	static string replaceVariable(Dictionary<string, string> variableDefine, string value)
+	{
+		foreach (var variable in variableDefine)
+		{
+			if (value.Contains("{" + variable.Key + "}"))
+			{
+				value = value.Replace("{" + variable.Key + "}", variable.Value);
+			}
+		}
+		return value;
+	}
 	static void Main(string[] args)
 	{
 		byte[] bytes = null;
@@ -24,22 +35,27 @@ class Program
 			Console.Read();
 			return;
 		}
-		string RootPathKey = "RootPath";
+		Dictionary<string, string> variableDefine = new Dictionary<string, string>();
 		string[] lines = removeAll(Encoding.UTF8.GetString(bytes), '\r').Split('\n');
-		if (!lines[0].StartsWith(RootPathKey + "="))
+		foreach (string line in lines)
 		{
-			Console.WriteLine("第一行必须是" + RootPathKey);
-			Console.Read();
-			return;
+			if (line[0] == '[' && line[line.Length - 1] == ']')
+			{
+				break;
+			}
+			if (line.Contains("="))
+			{
+				string[] tempPair = line.Split('=');
+				if (tempPair.Length != 2)
+				{
+					Console.WriteLine(line + "配置错误");
+					Console.Read();
+					return;
+				}
+				// 检查是否有引用之前的变量定义
+				variableDefine.Add(tempPair[0], rightToLeft(replaceVariable(variableDefine, tempPair[1])));
+			}
 		}
-		string[] tempPair = lines[0].Split('=');
-		if (tempPair.Length != 2)
-		{
-			Console.WriteLine(RootPathKey + "配置错误");
-			Console.Read();
-			return;
-		}
-		string rootPath = tempPair[1];
 		lines[0] = null;
 
 		Dictionary<string, Dictionary<string, string>> paramMap = new Dictionary<string, Dictionary<string, string>>();
@@ -66,18 +82,18 @@ class Program
 				continue;
 			}
 			// 将RootPath替换为配置的值
-			paramMap[curFlag].Add(paramPair[0], paramPair[1].Replace("{" + RootPathKey + "}", rootPath));
+			paramMap[curFlag].Add(paramPair[0], rightToLeft(replaceVariable(variableDefine, paramPair[1])));
 		}
-		foreach (var item in paramMap)
+		foreach (var item in paramMap.Values)
 		{
-			if (!item.Value.TryGetValue("ProjectFilePath", out string projectFilePath))
+			if (!item.TryGetValue("ProjectFilePath", out string projectFilePath))
 			{
 				Console.WriteLine("配置文件错误");
 				Console.Read();
 				return;
 			}
-			item.Value.TryGetValue("ProjectIncludePath", out string includePath);
-			item.Value.TryGetValue("ExcludePath", out string excludePath);
+			item.TryGetValue("ProjectIncludePath", out string includePath);
+			item.TryGetValue("ExcludePath", out string excludePath);
 			generateVCXProject(projectFilePath, includePath, new List<string>(excludePath.Split(',')));
 			generateVCXProjectFilters(projectFilePath + ".filters");
 		}
