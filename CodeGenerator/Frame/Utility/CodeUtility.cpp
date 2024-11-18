@@ -2,22 +2,18 @@
 #include "Utility.h"
 
 string CodeUtility::ServerGameProjectPath;
-string CodeUtility::ServerGameCoreProjectPath;
 string CodeUtility::ServerFrameProjectPath;
 string CodeUtility::ClientProjectPath;
 string CodeUtility::ClientHotFixPath;
 string CodeUtility::VirtualClientProjectPath;
 myVector<string> CodeUtility::ServerExcludeIncludePath;
 string CodeUtility::cppGamePath;
-string CodeUtility::cppGameCorePath;
 string CodeUtility::cppFramePath;
 string CodeUtility::cppGameStringDefineHeaderFile;
-string CodeUtility::cppGameCoreStringDefineHeaderFile;
 string CodeUtility::csGamePath;
 string CodeUtility::VirtualClientSocketPath;
 string CodeUtility::SQLitePath;
 string CodeUtility::START_FALG = "#start";
-bool CodeUtility::mUseILRuntime = true;
 
 string CodeUtility::replaceVariable(const myMap<string, string>& variableDefine, const string& value)
 {
@@ -99,10 +95,6 @@ bool CodeUtility::initPath()
 		{
 			ServerGameProjectPath = params[1];
 		}
-		else if (params[0] == "SERVER_GAMECORE_PROJECT_PATH")
-		{
-			ServerGameCoreProjectPath = params[1];
-		}
 		else if (params[0] == "SERVER_FRAME_PROJECT_PATH")
 		{
 			ServerFrameProjectPath = params[1];
@@ -116,10 +108,6 @@ bool CodeUtility::initPath()
 		{
 			VirtualClientProjectPath = params[1];
 		}
-		else if (params[0] == "USE_ILRUNTIME")
-		{
-			mUseILRuntime = stringToBool(params[1]);
-		}
 		else if (params[0] == "SQLITE_PATH")
 		{
 			SQLitePath = params[1];
@@ -132,14 +120,12 @@ bool CodeUtility::initPath()
 	}
 
 	rightToLeft(ServerGameProjectPath);
-	rightToLeft(ServerGameCoreProjectPath);
 	rightToLeft(ServerFrameProjectPath);
 	rightToLeft(SQLitePath);
 	rightToLeft(ClientProjectPath);
 	rightToLeft(ClientHotFixPath);
 	rightToLeft(VirtualClientProjectPath);
 	validPath(ServerGameProjectPath);
-	validPath(ServerGameCoreProjectPath);
 	validPath(ServerFrameProjectPath);
 	validPath(SQLitePath);
 	validPath(ClientProjectPath);
@@ -148,9 +134,7 @@ bool CodeUtility::initPath()
 	if (!ServerGameProjectPath.empty())
 	{
 		cppGamePath = ServerGameProjectPath + "Game/";
-		cppGameCorePath = ServerGameCoreProjectPath + "GameCore/";
 		cppFramePath = ServerFrameProjectPath + "Frame/";
-		cppGameCoreStringDefineHeaderFile = cppGameCorePath + "Common/GameCoreStringDefine.h";
 		cppGameStringDefineHeaderFile = cppGamePath + "Common/GameStringDefine.h";
 	}
 	if (!ClientProjectPath.empty())
@@ -474,14 +458,7 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = cSharpTypeToWrapType(cppTypeToCSharpType(memberInfo.mTypeName));
-	if (mUseILRuntime)
-	{
-		return "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
-	}
-	else
-	{
-		return "public " + typeName + " " + memberInfo.mMemberName + " = new();";
-	}
+	return "public " + typeName + " " + memberInfo.mMemberName + " = new();";
 }
 
 myVector<string> CodeUtility::parseTagList(const string& line, string& newLine)
@@ -507,20 +484,6 @@ void CodeUtility::parseStructName(const string& line, PacketStruct& structInfo)
 	// 查找标签
 	myVector<string> tagList = parseTagList(line, structInfo.mStructName);
 	structInfo.mHotFix = !tagList.contains("[NoHotFix]");
-	bool isGame = tagList.contains("[Game]");
-	bool isGameCore = tagList.contains("[GameCore]");
-	if (isGame == isGameCore)
-	{
-		if (isGame)
-		{
-			ERROR("结构体只能有一个Game或GameCore标签," + line);
-		}
-		else
-		{
-			ERROR("结构体缺少一个Game或GameCore标签," + line);
-		}
-	}
-	structInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
 }
 
 void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
@@ -530,20 +493,6 @@ void CodeUtility::parsePacketName(const string& line, PacketInfo& packetInfo)
 	packetInfo.mHotFix = !tagList.contains("[NoHotFix]");
 	packetInfo.mUDP = tagList.contains("[UDP]");
 	packetInfo.mShowInfo = !tagList.contains("[NoLog]");
-	bool isGame = tagList.contains("[Game]");
-	bool isGameCore = tagList.contains("[GameCore]");
-	if (isGame == isGameCore)
-	{
-		if (isGame)
-		{
-			ERROR("消息只能有一个Game或GameCore标签," + line);
-		}
-		else
-		{
-			ERROR("消息缺少一个Game或GameCore标签," + line);
-		}
-	}
-	packetInfo.mOwner = isGame ? PACKET_OWNER::GAME : PACKET_OWNER::GAME_CORE;
 }
 
 string CodeUtility::convertToCSharpType(const string& cppType)

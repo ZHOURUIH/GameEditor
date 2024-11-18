@@ -4,7 +4,6 @@ void CodeFrameSystem::generate()
 {
 	print("正在生成框架组件");
 	generateFrameSystem(cppGamePath, "Common/GameBase.h", "Game/Game.cpp", "GameBase", "");
-	generateFrameSystem(cppGameCorePath, "Common/GameCoreBase.h", "GameCore/GameCore.cpp", "GameCoreBase", "MICRO_LEGEND_CORE_API ");
 	generateFrameSystem(cppFramePath, "Common/FrameBase.h", "ServerFramework/ServerFramework.cpp", "FrameBase", "MICRO_LEGEND_FRAME_API ");
 	print("完成生成框架组件");
 	print("");

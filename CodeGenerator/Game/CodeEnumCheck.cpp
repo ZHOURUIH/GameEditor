@@ -5,7 +5,6 @@ void CodeEnumCheck::generate()
 	print("正在生成枚举检测");
 	// 只收集指定文件中定义的枚举
 	doGenerate("GameEnumCheck", cppGamePath + "Common/", cppGamePath + "Common/GameEnum.h");
-	doGenerate("GameCoreEnumCheck", cppGameCorePath + "Common/", cppGameCorePath + "Common/GameCoreEnum.h");
 	doGenerate("FrameEnumCheck", cppFramePath + "Common/", cppFramePath + "Common/FrameEnum.h");
 	print("完成生成枚举检测");
 	print("");

@@ -12,30 +12,6 @@ enum class SQLITE_OWNER : byte
 	SERVER_ONLY,		// 仅服务器用
 };
 
-// SQLite表格在Server所属的层
-enum class SQLITE_SERVER_OWNER : byte
-{
-	NONE,				// 无效值
-	GAME,				// Game层使用的表格
-	GAME_CORE,			// GameCore层使用的表格
-};
-
-// MySQL表格所属的层
-enum class MYSQL_SERVER_OWNER : byte
-{
-	NONE,				// 无效值
-	GAME,				// Game层使用的表格
-	GAME_CORE,			// GameCore层使用的表格
-};
-
-// 消息包在Server所属的层
-enum class PACKET_OWNER : byte
-{
-	NONE,				// 无效值
-	GAME,				// Game层使用的消息
-	GAME_CORE,			// GameCore层使用的消息
-};
-
 struct PacketMember
 {
 	string mTypeName;
@@ -51,7 +27,6 @@ struct PacketStruct
 	myVector<PacketMember> mMemberList;			// 结构体成员
 	string mStructName;							// 结构体名字
 	string mComment;							// 结构体注释
-	PACKET_OWNER mOwner = PACKET_OWNER::NONE;	// 属于Game层还是GameCore层
 	bool mHotFix = false;						// 消息在客户端是否可热更
 };
 
@@ -64,7 +39,6 @@ struct PacketInfo
 	bool mShowInfo = false;						// 是否显示调试信息
 	bool mHotFix = false;						// 消息在客户端是否可热更
 	bool mUDP = false;							// 是否通过UDP传输
-	PACKET_OWNER mOwner = PACKET_OWNER::NONE;	// 属于Game层还是GameCore层
 };
 
 struct SQLiteMember
@@ -84,7 +58,6 @@ struct SQLiteInfo
 	string mComment;
 	bool mHotFix = false;
 	bool mClientSQLite = false;
-	SQLITE_SERVER_OWNER mServerOwner = SQLITE_SERVER_OWNER::NONE;
 };
 
 struct MySQLMember
@@ -102,15 +75,13 @@ struct MySQLInfo
 	string mMySQLClassName;
 	string mMySQLTableName;
 	string mComment;
-	MYSQL_SERVER_OWNER mOwner = MYSQL_SERVER_OWNER::NONE;
-	void init(const string& className, const string& tableName, const string& comment, MYSQL_SERVER_OWNER owner)
+	void init(const string& className, const string& tableName, const string& comment)
 	{
 		mMemberList.clear();
 		mIndexList.clear();
 		mMySQLClassName = className;
 		mMySQLTableName = tableName;
 		mComment = comment;
-		mOwner = owner;
 	}
 };
 

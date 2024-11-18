@@ -8,7 +8,7 @@ class CodeState : public CodeUtility
 public:
 	static void generate();
 protected:
-	static void generateStateRegister(const myVector<string>& stateList, const string& filePath, bool isGameCore);
+	static void generateStateRegister(const myVector<string>& stateList, const string& filePath);
 };
 
 #endif

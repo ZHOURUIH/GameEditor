@@ -10,22 +10,18 @@ class CodeUtility : public SystemUtility
 {
 protected:
 	static string ServerGameProjectPath;
-	static string ServerGameCoreProjectPath;
 	static string ServerFrameProjectPath;
 	static string ClientProjectPath;
 	static string ClientHotFixPath;
 	static string VirtualClientProjectPath;
 	static myVector<string> ServerExcludeIncludePath;
 	static string cppGamePath;
-	static string cppGameCorePath;
 	static string cppFramePath;
 	static string cppGameStringDefineHeaderFile;
-	static string cppGameCoreStringDefineHeaderFile;
 	static string csGamePath;
 	static string VirtualClientSocketPath;
 	static string SQLitePath;
 	static string START_FALG;
-	static bool mUseILRuntime;
 public:
 	static bool initPath();
 	static bool isPod(const string& type)

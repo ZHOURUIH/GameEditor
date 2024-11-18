@@ -425,8 +425,8 @@ StringUtility::strcat_s(charArray, size, str5);
 #ifdef ERROR
 #undef ERROR
 #endif
-#define ERROR(info) cout << info << " File:" << __FILE__ << ", Line:" << __LINE__ << endl;FrameDefine::mHasError = true
-#define LOG(info) cout << info << endl
+#define ERROR(info) std::cout << info << " File:" << __FILE__ << ", Line:" << __LINE__ << std::endl;FrameDefine::mHasError = true
+#define LOG(info) std::cout << info << std::endl
 
 typedef unsigned char byte;
 typedef unsigned short ushort;

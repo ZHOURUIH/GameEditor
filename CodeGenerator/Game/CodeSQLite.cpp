@@ -35,21 +35,6 @@ void CodeSQLite::generate()
 			}
 			else if (item->first == 3)
 			{
-				if (data->mName == "Game")
-				{
-					info.mServerOwner = SQLITE_SERVER_OWNER::GAME;
-				}
-				else if (data->mName == "GameCore")
-				{
-					info.mServerOwner = SQLITE_SERVER_OWNER::GAME_CORE;
-				}
-				else
-				{
-					ERROR("需要指定服务器层级:" + info.mSQLiteName);
-				}
-			}
-			else if (item->first == 4)
-			{
 				if (data->mName == "All")
 				{
 					info.mOwner = SQLITE_OWNER::BOTH;
@@ -71,7 +56,7 @@ void CodeSQLite::generate()
 					ERROR("表格所属错误:" + info.mSQLiteName);
 				}
 			}
-			else if (item->first == 5)
+			else if (item->first == 4)
 			{
 				info.mClientSQLite = StringUtility::stringToBool(data->mName);
 			}
@@ -117,11 +102,10 @@ void CodeSQLite::generate()
 	// cpp
 	string cppGameDataPath = cppGamePath + "DataBase/SQLite/Data/";
 	string cppGameTablePath = cppGamePath + "DataBase/SQLite/Table/";
-	// 筛选出Server的Game层表格
 	myVector<SQLiteInfo> serverGameSQLiteList;
 	for (const SQLiteInfo& info : sqliteInfoList)
 	{
-		if ((info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY) && info.mServerOwner == SQLITE_SERVER_OWNER::GAME)
+		if ((info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY))
 		{
 			serverGameSQLiteList.push_back(info);
 		}
@@ -160,61 +144,11 @@ void CodeSQLite::generate()
 	const string gameBaseHeaderPath = cppGamePath + "Common/GameBase.h";
 	const string gameBaseSourcePath = cppGamePath + "Common/GameBase.cpp";
 	const string gameSTLPoolSourcePath = cppGamePath + "Common/GameSTLPoolRegister.cpp";
-	generateCppGameSQLiteRegisteFile(serverGameSQLiteList, getFilePath(cppGameDataPath) + "/");
+	generateCppSQLiteRegisteFile(serverGameSQLiteList, getFilePath(cppGameDataPath) + "/");
 	generateCppSQLiteInstanceDeclare(serverGameSQLiteList, gameBaseHeaderPath, "");
 	generateCppSQLiteInstanceDefine(serverGameSQLiteList, gameBaseSourcePath);
 	generateCppSQLiteSTLPoolRegister(serverGameSQLiteList, gameSTLPoolSourcePath);
 	generateCppSQLiteInstanceClear(serverGameSQLiteList, gameBaseSourcePath);
-
-	string cppGameCoreDataPath = cppGameCorePath + "DataBase/SQLite/Data/";
-	string cppGameCoreTablePath = cppGameCorePath + "DataBase/SQLite/Table/";
-	// 筛选出Server的GameCore层表格
-	myVector<SQLiteInfo> serverGameCoreSQLiteList;
-	for (const SQLiteInfo& info : sqliteInfoList)
-	{
-		if ((info.mOwner == SQLITE_OWNER::BOTH || info.mOwner == SQLITE_OWNER::SERVER_ONLY) && info.mServerOwner == SQLITE_SERVER_OWNER::GAME_CORE)
-		{
-			serverGameCoreSQLiteList.push_back(info);
-		}
-	}
-	// 删除C++的代码文件
-	deleteFolder(cppGameCoreDataPath);
-	// SQLite的Table文件选择性删除,只删除非服务器使用的文件
-	myVector<string> cppGameCoreTableList;
-	findFiles(cppGameCoreTablePath, cppGameCoreTableList, patterns, 2);
-	for (const string& str : cppGameCoreTableList)
-	{
-		bool needDelete = true;
-		for (const SQLiteInfo& info : serverGameCoreSQLiteList)
-		{
-			if ("SQLite" + info.mSQLiteName == getFileNameNoSuffix(str, true))
-			{
-				needDelete = false;
-				break;
-			}
-		}
-		if (needDelete)
-		{
-			deleteFile(str);
-		}
-	}
-
-	// 生成代码文件
-	for (const SQLiteInfo& info : serverGameCoreSQLiteList)
-	{
-		// .h代码
-		generateCppSQLiteDataFile(info, cppGameCoreDataPath);
-		generateCppSQLiteTableFile(info, cppGameCoreTablePath);
-	}
-
-	const string gameCoreBaseHeaderPath = cppGameCorePath + "Common/GameCoreBase.h";
-	const string gameCoreBaseSourcePath = cppGameCorePath + "Common/GameCoreBase.cpp";
-	const string gameCoreSTLPoolSourcePath = cppGameCorePath + "Common/GameCoreSTLPoolRegister.cpp";
-	generateCppGameCoreSQLiteRegisteFile(serverGameCoreSQLiteList, getFilePath(cppGameCoreDataPath) + "/");
-	generateCppSQLiteInstanceDeclare(serverGameCoreSQLiteList, gameCoreBaseHeaderPath, "MICRO_LEGEND_CORE_API ");
-	generateCppSQLiteInstanceDefine(serverGameCoreSQLiteList, gameCoreBaseSourcePath);
-	generateCppSQLiteSTLPoolRegister(serverGameCoreSQLiteList, gameCoreSTLPoolSourcePath);
-	generateCppSQLiteInstanceClear(serverGameCoreSQLiteList, gameCoreBaseSourcePath);
 
 	//------------------------------------------------------------------------------------------------------------------------------
 	// csharp
@@ -314,20 +248,9 @@ void CodeSQLite::generateCppSQLiteDataFile(const SQLiteInfo& sqliteInfo, const s
 	line(header, "#pragma once");
 	line(header, "");
 	line(header, "#include \"SQLiteData.h\"");
-	if (sqliteInfo.mServerOwner == SQLITE_SERVER_OWNER::GAME_CORE)
-	{
-		line(header, "#include \"GameCoreDefine.h\"");
-	}
 	line(header, "");
 	line(header, "// " + sqliteInfo.mComment);
-	if (sqliteInfo.mServerOwner == SQLITE_SERVER_OWNER::GAME)
-	{
-		line(header, "class " + dataClassName + " : public SQLiteData");
-	}
-	else
-	{
-		line(header, "class MICRO_LEGEND_CORE_API " + dataClassName + " : public SQLiteData");
-	}
+	line(header, "class " + dataClassName + " : public SQLiteData");
 	
 	line(header, "{");
 	line(header, "\tBASE(" + dataClassName + ", SQLiteData);");
@@ -469,14 +392,7 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 		line(table, "#include \"" + dataClassName + ".h\"");
 		line(table, "#include \"SQLiteTable.h\"");
 		line(table, "");
-		if (sqliteInfo.mServerOwner == SQLITE_SERVER_OWNER::GAME)
-		{
-			line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
-		}
-		else
-		{
-			line(table, "class MICRO_LEGEND_CORE_API " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
-		}
+		line(table, "class " + tableClassName + " : public SQLiteTable<" + dataClassName + ">");
 		line(table, "{");
 		line(table, "public:");
 		line(table, "};", false);
@@ -486,7 +402,7 @@ void CodeSQLite::generateCppSQLiteTableFile(const SQLiteInfo& sqliteInfo, const 
 }
 
 // SQLiteRegister.h和SQLiteRegister.cpp文件
-void CodeSQLite::generateCppGameSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
+void CodeSQLite::generateCppSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
 {
 	// SQLiteRegister.h
 	string str0;
@@ -494,17 +410,17 @@ void CodeSQLite::generateCppGameSQLiteRegisteFile(const myVector<SQLiteInfo>& sq
 	line(str0, "");
 	line(str0, "#include \"GameBase.h\"");
 	line(str0, "");
-	line(str0, "class GameSQLiteRegister");
+	line(str0, "class SQLiteRegister");
 	line(str0, "{");
 	line(str0, "public:");
 	line(str0, "\tstatic void registeAll();");
 	line(str0, "};", false);
-	writeFile(filePath + "GameSQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
+	writeFile(filePath + "SQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
 
 	string str1;
 	line(str1, "#include \"GameHeader.h\"");
 	line(str1, "");
-	line(str1, "void GameSQLiteRegister::registeAll()");
+	line(str1, "void SQLiteRegister::registeAll()");
 	line(str1, "{");
 	uint count = sqliteList.size();
 	FOR_I(count)
@@ -519,52 +435,7 @@ void CodeSQLite::generateCppGameSQLiteRegisteFile(const myVector<SQLiteInfo>& sq
 		line(str1, "\tmSQLiteManager->addSQLiteTable(mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
 	}
 	line(str1, "}", false);
-	writeFile(filePath + "GameSQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
-}
-
-// SQLiteRegister.h和SQLiteRegister.cpp文件
-void CodeSQLite::generateCppGameCoreSQLiteRegisteFile(const myVector<SQLiteInfo>& sqliteList, const string& filePath)
-{
-	// SQLiteRegister.h
-	string str0;
-	line(str0, "#pragma once");
-	line(str0, "");
-	line(str0, "#include \"GameCoreBase.h\"");
-	line(str0, "");
-	line(str0, "class MICRO_LEGEND_CORE_API GameCoreSQLiteRegister");
-	line(str0, "{");
-	line(str0, "public:");
-	line(str0, "\tstatic void registeAll();");
-	line(str0, "};", false);
-	writeFile(filePath + "GameCoreSQLiteRegister.h", ANSIToUTF8(str0.c_str(), true));
-
-	string str1;
-	line(str1, "#include \"GameCoreHeader.h\"");
-	line(str1, "");
-	line(str1, "void GameCoreSQLiteRegister::registeAll()");
-	line(str1, "{");
-	uint count = sqliteList.size();
-	FOR_I(count)
-	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
-		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tmSQLite" + sqliteName + " = new SQLite" + sqliteName + "();");
-	}
-	line(str1, "");
-	FOR_I(count)
-	{
-		if (sqliteList[i].mOwner != SQLITE_OWNER::SERVER_ONLY && sqliteList[i].mOwner != SQLITE_OWNER::BOTH)
-		{
-			continue;
-		}
-		const string& sqliteName = sqliteList[i].mSQLiteName;
-		line(str1, "\tmSQLiteManager->addSQLiteTable(mSQLite" + sqliteName + ", \"" + sqliteName + "\");");
-	}
-	line(str1, "}", false);
-	writeFile(filePath + "GameCoreSQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
+	writeFile(filePath + "SQLiteRegister.cpp", ANSIToUTF8(str1.c_str(), true));
 }
 
 void CodeSQLite::generateCppSQLiteInstanceDeclare(const myVector<SQLiteInfo>& sqliteList, const string& gameBaseHeaderFileName, const string& exprtMacro)
@@ -696,7 +567,7 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 			listMemberSet.insert(member.mMemberName);
 		}
 		string memberLine;
-		if (mUseILRuntime || !isList)
+		if (!isList)
 		{
 			memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
 		}
@@ -711,16 +582,6 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		}
 		memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
 		line(file, memberLine);
-	}
-	if (mUseILRuntime && listMemberList.size() > 0)
-	{
-		line(file, "\tpublic " + dataClassName + "()");
-		line(file, "\t{");
-		FOR_VECTOR(listMemberList)
-		{
-			line(file, "\t\tm" + listMemberList[i].second + " = new " + listMemberList[i].first + "();");
-		}
-		line(file, "\t}");
 	}
 	line(file, "\tpublic override void read(SerializerRead reader)");
 	line(file, "\t{");
@@ -782,42 +643,8 @@ void CodeSQLite::generateCSharpExcelTableFile(const SQLiteInfo& sqliteInfo, cons
 	line(table, "using System;");
 	line(table, "using System.Collections.Generic;");
 	line(table, "");
-	if (mUseILRuntime)
-	{
-		line(table, "public partial class " + tableClassName + " : ExcelTable");
-		line(table, "{");
-		line(table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
-		line(table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
-		line(table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
-		line(table, "\tprotected List<" + dataClassName + "> mDataList;");
-		line(table, "\tprotected bool mDataAvailable;");
-		line(table, "\tpublic " + tableClassName + "()");
-		line(table, "\t{");
-		line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
-		line(table, "\t}");
-		line(table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
-		line(table, "\t{");
-		line(table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
-		line(table, "\t}");
-		line(table, "\tpublic List<" + dataClassName + "> queryAll()");
-		line(table, "\t{");
-		line(table, "\t\tif (!mDataAvailable)");
-		line(table, "\t\t{");
-		line(table, "\t\t\tforeach (var item in getDataList())");
-		line(table, "\t\t\t{");
-		line(table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
-		line(table, "\t\t\t}");
-		line(table, "\t\t\tmDataAvailable = true;");
-		line(table, "\t\t}");
-		line(table, "\t\treturn mDataList;");
-		line(table, "\t}");
-		line(table, "}", false);
-	}
-	else
-	{
-		line(table, "public partial class " + tableClassName + " : ExcelTableT<" + dataClassName + ">");
-		line(table, "{}", false);
-	}
+	line(table, "public partial class " + tableClassName + " : ExcelTableT<" + dataClassName + ">");
+	line(table, "{}", false);
 	string tableFilePath = sqliteInfo.mHotFix ? tableFileHotFixPath : tableFileGamePath;
 	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
 }
@@ -888,7 +715,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		}
 
 		string memberLine;
-		if (mUseILRuntime || !isList)
+		if (!isList)
 		{
 			memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
 		}
@@ -903,16 +730,6 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		}
 		memberLine += "// " + member.mComment;
 		line(file, memberLine);
-	}
-	if (mUseILRuntime && listMemberList.size() > 0)
-	{
-		line(file, "\tpublic " + dataClassName + "()");
-		line(file, "\t{");
-		FOR_VECTOR(listMemberList)
-		{
-			line(file, "\t\tm" + listMemberList[i].second + " = new " + listMemberList[i].first + "();");
-		}
-		line(file, "\t}");
 	}
 	line(file, "\tpublic override void parse(SqliteDataReader reader)");
 	line(file, "\t{");

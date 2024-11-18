@@ -203,36 +203,10 @@ void CodeNetPacket::parsePacketConfig(myVector<PacketStruct>& structInfoList, my
 
 void CodeNetPacket::generateCpp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int& packetVersion)
 {
-	myVector<PacketInfo> gamePacketList;
-	myVector<PacketInfo> gameCorePacketList;
 	myVector<string> gamePacketNameList;
-	myVector<string> gameCorePacketNameList;
 	for (const PacketInfo& packetInfo : packetInfoList)
 	{
-		if (packetInfo.mOwner == PACKET_OWNER::GAME)
-		{
-			gamePacketNameList.push_back(packetInfo.mPacketName);
-			gamePacketList.push_back(packetInfo);
-		}
-		else
-		{
-			gameCorePacketNameList.push_back(packetInfo.mPacketName);
-			gameCorePacketList.push_back(packetInfo);
-		}
-	}
-
-	myVector<PacketStruct> gameStructList;
-	myVector<PacketStruct> gameCoreStructList;
-	for (const auto& info : structInfoList)
-	{
-		if (info.mOwner == PACKET_OWNER::GAME)
-		{
-			gameStructList.push_back(info);
-		}
-		else
-		{
-			gameCoreStructList.push_back(info);
-		}
+		gamePacketNameList.push_back(packetInfo.mPacketName);
 	}
 	// Game层的消息
 	string cppGameCSPacketPath = cppGamePath + "Socket/ClientServer/";
@@ -266,7 +240,7 @@ void CodeNetPacket::generateCpp(const myVector<PacketStruct>& structInfoList, co
 	// 打开服务器的消息注册文件,找到当前的消息版本号,然后版本号自增
 	packetVersion = findPacketVersion(cppGamePacketDefinePath + "GamePacketRegister.cpp") + 1;
 	// 生成c++代码
-	for (const PacketInfo& packetInfo : gamePacketList)
+	for (const PacketInfo& packetInfo : packetInfoList)
 	{
 		// 找到有没有此文件,有就在原来的文件上修改
 		string csHeaderPath = cppGameCSPacketPath;
@@ -295,79 +269,12 @@ void CodeNetPacket::generateCpp(const myVector<PacketStruct>& structInfoList, co
 		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
 		generateCppSCPacketFileSource(packetInfo, scHeaderPath);
 	}
-	generateCppGamePacketDefineFile(gamePacketList, cppGamePacketDefinePath);
-	generateCppGamePacketRegisteFile(gamePacketList, cppGamePacketDefinePath, packetVersion);
+	generateCppGamePacketDefineFile(packetInfoList, cppGamePacketDefinePath);
+	generateCppGamePacketRegisteFile(packetInfoList, cppGamePacketDefinePath, packetVersion);
 
-	for (const PacketStruct& info : gameStructList)
+	for (const PacketStruct& info : structInfoList)
 	{
 		generateCppStruct(info, cppGameStructPath);
-	}
-
-	// GameCore层的消息
-	string cppGameCoreCSPacketPath = cppGameCorePath + "Socket/ClientServer/";
-	string cppGameCoreSCPacketPath = cppGameCorePath + "Socket/ServerClient/";
-	string cppGameCoreStructPath = cppGameCorePath + "Socket/Struct/";
-	string cppGameCorePacketDefinePath = cppGameCorePath + "Socket/";
-	// 删除无用的消息
-	// c++ CS
-	myVector<string> cppGameCoreCSFiles;
-	findFiles(cppGameCoreCSPacketPath, cppGameCoreCSFiles, nullptr, 0);
-	for (int i = 0; i < cppGameCoreCSFiles.size(); ++i)
-	{
-		if (!gameCorePacketNameList.contains(getFileNameNoSuffix(cppGameCoreCSFiles[i], true)))
-		{
-			deleteFile(cppGameCoreCSFiles[i]);
-			cppGameCoreCSFiles.erase(i--);
-		}
-	}
-	// c++ SC
-	myVector<string> cppGameCoreSCFiles;
-	findFiles(cppGameCoreSCPacketPath, cppGameCoreSCFiles, nullptr, 0);
-	for (int i = 0; i < cppGameCoreSCFiles.size(); ++i)
-	{
-		if (!gameCorePacketNameList.contains(getFileNameNoSuffix(cppGameCoreSCFiles[i], true)))
-		{
-			deleteFile(cppGameCoreSCFiles[i]);
-			cppGameCoreSCFiles.erase(i--);
-		}
-	}
-
-	// 生成c++代码
-	for (const PacketInfo& packetInfo : gameCorePacketList)
-	{
-		// 找到有没有此文件,有就在原来的文件上修改
-		string csHeaderPath = cppGameCoreCSPacketPath;
-		string csSourcePath = cppGameCoreCSPacketPath;
-		string scHeaderPath = cppGameCoreSCPacketPath;
-		for (const string& file : cppGameCoreCSFiles)
-		{
-			if (endWith(file, packetInfo.mPacketName + ".h"))
-			{
-				csHeaderPath = getFilePath(file) + "/";
-			}
-			if (endWith(file, packetInfo.mPacketName + ".cpp"))
-			{
-				csSourcePath = getFilePath(file) + "/";
-			}
-		}
-		for (const string& file : cppGameCoreSCFiles)
-		{
-			if (endWith(file, packetInfo.mPacketName + ".h"))
-			{
-				scHeaderPath = getFilePath(file) + "/";
-			}
-		}
-		generateCppCSPacketFileHeader(packetInfo, csHeaderPath);
-		generateCppCSPacketFileSource(packetInfo, csSourcePath);
-		generateCppSCPacketFileHeader(packetInfo, scHeaderPath);
-		generateCppSCPacketFileSource(packetInfo, scHeaderPath);
-	}
-	generateCppGameCorePacketDefineFile(gameCorePacketList, cppGameCorePacketDefinePath);
-	generateCppGameCorePacketRegisteFile(gameCorePacketList, cppGameCorePacketDefinePath);
-
-	for (const PacketStruct& info : gameCoreStructList)
-	{
-		generateCppStruct(info, cppGameCoreStructPath);
 	}
 }
 
@@ -381,22 +288,10 @@ void CodeNetPacket::generateCSharp(const myVector<PacketStruct>& structInfoList,
 	string csharpStructHotfixPath = ClientHotFixPath + "Socket/Struct/";
 	string csharpPacketDefinePath = ClientHotFixPath + "Socket/";
 
-	myVector<PacketInfo> gamePacketList;
-	myVector<PacketInfo> gameCorePacketList;
 	myVector<string> gamePacketNameList;
-	myVector<string> gameCorePacketNameList;
 	for (const PacketInfo& packetInfo : packetInfoList)
 	{
-		if (packetInfo.mOwner == PACKET_OWNER::GAME)
-		{
-			gamePacketNameList.push_back(packetInfo.mPacketName);
-			gamePacketList.push_back(packetInfo);
-		}
-		else
-		{
-			gameCorePacketNameList.push_back(packetInfo.mPacketName);
-			gameCorePacketList.push_back(packetInfo);
-		}
+		gamePacketNameList.push_back(packetInfo.mPacketName);
 	}
 
 	myVector<string> hotfixList;
@@ -494,7 +389,7 @@ void CodeNetPacket::generateCSharp(const myVector<PacketStruct>& structInfoList,
 	{
 		generateCSharpPacketFile(packetInfo, csharpCSHotfixPath, csharpCSGamePath, csharpSCHotfixPath, csharpSCGamePath);
 	}
-	generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
+	generateCSharpPacketDefineFile(packetInfoList, csharpPacketDefinePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
 
 	// 生成结构体代码
@@ -511,20 +406,10 @@ void CodeNetPacket::generateCSharpVirtualClient(const myVector<PacketStruct>& st
 	string csharpStructGamePath = VirtualClientSocketPath + "Struct/";
 	string csharpPacketDefinePath = VirtualClientSocketPath;
 
-	myVector<PacketInfo> gamePacketList;
-	myVector<PacketInfo> gameCorePacketList;
 	myVector<string> packetNameList;
 	for (const PacketInfo& packetInfo : packetInfoList)
 	{
 		packetNameList.push_back(packetInfo.mPacketName);
-		if (packetInfo.mOwner == PACKET_OWNER::GAME)
-		{
-			gamePacketList.push_back(packetInfo);
-		}
-		else
-		{
-			gameCorePacketList.push_back(packetInfo);
-		}
 	}
 	myVector<string> structNameList;
 	for (const PacketStruct& structInfo : structInfoList)
@@ -571,7 +456,7 @@ void CodeNetPacket::generateCSharpVirtualClient(const myVector<PacketStruct>& st
 	{
 		generateCSharpPacketFile(packetInfo, csharpCSGamePath, csharpCSGamePath, csharpSCGamePath, csharpSCGamePath);
 	}
-	generateCSharpPacketDefineFile(gamePacketList, gameCorePacketList, csharpPacketDefinePath);
+	generateCSharpPacketDefineFile(packetInfoList, csharpPacketDefinePath);
 	generateCSharpPacketRegisteFile(packetInfoList, csharpPacketDefinePath, packetVersion);
 
 	// 生成结构体代码
@@ -641,68 +526,6 @@ void CodeNetPacket::generateCppGamePacketDefineFile(const myVector<PacketInfo>& 
 		line(str, "};", false);
 
 		writeFile(fullPath, ANSIToUTF8(str.c_str(), true));
-	}
-}
-
-void CodeNetPacket::generateCppGameCorePacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
-{
-	const string fullPath = filePath + "GameCorePacketDefine.h";
-	myVector<string> generateList;
-	generateList.push_back("\tconstexpr static ushort MIN = 0;");
-	generateList.push_back("");
-	int csMinValue = 3000;
-	generateList.push_back("\tconstexpr static ushort CS_MIN = " + intToString(csMinValue) + ";");
-	uint packetCount = packetList.size();
-	FOR_I(packetCount)
-	{
-		if (startWith(packetList[i].mPacketName, "CS"))
-		{
-			generateList.push_back("\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++csMinValue) + ";");
-		}
-	}
-	generateList.push_back("");
-	int scMinValue = 6000;
-	generateList.push_back("\tconstexpr static ushort SC_MIN = " + intToString(scMinValue) + ";");
-	FOR_I(packetCount)
-	{
-		if (startWith(packetList[i].mPacketName, "SC"))
-		{
-			generateList.push_back("\tconstexpr static ushort " + packetList[i].mPacketName + " = " + intToString(++scMinValue) + ";");
-		}
-	}
-	if (isFileExist(fullPath))
-	{
-		myVector<string> codeList;
-		int lineStart = -1;
-		if (!findCustomCode(fullPath, codeList, lineStart,
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate start"); },
-			[](const string& codeLine) { return endWith(codeLine, "// auto generate end"); }))
-		{
-			return;
-		}
-		for (const string& line : generateList)
-		{
-			codeList.insert(++lineStart, line);
-		}
-		writeFile(fullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
-	}
-	else
-	{
-		string str;
-		line(str, "#pragma once");
-		line(str, "");
-		line(str, "#include \"FrameDefine.h\"");
-		line(str, "");
-		line(str, "class MICRO_LEGEND_CORE_API PACKET_TYPE_CORE");
-		line(str, "{");
-		line(str, "public:");
-		for (const string& code : generateList)
-		{
-			line(str, code);
-		}
-		line(str, "};", false);
-
-		writeFile(filePath + "GameCorePacketDefine.h", ANSIToUTF8(str.c_str(), true));
 	}
 }
 
@@ -777,75 +600,6 @@ void CodeNetPacket::generateCppGamePacketRegisteFile(const myVector<PacketInfo>&
 	writeFile(filePath + "GamePacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
 }
 
-void CodeNetPacket::generateCppGameCorePacketRegisteFile(const myVector<PacketInfo>& packetList, const string& filePath)
-{
-	string str;
-	line(str, "#include \"GameCoreHeader.h\"");
-
-	line(str, "");
-	line(str, "void GameCorePacketRegister::registeAll()");
-
-	line(str, "{");
-	myVector<PacketInfo> udpCSList;
-	for (const auto& info : packetList)
-	{
-		if (startWith(info.mPacketName, "CS") && info.mUDP)
-		{
-			udpCSList.push_back(info);
-		}
-	}
-	for (const auto& info : packetList)
-	{
-		const string& packetName = info.mPacketName;
-		if (!startWith(packetName, "CS"))
-		{
-			continue;
-		}
-		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
-	}
-	line(str, "");
-	myVector<PacketInfo> udpSCList;
-	for (const auto& info : packetList)
-	{
-		if (!startWith(info.mPacketName, "SC"))
-		{
-			continue;
-		}
-		if (info.mUDP)
-		{
-			udpSCList.push_back(info);
-		}
-	}
-	for (const auto& info : packetList)
-	{
-		const string& packetName = info.mPacketName;
-		if (!startWith(packetName, "SC"))
-		{
-			continue;
-		}
-		line(str, "\tmPacketFactoryManager->addFactory<" + packetName + ">(PACKET_TYPE_CORE::" + packetName + ");");
-	}
-	if (udpCSList.size() > 0)
-	{
-		line(str, "");
-		for (const auto& info : udpCSList)
-		{
-			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
-		}
-	}
-	if (udpSCList.size() > 0)
-	{
-		line(str, "");
-		for (const auto& info : udpSCList)
-		{
-			line(str, "\tmPacketFactoryManager->addUDPPacket(PACKET_TYPE_CORE::" + info.mPacketName + "); ");
-		}
-	}
-	line(str, "};", false);
-
-	writeFile(filePath + "GameCorePacketRegister.cpp", ANSIToUTF8(str.c_str(), true));
-}
-
 // CSPacket.h
 void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, const string& filePath)
 {
@@ -867,14 +621,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-	{
-		generateCodes.push_back("class MICRO_LEGEND_CORE_API " + packetName + " : public Packet");
-	}
-	else
-	{
-		generateCodes.push_back("class " + packetName + " : public Packet");
-	}
+	generateCodes.push_back("class " + packetName + " : public Packet");
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(" + packetName + ", Packet);");
 	if (hasOptional)
@@ -902,14 +649,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\t" + packetName + "()");
 	generateCodes.push_back("\t{");
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-	{
-		generateCodes.push_back("\t\tmType = PACKET_TYPE_CORE::" + packetName + ";");
-	}
-	else
-	{
-		generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
-	}
+	generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
 	generateCppPacketReadWrite(packetInfo, generateCodes);
@@ -939,14 +679,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
-		if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-		{
-			codeList.push_back("#include \"GameCorePacketDefine.h\"");
-		}
-		else
-		{
-			codeList.push_back("#include \"GamePacketDefine.h\"");
-		}
+		codeList.push_back("#include \"GamePacketDefine.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -987,14 +720,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	headerCodeList.push_back("#include \"SerializableBitData.h\"");
 	headerCodeList.push_back("");
 	headerCodeList.push_back(structInfo.mComment);
-	if (structInfo.mOwner == PACKET_OWNER::GAME_CORE)
-	{
-		headerCodeList.push_back("class MICRO_LEGEND_CORE_API " + structName + " : public SerializableBitData");
-	}
-	else
-	{
-		headerCodeList.push_back("class " + structName + " : public SerializableBitData");
-	}
+	headerCodeList.push_back("class " + structName + " : public SerializableBitData");
 	headerCodeList.push_back("{");
 	headerCodeList.push_back("\tBASE(" + structName + ", SerializableBitData);");
 	// 是否有可选字段
@@ -1114,14 +840,7 @@ void CodeNetPacket::generateCppStruct(const PacketStruct& structInfo, const stri
 	// PacketStruct.cpp
 	string sourceFullPath = filePath + structName + ".cpp";
 	myVector<string> sourceCodeList;
-	if (structInfo.mOwner == PACKET_OWNER::GAME)
-	{
-		sourceCodeList.push_back("#include \"GameHeader.h\"");
-	}
-	else
-	{
-		sourceCodeList.push_back("#include \"GameCoreHeader.h\"");
-	}
+	sourceCodeList.push_back("#include \"GameHeader.h\"");
 	if (constructParams.length() > 0)
 	{
 		sourceCodeList.push_back("");
@@ -1395,14 +1114,7 @@ void CodeNetPacket::generateCppCSPacketFileSource(const PacketInfo& packetInfo, 
 	if (!isFileExist(sourceFullPath))
 	{
 		string source;
-		if (packetInfo.mOwner == PACKET_OWNER::GAME)
-		{
-			line(source, "#include \"GameHeader.h\"");
-		}
-		else if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-		{
-			line(source, "#include \"GameCoreHeader.h\"");
-		}
+		line(source, "#include \"GameHeader.h\"");
 		line(source, "");
 		line(source, "void " + packetName + "::execute()");
 		line(source, "{");
@@ -1851,39 +1563,18 @@ string CodeNetPacket::singleMemberWriteLineCSharp(const string& memberName, cons
 {
 	if (memberType == "string")
 	{
-		if (mUseILRuntime)
-		{
-			return "writer.writeString(" + memberName + ".mValue);";
-		}
-		else
-		{
-			return "writer.writeString(" + memberName + ");";
-		}
+		return "writer.writeString(" + memberName + ");";
 	}
 	else if (startWith(memberType, "Vector<"))
 	{
-		if (mUseILRuntime)
-		{
-			return "writer.writeList(" + memberName + ".mValue);";
-		}
-		else
-		{
-			return "writer.writeList(" + memberName + ");";
-		}
+		return "writer.writeList(" + memberName + ");";
 	}
 	if (memberType == "bool" || memberType == "char" || memberType == "byte" || memberType == "sbyte" || memberType == "short" || 
 		memberType == "ushort" || memberType == "int" || memberType == "uint" || memberType == "llong" || memberType == "ullong" || 
 		memberType == "float" || memberType == "double" || memberType == "Vector2" || memberType == "Vector2UShort" || 
 		memberType == "Vector2Int" || memberType == "Vector2UInt" || memberType == "Vector3" || memberType == "Vector3Int" || memberType == "Vector4")
 	{
-		if (mUseILRuntime)
-		{
-			return "writer.write(" + memberName + ".mValue);";
-		}
-		else
-		{
-			return "writer.write(" + memberName + ");";
-		}
+		return "writer.write(" + memberName + ");";
 	}
 	ERROR("不支持的类型:" + memberType);
 	return "";
@@ -2356,7 +2047,7 @@ string CodeNetPacket::expandMembersInGroupCSharp(const myVector<PacketMember>& m
 		}
 		else
 		{
-			if (mUseILRuntime || !supportSimplify)
+			if (!supportSimplify)
 			{
 				memberNameList.push_back(memberName + ".mValue");
 			}
@@ -2519,14 +2210,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 
 	myVector<string> generateCodes;
 	generateCodes.push_back(packetInfo.mComment);
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-	{
-		generateCodes.push_back("class MICRO_LEGEND_CORE_API " + packetName + " : public Packet");
-	}
-	else
-	{
-		generateCodes.push_back("class " + packetName + " : public Packet");
-	}
+	generateCodes.push_back("class " + packetName + " : public Packet");
 	generateCodes.push_back("{");
 	generateCodes.push_back("\tBASE(" + packetName + ", Packet);");
 	if (hasOptional)
@@ -2556,14 +2240,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("public:");
 	generateCodes.push_back("\t" + packetName + "()");
 	generateCodes.push_back("\t{");
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-	{
-		generateCodes.push_back("\t\tmType = PACKET_TYPE_CORE::" + packetName + ";");
-	}
-	else
-	{
-		generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
-	}
+	generateCodes.push_back("\t\tmType = PACKET_TYPE::" + packetName + ";");
 	generateCodes.push_back("\t\tmShowInfo = " + boolToString(packetInfo.mShowInfo) + ";");
 	generateCodes.push_back("\t}");
 	generateCodes.push_back("\tstatic " + packetName + "& get()");
@@ -2571,14 +2248,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 	generateCodes.push_back("\t\tmStaticObject.resetProperty();");
 	generateCodes.push_back("\t\treturn mStaticObject;");
 	generateCodes.push_back("\t}");
-	if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-	{
-		generateCodes.push_back("\tstatic constexpr ushort getStaticType() { return PACKET_TYPE_CORE::" + packetName + "; }");
-	}
-	else
-	{
-		generateCodes.push_back("\tstatic constexpr ushort getStaticType() { return PACKET_TYPE::" + packetName + "; }");
-	}
+	generateCodes.push_back("\tstatic constexpr ushort getStaticType() { return PACKET_TYPE::" + packetName + "; }");
 	if (packetInfo.mMemberList.size() > 0)
 	{
 		generateCodes.push_back("\tstatic constexpr bool hasMember() { return true; }");
@@ -2612,14 +2282,7 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("#pragma once");
 		codeList.push_back("");
 		codeList.push_back("#include \"Packet.h\"");
-		if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-		{
-			codeList.push_back("#include \"GameCorePacketDefine.h\"");
-		}
-		else
-		{
-			codeList.push_back("#include \"GamePacketDefine.h\"");
-		}
+		codeList.push_back("#include \"GamePacketDefine.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.addRange(generateCodes);
@@ -2658,14 +2321,7 @@ void CodeNetPacket::generateCppSCPacketFileSource(const PacketInfo& packetInfo, 
 	else
 	{
 		myVector<string> codeList;
-		if (packetInfo.mOwner == PACKET_OWNER::GAME_CORE)
-		{
-			codeList.push_back("#include \"GameCoreHeader.h\"");
-		}
-		else
-		{
-			codeList.push_back("#include \"GameHeader.h\"");
-		}
+		codeList.push_back("#include \"GameHeader.h\"");
 		codeList.push_back("");
 		codeList.push_back("// auto generate start");
 		codeList.push_back(packetName + " " + packetName + "::mStaticObject;");
@@ -2675,7 +2331,7 @@ void CodeNetPacket::generateCppSCPacketFileSource(const PacketInfo& packetInfo, 
 }
 
 // PacketDefine.cs文件
-void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& gamePacketList, const myVector<PacketInfo>& gameCorePacketList, const string& filePath)
+void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& packetList, const string& filePath)
 {
 	string str;
 	line(str, "using System;");
@@ -2685,26 +2341,8 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& g
 	line(str, "{");
 	line(str, "\tpublic static ushort MIN = 0;");
 	line(str, "");
-	int csGameCorePacketNumber = 3000;
-	for (const auto& item : gameCorePacketList)
-	{
-		if (startWith(item.mPacketName, "CS"))
-		{
-			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++csGameCorePacketNumber) + ";");
-		}
-	}
-	line(str, "");
-	int scGameCorePacketNumber = 6000;
-	for (const auto& item : gameCorePacketList)
-	{
-		if (startWith(item.mPacketName, "SC"))
-		{
-			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++scGameCorePacketNumber) + ";");
-		}
-	}
-	line(str, "");
-	int csGamePacketNumber = 10000;
-	for (const auto& item : gamePacketList)
+	int csGamePacketNumber = 3000;
+	for (const auto& item : packetList)
 	{
 		if (startWith(item.mPacketName, "CS"))
 		{
@@ -2712,8 +2350,8 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& g
 		}
 	}
 	line(str, "");
-	int scGamePacketNumber = 20000;
-	for (const auto& item : gamePacketList)
+	int scGamePacketNumber = 10000;
+	for (const auto& item : packetList)
 	{
 		if (startWith(item.mPacketName, "SC"))
 		{
@@ -2745,14 +2383,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		{
 			continue;
 		}
-		if (mUseILRuntime)
-		{
-			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
-		}
-		else
-		{
-			line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
-		}
+		line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		if (packetList[i].mUDP)
 		{
 			udpCSList.push_back(packetList[i]);
@@ -2766,14 +2397,7 @@ void CodeNetPacket::generateCSharpPacketRegisteFile(const myVector<PacketInfo>& 
 		{
 			continue;
 		}
-		if (mUseILRuntime)
-		{
-			line(str, "\t\tregistePacket(typeof(" + packetList[i].mPacketName + "), PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
-		}
-		else
-		{
-			line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
-		}
+		line(str, "\t\tregistePacket<" + packetList[i].mPacketName + ">(PACKET_TYPE." + packetNameToUpper(packetList[i].mPacketName) + ");");
 		if (packetList[i].mUDP)
 		{
 			udpSCList.push_back(packetList[i]);
@@ -2856,10 +2480,6 @@ void CodeNetPacket::generateCSharpPacketFile(const PacketInfo& packetInfo, const
 		if (startWith(packetName, "CS"))
 		{
 			generateCodes.push_back("\tpublic static " + packetName + " get() { return PACKET<" + packetName + ">(); }");
-		}
-		if (packetName == "SCPKSettlement")
-		{
-			int a = 0;
 		}
 
 		// read
@@ -3110,14 +2730,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	// StructList
 	codeList.push_back("public class " + structInfo.mStructName + "_List : SerializableBit, IEnumerable<" + structInfo.mStructName + ">");
 	codeList.push_back("{");
-	if (mUseILRuntime)
-	{
-		codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new List<" + structInfo.mStructName + ">();");
-	}
-	else
-	{
-		codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new();");
-	}
+	codeList.push_back("\tpublic List<" + structInfo.mStructName + "> mList = new();");
 	codeList.push_back("\tpublic " + structInfo.mStructName + " this[int index]");
 	codeList.push_back("\t{");
 	codeList.push_back("\t\tget { return mList[index]; }");
@@ -3126,14 +2739,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 	codeList.push_back("\tpublic int Count{ get { return mList.Count; } }");
 	codeList.push_back("\tpublic override bool read(SerializerBitRead reader)");
 	codeList.push_back("\t{");
-	if (mUseILRuntime)
-	{
-		codeList.push_back("\t\treturn reader.readCustomList(mList, typeof(" + structInfo.mStructName + "));");
-	}
-	else
-	{
-		codeList.push_back("\t\treturn reader.readCustomList(mList);");
-	}
+	codeList.push_back("\t\treturn reader.readCustomList(mList);");
 	codeList.push_back("\t}");
 	codeList.push_back("\tpublic override void write(SerializerBitWrite writer)");
 	codeList.push_back("\t{");

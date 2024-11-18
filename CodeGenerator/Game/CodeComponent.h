@@ -10,7 +10,6 @@ public:
 protected:
 	//c++
 	static void generateGameComponentRegister(const myVector<string>& componentList, const string& filePath);
-	static void generateGameCoreComponentRegister(const myVector<string>& componentList, const string& filePath);
 protected:
 };
 
