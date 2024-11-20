@@ -14,7 +14,6 @@ string CodeUtility::csGamePath;
 string CodeUtility::VirtualClientSocketPath;
 string CodeUtility::SQLitePath;
 string CodeUtility::START_FALG = "#start";
-bool CodeUtility::mUseILRuntime = true;
 
 string CodeUtility::replaceVariable(const myMap<string, string>& variableDefine, const string& value)
 {
@@ -111,10 +110,6 @@ bool CodeUtility::initPath()
 		else if (params[0] == "VIRTUAL_CLIENT_PROJECT_PATH")
 		{
 			VirtualClientProjectPath = params[1];
-		}
-		else if (params[0] == "USE_ILRUNTIME")
-		{
-			mUseILRuntime = stringToBool(params[1]);
 		}
 		else if (params[0] == "SQLITE_PATH")
 		{
@@ -466,14 +461,7 @@ string CodeUtility::cSharpMemberDeclareString(const PacketMember& memberInfo)
 {
 	// c#里面不用char,使用byte,也没有ullong,使用long
 	string typeName = cSharpTypeToWrapType(cppTypeToCSharpType(memberInfo.mTypeName));
-	if (mUseILRuntime)
-	{
-		return "public " + typeName + " " + memberInfo.mMemberName + " = new " + typeName + "();";
-	}
-	else
-	{
-		return "public " + typeName + " " + memberInfo.mMemberName + " = new();";
-	}
+	return "public " + typeName + " " + memberInfo.mMemberName + " = new();";
 }
 
 myVector<string> CodeUtility::parseTagList(const string& line, string& newLine)

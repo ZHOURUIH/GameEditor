@@ -528,20 +528,6 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 			continue;
 		}
 		string typeName = convertToCSharpType(member.mTypeName);
-		//if (!member.mEnumRealType.empty())
-		//{
-		//	int pos0;
-		//	if (findString(typeName.c_str(), "List<", &pos0))
-		//	{
-		//		int pos1;
-		//		findString(typeName.c_str(), ">", &pos1);
-		//		replace(typeName, pos0 + (int)strlen("List<"), pos1, member.mEnumRealType);
-		//	}
-		//	else
-		//	{
-		//		typeName = member.mTypeName;
-		//	}
-		//}
 		// 列表类型的成员变量存储到单独的列表,因为需要分配内存
 		bool isList = findString(typeName.c_str(), "List", nullptr);
 		if (isList)
@@ -550,7 +536,7 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 			listMemberSet.insert(member.mMemberName);
 		}
 		string memberLine;
-		if (mUseILRuntime || !isList)
+		if (!isList)
 		{
 			memberLine = "\tpublic " + typeName + " m" + member.mMemberName + ";";
 		}
@@ -565,16 +551,6 @@ void CodeSQLite::generateCSharpExcelDataFile(const SQLiteInfo& sqliteInfo, const
 		}
 		memberLine += "// " + sqliteInfo.mMemberList[i].mComment;
 		line(file, memberLine);
-	}
-	if (mUseILRuntime && listMemberList.size() > 0)
-	{
-		line(file, "\tpublic " + dataClassName + "()");
-		line(file, "\t{");
-		FOR_VECTOR(listMemberList)
-		{
-			line(file, "\t\tm" + listMemberList[i].second + " = new " + listMemberList[i].first + "();");
-		}
-		line(file, "\t}");
 	}
 	line(file, "\tpublic override void read(SerializerRead reader)");
 	line(file, "\t{");
@@ -636,42 +612,8 @@ void CodeSQLite::generateCSharpExcelTableFile(const SQLiteInfo& sqliteInfo, cons
 	line(table, "using System;");
 	line(table, "using System.Collections.Generic;");
 	line(table, "");
-	if (mUseILRuntime)
-	{
-		line(table, "public partial class " + tableClassName + " : ExcelTable");
-		line(table, "{");
-		line(table, "\t// 由于基类无法知道子类的具体类型,所以将List类型的列表定义到子类中.因为大部分时候外部使用的都是List类型的列表");
-		line(table, "\t// 并且ILRuntime热更对于模板支持不太好,所以尽量避免使用模板");
-		line(table, "\t// 此处定义一个List是为了方便外部可直接获取,避免每次queryAll时都会创建列表");
-		line(table, "\tprotected List<" + dataClassName + "> mDataList;");
-		line(table, "\tprotected bool mDataAvailable;");
-		line(table, "\tpublic " + tableClassName + "()");
-		line(table, "\t{");
-		line(table, "\t\tmDataList = new List<" + dataClassName + ">();");
-		line(table, "\t}");
-		line(table, "\tpublic " + dataClassName + " query(int id, bool errorIfNull = true)");
-		line(table, "\t{");
-		line(table, "\t\treturn getData<" + dataClassName + ">(id, errorIfNull);");
-		line(table, "\t}");
-		line(table, "\tpublic List<" + dataClassName + "> queryAll()");
-		line(table, "\t{");
-		line(table, "\t\tif (!mDataAvailable)");
-		line(table, "\t\t{");
-		line(table, "\t\t\tforeach (var item in getDataList())");
-		line(table, "\t\t\t{");
-		line(table, "\t\t\t\tmDataList.Add(item.Value as " + dataClassName + ");");
-		line(table, "\t\t\t}");
-		line(table, "\t\t\tmDataAvailable = true;");
-		line(table, "\t\t}");
-		line(table, "\t\treturn mDataList;");
-		line(table, "\t}");
-		line(table, "}", false);
-	}
-	else
-	{
-		line(table, "public partial class " + tableClassName + " : ExcelTableT<" + dataClassName + ">");
-		line(table, "{}", false);
-	}
+	line(table, "public partial class " + tableClassName + " : ExcelTableT<" + dataClassName + ">");
+	line(table, "{}", false);
 	string tableFilePath = sqliteInfo.mHotFix ? tableFileHotFixPath : tableFileGamePath;
 	writeFile(tableFilePath + tableClassName + ".cs", ANSIToUTF8(table.c_str(), true));
 }
@@ -742,7 +684,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		}
 
 		string memberLine;
-		if (mUseILRuntime || !isList)
+		if (!isList)
 		{
 			memberLine = "\t" + publicType + " " + typeName + " m" + member.mMemberName + ";";
 		}
@@ -758,7 +700,7 @@ void CodeSQLite::generateCSharpSQLiteDataFile(const SQLiteInfo& sqliteInfo, cons
 		memberLine += "// " + member.mComment;
 		line(file, memberLine);
 	}
-	if (mUseILRuntime && listMemberList.size() > 0)
+	if (listMemberList.size() > 0)
 	{
 		line(file, "\tpublic " + dataClassName + "()");
 		line(file, "\t{");

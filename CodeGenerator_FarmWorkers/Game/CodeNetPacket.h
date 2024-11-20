@@ -28,18 +28,11 @@ protected:
 protected:
 	static string singleMemberReadLine(const string& memberName, const string& memberType, bool supportCustom);
 	static string singleMemberWriteLine(const string& memberName, const string& memberType, bool supportCustom);
-	static myVector<string> multiMemberReadLine(const myVector<string>& memberNameList, const string& memberType, bool supportCustom);
-	static myVector<string> multiMemberWriteLine(const myVector<string>& memberNameList, const string& memberType, bool supportCustom);
 	static string singleMemberReadLineCSharp(const string& memberName, const string& memberType);
 	static string singleMemberWriteLineCSharp(const string& memberName, const string& memberType);
-	static myVector<string> multiMemberReadLineCSharp(const myVector<string>& memberNameList, const string& memberType, bool supportCustom);
-	static myVector<string> multiMemberWriteLineCSharp(const myVector<string>& memberNameList, const string& memberType, bool supportCustom);
 	static bool isSameType(const string& sourceType, const string& curType);
 	static string toPODType(const string& type);
 	static bool isCustomStructType(const string& type);
-	static void generateMemberGroup(const myVector<PacketMember>& memberList, myVector<myVector<PacketMember>>& memberNameList);
-	static string expandMembersInGroup(const myVector<PacketMember>& memberList, myVector<string>& memberNameList);
-	static string expandMembersInGroupCSharp(const myVector<PacketMember>& memberList, myVector<string>& memberNameList, bool supportSimplify);
 	static void generateCpp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int& packetVersion);
 	static void generateCSharp(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int packetVersion);
 	static void generateCSharpVirtualClient(const myVector<PacketStruct>& structInfoList, const myVector<PacketInfo>& packetInfoList, int packetVersion);
