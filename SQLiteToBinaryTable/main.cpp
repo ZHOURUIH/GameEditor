@@ -134,7 +134,7 @@ void parseSQLiteDescription(const string& filePath, Map<string, SQLiteInfo>& sql
 		}
 		SQLiteInfo info;
 		info.mSQLiteName = StringUtility::getFileNameNoSuffix(files[i], true);
-		FOR_J(5)
+		FOR_J(4)
 		{
 			reader->read();
 			string value;
@@ -148,10 +148,6 @@ void parseSQLiteDescription(const string& filePath, Map<string, SQLiteInfo>& sql
 				info.mHotFix = StringUtility::stringToBool(value);
 			}
 			else if (j == 2)
-			{
-				// 服务器层级
-			}
-			else if (j == 3)
 			{
 				if (value == "All")
 				{
@@ -170,7 +166,7 @@ void parseSQLiteDescription(const string& filePath, Map<string, SQLiteInfo>& sql
 					info.mOwner = SQLITE_OWNER::NONE;
 				}
 			}
-			else if (j == 4)
+			else if (j == 3)
 			{
 				info.mClientSQLite = StringUtility::stringToBool(value);
 			}
@@ -237,7 +233,12 @@ int main()
 	string destPath;
 	Vector<string> destSQLitePath;
 	Vector<string> lines;
-	FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true);
+	if (!FileUtility::openTxtFileLines("./SQLiteToBinaryTableConfig.txt", lines, true))
+	{
+		cout << "找不到SQLiteToBinaryTableConfig.txt" << endl;
+		system("pause");
+		return 0;
+	}
 	for (const string& line : lines)
 	{
 		Vector<string> params;
