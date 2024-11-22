@@ -2341,21 +2341,21 @@ void CodeNetPacket::generateCSharpPacketDefineFile(const myVector<PacketInfo>& p
 	line(str, "{");
 	line(str, "\tpublic static ushort MIN = 0;");
 	line(str, "");
-	int csGamePacketNumber = 3000;
+	int csPacketNumber = 10000;
 	for (const auto& item : packetList)
 	{
 		if (startWith(item.mPacketName, "CS"))
 		{
-			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++csGamePacketNumber) + ";");
+			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++csPacketNumber) + ";");
 		}
 	}
 	line(str, "");
-	int scGamePacketNumber = 10000;
+	int scPacketNumber = 20000;
 	for (const auto& item : packetList)
 	{
 		if (startWith(item.mPacketName, "SC"))
 		{
-			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++scGamePacketNumber) + ";");
+			line(str, "\tpublic static ushort " + packetNameToUpper(item.mPacketName) + " = " + intToString(++scPacketNumber) + ";");
 		}
 	}
 	line(str, "}", false);
