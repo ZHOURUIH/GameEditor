@@ -1850,7 +1850,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		codeList.push_back("using static BinaryUtility;");
 	}
 	codeList.push_back("");
-	codeList.push_back("public class " + structInfo.mStructName + " : NetStruct");
+	codeList.push_back("public class " + structInfo.mStructName + " : NetStructByte");
 	codeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
 	{
