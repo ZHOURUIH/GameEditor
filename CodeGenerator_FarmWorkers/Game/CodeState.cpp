@@ -17,7 +17,7 @@ void CodeState::generate()
 				   findSubstr(line, " : public CharacterBuffTrigger");
 		});
 	// 生成StateRegister.cpp文件
-	generateStateRegister(gameBuffList, cppGamePath + "Character/Component/StateMachine/GameStateRegister.cpp");
+	generateStateRegister(gameBuffList, cppGamePath + "Character/Component/StateMachine/StateRegister.cpp");
 	print("完成生成角色状态");
 	print("");
 }
