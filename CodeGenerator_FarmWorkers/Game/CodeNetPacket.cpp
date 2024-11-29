@@ -632,7 +632,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t// auto generate end");
 		codeList.push_back("\tvoid debugInfo(MyString<1024>& buffer) override");
 		codeList.push_back("\t{");
-		codeList.push_back("\t\tdebug(buffer, "");");
+		codeList.push_back("\t\tdebug(buffer, \"\");");
 		codeList.push_back("\t}");
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
