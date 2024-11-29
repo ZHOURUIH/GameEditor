@@ -1590,6 +1590,7 @@ void CodeNetPacket::generateCppSCPacketFileSource(const PacketInfo& packetInfo, 
 		codeList.push_back("// auto generate start");
 		codeList.push_back(packetName + " " + packetName + "::mStaticObject;");
 		codeList.push_back("// auto generate end");
+		codeList.push_back("");
 		codeList.push_back("void " + packetName + "::send(CharacterPlayer* player)");
 		codeList.push_back("{");
 		codeList.push_back("\t" + packetName + "& packet = get();");
