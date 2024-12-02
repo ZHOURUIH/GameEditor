@@ -345,103 +345,103 @@ string CodeUtility::cSharpTypeToWrapType(const string& csharpType)
 {
 	if (csharpType == "bool")
 	{
-		return "BOOL";
+		return "BIT_BOOL";
 	}
 	if (csharpType == "byte")
 	{
-		return "BYTE";
+		return "BIT_BYTE";
 	}
 	if (csharpType == "List<byte>")
 	{
-		return "BYTES";
+		return "BIT_BYTES";
 	}
 	if (csharpType == "sbyte")
 	{
-		return "SBYTE";
+		return "BIT_SBYTE";
 	}
 	if (csharpType == "List<sbyte>")
 	{
-		return "SBYTES";
+		return "BIT_SBYTES";
 	}
 	if (csharpType == "short")
 	{
-		return "SHORT";
+		return "BIT_SHORT";
 	}
 	if (csharpType == "List<short>")
 	{
-		return "SHORTS";
+		return "BIT_SHORTS";
 	}
 	if (csharpType == "ushort")
 	{
-		return "USHORT";
+		return "BIT_USHORT";
 	}
 	if (csharpType == "List<ushort>")
 	{
-		return "USHORTS";
+		return "BIT_USHORTS";
 	}
 	if (csharpType == "int")
 	{
-		return "INT";
+		return "BIT_INT";
 	}
 	if (csharpType == "List<int>")
 	{
-		return "INTS";
+		return "BIT_INTS";
 	}
 	if (csharpType == "uint")
 	{
-		return "UINT";
+		return "BIT_UINT";
 	}
 	if (csharpType == "List<uint>")
 	{
-		return "UINTS";
+		return "BIT_UINTS";
 	}
 	if (csharpType == "long")
 	{
-		return "LONG";
+		return "BIT_LONG";
 	}
 	if (csharpType == "List<long>")
 	{
-		return "LONGS";
+		return "BIT_LONGS";
 	}
 	if (csharpType == "float")
 	{
-		return "FLOAT";
+		return "BIT_FLOAT";
 	}
 	if (csharpType == "List<float>")
 	{
-		return "FLOATS";
+		return "BIT_FLOATS";
 	}
 	if (csharpType == "string")
 	{
-		return "STRING";
+		return "BIT_STRING";
 	}
 	if (csharpType == "List<string>")
 	{
-		return "STRINGS";
+		return "BIT_STRINGS";
 	}
 	if (csharpType == "Vector2")
 	{
-		return "VECTOR2";
+		return "BIT_VECTOR2";
 	}
 	if (csharpType == "Vector2UShort")
 	{
-		return "VECTOR2USHORt";
+		return "BIT_VECTOR2_USHORT";
 	}
 	if (csharpType == "Vector2Int")
 	{
-		return "VECTOR2INT";
+		return "BIT_VECTOR2_INT";
 	}
 	if (csharpType == "Vector2UInt")
 	{
-		return "VECTOR2UINT";
+		return "BIT_VECTOR2_UINT";
 	}
 	if (csharpType == "Vector3")
 	{
-		return "VECTOR3";
+		return "BIT_VECTOR3";
 	}
 	if (csharpType == "Vector4")
 	{
-		return "VECTOR4";
+		return "BIT_VECTOR4";
 	}
 	// 如果是自定义的参数类型的列表,则是此类型的名字加上_List后缀
 	if (startWith(csharpType, "List<"))

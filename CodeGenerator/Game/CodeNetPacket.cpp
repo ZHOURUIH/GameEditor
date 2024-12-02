@@ -686,7 +686,7 @@ void CodeNetPacket::generateCppCSPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t// auto generate end");
 		codeList.push_back("\tvoid debugInfo(MyString<1024>& buffer) override");
 		codeList.push_back("\t{");
-		codeList.push_back("\t\tdebug(buffer, "");");
+		codeList.push_back("\t\tdebug(buffer, \"\");");
 		codeList.push_back("\t}");
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
@@ -2289,8 +2289,9 @@ void CodeNetPacket::generateCppSCPacketFileHeader(const PacketInfo& packetInfo, 
 		codeList.push_back("\t// auto generate end");
 		codeList.push_back("\tvoid debugInfo(MyString<1024>& buffer) override");
 		codeList.push_back("\t{");
-		codeList.push_back("\t\tdebug(buffer, "");");
+		codeList.push_back("\t\tdebug(buffer, \"\");");
 		codeList.push_back("\t}");
+		codeList.push_back("\tstatic void send(CharacterPlayer* player);");
 		codeList.push_back("};");
 		writeFile(headerFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
@@ -2326,6 +2327,11 @@ void CodeNetPacket::generateCppSCPacketFileSource(const PacketInfo& packetInfo, 
 		codeList.push_back("// auto generate start");
 		codeList.push_back(packetName + " " + packetName + "::mStaticObject;");
 		codeList.push_back("// auto generate end");
+		codeList.push_back("void " + packetName + "::send(CharacterPlayer* player)");
+		codeList.push_back("{");
+		codeList.push_back("\t" + packetName + "& packet = get();");
+		codeList.push_back("\tsendPacketTCP(&packet, player->getClient());");
+		codeList.push_back("}");
 		writeFile(cppFullPath, ANSIToUTF8(codeListToString(codeList).c_str(), true));
 	}
 }
@@ -2624,7 +2630,7 @@ void CodeNetPacket::generateCSharpStruct(const PacketStruct& structInfo, const s
 		codeList.push_back("using static BinaryUtility;");
 	}
 	codeList.push_back("");
-	codeList.push_back("public class " + structInfo.mStructName + " : NetStruct");
+	codeList.push_back("public class " + structInfo.mStructName + " : NetStructBit");
 	codeList.push_back("{");
 	for (const PacketMember& item : structInfo.mMemberList)
 	{
