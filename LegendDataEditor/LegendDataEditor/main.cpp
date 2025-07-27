@@ -24,6 +24,7 @@ void main()
 		cout << "32:将图片宽高缩放为原来的一半" << endl;
 		cout << "35:将角色动作写入Animation表格" << endl;
 		cout << "43:将怪物动作写入Animation表格" << endl;
+		cout << "44:序列帧:根据动作名字划分合适的图集文件夹" << endl;
 		cout << endl;
 		cout << "14:图集:打包全部图集" << endl;
 		cout << "37:图集:图片划分到多个图集" << endl;
@@ -321,6 +322,14 @@ void main()
 			int startID;
 			cin >> startID;
 			ImageUtility::autoFillMonsterAnimationTable(monsterName, startID);
+		}
+		else if (input == 44)
+		{
+			cout << "输入文件夹名:";
+			string fileName;
+			cin >> fileName;
+			// 如果输入的文件夹中有文件夹,则继续拆分子文件夹,如果没有文件夹,则拆分当前文件夹,递归判断,不能出现一个文件夹中既有文件夹也有图片
+			ImageUtility::groupAtlasByAnimationName("../media/" + fileName);
 		}
 		system("pause");
 		system("cls");

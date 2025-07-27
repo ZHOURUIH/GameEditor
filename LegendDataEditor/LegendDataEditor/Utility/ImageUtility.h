@@ -84,13 +84,14 @@ public:
 	static void printMapSize(const string& filePath);
 	static void mapFileToTxt(const string& filePath);
 	static void txtToMapFile(const string& filePath);
-protected:
+	static void groupAtlasByAnimationName(const string& filePath);
 	static void packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath);
+protected:
 	static void generateMinimalImage(const string& fileName, const string& newFileName, Vector2Int& offset, int alphaThreashold);
 	static void generateExpandImage(const string& fileName, const string& newFileName, Vector2Int size);
 	static Vector2Int getImageSize(const string& fileName);
 	static void removeBackground(const string& fileName, const string& newFileName);
-	static void trimImage(const string& filePath, const string& newFilePath, Vector2Int size, Vector2Int center);
+	static void trimImage(const string& filePath, const string& newFilePath, Vector2Int size, Vector2 center);
 	static Vector2Int generateImageSizeWithOffset(const string& fileName, Vector2Int offset);
 	static void generateOffsetedImage(const string& fileName, const string& newFileName, Vector2Int maxSize, Vector2Int offset);
 	static Vector4Int generateMinRect(const string& fileName, const int minAlpha);

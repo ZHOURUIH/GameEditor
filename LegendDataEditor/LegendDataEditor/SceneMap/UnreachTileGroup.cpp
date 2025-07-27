@@ -172,17 +172,17 @@ bool UnreachTileGroup::generateAddTriangle(int x, int y)
 			mTempAddTriangles.push_back((int)TILE_TRIANGLE::INNER_RIGHT_BOTTOM);
 			mTempAddTriangles.push_back((int)TILE_TRIANGLE::INNER_LEFT_BOTTOM);
 		}
-		if (!mTriangleList.contains(tileIndex))
-		{
-			mTriangleList.insert(tileIndex, myVector<int>());
-		}
 		// 设置组ID,将三角形加入到不可行走区域中
-		mMapData->mTileList[tileIndex].mUnreachGroupID = mGroupID;
-		FOR_I(mTempAddTriangles.size())
+		if (mTempAddTriangles.size() > 0)
 		{
-			if (!mTriangleList[tileIndex].contains(mTempAddTriangles[i]))
+			mTriangleList.tryInsert(tileIndex, myVector<int>());
+			mMapData->mTileList[tileIndex].mUnreachGroupID = mGroupID;
+			FOR_I(mTempAddTriangles.size())
 			{
-				mTriangleList[tileIndex].push_back(mTempAddTriangles[i]);
+				if (!mTriangleList[tileIndex].contains(mTempAddTriangles[i]))
+				{
+					mTriangleList[tileIndex].push_back(mTempAddTriangles[i]);
+				}
 			}
 		}
 		return true;

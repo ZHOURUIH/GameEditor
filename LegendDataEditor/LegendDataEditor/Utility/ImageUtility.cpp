@@ -1532,6 +1532,7 @@ void ImageUtility::trimAllImage(const string& filePath, const int minAlpha)
 
 		FOREACH(iterAnim, animList)
 		{
+			// minX, minY, maxX, maxY
 			Vector4Int minRect(9999, 9999, 0, 0);
 			FOREACH(iter0, iterAnim->second)
 			{
@@ -1553,8 +1554,13 @@ void ImageUtility::trimAllImage(const string& filePath, const int minAlpha)
 					minRect.w = getMax(rect.w, minRect.w);
 				}
 			}
-			Vector2Int minSize(minRect.z - minRect.x, minRect.w - minRect.y);
-			Vector2Int center((minRect.z + minRect.x) >> 1, (minRect.w + minRect.y) >> 1);
+			int minX = minRect.x;
+			int minY = minRect.y;
+			int maxX = minRect.z;
+			int maxY = minRect.w;
+			Vector2Int minSize(maxX - minX, maxY - minY);
+			// 因为涉及到除以2,所以使用浮点数,避免误差导致的错误
+			Vector2 center((maxX + minX) * 0.5f, (maxY + minY) * 0.5f);
 			FOREACH(iter1, iterAnim->second)
 			{
 				string fullPathNoMedia = removeStartString(iter1->second, "../media/");
@@ -1908,6 +1914,95 @@ void ImageUtility::txtToMapFile(const string& filePath)
 	mapData.writeFile(filePath.substr(0, filePath.length() - strlen("_info.txt")));
 }
 
+void ImageUtility::groupAtlasByAnimationName(const string& filePath)
+{
+	myVector<string> files;
+	findFiles(filePath, files, ".png");
+	// first是attack_dir0格式的字符串,second是文件列表,包含路径和后缀
+	myMap<string, myVector<string>> actionList;
+	FOR_VECTOR(files)
+	{
+		string fileName = getFileNameNoSuffix(files[i], true);
+		bool isValidPng = false;
+		FOR_J(HUMAN_ACTION_COUNT)
+		{
+			if (startWith(fileName, HUMAN_ACTION[j].mName.c_str()))
+			{
+				isValidPng = true;
+				break;
+			}
+		}
+		if (!isValidPng)
+		{
+			cout << "文件名错误:" << files[i] << endl;
+			return;
+		}
+		int startIndex = 0;
+		FOR_J(2)
+		{
+			int pos = -1;
+			if (!findString(fileName.c_str(), "_", &pos, startIndex))
+			{
+				cout << "文件名错误:" << files[i] << ",找不到_" << endl;
+			}
+			startIndex = pos + 1;
+		}
+		string preString = fileName.substr(0, startIndex);
+		actionList.tryInsert(preString, myVector<string>()).push_back(files[i]);
+	}
+	int groupIndex = 0;
+	int curIndex = 0;
+	auto iterEnd = actionList.end();
+	for (auto iter = actionList.begin(); iter != iterEnd; )
+	{
+		// 将文件拷贝到临时目录
+		const string tempPath = filePath + "/temp/";
+		const myVector<string>& fileList = iter->second;
+		FOR_VECTOR_CONST(fileList)
+		{
+			moveFile(fileList[i], tempPath + getFileName(fileList[i]));
+			moveFile(replaceSuffix(fileList[i], ".txt"), replaceSuffix(tempPath + getFileName(fileList[i]), ".txt"));
+		}
+		cout << "尝试加入" << fileList.size() << "个图片:" << iter->first << endl;
+		// 移动后就尝试打包
+		const string outputPath = getFilePath(tempPath) + "/tempAtlas";
+		const string tempFileName = "temp";
+		packAtlas(outputPath, tempFileName, tempPath);
+		bool packResult = isFileExist(outputPath + "/" + tempFileName + ".png");
+		deleteFolder(outputPath);
+		bool moveToNext = true;
+		// 本次打包失败,则说明上一次的数量已经达到上限,临时目录就可以直接改成一个可单独打图集的目录
+		// 打包成功,但是已经没有剩余的图片了,则当前图集已经完成,可以跳转分组下一个图集了
+		if (curIndex == actionList.size() - 1 || !packResult)
+		{
+			// 打包失败,将多余的这部分图片再移回到原来的位置去
+			if (!packResult)
+			{
+				moveToNext = false;
+				FOR_VECTOR_CONST(fileList)
+				{
+					moveFile(tempPath + getFileName(fileList[i]), fileList[i]);
+					moveFile(replaceSuffix(tempPath + getFileName(fileList[i]), ".txt"), replaceSuffix(fileList[i], ".txt"));
+				}
+				// 第一次尝试就已经失败,就不再继续处理了
+				if (curIndex == 0)
+				{
+					cout << "分组失败,原因可能是图片过大导致无法打出最小数量图片的图集,将跳过,请手动处理" << endl;
+					break;
+				}
+			}
+			string newPathName = "AnimationSet" + intToString(groupIndex++);
+			renameFolder(tempPath, filePath + "/" + newPathName);
+			cout << "完成一个分组:" << newPathName << endl;
+		}
+		if (moveToNext)
+		{
+			++curIndex;
+			++iter;
+		}
+	}
+}
+
 void ImageUtility::packAtlas(const string& outputPath, const string& outputFileName, const string& sourcePath)
 {
 	createFolder(outputPath);
@@ -1940,15 +2035,17 @@ void ImageUtility::packAtlas(const string& outputPath, const string& outputFileN
 	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
 }
 
-void ImageUtility::trimImage(const string& filePath, const string& newFilePath, const Vector2Int size, const Vector2Int center)
+void ImageUtility::trimImage(const string& filePath, const string& newFilePath, const Vector2Int size, const Vector2 center)
 {
 	FreeImage_Initialise();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(filePath.c_str());
 	FIBITMAP* oldBitmap = FreeImage_Load(format, filePath.c_str());
 	int width = FreeImage_GetWidth(oldBitmap);
 	int height = FreeImage_GetHeight(oldBitmap);
-	int xInOld = ((width - size.x) >> 1) + (center.x - (width >> 1));
-	int yInOld = ((height - size.y) >> 1) + (center.y - (height >> 1));
+	float xInOldF = ((width - size.x) * 0.5f) + (center.x - (width * 0.5f));
+	float yInOldF = ((height - size.y) * 0.5f) + (center.y - (height * 0.5f));
+	int xInOld = (int)xInOldF;
+	int yInOld = (int)yInOldF;
 	if (xInOld >= 0 && yInOld >= 0)
 	{
 		FIBITMAP* newBitmap = FreeImage_Allocate(size.x, size.y, 32);
@@ -1961,6 +2058,10 @@ void ImageUtility::trimImage(const string& filePath, const string& newFilePath, 
 		}
 		FreeImage_Save(format, newBitmap, newFilePath.c_str());
 		FreeImage_Unload(newBitmap);
+	}
+	else
+	{
+		cout << "计算出的起点错误:" << xInOld << ", " << yInOld << endl;
 	}
 	FreeImage_Unload(oldBitmap);
 	FreeImage_DeInitialise();
