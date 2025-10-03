@@ -201,29 +201,57 @@ void MainListWindow::PasteSelection()
 		return;
 	}
 
-	// 添加撤销操作
-	Vector<Vector<string>> rectData;
-	FOR_VECTOR(rows)
-	{
-		const wxArrayString cols = wxSplit(rows[i], '\t');
-		Vector<string> tempRow;
-		FOR_VECTOR_J(cols)
-		{
-			tempRow.push_back(mCSVEditor->getCellDataAuto(topRow + i, leftCol + j));
-		}
-		rectData.push_back(move(tempRow));
-	}
-	UndoSetCellData* undo = new UndoSetCellData();
-	undo->setData(topRow, leftCol, move(rectData));
-	mUndoManager->addUndo(undo);
-
 	// 设置单元格数据
-	FOR_VECTOR(rows)
+	// 如果只复制了1格,但是选中了多格,则全部填充为相同的数据
+	if (rows.size() == 1 && wxSplit(rows[0], '\t').size() == 1)
 	{
-		const wxArrayString cols = wxSplit(rows[i], '\t');
-		FOR_VECTOR_J(cols)
+		// 添加撤销操作
+		Vector<Vector<string>> rectData;
+		for (int i = topRow; i <= bottomRow; ++i)
 		{
-			SetCellValue(topRow + i, leftCol + j, cols[j]);
+			Vector<string> tempRow;
+			for (int j = leftCol; j <= rightCol; ++j)
+			{
+				tempRow.push_back(mCSVEditor->getCellDataAuto(i, j));
+			}
+			rectData.push_back(move(tempRow));
+		}
+		UndoSetCellData* undo = new UndoSetCellData();
+		undo->setData(topRow, leftCol, move(rectData));
+		mUndoManager->addUndo(undo);
+
+		for (int i = topRow; i <= bottomRow; ++i)
+		{
+			for (int j = leftCol; j <= rightCol; ++j)
+			{
+				SetCellValue(i, j, rows[0]);
+			}
+		}
+	}
+	else
+	{
+		// 添加撤销操作
+		Vector<Vector<string>> rectData;
+		FOR_VECTOR(rows)
+		{
+			const wxArrayString cols = wxSplit(rows[i], '\t');
+			Vector<string> tempRow;
+			FOR_VECTOR_J(cols)
+			{
+				tempRow.push_back(mCSVEditor->getCellDataAuto(topRow + i, leftCol + j));
+			}
+			rectData.push_back(move(tempRow));
+		}
+		UndoSetCellData* undo = new UndoSetCellData();
+		undo->setData(topRow, leftCol, move(rectData));
+		mUndoManager->addUndo(undo);
+		FOR_VECTOR(rows)
+		{
+			const wxArrayString cols = wxSplit(rows[i], '\t');
+			FOR_VECTOR_J(cols)
+			{
+				SetCellValue(topRow + i, leftCol + j, cols[j]);
+			}
 		}
 	}
 }

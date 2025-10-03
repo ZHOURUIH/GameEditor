@@ -255,11 +255,25 @@ string CSVEditor::getCellDataAuto(int row, int col)
 {
 	if (row == EditorDefine::ROW_TABLE_NAME)
 	{
-		return getTableName();
+		if (col == 0)
+		{
+			return getTableName();
+		}
+		else
+		{
+			return FrameDefine::EMPTY;
+		}
 	}
 	else if (row == EditorDefine::ROW_TABLE_OWNER)
 	{
-		return getOwnerString(getTableOwner());
+		if (col == 0)
+		{
+			return getOwnerString(getTableOwner());
+		}
+		else
+		{
+			return FrameDefine::EMPTY;
+		}
 	}
 	else if (row == EditorDefine::ROW_COLUMN_NAME)
 	{
@@ -291,11 +305,17 @@ void CSVEditor::setCellDataAuto(int row, int col, const string& value)
 {
 	if (row == EditorDefine::ROW_TABLE_NAME)
 	{
-		setTableName(value);
+		if (col == 0)
+		{
+			setTableName(value);
+		}
 	}
 	else if (row == EditorDefine::ROW_TABLE_OWNER)
 	{
-		setTableOwner(value);
+		if (col == 0)
+		{
+			setTableOwner(value);
+		}
 	}
 	else if (row == EditorDefine::ROW_COLUMN_NAME)
 	{
