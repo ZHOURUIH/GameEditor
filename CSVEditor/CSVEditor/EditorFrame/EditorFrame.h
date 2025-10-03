@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorUtility.h"
+#include "wxHeader.h"
 
 class MainListWindow;
 class CSVEditor;
@@ -37,5 +37,4 @@ protected:
 	wxMenu* mFileMenu = nullptr;
 	wxAuiManager mAuiManager = nullptr;
 	MainListWindow* mMainListWindow = nullptr;
-	CSVEditor* mCSVEditor = nullptr;
 };

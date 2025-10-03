@@ -14,9 +14,7 @@ END_EVENT_TABLE()
 
 EditorFrame::EditorFrame(wxString title, wxSize size):
 	wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, size)
-{
-	mCSVEditor = new CSVEditor();
-}
+{}
 
 EditorFrame::~EditorFrame()
 {}

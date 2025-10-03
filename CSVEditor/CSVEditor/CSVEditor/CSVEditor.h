@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorHeader.h"
+#include "UsingSTD.h"
 #include "GridData.h"
 #include "ColumnData.h"
 
@@ -21,6 +21,15 @@ public:
 	const string& getTableName() const { return mTableName; }
 	OWNER getTableOwner() const { return mOwner; }
 	bool isOpened() const { return !mTableName.empty(); }
+	bool validate();
+	void setCellData(int row, int col, const string& data);
+	void setColumnName(int col, const string& name);
+	void setColumnOwner(int col, const string& owner);
+	void setColumnType(int col, const string& type);
+	void setColumnComment(int col, const string& comment);
+	void setColumnLinkTable(int col, const string& linkTable);
+	void setTableName(const string& name);
+	void setTableOwner(const string& owner);
 protected:
 	string mFilePath;
 	Vector<Vector<GridData*>> mAllGrid;

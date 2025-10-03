@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorFrame\EditorApp.cpp" />
+    <ClCompile Include="EditorFrame\EditorBase.cpp" />
     <ClCompile Include="EditorFrame\EditorFrame.cpp" />
     <ClCompile Include="EditorFrame\EditorUtility.cpp" />
     <ClCompile Include="EditorFrame\MainListWindow.cpp" />
@@ -42,10 +43,11 @@
     <ClInclude Include="CSVEditor\GridData.h" />
     <ClInclude Include="EditorFrame\AllHeader.h" />
     <ClInclude Include="EditorFrame\EditorApp.h" />
+    <ClInclude Include="EditorFrame\EditorBase.h" />
     <ClInclude Include="EditorFrame\EditorDefine.h" />
     <ClInclude Include="EditorFrame\EditorEnum.h" />
     <ClInclude Include="EditorFrame\EditorFrame.h" />
-    <ClInclude Include="EditorFrame\EditorHeader.h" />
+    <ClInclude Include="EditorFrame\wxHeader.h" />
     <ClInclude Include="EditorFrame\EditorUtility.h" />
     <ClInclude Include="EditorFrame\MainListWindow.h" />
     <ClInclude Include="CSVEditor\CSVEditor.h" />

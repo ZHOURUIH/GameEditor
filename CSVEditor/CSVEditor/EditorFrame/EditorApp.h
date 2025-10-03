@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EditorUtility.h"
+#include "wxHeader.h"
 
 class EditorFrame;
 class EditorBusyInfo;

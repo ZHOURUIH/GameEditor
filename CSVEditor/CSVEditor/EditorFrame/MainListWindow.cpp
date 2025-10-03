@@ -41,6 +41,8 @@ MainListWindow::MainListWindow(wxWindow* parent, long style)
 	SetSizer(sizer1);
 	Layout();
 	Centre(wxBOTH);
+
+	mGrid->Bind(wxEVT_GRID_CELL_CHANGED, &MainListWindow::OnCellChanged, this);
 }
 
 MainListWindow::~MainListWindow()
@@ -75,22 +77,22 @@ void MainListWindow::initData(CSVEditor* table)
 		mGrid->SetColLabelValue(i, colList[i]->mName);
 	}
 	// 表名
-	mGrid->SetCellValue(0, 0, table->getTableName());
+	mGrid->SetCellValue(EditorDefine::ROW_TABLE_NAME, 0, table->getTableName());
 	// 表所属
-	mGrid->SetCellValue(1, 0, getOwnerString(table->getTableOwner()));
+	mGrid->SetCellValue(EditorDefine::ROW_TABLE_OWNER, 0, getOwnerString(table->getTableOwner()));
 	// 前几行是列信息
 	FOR_VECTOR(colList)
 	{
 		// 字段名字
-		mGrid->SetCellValue(2, i, colList[i]->mName);
+		mGrid->SetCellValue(EditorDefine::ROW_COLUMN_NAME, i, colList[i]->mName);
 		// 字段类型
-		mGrid->SetCellValue(3, i, colList[i]->mType);
+		mGrid->SetCellValue(EditorDefine::ROW_COLUMN_TYPE, i, colList[i]->mType);
 		// 字段所属
-		mGrid->SetCellValue(4, i, getOwnerString(colList[i]->mOwner));
+		mGrid->SetCellValue(EditorDefine::ROW_COLUMN_OWNER, i, getOwnerString(colList[i]->mOwner));
 		// 字段注释
-		mGrid->SetCellValue(5, i, colList[i]->mComment);
+		mGrid->SetCellValue(EditorDefine::ROW_COLUMN_COMMENT, i, colList[i]->mComment);
 		// 字段链接表
-		mGrid->SetCellValue(6, i, colList[i]->mLinkTable);
+		mGrid->SetCellValue(EditorDefine::ROW_COLUMN_LINK_TABLE, i, colList[i]->mLinkTable);
 	}
 
 	FOR_VECTOR(dataList)
@@ -101,9 +103,53 @@ void MainListWindow::initData(CSVEditor* table)
 			mGrid->SetCellValue(i + EditorDefine::HEADER_ROW, j, line[j]->mOriginData);
 		}
 	}
+
+	// 表头需要全部都设置成蓝色背景
+	FOR_I(EditorDefine::HEADER_ROW)
+	{
+		FOR_J(colList.size())
+		{
+			mGrid->SetCellBackgroundColour(i, j, *wxCYAN);
+		}
+	}
 }
 
-void MainListWindow::update(float elapsedTime)
+void MainListWindow::OnCellChanged(wxGridEvent& event)
 {
-	
+	const int row = event.GetRow();
+	const int col = event.GetCol();
+	const string value = mGrid->GetCellValue(row, col).ToStdString();
+	if (row == EditorDefine::ROW_TABLE_NAME)
+	{
+		mCSVEditor->setTableName(value);
+	}
+	else if (row == EditorDefine::ROW_TABLE_OWNER)
+	{
+		mCSVEditor->setTableOwner(value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_NAME)
+	{
+		mCSVEditor->setColumnName(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_TYPE)
+	{
+		mCSVEditor->setColumnType(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_OWNER)
+	{
+		mCSVEditor->setColumnOwner(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_COMMENT)
+	{
+		mCSVEditor->setColumnComment(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_LINK_TABLE)
+	{
+		mCSVEditor->setColumnLinkTable(col, value);
+	}
+	else
+	{
+		mCSVEditor->setCellData(row - EditorDefine::HEADER_ROW, col, value);
+	}
+	event.Skip(); // 保持默认行为
 }

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <map>
-
-#include "EditorHeader.h"
+#include "wxHeader.h"
 
 class GridData;
 class ColumnData;
@@ -13,8 +11,9 @@ public:
 	~MainListWindow();
 	void init();
 	void initData(CSVEditor* table);
-	void update(float elapsedTime);
+	void update(float elapsedTime){}
 	DECLARE_EVENT_TABLE()
+	void OnCellChanged(wxGridEvent& event);
 protected:
 	wxGrid* mGrid;
 };

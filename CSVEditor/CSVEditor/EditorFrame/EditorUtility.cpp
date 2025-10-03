@@ -112,7 +112,7 @@ namespace EditorUtility
 		return "";
 	}
 
-	OWNER getOwner(string owner)
+	OWNER getOwner(const string& owner)
 	{
 		if (owner == "None")
 		{

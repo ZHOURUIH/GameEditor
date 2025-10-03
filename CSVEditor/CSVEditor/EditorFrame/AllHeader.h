@@ -1,9 +1,14 @@
 #pragma once
 
-#include "EditorHeader.h"
+#include "wxHeader.h"
 #include "EditorApp.h"
 #include "EditorFrame.h"
 #include "EditorUtility.h"
 #include "MainListWindow.h"
 #include "CSVEditor.h"
 #include "GridData.h"
+#include "FrameHeader.h"
+#include "EditorEnum.h"
+#include "EditorDefine.h"
+#include "EditorBase.h"
+#include "ColumnData.h"

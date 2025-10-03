@@ -1,6 +1,7 @@
 #pragma once
 
-#include "EditorHeader.h"
+#include "wxHeader.h"
+#include "EditorEnum.h"
 
 namespace EditorUtility
 {
@@ -9,7 +10,7 @@ namespace EditorUtility
 	// 给csv文件添加一个字符串数据,addCommaOrReturn为true则在最后添加逗号,否则添加换行
 	void appendString(string& file, const string& value, bool addCommaOrReturn);
 	string getOwnerString(OWNER owner);
-	OWNER getOwner(string owner);
+	OWNER getOwner(const string& owner);
 };
 
 using namespace EditorUtility;

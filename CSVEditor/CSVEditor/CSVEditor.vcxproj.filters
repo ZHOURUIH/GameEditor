@@ -76,6 +76,9 @@
     <ClCompile Include="Frame\Utility\FileUtility.cpp">
       <Filter>Frame\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="EditorFrame\EditorBase.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorFrame\EditorApp.h">
@@ -84,7 +87,7 @@
     <ClInclude Include="EditorFrame\EditorFrame.h">
       <Filter>EditorFrame</Filter>
     </ClInclude>
-    <ClInclude Include="EditorFrame\EditorHeader.h">
+    <ClInclude Include="EditorFrame\wxHeader.h">
       <Filter>EditorFrame</Filter>
     </ClInclude>
     <ClInclude Include="EditorFrame\EditorUtility.h">
@@ -244,6 +247,9 @@
       <Filter>EditorFrame</Filter>
     </ClInclude>
     <ClInclude Include="EditorFrame\EditorDefine.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\EditorBase.h">
       <Filter>EditorFrame</Filter>
     </ClInclude>
   </ItemGroup>

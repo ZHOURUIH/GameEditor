@@ -11,7 +11,7 @@ END_EVENT_TABLE()
 
 EditorApp::EditorApp()
 {
-	;
+	mCSVEditor = new CSVEditor();
 }
 
 EditorApp::~EditorApp()

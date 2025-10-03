@@ -31,5 +31,3 @@
 #include <wx/sizer.h>
 
 #include "FrameHeader.h"
-#include "EditorEnum.h"
-#include "EditorDefine.h"

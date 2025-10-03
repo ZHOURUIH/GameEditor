@@ -14,17 +14,17 @@ void CSVEditor::openFile(const string& file)
 	{
 		const Vector<string>& line = result[i];
 		// 表名
-		if (i == 0)
+		if (i == EditorDefine::ROW_TABLE_NAME)
 		{
 			mTableName = line[0];
 		}
 		// 表所属
-		else if (i == 1)
+		else if (i == EditorDefine::ROW_TABLE_OWNER)
 		{
 			mOwner = getOwner(line[0]);
 		}
 		// 字段名
-		else if (i == 2)
+		else if (i == EditorDefine::ROW_COLUMN_NAME)
 		{
 			FOR_VECTOR_J(line)
 			{
@@ -34,7 +34,7 @@ void CSVEditor::openFile(const string& file)
 			}
 		}
 		// 字段类型
-		else if (i == 3)
+		else if (i == EditorDefine::ROW_COLUMN_TYPE)
 		{
 			FOR_VECTOR_J(line)
 			{
@@ -42,7 +42,7 @@ void CSVEditor::openFile(const string& file)
 			}
 		}
 		// 字段所属
-		else if (i == 4)
+		else if (i == EditorDefine::ROW_COLUMN_OWNER)
 		{
 			FOR_VECTOR_J(line)
 			{
@@ -50,7 +50,7 @@ void CSVEditor::openFile(const string& file)
 			}
 		}
 		// 字段注释
-		else if (i == 5)
+		else if (i == EditorDefine::ROW_COLUMN_COMMENT)
 		{
 			FOR_VECTOR_J(line)
 			{
@@ -58,7 +58,7 @@ void CSVEditor::openFile(const string& file)
 			}
 		}
 		// 链接表格
-		else if (i == 6)
+		else if (i == EditorDefine::ROW_COLUMN_LINK_TABLE)
 		{
 			FOR_VECTOR_J(line)
 			{
@@ -104,45 +104,72 @@ void CSVEditor::closeFile()
 
 void CSVEditor::save()
 {
+	if (!validate())
+	{
+		return;
+	}
 	string csv;
 	const int colCount = mColumnDataList.size();
-	// 表名
-	csv += mTableName;
-	FOR_I(colCount)
+	FOR_I(EditorDefine::HEADER_ROW)
 	{
-		appendString(csv, "", i < colCount - 1);
-	}
-	// 表所属
-	csv += getOwnerString(mOwner);
-	FOR_I(colCount)
-	{
-		appendString(csv, "", i < colCount - 1);
-	}
-	// 表头
-	// 名字
-	FOR_VECTOR(mColumnDataList)
-	{
-		appendString(csv, mColumnDataList[i]->mName, i < mColumnDataList.size() - 1);
-	}
-	// 类型
-	FOR_VECTOR(mColumnDataList)
-	{
-		appendString(csv, mColumnDataList[i]->mType, i < mColumnDataList.size() - 1);
-	}
-	// 所属
-	FOR_VECTOR(mColumnDataList)
-	{
-		appendString(csv, getOwnerString(mColumnDataList[i]->mOwner), i < mColumnDataList.size() - 1);
-	}
-	// 注释
-	FOR_VECTOR(mColumnDataList)
-	{
-		appendString(csv, mColumnDataList[i]->mComment, i < mColumnDataList.size() - 1);
-	}
-	// 链接表格
-	FOR_VECTOR(mColumnDataList)
-	{
-		appendString(csv, mColumnDataList[i]->mLinkTable, i < mColumnDataList.size() - 1);
+		// 表名
+		if (i == EditorDefine::ROW_TABLE_NAME)
+		{
+			csv += mTableName;
+			FOR_I(colCount)
+			{
+				appendString(csv, "", i < colCount - 1);
+			}
+		}
+		// 表所属
+		else if (i == EditorDefine::ROW_TABLE_OWNER)
+		{
+			csv += getOwnerString(mOwner);
+			FOR_I(colCount)
+			{
+				appendString(csv, "", i < colCount - 1);
+			}
+		}
+		// 字段名字
+		else if (i == EditorDefine::ROW_COLUMN_NAME)
+		{
+			FOR_VECTOR(mColumnDataList)
+			{
+				appendString(csv, mColumnDataList[i]->mName, i < mColumnDataList.size() - 1);
+			}
+		}
+		// 字段类型
+		else if (i == EditorDefine::ROW_COLUMN_TYPE)
+		{
+			FOR_VECTOR(mColumnDataList)
+			{
+				appendString(csv, mColumnDataList[i]->mType, i < mColumnDataList.size() - 1);
+			}
+		}
+		// 字段所属
+		else if (i == EditorDefine::ROW_COLUMN_OWNER)
+		{
+			FOR_VECTOR(mColumnDataList)
+			{
+				appendString(csv, getOwnerString(mColumnDataList[i]->mOwner), i < mColumnDataList.size() - 1);
+			}
+		}
+		// 字段注释
+		else if (i == EditorDefine::ROW_COLUMN_COMMENT)
+		{
+			FOR_VECTOR(mColumnDataList)
+			{
+				appendString(csv, mColumnDataList[i]->mComment, i < mColumnDataList.size() - 1);
+			}
+		}
+		// 字段链接表格
+		else if (i == EditorDefine::ROW_COLUMN_LINK_TABLE)
+		{
+			FOR_VECTOR(mColumnDataList)
+			{
+				appendString(csv, mColumnDataList[i]->mLinkTable, i < mColumnDataList.size() - 1);
+			}
+		}
 	}
 	// 表数据
 	FOR_VECTOR(mAllGrid)
@@ -154,4 +181,59 @@ void CSVEditor::save()
 		}
 	}
 	writeFile(mFilePath, ANSIToUTF8(csv));
+}
+
+bool CSVEditor::validate()
+{
+	// 检查所有ID是否唯一
+	Set<int> idSet;
+	for (const auto& item : mAllGrid)
+	{
+		if (!idSet.insert(SToI(item[0]->mOriginData)))
+		{
+			wxMessageBox("有重复的ID:" + item[0]->mOriginData, "错误", wxOK | wxICON_ERROR);
+			return false;
+		}
+	}
+	return true;
+}
+
+void CSVEditor::setCellData(int row, int col, const string& data)
+{
+	mAllGrid[row][col]->mOriginData = data;
+}
+
+void CSVEditor::setColumnName(int col, const string& name)
+{
+	mColumnDataList[col]->mName = name;
+}
+
+void CSVEditor::setColumnOwner(int col, const string& owner)
+{
+	mColumnDataList[col]->mOwner = getOwner(owner);
+}
+
+void CSVEditor::setColumnType(int col, const string& type)
+{
+	mColumnDataList[col]->mType = type;
+}
+
+void CSVEditor::setColumnComment(int col, const string& comment)
+{
+	mColumnDataList[col]->mComment = comment;
+}
+
+void CSVEditor::setColumnLinkTable(int col, const string& linkTable)
+{
+	mColumnDataList[col]->mLinkTable = linkTable;
+}
+
+void CSVEditor::setTableName(const string& name)
+{
+	mTableName = name;
+}
+
+void CSVEditor::setTableOwner(const string& owner)
+{
+	mOwner = getOwner(owner);
 }
