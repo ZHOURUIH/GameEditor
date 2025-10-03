@@ -4,7 +4,9 @@
 
 namespace EditorBase
 {
-	CSVEditor* mCSVEditor;
-	EditorApp* mEditorApp;
-	EditorFrame* mEditorFrame;
+	CSVEditor* mCSVEditor = nullptr;
+	EditorApp* mEditorApp = nullptr;
+	EditorFrame* mEditorFrame = nullptr;
+	MainListWindow* mMainListWindow = nullptr;
+	UndoManager* mUndoManager = nullptr;
 };

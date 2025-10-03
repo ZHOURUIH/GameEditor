@@ -13,3 +13,7 @@
 #include "EditorBase.h"
 #include "ColumnData.h"
 #include "EditorCallback.h"
+#include "UndoManager.h"
+#include "Undo.h"
+#include "UndoSetCellData.h"
+#include "MyMessageBox.h"

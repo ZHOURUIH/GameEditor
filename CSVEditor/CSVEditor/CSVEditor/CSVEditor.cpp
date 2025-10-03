@@ -201,6 +201,92 @@ bool CSVEditor::validate()
 	return true;
 }
 
+const string& CSVEditor::getColumnName(int col)
+{
+	if (col < 0 || col >= mColumnDataList.size())
+	{
+		return FrameDefine::EMPTY;
+	}
+	return mColumnDataList[col]->mName;
+}
+
+string CSVEditor::getColumnOwner(int col)
+{
+	if (col < 0 || col >= mColumnDataList.size())
+	{
+		return FrameDefine::EMPTY;
+	}
+	return getOwnerString(mColumnDataList[col]->mOwner);
+}
+
+const string& CSVEditor::getColumnType(int col)
+{
+	if (col < 0 || col >= mColumnDataList.size())
+	{
+		return FrameDefine::EMPTY;
+	}
+	return mColumnDataList[col]->mType;
+}
+
+const string& CSVEditor::getColumnComment(int col)
+{
+	if (col < 0 || col >= mColumnDataList.size())
+	{
+		return FrameDefine::EMPTY;
+	}
+	return mColumnDataList[col]->mComment;
+}
+
+const string& CSVEditor::getColumnLinkTable(int col)
+{
+	if (col < 0 || col >= mColumnDataList.size())
+	{
+		return FrameDefine::EMPTY;
+	}
+	return mColumnDataList[col]->mLinkTable;
+}
+
+const string& CSVEditor::getCellData(int row, int col)
+{
+	return mAllGrid[row][col]->mOriginData;
+}
+
+string CSVEditor::getCellDataAuto(int row, int col)
+{
+	if (row == EditorDefine::ROW_TABLE_NAME)
+	{
+		return getTableName();
+	}
+	else if (row == EditorDefine::ROW_TABLE_OWNER)
+	{
+		return getOwnerString(getTableOwner());
+	}
+	else if (row == EditorDefine::ROW_COLUMN_NAME)
+	{
+		return getColumnName(col);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_TYPE)
+	{
+		return getColumnType(col);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_OWNER)
+	{
+		return getColumnOwner(col);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_COMMENT)
+	{
+		return getColumnComment(col);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_LINK_TABLE)
+	{
+		return getColumnLinkTable(col);
+	}
+	else
+	{
+		return getCellData(row - EditorDefine::HEADER_ROW, col);
+	}
+}
+
 void CSVEditor::setCellDataAuto(int row, int col, const string& value)
 {
 	if (row == EditorDefine::ROW_TABLE_NAME)

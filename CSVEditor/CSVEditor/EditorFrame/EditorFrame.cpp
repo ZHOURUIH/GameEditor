@@ -3,24 +3,26 @@
 enum
 {
 	ID_TIMER,
+	ID_UNDO,
+	ID_REDO,
 };
 
 BEGIN_EVENT_TABLE(EditorFrame, wxFrame)
 
 EVT_TIMER(ID_TIMER, OnTimer)
+EVT_TOOL(ID_UNDO, EditorFrame::OnUndo)
+EVT_TOOL(ID_REDO, EditorFrame::OnRedo)
 EVT_CLOSE(OnCloseWindow)
 
 END_EVENT_TABLE()
 
 EditorFrame::EditorFrame(wxString title, wxSize size):
-	wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, size)
+	wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, size)
 {
 	mEditorFrame = this;
 	mCSVEditor->setDirtyCallback(onDirty);
+	mUndoManager->setUndoChangeCallback(onUndoChanged);
 }
-
-EditorFrame::~EditorFrame()
-{}
 
 void EditorFrame::init()
 {
@@ -32,15 +34,15 @@ void EditorFrame::init()
 
 void EditorFrame::destroy()
 {
-	if (mTimer != NULL)
+	if (mTimer != nullptr)
 	{
 		delete mTimer;
-		mTimer = NULL;
+		mTimer = nullptr;
 	}
-	if (mMainListWindow != NULL)
+	if (mMainListWindow != nullptr)
 	{
 		delete mMainListWindow;
-		mMainListWindow = NULL;
+		mMainListWindow = nullptr;
 	}
 	mAuiManager.UnInit();
 }
@@ -62,9 +64,6 @@ void EditorFrame::setup()
 
 	// 创建完后刷新一遍全部控件的选中状态
 	RefreshAllMenuToolCheckState();
-
-	// 刷新全部资源列表
-	RefreshAllResource();
 }
 
 void EditorFrame::CreateMenu()
@@ -86,16 +85,24 @@ void EditorFrame::CreateMenu()
 	wxMenu* editMenu = new wxMenu;
 	editMenu->Append(wxID_COPY, "复制\tCtrl+C", "copy");
 	editMenu->Append(wxID_PASTE, "粘贴\tCtrl+V", "paste");
+	editMenu->Append(ID_UNDO, "撤销\tCtrl+Z", "undo");
+	editMenu->Append(ID_REDO, "重做\tCtrl+Y", "redo");
 	menuBar->Append(editMenu, "编辑");
 
 	Bind(wxEVT_MENU, &EditorFrame::OnCopy, this, wxID_COPY);
 	Bind(wxEVT_MENU, &EditorFrame::OnPaste, this, wxID_PASTE);
+	Bind(wxEVT_MENU, &EditorFrame::OnUndo, this, ID_UNDO);
+	Bind(wxEVT_MENU, &EditorFrame::OnRedo, this, ID_REDO);
 
 	SetMenuBar(menuBar);
 }
 
 void EditorFrame::CreateToolBar()
 {
+	wxToolBar* toolbar = wxFrame::CreateToolBar(wxTB_HORIZONTAL | wxTB_FLAT);
+	toolbar->AddTool(ID_UNDO, "撤销", wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR).ConvertToDisabled(), wxITEM_NORMAL, "撤销上次操作", "撤销上次操作");
+	toolbar->AddTool(ID_REDO, "重做", wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR).ConvertToDisabled(), wxITEM_NORMAL, "恢复上次撤销的操作", "恢复上次撤销的操作");
+	toolbar->Realize();
 	mAuiManager.Update();
 }
 
@@ -114,24 +121,9 @@ void EditorFrame::CreateStatuBar()
 	CreateStatusBar(2);
 }
 
-void EditorFrame::UpdateStatus()
-{
-	;
-}
-
-void EditorFrame::CreateEditorCore()
-{
-	
-}
-
-void EditorFrame::RefreshAllResource()
-{
-	;
-}
-
 void EditorFrame::RefreshAllMenuToolCheckState()
 {
-	;
+	onUndoChanged();
 }
 
 void EditorFrame::OnTimer(wxTimerEvent& event)
@@ -150,18 +142,21 @@ void EditorFrame::Update(float elapsedTime)
 	UpdateStatus();
 }
 
-void EditorFrame::Render()
-{
-	;
-}
-
-void EditorFrame::KeyProcess()
-{
-	;
-}
-
 void EditorFrame::OnExit(wxCommandEvent& event)
 {
+	if (mCSVEditor->isOpened() && mCSVEditor->isDirty())
+	{
+		const int ret = dialogYesNoCancel("文件未保存,是否保存再退出?", "保存并退出", "不保存且退出", "取消退出");
+		if (ret == wxID_YES)
+		{
+			mCSVEditor->save();
+		}
+		else if (ret == wxID_NO) {}
+		else if (ret == wxID_CANCEL)
+		{
+			return;
+		}
+	}
 	// 发出关闭窗口的事件
 	Close(true);
 }
@@ -198,8 +193,39 @@ void EditorFrame::OnPaste(wxCommandEvent& event)
 	mMainListWindow->PasteSelection();
 }
 
+void EditorFrame::OnUndo(wxCommandEvent& event)
+{
+	if (!mUndoManager->canUndo())
+	{
+		return;
+	}
+	mUndoManager->undo();
+}
+
+void EditorFrame::OnRedo(wxCommandEvent& event)
+{
+	if (!mUndoManager->canRedo())
+	{
+		return;
+	}
+	mUndoManager->redo();
+}
+
 void EditorFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
+	if (mCSVEditor->isOpened() && mCSVEditor->isDirty())
+	{
+		const int ret = dialogYesNoCancel("文件未保存,是否保存再退出?", "保存并退出", "不保存且退出", "取消退出");
+		if (ret == wxID_YES)
+		{
+			mCSVEditor->save();
+		}
+		else if (ret == wxID_NO) {}
+		else if (ret == wxID_CANCEL)
+		{
+			return;
+		}
+	}
 	// 销毁自己的数据
 	destroy();
 	// 销毁窗口
@@ -219,4 +245,22 @@ void EditorFrame::onDirty()
 		title += " *";
 	}
 	mEditorFrame->SetTitle(title);
+}
+
+void EditorFrame::onUndoChanged()
+{
+	// 获取工具栏控件
+	wxToolBar* toolbar = mEditorFrame->GetToolBar();
+	if (toolbar != nullptr)
+	{
+		toolbar->EnableTool(ID_UNDO, mUndoManager->canUndo());
+		toolbar->EnableTool(ID_REDO, mUndoManager->canRedo());
+	}
+	// 获取菜单栏控件
+	wxMenuBar* menuBar = mEditorFrame->GetMenuBar();
+	if (menuBar != nullptr)
+	{
+		menuBar->Enable(ID_UNDO, mUndoManager->canUndo());
+		menuBar->Enable(ID_REDO, mUndoManager->canRedo());
+	}
 }

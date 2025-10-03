@@ -9,15 +9,15 @@ class EditorFrame : public wxFrame
 {
 public:
 	EditorFrame(wxString title, wxSize size);
+	virtual ~EditorFrame() = default;
 	void init();
 	void destroy();
 	void setup();
-	virtual ~EditorFrame();
 	// 刷新全部的可选中菜单和可选中工具按钮的选中状态
 	void RefreshAllMenuToolCheckState();
 	void Update(float elapsedTime);
-	void Render();
-	void KeyProcess();
+	void Render() {}
+	void KeyProcess() {}
 	
 	DECLARE_EVENT_TABLE()
 	void OnTimer(wxTimerEvent& event);
@@ -26,16 +26,19 @@ public:
 	void OnSaveFile(wxCommandEvent& event);		// 菜单的保存文件
 	void OnCopy(wxCommandEvent& event);			// 菜单的复制
 	void OnPaste(wxCommandEvent& event);		// 菜单的粘贴
+	void OnUndo(wxCommandEvent& event);			// 菜单的撤销
+	void OnRedo(wxCommandEvent& event);			// 菜单的重做
 	void OnCloseWindow(wxCloseEvent& event);	// 程序发出的关闭事件
 protected:
 	static void onDirty();
+	static void onUndoChanged();
 	void CreateMenu();
 	void CreateToolBar();
 	void CreateWindows();
 	void CreateStatuBar();
-	void UpdateStatus();
-	void CreateEditorCore();
-	void RefreshAllResource();
+	void UpdateStatus() {}
+	void CreateEditorCore() {}
+	void RefreshAllResource() {}
 protected:
 	wxTimer* mTimer = nullptr;
 	wxAuiManager mAuiManager = nullptr;

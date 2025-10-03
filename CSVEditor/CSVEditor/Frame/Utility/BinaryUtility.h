@@ -158,6 +158,8 @@ namespace BinaryUtility
 	// 指定下标的位是否为1
 	template<typename T, typename TypeCheck = typename IsPodIntegerType<T>::mType>
 	inline constexpr bool hasBit(T value, const int pos) { return (value & (1LL << pos)) != 0; }
+	template<typename T, typename TypeCheck = typename IsPodIntegerType<T>::mType>
+	inline constexpr bool hasFlag(T value, const T flag) { return (value & flag) != 0; }
 	// 获取指定位的值
 	template<typename T, typename TypeCheck = typename IsPodIntegerType<T>::mType>
 	inline constexpr int getBit(T value, const int pos) { return (value & (1LL << pos)) >> pos; }
@@ -1250,6 +1252,7 @@ namespace BinaryUtility
 }
 
 using BinaryUtility::hasBit;
+using BinaryUtility::hasFlag;
 using BinaryUtility::setBitOne;
 using BinaryUtility::setBitZero;
 using BinaryUtility::getByte;

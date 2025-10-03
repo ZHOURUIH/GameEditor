@@ -23,6 +23,9 @@
     <Filter Include="Frame\md5">
       <UniqueIdentifier>{f3760fbc-4493-4148-8c6a-8f4ed9445861}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Undo">
+      <UniqueIdentifier>{dac695ae-1c20-4335-96da-b4cc4b1d0195}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorFrame\EditorApp.cpp">
@@ -77,6 +80,18 @@
       <Filter>Frame\Utility</Filter>
     </ClCompile>
     <ClCompile Include="EditorFrame\EditorBase.cpp">
+      <Filter>EditorFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\UndoManager.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\UndoSetCellData.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame\FrameDefine.cpp">
+      <Filter>Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorFrame\MyMessageBox.cpp">
       <Filter>EditorFrame</Filter>
     </ClCompile>
   </ItemGroup>
@@ -253,6 +268,18 @@
       <Filter>EditorFrame</Filter>
     </ClInclude>
     <ClInclude Include="EditorFrame\EditorCallback.h">
+      <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoSetCellData.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoManager.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\Undo.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorFrame\MyMessageBox.h">
       <Filter>EditorFrame</Filter>
     </ClInclude>
   </ItemGroup>

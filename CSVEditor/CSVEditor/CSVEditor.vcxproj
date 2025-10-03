@@ -25,6 +25,8 @@
     <ClCompile Include="EditorFrame\EditorUtility.cpp" />
     <ClCompile Include="EditorFrame\MainListWindow.cpp" />
     <ClCompile Include="CSVEditor\CSVEditor.cpp" />
+    <ClCompile Include="EditorFrame\MyMessageBox.cpp" />
+    <ClCompile Include="Frame\FrameDefine.cpp" />
     <ClCompile Include="Frame\Math\Color.cpp" />
     <ClCompile Include="Frame\Math\Quaternion.cpp" />
     <ClCompile Include="Frame\Math\Vector2.cpp" />
@@ -37,6 +39,8 @@
     <ClCompile Include="Frame\Utility\MathUtility.cpp" />
     <ClCompile Include="Frame\Utility\StringUtility.cpp" />
     <ClCompile Include="Frame\Utility\SystemUtility.cpp" />
+    <ClCompile Include="Undo\UndoSetCellData.cpp" />
+    <ClCompile Include="Undo\UndoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVEditor\ColumnData.h" />
@@ -48,6 +52,7 @@
     <ClInclude Include="EditorFrame\EditorDefine.h" />
     <ClInclude Include="EditorFrame\EditorEnum.h" />
     <ClInclude Include="EditorFrame\EditorFrame.h" />
+    <ClInclude Include="EditorFrame\MyMessageBox.h" />
     <ClInclude Include="EditorFrame\wxHeader.h" />
     <ClInclude Include="EditorFrame\EditorUtility.h" />
     <ClInclude Include="EditorFrame\MainListWindow.h" />
@@ -97,6 +102,9 @@
     <ClInclude Include="Frame\Utility\StringUtility.h" />
     <ClInclude Include="Frame\Utility\SystemUtility.h" />
     <ClInclude Include="Frame\Utility\TypeUtility.h" />
+    <ClInclude Include="Undo\Undo.h" />
+    <ClInclude Include="Undo\UndoSetCellData.h" />
+    <ClInclude Include="Undo\UndoManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4A365C80-84D8-4B5E-8F7E-3CA726DDFD4F}</ProjectGuid>
@@ -189,7 +197,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./EditorFrame;./CSVEditor;./Frame;./Frame/STL;./Frame/Math;./Frame/Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./EditorFrame;./CSVEditor;./Frame;./Frame/STL;./Frame/Math;./Frame/Utility;./Undo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -229,7 +237,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./EditorFrame;./CSVEditor;./Frame;./Frame/STL;./Frame/Math;./Frame/Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./EditorFrame;./CSVEditor;./Frame;./Frame/STL;./Frame/Math;./Frame/Utility;./Undo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -12,6 +12,7 @@ END_EVENT_TABLE()
 MainListWindow::MainListWindow(wxWindow* parent, long style)
 :wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)
 {
+	mMainListWindow = this;
 	SetSizeHints(wxDefaultSize, wxDefaultSize);
 
 	wxBoxSizer* sizer1 = new wxBoxSizer(wxVERTICAL);
@@ -45,16 +46,6 @@ MainListWindow::MainListWindow(wxWindow* parent, long style)
 	Centre(wxBOTH);
 
 	mGrid->Bind(wxEVT_GRID_CELL_CHANGED, &MainListWindow::OnCellChanged, this);
-}
-
-MainListWindow::~MainListWindow()
-{
-	;
-}
-
-void MainListWindow::init()
-{
-	
 }
 
 void MainListWindow::initData(CSVEditor* table)
@@ -129,6 +120,9 @@ void MainListWindow::OnCellChanged(wxGridEvent& event)
 	const int row = event.GetRow();
 	const int col = event.GetCol();
 	LOG("cell:" + IToS(row) + ", " + IToS(col));
+	UndoSetCellData* undo = new UndoSetCellData();
+	undo->setData(row, col, mCSVEditor->getCellDataAuto(row, col));
+	mUndoManager->addUndo(undo);
 	mCSVEditor->setCellDataAuto(row, col, mGrid->GetCellValue(row, col).ToStdString());
 	event.Skip();
 }
@@ -143,28 +137,12 @@ void MainListWindow::CopySelection()
 	int leftCol = -1;
 	int bottomRow = -1;
 	int rightCol = -1;
-	// 尝试获取连续块选区
-	wxGridCellCoordsArray topLeft = mGrid->GetSelectionBlockTopLeft();
-	wxGridCellCoordsArray bottomRight = mGrid->GetSelectionBlockBottomRight();
-	if (!topLeft.IsEmpty() && !bottomRight.IsEmpty())
-	{
-		topRow = topLeft[0].GetRow();
-		leftCol = topLeft[0].GetCol();
-		bottomRow = bottomRight[0].GetRow();
-		rightCol = bottomRight[0].GetCol();
-	}
-	// 如果没有块选区，尝试获取光标位置作为单格选区
-	else if (mGrid->GetGridCursorRow() >= 0 && mGrid->GetGridCursorCol() >= 0)
-	{
-		topRow = bottomRow = mGrid->GetGridCursorRow();
-		leftCol = rightCol = mGrid->GetGridCursorCol();
-	}
-	// 无法检测到选区则退出
-	else
+	if (!getSelectionRect(topRow, leftCol, bottomRow, rightCol))
 	{
 		wxTheClipboard->Close();
 		return;
 	}
+
 	wxString data;
 	for (int r = topRow; r <= bottomRow; ++r)
 	{
@@ -207,22 +185,87 @@ void MainListWindow::PasteSelection()
 	wxTheClipboard->GetData(dataObj);
 	wxTheClipboard->Close();
 
-	const wxString data = dataObj.GetText();
-	wxArrayString rows = wxSplit(data, '\n');
-	const int row = mGrid->GetGridCursorRow();
-	const int col = mGrid->GetGridCursorCol();
+	int topRow = -1;
+	int leftCol = -1;
+	int bottomRow = -1;
+	int rightCol = -1;
+	if (!getSelectionRect(topRow, leftCol, bottomRow, rightCol))
+	{
+		wxTheClipboard->Close();
+		return;
+	}
+
+	wxArrayString rows = wxSplit(dataObj.GetText(), '\n');
+	if (rows.size() == 0 || wxSplit(rows[0], '\t').size() == 0)
+	{
+		return;
+	}
+
+	// 添加撤销操作
+	Vector<Vector<string>> rectData;
+	FOR_VECTOR(rows)
+	{
+		const wxArrayString cols = wxSplit(rows[i], '\t');
+		Vector<string> tempRow;
+		FOR_VECTOR_J(cols)
+		{
+			tempRow.push_back(mCSVEditor->getCellDataAuto(topRow + i, leftCol + j));
+		}
+		rectData.push_back(move(tempRow));
+	}
+	UndoSetCellData* undo = new UndoSetCellData();
+	undo->setData(topRow, leftCol, move(rectData));
+	mUndoManager->addUndo(undo);
+
+	// 设置单元格数据
 	FOR_VECTOR(rows)
 	{
 		const wxArrayString cols = wxSplit(rows[i], '\t');
 		FOR_VECTOR_J(cols)
 		{
-			const int targetRow = row + i;
-			const int targetCol = col + j;
-			if (targetRow < mGrid->GetNumberRows() && targetCol < mGrid->GetNumberCols())
-			{
-				mGrid->SetCellValue(targetRow, targetCol, cols[j]);
-				mCSVEditor->setCellDataAuto(targetRow, targetCol, cols[j].ToStdString());
-			}
+			SetCellValue(topRow + i, leftCol + j, cols[j]);
 		}
 	}
+}
+
+void MainListWindow::SetCellValue(int row, int col, const string& data)
+{
+	mGrid->SetCellValue(row, col, data);
+	mCSVEditor->setCellDataAuto(row, col, data);
+}
+
+void MainListWindow::SetCellValue(int row, int col, const wxString& data)
+{
+	mGrid->SetCellValue(row, col, data);
+	mCSVEditor->setCellDataAuto(row, col, data.ToStdString());
+}
+
+bool MainListWindow::getSelectionRect(int& topRow, int& leftCol, int& bottomRow, int& rightCol)
+{
+	topRow = -1;
+	leftCol = -1;
+	bottomRow = -1;
+	rightCol = -1;
+	// 尝试获取连续块选区
+	wxGridCellCoordsArray topLeft = mGrid->GetSelectionBlockTopLeft();
+	wxGridCellCoordsArray bottomRight = mGrid->GetSelectionBlockBottomRight();
+	if (!topLeft.IsEmpty() && !bottomRight.IsEmpty())
+	{
+		topRow = topLeft[0].GetRow();
+		leftCol = topLeft[0].GetCol();
+		bottomRow = bottomRight[0].GetRow();
+		rightCol = bottomRight[0].GetCol();
+	}
+	// 如果没有块选区，尝试获取光标位置作为单格选区
+	else if (mGrid->GetGridCursorRow() >= 0 && mGrid->GetGridCursorCol() >= 0)
+	{
+		topRow = bottomRow = mGrid->GetGridCursorRow();
+		leftCol = rightCol = mGrid->GetGridCursorCol();
+	}
+	// 无法检测到选区则退出
+	else
+	{
+		return false;
+	}
+	return true;
 }

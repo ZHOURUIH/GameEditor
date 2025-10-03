@@ -13,24 +13,7 @@ EditorApp::EditorApp()
 {
 	mEditorApp = this;
 	mCSVEditor = new CSVEditor();
-}
-
-EditorApp::~EditorApp()
-{}
-
-void EditorApp::OnKeyDown(wxKeyEvent& event)
-{
-	event.Skip();
-}
-
-void EditorApp::OnKeyUp(wxKeyEvent& event)
-{
-	event.Skip();
-}
-
-void EditorApp::OnMouseWheel(wxMouseEvent& event)
-{
-	event.Skip();
+	mUndoManager = new UndoManager();
 }
 
 bool EditorApp::OnInit()
@@ -38,6 +21,5 @@ bool EditorApp::OnInit()
 	EditorFrame* mainFrame = new EditorFrame("CSVEditor", wxSize(1440, 900));
 	mainFrame->init();
 	mainFrame->Show(true);
-
 	return true;
 }

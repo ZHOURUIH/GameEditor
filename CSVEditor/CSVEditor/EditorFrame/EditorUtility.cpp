@@ -132,4 +132,62 @@ namespace EditorUtility
 		}
 		return OWNER::NONE;
 	}
+
+	int dialogYesNoCancel(const wxString& title, const wxString& message, const wxString& yesText, const wxString& noText, const wxString& cancelText)
+	{
+		CustomMessageBox dlg(mEditorFrame, title, message, yesText, noText, cancelText, wxYES | wxNO | wxCANCEL);
+		return dlg.ShowModal();
+	}
+
+	int dialogYesNoCancel(const wxString& message, const wxString& yesText, const wxString& noText, const wxString& cancelText)
+	{
+		return dialogYesNoCancel("提示", message, yesText, noText, cancelText);
+	}
+
+	int dialogYesNoCancel(const wxString& title, const wxString& message)
+	{
+		return dialogYesNoCancel(title, message, "是", "否", "取消");
+	}
+
+	int dialogYesNoCancel(const wxString& message)
+	{
+		return dialogYesNoCancel("提示", message, "是", "否", "取消");
+	}
+
+	int dialogYesNo(const wxString& title, const wxString& message, const wxString& yesText, const wxString& noText)
+	{
+		CustomMessageBox dlg(mEditorFrame, title, message, yesText, noText, "", wxYES | wxNO);
+		return dlg.ShowModal();
+	}
+
+	int dialogYesNo(const wxString& message, const wxString& yesText, const wxString& noText)
+	{
+		return dialogYesNo("提示", message, yesText, noText);
+	}
+
+	int dialogYesNo(const wxString& title, const wxString& message)
+	{
+		return dialogYesNo(title, message, "是", "否");
+	}
+
+	int dialogYesNo(const wxString& message)
+	{
+		return dialogYesNo("提示", message, "是", "否");
+	}
+
+	int dialogOK(const wxString& title, const wxString& message, const wxString& okText)
+	{
+		CustomMessageBox dlg(mEditorFrame, title, message, okText, "", "", wxYES);
+		return dlg.ShowModal();
+	}
+
+	int dialogOK(const wxString& title, const wxString& message)
+	{
+		return dialogOK(title, message, "确定");
+	}
+
+	int dialogOK(const wxString& message)
+	{
+		return dialogOK("提示", message, "确定");
+	}
 }

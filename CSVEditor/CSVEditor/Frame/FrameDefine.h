@@ -25,4 +25,5 @@
 class FrameDefine
 {
 public:
+	static string EMPTY;
 };

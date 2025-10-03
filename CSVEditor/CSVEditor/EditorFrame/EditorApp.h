@@ -7,13 +7,13 @@ class EditorApp : public wxApp
 {
 public:
 	EditorApp();
-	virtual ~EditorApp();
+	virtual ~EditorApp() = default;
 	virtual bool OnInit();
 
 	DECLARE_EVENT_TABLE()
-	void OnKeyDown(wxKeyEvent& event);
-	void OnKeyUp(wxKeyEvent& event);
-	void OnMouseWheel(wxMouseEvent& event);
+	void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+	void OnKeyUp(wxKeyEvent& event) { event.Skip(); }
+	void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
 protected:
 };
 

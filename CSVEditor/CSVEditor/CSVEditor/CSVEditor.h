@@ -23,11 +23,19 @@ public:
 	const string& getTableName() const { return mTableName; }
 	const string& getFilePath() const { return mFilePath; }
 	OWNER getTableOwner() const { return mOwner; }
+	const string& getColumnName(int col);
+	string getColumnOwner(int col);
+	const string& getColumnType(int col);
+	const string& getColumnComment(int col);
+	const string& getColumnLinkTable(int col);
+	const string& getCellData(int row, int col);
+
 	bool isOpened() const { return !mTableName.empty(); }
 	void setDirty(bool dirty) { mDirty = dirty; CALL(mDirtyCallback); }
 	bool isDirty() const { return mDirty; }
 	void setDirtyCallback(const Action& callback) { mDirtyCallback = callback; }
 	bool validate();
+	string getCellDataAuto(int row, int col);
 	void setCellDataAuto(int row, int col, const string& value);
 	void setCellData(int row, int col, const string& data);
 	void setColumnName(int col, const string& name);
