@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <stack>
-
-using std::stack;
+#include "UsingSTD.h"
 
 template<typename T>
 class Stack

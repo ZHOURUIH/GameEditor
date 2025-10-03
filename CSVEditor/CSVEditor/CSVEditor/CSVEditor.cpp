@@ -81,6 +81,7 @@ void CSVEditor::openFile(const string& file)
 			mAllGrid.push_back(move(dataLine));
 		}
 	}
+	setDirty(false);
 }
 
 void CSVEditor::closeFile()
@@ -100,6 +101,7 @@ void CSVEditor::closeFile()
 	mColumnDataList.clear();
 	mTableName = "";
 	mOwner = OWNER::NONE;
+	setDirty(false);
 }
 
 void CSVEditor::save()
@@ -181,6 +183,7 @@ void CSVEditor::save()
 		}
 	}
 	writeFile(mFilePath, ANSIToUTF8(csv));
+	setDirty(false);
 }
 
 bool CSVEditor::validate()
@@ -198,42 +201,86 @@ bool CSVEditor::validate()
 	return true;
 }
 
+void CSVEditor::setCellDataAuto(int row, int col, const string& value)
+{
+	if (row == EditorDefine::ROW_TABLE_NAME)
+	{
+		setTableName(value);
+	}
+	else if (row == EditorDefine::ROW_TABLE_OWNER)
+	{
+		setTableOwner(value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_NAME)
+	{
+		setColumnName(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_TYPE)
+	{
+		setColumnType(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_OWNER)
+	{
+		setColumnOwner(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_COMMENT)
+	{
+		setColumnComment(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_LINK_TABLE)
+	{
+		setColumnLinkTable(col, value);
+	}
+	else
+	{
+		setCellData(row - EditorDefine::HEADER_ROW, col, value);
+	}
+}
+
 void CSVEditor::setCellData(int row, int col, const string& data)
 {
 	mAllGrid[row][col]->mOriginData = data;
+	setDirty(true);
 }
 
 void CSVEditor::setColumnName(int col, const string& name)
 {
 	mColumnDataList[col]->mName = name;
+	setDirty(true);
 }
 
 void CSVEditor::setColumnOwner(int col, const string& owner)
 {
 	mColumnDataList[col]->mOwner = getOwner(owner);
+	setDirty(true);
 }
 
 void CSVEditor::setColumnType(int col, const string& type)
 {
 	mColumnDataList[col]->mType = type;
+	setDirty(true);
 }
 
 void CSVEditor::setColumnComment(int col, const string& comment)
 {
 	mColumnDataList[col]->mComment = comment;
+	setDirty(true);
 }
 
 void CSVEditor::setColumnLinkTable(int col, const string& linkTable)
 {
 	mColumnDataList[col]->mLinkTable = linkTable;
+	setDirty(true);
 }
 
 void CSVEditor::setTableName(const string& name)
 {
 	mTableName = name;
+	setDirty(true);
 }
 
 void CSVEditor::setTableOwner(const string& owner)
 {
 	mOwner = getOwner(owner);
+	setDirty(true);
 }

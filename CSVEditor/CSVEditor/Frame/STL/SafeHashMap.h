@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "UsingSTD.h"
 #include "HashMap.h"
 #include "Vector.h"
 #include "MapModify.h"

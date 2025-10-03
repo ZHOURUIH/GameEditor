@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <queue>
-
-using std::queue;
+#include "UsingSTD.h"
 
 template<typename T>
 class Queue

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <wxHeader.h>
+
 // 最大并发连接数为128,需要在winsock.h之前进行定义
 #ifdef FD_SETSIZE
 #undef FD_SETSIZE
@@ -76,6 +78,8 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <stack>
+#include <queue>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -203,9 +207,15 @@ if (socket != INVALID_SOCKET)		\
 #ifdef ERROR
 #undef ERROR
 #endif
-#define ERROR(str) std::cout << "error:" << str << std::endl
+#define ERROR(str) wxLogError(str)
 
 #ifdef LOG
 #undef LOG
 #endif
-#define LOG(str) std::cout << str << std::endl
+#define LOG(str) wxLogDebug(str)
+
+#define CALL(func, ...)		\
+if (func != nullptr)		\
+{							\
+	func(__VA_ARGS__);		\
+}

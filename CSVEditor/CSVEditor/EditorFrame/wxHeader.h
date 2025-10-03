@@ -29,5 +29,5 @@
 #include <wx/grid.h>
 #include <wx/gdicmn.h>
 #include <wx/sizer.h>
-
-#include "FrameHeader.h"
+#include <wx/clipbrd.h>
+#include <wx/log.h>

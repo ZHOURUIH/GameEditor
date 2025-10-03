@@ -14,7 +14,10 @@ END_EVENT_TABLE()
 
 EditorFrame::EditorFrame(wxString title, wxSize size):
 	wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, size)
-{}
+{
+	mEditorFrame = this;
+	mCSVEditor->setDirtyCallback(onDirty);
+}
 
 EditorFrame::~EditorFrame()
 {}
@@ -69,15 +72,24 @@ void EditorFrame::CreateMenu()
 	wxMenuBar* menuBar = new wxMenuBar();
 
 	// 文件菜单
-	mFileMenu = new wxMenu;
-	mFileMenu->Append(wxID_OPEN, "打开\tCtrl+O", "Open a file");
-	mFileMenu->Append(wxID_SAVE, "保存\tCtrl+S", "Save a file");
-	mFileMenu->Append(wxID_EXIT, "关闭\tAlt+F4", "Quit the program");
+	wxMenu* fileMenu = new wxMenu;
+	fileMenu->Append(wxID_OPEN, "打开\tCtrl+O", "Open a file");
+	fileMenu->Append(wxID_SAVE, "保存\tCtrl+S", "Save a file");
+	fileMenu->Append(wxID_EXIT, "关闭\tAlt+F4", "Quit the program");
+	menuBar->Append(fileMenu, "文件");
 
-	menuBar->Append(mFileMenu, "文件");
 	Bind(wxEVT_MENU, &EditorFrame::OnOpenFile, this, wxID_OPEN);
 	Bind(wxEVT_MENU, &EditorFrame::OnSaveFile, this, wxID_SAVE);
 	Bind(wxEVT_MENU, &EditorFrame::OnExit, this, wxID_EXIT);
+
+	// 编辑菜单
+	wxMenu* editMenu = new wxMenu;
+	editMenu->Append(wxID_COPY, "复制\tCtrl+C", "copy");
+	editMenu->Append(wxID_PASTE, "粘贴\tCtrl+V", "paste");
+	menuBar->Append(editMenu, "编辑");
+
+	Bind(wxEVT_MENU, &EditorFrame::OnCopy, this, wxID_COPY);
+	Bind(wxEVT_MENU, &EditorFrame::OnPaste, this, wxID_PASTE);
 
 	SetMenuBar(menuBar);
 }
@@ -176,10 +188,35 @@ void EditorFrame::OnSaveFile(wxCommandEvent& event)
 	mCSVEditor->save();
 }
 
+void EditorFrame::OnCopy(wxCommandEvent& event)
+{
+	mMainListWindow->CopySelection();
+}
+
+void EditorFrame::OnPaste(wxCommandEvent& event)
+{
+	mMainListWindow->PasteSelection();
+}
+
 void EditorFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 {
 	// 销毁自己的数据
 	destroy();
 	// 销毁窗口
 	Destroy();
+}
+
+void EditorFrame::onDirty()
+{
+	string title = "CSVEditor";
+	if (mCSVEditor->isOpened())
+	{
+		title += " " + mCSVEditor->getFilePath();
+		title += " " + mCSVEditor->getTableName();
+	}
+	if (mCSVEditor->isDirty())
+	{
+		title += " *";
+	}
+	mEditorFrame->SetTitle(title);
 }

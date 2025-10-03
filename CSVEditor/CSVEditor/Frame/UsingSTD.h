@@ -5,6 +5,8 @@
 // 只开放部分std的内容,避免不必要的命名冲突
 using std::vector;
 using std::map;
+using std::stack;
+using std::queue;
 using std::set;
 using std::endl;
 using std::string;

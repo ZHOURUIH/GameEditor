@@ -6,6 +6,7 @@ enum
 };
 
 BEGIN_EVENT_TABLE(MainListWindow, wxPanel)
+EVT_GRID_SELECT_CELL(MainListWindow::OnCellSelected)
 END_EVENT_TABLE()
 
 MainListWindow::MainListWindow(wxWindow* parent, long style)
@@ -18,11 +19,12 @@ MainListWindow::MainListWindow(wxWindow* parent, long style)
 	mGrid = new wxGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 
 	// Grid
-	mGrid->CreateGrid(1, 1);
+	mGrid->CreateGrid(0, 0);
 	mGrid->EnableEditing(true);
 	mGrid->EnableGridLines(true);
 	mGrid->EnableDragGridSize(false);
 	mGrid->SetMargins(0, 0);
+	mGrid->SetSelectionMode(wxGrid::wxGridSelectCells);
 
 	// Columns
 	mGrid->EnableDragColMove(false);
@@ -114,42 +116,113 @@ void MainListWindow::initData(CSVEditor* table)
 	}
 }
 
+void MainListWindow::OnCellSelected(wxGridEvent& event)
+{
+	int row = event.GetRow();
+	int col = event.GetCol();
+	LOG("select:" + IToS(row) + ", " + IToS(col));
+	event.Skip();
+}
+
 void MainListWindow::OnCellChanged(wxGridEvent& event)
 {
 	const int row = event.GetRow();
 	const int col = event.GetCol();
-	const string value = mGrid->GetCellValue(row, col).ToStdString();
-	if (row == EditorDefine::ROW_TABLE_NAME)
+	LOG("cell:" + IToS(row) + ", " + IToS(col));
+	mCSVEditor->setCellDataAuto(row, col, mGrid->GetCellValue(row, col).ToStdString());
+	event.Skip();
+}
+
+void MainListWindow::CopySelection()
+{
+	if (!wxTheClipboard->Open())
 	{
-		mCSVEditor->setTableName(value);
+		return;
 	}
-	else if (row == EditorDefine::ROW_TABLE_OWNER)
+	int topRow = -1;
+	int leftCol = -1;
+	int bottomRow = -1;
+	int rightCol = -1;
+	// 尝试获取连续块选区
+	wxGridCellCoordsArray topLeft = mGrid->GetSelectionBlockTopLeft();
+	wxGridCellCoordsArray bottomRight = mGrid->GetSelectionBlockBottomRight();
+	if (!topLeft.IsEmpty() && !bottomRight.IsEmpty())
 	{
-		mCSVEditor->setTableOwner(value);
+		topRow = topLeft[0].GetRow();
+		leftCol = topLeft[0].GetCol();
+		bottomRow = bottomRight[0].GetRow();
+		rightCol = bottomRight[0].GetCol();
 	}
-	else if (row == EditorDefine::ROW_COLUMN_NAME)
+	// 如果没有块选区，尝试获取光标位置作为单格选区
+	else if (mGrid->GetGridCursorRow() >= 0 && mGrid->GetGridCursorCol() >= 0)
 	{
-		mCSVEditor->setColumnName(col, value);
+		topRow = bottomRow = mGrid->GetGridCursorRow();
+		leftCol = rightCol = mGrid->GetGridCursorCol();
 	}
-	else if (row == EditorDefine::ROW_COLUMN_TYPE)
-	{
-		mCSVEditor->setColumnType(col, value);
-	}
-	else if (row == EditorDefine::ROW_COLUMN_OWNER)
-	{
-		mCSVEditor->setColumnOwner(col, value);
-	}
-	else if (row == EditorDefine::ROW_COLUMN_COMMENT)
-	{
-		mCSVEditor->setColumnComment(col, value);
-	}
-	else if (row == EditorDefine::ROW_COLUMN_LINK_TABLE)
-	{
-		mCSVEditor->setColumnLinkTable(col, value);
-	}
+	// 无法检测到选区则退出
 	else
 	{
-		mCSVEditor->setCellData(row - EditorDefine::HEADER_ROW, col, value);
+		wxTheClipboard->Close();
+		return;
 	}
-	event.Skip(); // 保持默认行为
+	wxString data;
+	for (int r = topRow; r <= bottomRow; ++r)
+	{
+		for (int c = leftCol; c <= rightCol; ++c)
+		{
+			data += mGrid->GetCellValue(r, c);
+			// 单元格分隔符（制表符）
+			if (c < rightCol)
+			{
+				data += "\t";
+			}
+		}
+		// 行分隔符（换行符）
+		data += "\n";
+	}
+	// 移除最后一行的多余换行符
+	if (!data.IsEmpty())
+	{
+		data.RemoveLast();
+	}
+
+	wxTheClipboard->SetData(new wxTextDataObject(data));
+	wxTheClipboard->Close();
+}
+
+void MainListWindow::PasteSelection()
+{
+	if (!wxTheClipboard->Open())
+	{
+		return;
+	}
+
+	if (!wxTheClipboard->IsSupported(wxDF_TEXT))
+	{
+		wxTheClipboard->Close();
+		return;
+	}
+
+	wxTextDataObject dataObj;
+	wxTheClipboard->GetData(dataObj);
+	wxTheClipboard->Close();
+
+	const wxString data = dataObj.GetText();
+	wxArrayString rows = wxSplit(data, '\n');
+	const int row = mGrid->GetGridCursorRow();
+	const int col = mGrid->GetGridCursorCol();
+	FOR_VECTOR(rows)
+	{
+		const wxArrayString cols = wxSplit(rows[i], '\t');
+		FOR_VECTOR_J(cols)
+		{
+			const int targetRow = row + i;
+			const int targetCol = col + j;
+			if (targetRow < mGrid->GetNumberRows() && targetCol < mGrid->GetNumberCols())
+			{
+				mGrid->SetCellValue(targetRow, targetCol, cols[j]);
+				mCSVEditor->setCellDataAuto(targetRow, targetCol, cols[j].ToStdString());
+			}
+		}
+	}
 }

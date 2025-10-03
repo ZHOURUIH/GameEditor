@@ -1,6 +1,7 @@
 #pragma once
 
-#include "UsingSTD.h"
+#include "FrameHeader.h"
+#include "EditorEnum.h"
 
 class ColumnData
 {

@@ -342,7 +342,7 @@ public:
 	void push_back(T&& elem)
 	{
 		++mSize;
-		mVector.emplace_back(elem);
+		mVector.emplace_back(move(elem));
 	}
 	void push_back(const T& elem0, const T& elem1)
 	{

@@ -2,6 +2,7 @@
 
 #include "wxHeader.h"
 #include "EditorEnum.h"
+#include "FrameHeader.h"
 
 namespace EditorUtility
 {

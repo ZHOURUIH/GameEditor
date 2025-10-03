@@ -11,6 +11,7 @@ END_EVENT_TABLE()
 
 EditorApp::EditorApp()
 {
+	mEditorApp = this;
 	mCSVEditor = new CSVEditor();
 }
 
@@ -34,9 +35,9 @@ void EditorApp::OnMouseWheel(wxMouseEvent& event)
 
 bool EditorApp::OnInit()
 {
-	mMainFrame = new EditorFrame("CSVEditor", wxSize(1440, 900));
-	mMainFrame->init();
-	mMainFrame->Show(true);
+	EditorFrame* mainFrame = new EditorFrame("CSVEditor", wxSize(1440, 900));
+	mainFrame->init();
+	mainFrame->Show(true);
 
 	return true;
 }

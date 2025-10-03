@@ -376,7 +376,7 @@ namespace SystemUtility
 	{
 #ifdef WIN32
 		// 启动游戏程序
-		SHELLEXECUTEINFO sei;
+		SHELLEXECUTEINFOA sei;
 		memset(&sei, 0, sizeof(sei));
 		sei.cbSize = sizeof(sei);
 		sei.lpFile = fullName.c_str();
@@ -388,7 +388,7 @@ namespace SystemUtility
 		sei.nShow = SW_SHOWDEFAULT;
 #endif
 		sei.fMask = SEE_MASK_FLAG_NO_UI;
-		return ShellExecuteEx(&sei) == TRUE;
+		return ShellExecuteExA(&sei) == TRUE;
 #elif defined LINUX
 		if (vfork() == 0)
 		{

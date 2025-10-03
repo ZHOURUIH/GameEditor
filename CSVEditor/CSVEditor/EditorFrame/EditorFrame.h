@@ -1,6 +1,7 @@
 #pragma once
 
 #include "wxHeader.h"
+#include "FrameHeader.h"
 
 class MainListWindow;
 class CSVEditor;
@@ -23,8 +24,11 @@ public:
 	void OnExit(wxCommandEvent& event);			// 菜单的退出
 	void OnOpenFile(wxCommandEvent& event);		// 菜单的打开文件
 	void OnSaveFile(wxCommandEvent& event);		// 菜单的保存文件
+	void OnCopy(wxCommandEvent& event);			// 菜单的复制
+	void OnPaste(wxCommandEvent& event);		// 菜单的粘贴
 	void OnCloseWindow(wxCloseEvent& event);	// 程序发出的关闭事件
 protected:
+	static void onDirty();
 	void CreateMenu();
 	void CreateToolBar();
 	void CreateWindows();
@@ -34,7 +38,6 @@ protected:
 	void RefreshAllResource();
 protected:
 	wxTimer* mTimer = nullptr;
-	wxMenu* mFileMenu = nullptr;
 	wxAuiManager mAuiManager = nullptr;
 	MainListWindow* mMainListWindow = nullptr;
 };

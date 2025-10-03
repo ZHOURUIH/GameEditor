@@ -1,11 +1,9 @@
 ﻿#pragma once
 
-#include <set>
+#include "UsingSTD.h"
 #include "Array.h"
 #include "ArrayList.h"
 #include "Vector.h"
-
-using std::set;
 
 template<typename T>
 class Set

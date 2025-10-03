@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "UsingSTD.h"
 #include "Vector.h"
 #include "ValueModify.h"
 
