@@ -1,6 +1,5 @@
 #pragma once
 
-#include "wxHeader.h"
 #include "FrameHeader.h"
 
 // 自定义消息对话框（支持修改按钮文字）

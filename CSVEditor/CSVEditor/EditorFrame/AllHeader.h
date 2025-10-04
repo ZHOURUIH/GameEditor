@@ -1,6 +1,5 @@
 #pragma once
 
-#include "wxHeader.h"
 #include "EditorApp.h"
 #include "EditorFrame.h"
 #include "EditorUtility.h"

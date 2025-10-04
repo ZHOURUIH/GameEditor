@@ -1,6 +1,5 @@
 #pragma once
 
-#include "wxHeader.h"
 #include "FrameHeader.h"
 
 class EditorApp : public wxApp
@@ -14,7 +13,11 @@ public:
 	void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 	void OnKeyUp(wxKeyEvent& event) { event.Skip(); }
 	void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
+	void OnInitCmdLine(wxCmdLineParser& parser) override;
+	bool OnCmdLineParsed(wxCmdLineParser& parser) override;
 protected:
+	string mFileToOpen;
+	static const wxCmdLineEntryDesc mCmdLineDesc[];
 };
 
 DECLARE_APP(EditorApp)

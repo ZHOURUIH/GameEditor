@@ -13,6 +13,7 @@ public:
 	void initData(CSVEditor* table);
 	void update(float elapsedTime){}
 	void openFile();
+	void openFile(const string& path);
 	void newFile();
 	void copySelection();
 	void pasteSelection();

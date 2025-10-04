@@ -31,3 +31,4 @@
 #include <wx/sizer.h>
 #include <wx/clipbrd.h>
 #include <wx/log.h>
+#include <wx/cmdline.h>

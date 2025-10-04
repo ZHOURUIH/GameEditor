@@ -1,6 +1,5 @@
 #pragma once
 
-#include "wxHeader.h"
 #include "FrameHeader.h"
 
 class MainListWindow;

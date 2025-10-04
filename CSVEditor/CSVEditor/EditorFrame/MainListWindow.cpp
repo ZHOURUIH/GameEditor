@@ -148,8 +148,13 @@ void MainListWindow::openFile()
 	{
 		return;
 	}
+	openFile(openFileDialog.GetPath().ToStdString());
+}
+
+void MainListWindow::openFile(const string& path)
+{
 	mCSVEditor->closeFile();
-	mCSVEditor->openFile(openFileDialog.GetPath().ToStdString());
+	mCSVEditor->openFile(path);
 	if (!mCSVEditor->isOpened())
 	{
 		dialogOK("文件打开失败,文件可能被占用或者文件内容无法解析");
