@@ -76,7 +76,7 @@ void CSVEditor::openFile(const string& file)
 			data->mOriginData = line[j];
 			dataLine.push_back(data);
 		}
-		if (dataLine.size() > 0)
+		if (!dataLine.isEmpty())
 		{
 			mAllGrid.push_back(move(dataLine));
 		}
@@ -388,5 +388,41 @@ void CSVEditor::setTableName(const string& name)
 void CSVEditor::setTableOwner(const string& owner)
 {
 	mOwner = getOwner(owner);
+	setDirty(true);
+}
+
+void CSVEditor::deleteColumn(int col, Vector<GridData*>& outList, ColumnData*& outCol)
+{
+	outCol = mColumnDataList[col];
+	mColumnDataList.eraseAt(col);
+	for (auto& item : mAllGrid)
+	{
+		outList.push_back(item[col]);
+		item.eraseAt(col);
+	}
+	setDirty(true);
+}
+
+void CSVEditor::addColumn(int col, Vector<GridData*>&& cols, ColumnData* colData)
+{
+	mColumnDataList.insert(col, colData);
+	FOR_VECTOR(mAllGrid)
+	{
+		mAllGrid[i].insert(col, cols[i]);
+	}
+	cols.clear();
+	setDirty(true);
+}
+
+void CSVEditor::deleteRow(int row, Vector<GridData*>& outRows)
+{
+	outRows.setRange(move(mAllGrid[row]));
+	mAllGrid.eraseAt(row);
+	setDirty(true);
+}
+
+void CSVEditor::addRow(int row, Vector<GridData*>&& rows)
+{
+	mAllGrid.insert(row, move(rows));
 	setDirty(true);
 }

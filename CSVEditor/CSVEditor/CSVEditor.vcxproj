@@ -39,6 +39,10 @@
     <ClCompile Include="Frame\Utility\MathUtility.cpp" />
     <ClCompile Include="Frame\Utility\StringUtility.cpp" />
     <ClCompile Include="Frame\Utility\SystemUtility.cpp" />
+    <ClCompile Include="Undo\UndoAddColumn.cpp" />
+    <ClCompile Include="Undo\UndoAddRow.cpp" />
+    <ClCompile Include="Undo\UndoDeleteColumn.cpp" />
+    <ClCompile Include="Undo\UndoDeleteRow.cpp" />
     <ClCompile Include="Undo\UndoSetCellData.cpp" />
     <ClCompile Include="Undo\UndoManager.cpp" />
   </ItemGroup>
@@ -103,6 +107,10 @@
     <ClInclude Include="Frame\Utility\SystemUtility.h" />
     <ClInclude Include="Frame\Utility\TypeUtility.h" />
     <ClInclude Include="Undo\Undo.h" />
+    <ClInclude Include="Undo\UndoAddColumn.h" />
+    <ClInclude Include="Undo\UndoAddRow.h" />
+    <ClInclude Include="Undo\UndoDeleteColumn.h" />
+    <ClInclude Include="Undo\UndoDeleteRow.h" />
     <ClInclude Include="Undo\UndoSetCellData.h" />
     <ClInclude Include="Undo\UndoManager.h" />
   </ItemGroup>

@@ -9,7 +9,6 @@ public:
 	UndoManager() = default;
 	virtual ~UndoManager(){ destroy(); }
 	void destroy();
-	void addUndo(Undo* undoCollection);
 	void undo();
 	void redo();
 	bool canUndo() const {return mUndoBuffer.size() > 0;}
@@ -18,7 +17,15 @@ public:
 	void clearRedo();
 	void clearUndo();
 	void checkUndoRedoEnable();
+	template<typename T, typename TypeCheck = IsSubClassOf<Undo, T>::mType>
+	T* addUndo() 
+	{
+		T* undo = new T();
+		addUndo(undo);
+		return undo;
+	}
 protected:
+	void addUndo(Undo* undoCollection);
 	// beforeEnable是改变之前的可撤销状态,nowEnable是改变之后的可撤销状态,force是无论状态有没有改变都强制发送事件
 	void undoChanged(bool beforeEnable, bool nowEnable, bool force = false);
 	void redoChanged(bool beforeEnable, bool nowEnable, bool force = false);

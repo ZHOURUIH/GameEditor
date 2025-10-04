@@ -125,6 +125,7 @@ public:
 	virtual ~Vector()				{ mVector.clear(); }
 	T* data() const					{ return (T*)mVector.data(); }
 	int size() const				{ return mSize; }
+	bool isEmpty() const			{ return mSize <= 0; }
 	iterator begin()				{ return mVector.begin(); }
 	iterator end()					{ return mVector.end(); }
 	const_iterator begin() const	{ return mVector.begin(); }
@@ -525,6 +526,11 @@ public:
 	void insert(const int index, const T& elem)
 	{
 		mVector.emplace(mVector.begin() + index, elem);
+		++mSize;
+	}
+	void insert(const int index, T&& elem)
+	{
+		mVector.emplace(mVector.begin() + index, move(elem));
 		++mSize;
 	}
 	void insert(const iterator& iter, const T& elem)

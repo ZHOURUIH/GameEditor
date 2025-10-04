@@ -9,12 +9,8 @@
 class CSVEditor
 {
 public:
-	CSVEditor()
-	{
-	}
-	~CSVEditor()
-	{
-	}
+	CSVEditor() = default;
+	~CSVEditor() = default;
 	void openFile(const string& file);
 	void closeFile();
 	void save();
@@ -45,6 +41,10 @@ public:
 	void setColumnLinkTable(int col, const string& linkTable);
 	void setTableName(const string& name);
 	void setTableOwner(const string& owner);
+	void deleteColumn(int col, Vector<GridData*>& outList, ColumnData*& outCol);
+	void addColumn(int col, Vector<GridData*>&& cols, ColumnData* colData);
+	void deleteRow(int row, Vector<GridData*>& outRows);
+	void addRow(int row, Vector<GridData*>&& rows);
 protected:
 	string mFilePath;
 	Vector<Vector<GridData*>> mAllGrid;

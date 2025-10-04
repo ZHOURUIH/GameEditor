@@ -17,3 +17,7 @@
 #include "Undo.h"
 #include "UndoSetCellData.h"
 #include "MyMessageBox.h"
+#include "UndoDeleteColumn.h"
+#include "UndoAddColumn.h"
+#include "UndoDeleteRow.h"
+#include "UndoAddRow.h"

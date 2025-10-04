@@ -94,6 +94,18 @@
     <ClCompile Include="EditorFrame\MyMessageBox.cpp">
       <Filter>EditorFrame</Filter>
     </ClCompile>
+    <ClCompile Include="Undo\UndoDeleteColumn.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\UndoAddColumn.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\UndoDeleteRow.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo\UndoAddRow.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorFrame\EditorApp.h">
@@ -281,6 +293,18 @@
     </ClInclude>
     <ClInclude Include="EditorFrame\MyMessageBox.h">
       <Filter>EditorFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoDeleteColumn.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoAddColumn.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoAddRow.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoDeleteRow.h">
+      <Filter>Undo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

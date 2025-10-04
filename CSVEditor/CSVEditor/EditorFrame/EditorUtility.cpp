@@ -32,7 +32,7 @@ namespace EditorUtility
 			else if ((c == '\n' || c == '\r') && !inQuotes)
 			{
 				// 遇到换行，完成一行
-				if (!field.empty() || row.size() != 0)
+				if (!field.empty() || !row.isEmpty())
 				{
 					row.emplace_back(move(field));
 					result.emplace_back(move(row));
@@ -51,7 +51,7 @@ namespace EditorUtility
 		}
 
 		// 最后一行如果没加进去，要补上
-		if (!field.empty() || row.size() != 0)
+		if (!field.empty() || !row.isEmpty())
 		{
 			row.emplace_back(move(field));
 			result.emplace_back(move(row));
