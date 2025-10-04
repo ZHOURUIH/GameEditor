@@ -31,8 +31,8 @@ namespace EditorUtility
 			}
 			else if ((c == '\n' || c == '\r') && !inQuotes)
 			{
-				// 遇到换行，完成一行
-				if (!field.empty() || !row.isEmpty())
+				// 遇到换行，完成一行,即使空行也要放进去
+				//if (!field.empty() || !row.isEmpty())
 				{
 					row.emplace_back(move(field));
 					result.emplace_back(move(row));

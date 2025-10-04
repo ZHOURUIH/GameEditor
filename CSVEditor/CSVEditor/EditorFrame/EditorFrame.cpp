@@ -77,11 +77,13 @@ void EditorFrame::CreateMenu()
 	// 文件菜单
 	wxMenu* fileMenu = new wxMenu;
 	fileMenu->Append(wxID_OPEN, "打开\tCtrl+O", "Open a file");
+	fileMenu->Append(wxID_NEW, "新建\tCtrl+N", "New a file");
 	fileMenu->Append(wxID_SAVE, "保存\tCtrl+S", "Save a file");
 	fileMenu->Append(wxID_EXIT, "关闭\tAlt+F4", "Quit the program");
 	menuBar->Append(fileMenu, "文件");
 
 	Bind(wxEVT_MENU, &EditorFrame::OnOpenFile, this, wxID_OPEN);
+	Bind(wxEVT_MENU, &EditorFrame::OnNewFile, this, wxID_NEW);
 	Bind(wxEVT_MENU, &EditorFrame::OnSaveFile, this, wxID_SAVE);
 	Bind(wxEVT_MENU, &EditorFrame::OnExit, this, wxID_EXIT);
 
@@ -169,19 +171,12 @@ void EditorFrame::OnExit(wxCommandEvent& event)
 
 void EditorFrame::OnOpenFile(wxCommandEvent& event)
 {
-	wxFileDialog openFileDialog(this, _("Open CSV file"), "", "", "CSV files (*.csv)|*.csv|All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-	if (openFileDialog.ShowModal() == wxID_CANCEL)
-	{
-		return;
-	}
-	mCSVEditor->closeFile();
-	mCSVEditor->openFile(openFileDialog.GetPath().ToStdString());
-	if (!mCSVEditor->isOpened())
-	{
-		wxMessageBox("文件打开失败,文件可能被占用或者文件内容无法解析", "错误", wxOK | wxICON_ERROR);
-		return;
-	}
-	mMainListWindow->initData(mCSVEditor);
+	mMainListWindow->openFile();
+}
+
+void EditorFrame::OnNewFile(wxCommandEvent& event)
+{
+	mMainListWindow->newFile();
 }
 
 void EditorFrame::OnSaveFile(wxCommandEvent& event)

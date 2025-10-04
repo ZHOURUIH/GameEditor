@@ -23,6 +23,7 @@ public:
 	void OnTimer(wxTimerEvent& event);
 	void OnExit(wxCommandEvent& event);			// 菜单的退出
 	void OnOpenFile(wxCommandEvent& event);		// 菜单的打开文件
+	void OnNewFile(wxCommandEvent& event);
 	void OnSaveFile(wxCommandEvent& event);		// 菜单的保存文件
 	void OnCopy(wxCommandEvent& event);			// 菜单的复制
 	void OnPaste(wxCommandEvent& event);		// 菜单的粘贴

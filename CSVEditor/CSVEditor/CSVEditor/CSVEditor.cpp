@@ -84,6 +84,19 @@ void CSVEditor::openFile(const string& file)
 	setDirty(false);
 }
 
+void CSVEditor::newFile()
+{
+	mTableName = "NewTable";
+	mOwner = OWNER::BOTH;
+	ColumnData* tempCol = new ColumnData();
+	tempCol->mName = "ID";
+	tempCol->mType = "int";
+	tempCol->mOwner = OWNER::BOTH;
+	tempCol->mComment = "ΨһID";
+	mColumnDataList.push_back(tempCol);
+	setDirty(true);
+}
+
 void CSVEditor::closeFile()
 {
 	for (auto& item : mAllGrid)
@@ -104,11 +117,11 @@ void CSVEditor::closeFile()
 	setDirty(false);
 }
 
-void CSVEditor::save()
+bool CSVEditor::save()
 {
 	if (!validate())
 	{
-		return;
+		return false;
 	}
 	string csv;
 	const int colCount = mColumnDataList.size();
@@ -184,6 +197,7 @@ void CSVEditor::save()
 	}
 	writeFile(mFilePath, ANSIToUTF8(csv));
 	setDirty(false);
+	return true;
 }
 
 bool CSVEditor::validate()

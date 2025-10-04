@@ -141,6 +141,29 @@ void MainListWindow::OnCellChanged(wxGridEvent& event)
 	event.Skip();
 }
 
+void MainListWindow::openFile()
+{
+	wxFileDialog openFileDialog(this, _("Open CSV file"), "", "", "CSV files (*.csv)|*.csv", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	if (openFileDialog.ShowModal() == wxID_CANCEL)
+	{
+		return;
+	}
+	mCSVEditor->closeFile();
+	mCSVEditor->openFile(openFileDialog.GetPath().ToStdString());
+	if (!mCSVEditor->isOpened())
+	{
+		dialogOK("文件打开失败,文件可能被占用或者文件内容无法解析");
+		return;
+	}
+	initData(mCSVEditor);
+}
+
+void MainListWindow::newFile()
+{
+	mCSVEditor->newFile();
+	initData(mCSVEditor);
+}
+
 void MainListWindow::copySelection()
 {
 	if (!wxTheClipboard->Open())
@@ -570,5 +593,25 @@ void MainListWindow::save()
 		// 关闭编辑器（结束编辑状态）
 		mGrid->DisableCellEditControl();
 	}
-	mCSVEditor->save();
+
+	if (mCSVEditor->getFilePath().empty())
+	{
+		wxFileDialog saveDialog(this, "保存文件", "", mCSVEditor->getTableName() + ".csv", "文本文件 (*.csv)|*.csv", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+		if (saveDialog.ShowModal() == wxID_OK)
+		{
+			mCSVEditor->setFilePath(saveDialog.GetPath().ToStdString());
+			mCSVEditor->setTableName(getFileNameNoSuffix(mCSVEditor->getFilePath(), true));
+			// 保存失败再把路径清空,下次再重新选择
+			if (!mCSVEditor->save())
+			{
+				mCSVEditor->setFilePath("");
+			}
+			// 由于修改了内容,需要刷新显示
+			mGrid->SetCellValue(0, 0, mCSVEditor->getTableName());
+		}
+	}
+	else
+	{
+		mCSVEditor->save();
+	}
 }

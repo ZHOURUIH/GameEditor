@@ -12,6 +12,8 @@ public:
 	void init() {}
 	void initData(CSVEditor* table);
 	void update(float elapsedTime){}
+	void openFile();
+	void newFile();
 	void copySelection();
 	void pasteSelection();
 	void setCellValue(int topRow, int leftCol, int bottomRow, int rightCol, const Vector<Vector<string>>& rowList);

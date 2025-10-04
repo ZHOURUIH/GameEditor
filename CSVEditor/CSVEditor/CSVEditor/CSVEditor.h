@@ -13,11 +13,13 @@ public:
 	~CSVEditor() = default;
 	void openFile(const string& file);
 	void closeFile();
-	void save();
+	void newFile();
+	bool save();
 	const Vector<Vector<GridData*>>& getAllGrid() const { return mAllGrid; }
 	const Vector<ColumnData*>& getColumnDataList() const { return mColumnDataList; }
 	const string& getTableName() const { return mTableName; }
 	const string& getFilePath() const { return mFilePath; }
+	void setFilePath(const string& path) { mFilePath = path; }
 	OWNER getTableOwner() const { return mOwner; }
 	const string& getColumnName(int col);
 	string getColumnOwner(int col);
