@@ -21,3 +21,4 @@
 #include "UndoAddColumn.h"
 #include "UndoDeleteRow.h"
 #include "UndoAddRow.h"
+#include "UndoSwapRow.h"

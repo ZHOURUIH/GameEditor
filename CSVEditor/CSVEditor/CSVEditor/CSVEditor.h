@@ -25,6 +25,8 @@ public:
 	const string& getColumnComment(int col);
 	const string& getColumnLinkTable(int col);
 	const string& getCellData(int row, int col);
+	int getRowCount() const { return mAllGrid.size(); }
+	int getColumnCount() const { return mColumnDataList.size(); }
 
 	bool isOpened() const { return !mTableName.empty(); }
 	void setDirty(bool dirty) { mDirty = dirty; CALL(mDirtyCallback); }
@@ -42,9 +44,10 @@ public:
 	void setTableName(const string& name);
 	void setTableOwner(const string& owner);
 	void deleteColumn(int col, Vector<GridData*>& outList, ColumnData*& outCol);
-	void addColumn(int col, Vector<GridData*>&& cols, ColumnData* colData);
+	void addColumn(int col, Vector<GridData*>&& cols, ColumnData*& colData);
 	void deleteRow(int row, Vector<GridData*>& outRows);
 	void addRow(int row, Vector<GridData*>&& rows);
+	void swapRow(int row0, int row1);
 protected:
 	string mFilePath;
 	Vector<Vector<GridData*>> mAllGrid;

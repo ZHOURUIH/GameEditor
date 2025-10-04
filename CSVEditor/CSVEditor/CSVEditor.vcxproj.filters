@@ -106,6 +106,9 @@
     <ClCompile Include="Undo\UndoAddRow.cpp">
       <Filter>Undo</Filter>
     </ClCompile>
+    <ClCompile Include="Undo\UndoSwapRow.cpp">
+      <Filter>Undo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorFrame\EditorApp.h">
@@ -304,6 +307,9 @@
       <Filter>Undo</Filter>
     </ClInclude>
     <ClInclude Include="Undo\UndoDeleteRow.h">
+      <Filter>Undo</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo\UndoSwapRow.h">
       <Filter>Undo</Filter>
     </ClInclude>
   </ItemGroup>

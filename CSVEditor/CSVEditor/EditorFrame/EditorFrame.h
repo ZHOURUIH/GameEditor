@@ -28,6 +28,8 @@ public:
 	void OnPaste(wxCommandEvent& event);		// 菜单的粘贴
 	void OnUndo(wxCommandEvent& event);			// 菜单的撤销
 	void OnRedo(wxCommandEvent& event);			// 菜单的重做
+	void OnAddRowToFirst(wxCommandEvent& event);
+	void OnAddRowToEnd(wxCommandEvent& event);
 	void OnCloseWindow(wxCloseEvent& event);	// 程序发出的关闭事件
 protected:
 	static void onDirty();
@@ -42,5 +44,4 @@ protected:
 protected:
 	wxTimer* mTimer = nullptr;
 	wxAuiManager mAuiManager = nullptr;
-	MainListWindow* mMainListWindow = nullptr;
 };

@@ -4,6 +4,11 @@ enum
 {
 	ID_DELETE_COL,
 	ID_DELETE_ROW,
+	ID_ADD_COL,
+	ID_ADD_ROW,
+	ID_ADD_ROW_10,
+	ID_MOVE_UP,
+	ID_MOVE_DOWN,
 };
 
 BEGIN_EVENT_TABLE(MainListWindow, wxPanel)
@@ -11,6 +16,11 @@ EVT_GRID_SELECT_CELL(MainListWindow::OnCellSelected)
 EVT_GRID_LABEL_RIGHT_CLICK(MainListWindow::OnGridLabelRightClick)
 EVT_MENU(ID_DELETE_COL, MainListWindow::OnDeleteColumn)
 EVT_MENU(ID_DELETE_ROW, MainListWindow::OnDeleteRow)
+EVT_MENU(ID_ADD_COL, MainListWindow::OnAddColumn)
+EVT_MENU(ID_ADD_ROW, MainListWindow::OnAddRow)
+EVT_MENU(ID_ADD_ROW_10, MainListWindow::OnAddRow10)
+EVT_MENU(ID_MOVE_UP, MainListWindow::OnMoveUp)
+EVT_MENU(ID_MOVE_DOWN, MainListWindow::OnMoveDown)
 END_EVENT_TABLE()
 
 MainListWindow::MainListWindow(wxWindow* parent, long style)
@@ -124,10 +134,14 @@ void MainListWindow::OnCellChanged(wxGridEvent& event)
 	LOG("cell:" + IToS(row) + ", " + IToS(col));
 	mUndoManager->addUndo<UndoSetCellData>()->setData(row, col, mCSVEditor->getCellDataAuto(row, col));
 	mCSVEditor->setCellDataAuto(row, col, mGrid->GetCellValue(row, col).ToStdString());
+	if (row == EditorDefine::ROW_COLUMN_NAME)
+	{
+		mGrid->SetColLabelValue(col, mGrid->GetCellValue(row, col));
+	}
 	event.Skip();
 }
 
-void MainListWindow::CopySelection()
+void MainListWindow::copySelection()
 {
 	if (!wxTheClipboard->Open())
 	{
@@ -168,7 +182,7 @@ void MainListWindow::CopySelection()
 	wxTheClipboard->Close();
 }
 
-void MainListWindow::PasteSelection()
+void MainListWindow::pasteSelection()
 {
 	if (!wxTheClipboard->Open())
 	{
@@ -205,10 +219,10 @@ void MainListWindow::PasteSelection()
 	{
 		dataList.push_back(split(str.char_str(), '\t'));
 	}
-	SetCellValue(topRow, leftCol, bottomRow, rightCol, dataList);
+	setCellValue(topRow, leftCol, bottomRow, rightCol, dataList);
 }
 
-void MainListWindow::SetCellValue(int topRow, int leftCol, int bottomRow, int rightCol, const Vector<Vector<string>>& dataList)
+void MainListWindow::setCellValue(int topRow, int leftCol, int bottomRow, int rightCol, const Vector<Vector<string>>& dataList)
 {
 	// 设置单元格数据
 	// 如果只复制了1格,但是选中了多格,则全部填充为相同的数据
@@ -234,6 +248,10 @@ void MainListWindow::SetCellValue(int topRow, int leftCol, int bottomRow, int ri
 			{
 				mGrid->SetCellValue(i, j, data);
 				mCSVEditor->setCellDataAuto(i, j, data);
+				if (i == EditorDefine::ROW_COLUMN_NAME)
+				{
+					mGrid->SetColLabelValue(j, data);
+				}
 			}
 		}
 	}
@@ -258,6 +276,10 @@ void MainListWindow::SetCellValue(int topRow, int leftCol, int bottomRow, int ri
 			{
 				mGrid->SetCellValue(topRow + i, leftCol + j, cols[j]);
 				mCSVEditor->setCellDataAuto(topRow + i, leftCol + j, cols[j]);
+				if (topRow + i == EditorDefine::ROW_COLUMN_NAME)
+				{
+					mGrid->SetColLabelValue(leftCol + j, cols[j]);
+				}
 			}
 		}
 	}
@@ -295,22 +317,34 @@ bool MainListWindow::getSelectionRect(int& topRow, int& leftCol, int& bottomRow,
 
 void MainListWindow::OnGridLabelRightClick(wxGridEvent& event)
 {
-	// 判断是否为列标签点击
+	// 点击列标签
 	if (event.GetRow() == -1 && event.GetCol() != -1)
 	{
 		mClickedCol = event.GetCol();
 		wxMenu menu;
 		menu.Append(ID_DELETE_COL, "删除");
+		menu.Append(ID_ADD_COL, "在右侧插入一列");
 		if (wxGrid* grid = dynamic_cast<wxGrid*>(event.GetEventObject()))
 		{
 			grid->PopupMenu(&menu, event.GetPosition());
 		}
 	}
-	else if (event.GetRow() != -1 && event.GetCol() == -1)
+	// 点击行标签
+	else if (event.GetRow() >= EditorDefine::HEADER_ROW && event.GetCol() == -1)
 	{
 		mClickedRow = event.GetRow();
 		wxMenu menu;
 		menu.Append(ID_DELETE_ROW, "删除");
+		menu.Append(ID_ADD_ROW, "在上面插入一行");
+		menu.Append(ID_ADD_ROW_10, "在上面插入10行");
+		if (event.GetRow() != EditorDefine::HEADER_ROW)
+		{
+			menu.Append(ID_MOVE_UP, "上移一行");
+		}
+		if (event.GetRow() != EditorDefine::HEADER_ROW + mCSVEditor->getRowCount() - 1)
+		{
+			menu.Append(ID_MOVE_DOWN, "下移一行");
+		}
 		if (wxGrid* grid = dynamic_cast<wxGrid*>(event.GetEventObject()))
 		{
 			grid->PopupMenu(&menu, event.GetPosition());
@@ -321,24 +355,86 @@ void MainListWindow::OnGridLabelRightClick(wxGridEvent& event)
 
 void MainListWindow::OnDeleteColumn(wxCommandEvent& event)
 {
-	if (mGrid->GetNumberCols() > 0 && mClickedCol != -1)
+	if (mGrid->GetNumberCols() <= 0 || mClickedCol < 0)
 	{
-		deleteColumn(mClickedCol);
-		mGrid->ForceRefresh();
+		return;
 	}
+	deleteColumn(mClickedCol);
+	mGrid->ForceRefresh();
+}
+
+void MainListWindow::OnAddColumn(wxCommandEvent& event)
+{
+	if (mGrid->GetNumberCols() <= 0 || mClickedCol < 0)
+	{
+		return;
+	}
+	// 在右侧插入一列
+	addColumn(mClickedCol + 1, {}, nullptr);
+	mGrid->ForceRefresh();
 }
 
 void MainListWindow::OnDeleteRow(wxCommandEvent& event)
 {
-	if (mGrid->GetNumberRows() > 0 && mClickedRow != -1)
+	if (mGrid->GetNumberCols() <= 0 || mClickedRow < EditorDefine::HEADER_ROW)
 	{
-		deleteRow(mClickedRow);
-		mGrid->ForceRefresh();
+		return;
 	}
+	deleteRow(mClickedRow);
+	mGrid->ForceRefresh();
+}
+
+void MainListWindow::OnAddRow(wxCommandEvent& event)
+{
+	if (mGrid->GetNumberCols() <= 0 || mClickedRow < EditorDefine::HEADER_ROW)
+	{
+		return;
+	}
+	// 在上面插入一行
+	addRow(mClickedRow, {});
+	mGrid->ForceRefresh();
+}
+
+void MainListWindow::OnAddRow10(wxCommandEvent& event)
+{
+	if (mGrid->GetNumberCols() <= 0 || mClickedRow < EditorDefine::HEADER_ROW)
+	{
+		return;
+	}
+	// 在上面插入10行
+	FOR_I(10)
+	{
+		addRow(mClickedRow, {});
+	}
+	mGrid->ForceRefresh();
+}
+
+void MainListWindow::OnMoveUp(wxCommandEvent& event)
+{
+	if (mGrid->GetNumberCols() <= 0 || mClickedRow <= EditorDefine::HEADER_ROW)
+	{
+		return;
+	}
+	// 和上面一行交换位置
+	swapRow(mClickedRow, mClickedRow - 1);
+}
+
+void MainListWindow::OnMoveDown(wxCommandEvent& event)
+{
+	if (mGrid->GetNumberCols() <= 0 || mClickedRow < EditorDefine::HEADER_ROW || mClickedRow >= EditorDefine::HEADER_ROW + mCSVEditor->getRowCount() - 1)
+	{
+		return;
+	}
+	// 和下面一行交换位置
+	swapRow(mClickedRow, mClickedRow + 1);
 }
 
 void MainListWindow::deleteColumn(int col)
 {
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
 	if (col == 0)
 	{
 		dialogOK("不能删除ID列");
@@ -354,8 +450,19 @@ void MainListWindow::deleteColumn(int col)
 
 void MainListWindow::addColumn(int col, Vector<GridData*>&& dataList, ColumnData* columnData)
 {
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
 	// 添加撤销操作
 	mUndoManager->addUndo<UndoAddColumn>()->setData(col);
+	FOR_VECTOR(dataList)
+	{
+		mGrid->SetCellValue(i + EditorDefine::HEADER_ROW, col, dataList[i]->mOriginData);
+	}
+	mCSVEditor->addColumn(col, move(dataList), columnData);
+
+	// 刷新界面
 	mGrid->InsertCols(col);
 	mGrid->SetColLabelValue(col, columnData->mName);
 	mGrid->SetCellValue(EditorDefine::ROW_COLUMN_NAME, col, columnData->mName);
@@ -367,15 +474,14 @@ void MainListWindow::addColumn(int col, Vector<GridData*>&& dataList, ColumnData
 	{
 		mGrid->SetCellBackgroundColour(i, col, *wxCYAN);
 	}
-	FOR_VECTOR(dataList)
-	{
-		mGrid->SetCellValue(i + EditorDefine::HEADER_ROW, col, dataList[i]->mOriginData);
-	}
-	mCSVEditor->addColumn(col, move(dataList), columnData);
 }
 
 void MainListWindow::deleteRow(int row)
 {
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
 	if (row < EditorDefine::HEADER_ROW)
 	{
 		dialogOK("不能删除表头行");
@@ -390,6 +496,10 @@ void MainListWindow::deleteRow(int row)
 
 void MainListWindow::addRow(int row, Vector<GridData*>&& dataList)
 {
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
 	// 添加撤销操作
 	mUndoManager->addUndo<UndoAddRow>()->setData(row);
 	mGrid->InsertRows(row);
@@ -398,4 +508,67 @@ void MainListWindow::addRow(int row, Vector<GridData*>&& dataList)
 		mGrid->SetCellValue(row, i, dataList[i]->mOriginData);
 	}
 	mCSVEditor->addRow(row - EditorDefine::HEADER_ROW, move(dataList));
+}
+
+void MainListWindow::addRowToEnd(Vector<GridData*>&& dataList)
+{
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
+	addRow(mCSVEditor->getRowCount() + EditorDefine::HEADER_ROW, move(dataList));
+	mGrid->MakeCellVisible(mCSVEditor->getRowCount() + EditorDefine::HEADER_ROW - 1, 0);
+}
+
+void MainListWindow::addRowToFirst(Vector<GridData*>&& dataList)
+{
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
+	addRow(EditorDefine::HEADER_ROW, move(dataList));
+	mGrid->MakeCellVisible(EditorDefine::HEADER_ROW, 0);
+}
+
+void MainListWindow::swapRow(int row0, int row1)
+{
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
+
+	// 添加撤销操作
+	mUndoManager->addUndo<UndoSwapRow>()->setData(row0, row1);
+	mCSVEditor->swapRow(row0 - EditorDefine::HEADER_ROW, row1 - EditorDefine::HEADER_ROW);
+	// 重新刷新这两行的数据
+	const auto& rowData0 = mCSVEditor->getAllGrid()[row0 - EditorDefine::HEADER_ROW];
+	const auto& rowData1 = mCSVEditor->getAllGrid()[row1 - EditorDefine::HEADER_ROW];
+	FOR_VECTOR(rowData0)
+	{
+		mGrid->SetCellValue(row0, i, rowData0[i]->mOriginData);
+	}
+	FOR_VECTOR(rowData1)
+	{
+		mGrid->SetCellValue(row1, i, rowData1[i]->mOriginData);
+	}
+	mGrid->SetGridCursor(row1, 0);
+	mGrid->SelectRow(row1);
+	mGrid->MakeCellVisible(row1, 0);
+	mGrid->ForceRefresh();
+}
+
+void MainListWindow::save()
+{
+	if (!mCSVEditor->isOpened())
+	{
+		return;
+	}
+	if (mGrid->IsCellEditControlEnabled())
+	{
+		// 强制提交编辑器中的值到数据模型
+		mGrid->SaveEditControlValue();
+		// 关闭编辑器（结束编辑状态）
+		mGrid->DisableCellEditControl();
+	}
+	mCSVEditor->save();
 }

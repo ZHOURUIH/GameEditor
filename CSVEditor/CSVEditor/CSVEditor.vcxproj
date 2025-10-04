@@ -45,6 +45,7 @@
     <ClCompile Include="Undo\UndoDeleteRow.cpp" />
     <ClCompile Include="Undo\UndoSetCellData.cpp" />
     <ClCompile Include="Undo\UndoManager.cpp" />
+    <ClCompile Include="Undo\UndoSwapRow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVEditor\ColumnData.h" />
@@ -113,6 +114,7 @@
     <ClInclude Include="Undo\UndoDeleteRow.h" />
     <ClInclude Include="Undo\UndoSetCellData.h" />
     <ClInclude Include="Undo\UndoManager.h" />
+    <ClInclude Include="Undo\UndoSwapRow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4A365C80-84D8-4B5E-8F7E-3CA726DDFD4F}</ProjectGuid>

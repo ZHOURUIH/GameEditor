@@ -22,7 +22,7 @@ void UndoSetCellData::undo()
 		const auto& cols = mData[i];
 		FOR_VECTOR_J(cols)
 		{
-			mMainListWindow->SetCellValue(mStartRow, mStartCol, mData.size(), mData[0].size(), mData);
+			mMainListWindow->setCellValue(mStartRow, mStartCol, mData.size(), mData[0].size(), mData);
 		}
 	}
 }

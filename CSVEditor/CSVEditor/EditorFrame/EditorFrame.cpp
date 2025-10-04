@@ -5,6 +5,8 @@ enum
 	ID_TIMER,
 	ID_UNDO,
 	ID_REDO,
+	ID_ADD_ROW_TO_FIRST,
+	ID_ADD_ROW_TO_END,
 };
 
 BEGIN_EVENT_TABLE(EditorFrame, wxFrame)
@@ -12,6 +14,8 @@ BEGIN_EVENT_TABLE(EditorFrame, wxFrame)
 EVT_TIMER(ID_TIMER, OnTimer)
 EVT_TOOL(ID_UNDO, EditorFrame::OnUndo)
 EVT_TOOL(ID_REDO, EditorFrame::OnRedo)
+EVT_TOOL(ID_ADD_ROW_TO_FIRST, EditorFrame::OnAddRowToFirst)
+EVT_TOOL(ID_ADD_ROW_TO_END, EditorFrame::OnAddRowToEnd)
 EVT_CLOSE(OnCloseWindow)
 
 END_EVENT_TABLE()
@@ -102,6 +106,8 @@ void EditorFrame::CreateToolBar()
 	wxToolBar* toolbar = wxFrame::CreateToolBar(wxTB_HORIZONTAL | wxTB_FLAT);
 	toolbar->AddTool(ID_UNDO, "撤销", wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR).ConvertToDisabled(), wxITEM_NORMAL, "撤销上次操作", "撤销上次操作");
 	toolbar->AddTool(ID_REDO, "重做", wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR).ConvertToDisabled(), wxITEM_NORMAL, "恢复上次撤销的操作", "恢复上次撤销的操作");
+	toolbar->AddTool(ID_ADD_ROW_TO_FIRST, "插入到第一行", wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR));
+	toolbar->AddTool(ID_ADD_ROW_TO_END, "插入到最后一行", wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR));
 	toolbar->Realize();
 	mAuiManager.Update();
 }
@@ -180,17 +186,17 @@ void EditorFrame::OnOpenFile(wxCommandEvent& event)
 
 void EditorFrame::OnSaveFile(wxCommandEvent& event)
 {
-	mCSVEditor->save();
+	mMainListWindow->save();
 }
 
 void EditorFrame::OnCopy(wxCommandEvent& event)
 {
-	mMainListWindow->CopySelection();
+	mMainListWindow->copySelection();
 }
 
 void EditorFrame::OnPaste(wxCommandEvent& event)
 {
-	mMainListWindow->PasteSelection();
+	mMainListWindow->pasteSelection();
 }
 
 void EditorFrame::OnUndo(wxCommandEvent& event)
@@ -209,6 +215,16 @@ void EditorFrame::OnRedo(wxCommandEvent& event)
 		return;
 	}
 	mUndoManager->redo();
+}
+
+void EditorFrame::OnAddRowToFirst(wxCommandEvent& event)
+{
+	mMainListWindow->addRowToFirst({});
+}
+
+void EditorFrame::OnAddRowToEnd(wxCommandEvent& event)
+{
+	mMainListWindow->addRowToEnd({});
 }
 
 void EditorFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))

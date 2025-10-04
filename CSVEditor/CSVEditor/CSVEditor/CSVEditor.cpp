@@ -188,13 +188,45 @@ void CSVEditor::save()
 
 bool CSVEditor::validate()
 {
-	// 检查所有ID是否唯一
-	Set<int> idSet;
-	for (const auto& item : mAllGrid)
+	// 名字不能重复
+	Set<string> nameSet;
+	for (ColumnData* data : mColumnDataList)
 	{
-		if (!idSet.insert(SToI(item[0]->mOriginData)))
+		if (data->mName.empty())
 		{
-			wxMessageBox("有重复的ID:" + item[0]->mOriginData, "错误", wxOK | wxICON_ERROR);
+			dialogOK("有空的列名");
+			return false;
+		}
+		if (!nameSet.insert(data->mName))
+		{
+			dialogOK("有重复的字段名:" + data->mName);
+			return false;
+		}
+		if (data->mType.empty())
+		{
+			dialogOK("有空的字段类型");
+			return false;
+		}
+		if (data->mComment.empty())
+		{
+			dialogOK("有空的字段注释");
+			return false;
+		}
+	}
+
+	// ID不能重复
+	Set<int> idSet;
+	FOR_VECTOR(mAllGrid)
+	{
+		const auto& row = mAllGrid[i];
+		if (row[0]->mOriginData.empty())
+		{
+			dialogOK("ID不能为空");
+			return false;
+		}
+		if (!idSet.insert(SToI(row[0]->mOriginData)))
+		{
+			dialogOK("有重复的ID:" + row[0]->mOriginData);
 			return false;
 		}
 	}
@@ -403,12 +435,27 @@ void CSVEditor::deleteColumn(int col, Vector<GridData*>& outList, ColumnData*& o
 	setDirty(true);
 }
 
-void CSVEditor::addColumn(int col, Vector<GridData*>&& cols, ColumnData* colData)
+void CSVEditor::addColumn(int col, Vector<GridData*>&& cols, ColumnData*& colData)
 {
-	mColumnDataList.insert(col, colData);
-	FOR_VECTOR(mAllGrid)
+	if (colData == nullptr)
 	{
-		mAllGrid[i].insert(col, cols[i]);
+		colData = new ColumnData();
+	}
+	mColumnDataList.insert(col, colData);
+	
+	if (cols.isEmpty())
+	{
+		FOR_VECTOR(mAllGrid)
+		{
+			mAllGrid[i].insert(col, new GridData());
+		}
+	}
+	else
+	{
+		FOR_VECTOR(mAllGrid)
+		{
+			mAllGrid[i].insert(col, cols[i]);
+		}
 	}
 	cols.clear();
 	setDirty(true);
@@ -423,6 +470,26 @@ void CSVEditor::deleteRow(int row, Vector<GridData*>& outRows)
 
 void CSVEditor::addRow(int row, Vector<GridData*>&& rows)
 {
-	mAllGrid.insert(row, move(rows));
+	if (rows.isEmpty())
+	{
+		Vector<GridData*> temp;
+		FOR_I(mColumnDataList.size())
+		{
+			temp.push_back(new GridData());
+		}
+		mAllGrid.insert(row, move(temp));
+	}
+	else
+	{
+		mAllGrid.insert(row, move(rows));
+	}
+	setDirty(true);
+}
+
+void CSVEditor::swapRow(int row0, int row1)
+{
+	auto temp = move(mAllGrid[row0]);
+	mAllGrid[row0] = move(mAllGrid[row1]);
+	mAllGrid[row1] = temp;
 	setDirty(true);
 }
