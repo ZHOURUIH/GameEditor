@@ -12,7 +12,6 @@ enum
 };
 
 BEGIN_EVENT_TABLE(MainListWindow, wxPanel)
-EVT_GRID_SELECT_CELL(MainListWindow::OnCellSelected)
 EVT_GRID_LABEL_RIGHT_CLICK(MainListWindow::OnGridLabelRightClick)
 EVT_MENU(ID_DELETE_COL, MainListWindow::OnDeleteColumn)
 EVT_MENU(ID_DELETE_ROW, MainListWindow::OnDeleteRow)
@@ -30,6 +29,9 @@ MainListWindow::MainListWindow(wxWindow* parent, long style)
 	SetSizeHints(wxDefaultSize, wxDefaultSize);
 
 	wxBoxSizer* sizer1 = new wxBoxSizer(wxVERTICAL);
+
+	mEditViewText = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 30));
+	sizer1->Add(mEditViewText, 0, wxEXPAND | wxALL, 5);
 
 	mGrid = new wxGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 
@@ -57,7 +59,17 @@ MainListWindow::MainListWindow(wxWindow* parent, long style)
 	Layout();
 	Centre(wxBOTH);
 
+	mEditViewText->Bind(wxEVT_TEXT, &MainListWindow::OnEditViewTextChanged, this);
 	mGrid->Bind(wxEVT_GRID_CELL_CHANGED, &MainListWindow::OnCellChanged, this);
+	mGrid->Bind(wxEVT_GRID_SELECT_CELL, &MainListWindow::OnCellSelected, this);
+	mGrid->Bind(wxEVT_GRID_EDITOR_CREATED, [this](wxGridEditorCreatedEvent& event)
+	{
+		if (auto* editor = dynamic_cast<wxTextCtrl*>(event.GetWindow()))
+		{
+			editor->Bind(wxEVT_TEXT, &MainListWindow::OnEditorTextChanged, this);
+		}
+		event.Skip();
+	});
 }
 
 void MainListWindow::initData(CSVEditor* table)
@@ -121,11 +133,24 @@ void MainListWindow::initData(CSVEditor* table)
 	mGrid->FreezeTo(EditorDefine::HEADER_ROW, 1);
 }
 
+void MainListWindow::OnEditViewTextChanged(wxCommandEvent& event)
+{
+	// 仅当顶部编辑框是焦点时才触发同步,否则会在单元格同步到文本编辑框时导致单元格的刷新
+	if (mEditViewText->HasFocus())
+	{
+		const int row = mGrid->GetGridCursorRow();
+		const int col = mGrid->GetGridCursorCol();
+		if (row != -1 && col != -1) 
+		{
+			mGrid->SetCellValue(row, col, mEditViewText->GetValue());
+		}
+	}
+	event.Skip();
+}
+
 void MainListWindow::OnCellSelected(wxGridEvent& event)
 {
-	int row = event.GetRow();
-	int col = event.GetCol();
-	LOG("select:" + IToS(row) + ", " + IToS(col));
+	mEditViewText->ChangeValue(mGrid->GetCellValue(event.GetRow(), event.GetCol()));
 	event.Skip();
 }
 
@@ -133,7 +158,6 @@ void MainListWindow::OnCellChanged(wxGridEvent& event)
 {
 	const int row = event.GetRow();
 	const int col = event.GetCol();
-	LOG("cell:" + IToS(row) + ", " + IToS(col));
 	mUndoManager->addUndo<UndoSetCellData>()->setData(row, col, mCSVEditor->getCellDataAuto(row, col));
 	mCSVEditor->setCellDataAuto(row, col, mGrid->GetCellValue(row, col).ToStdString());
 	if (row == EditorDefine::ROW_COLUMN_NAME)
@@ -141,6 +165,20 @@ void MainListWindow::OnCellChanged(wxGridEvent& event)
 		mGrid->SetColLabelValue(col, mGrid->GetCellValue(row, col));
 	}
 	event.Skip();
+}
+
+void MainListWindow::OnEditorTextChanged(wxCommandEvent& event)
+{
+	auto* editor = dynamic_cast<wxTextCtrl*>(event.GetEventObject());
+	if (editor == nullptr)
+	{
+		return;
+	}
+
+	if (mGrid->GetGridCursorRow() >= 0 && mGrid->GetGridCursorCol() >= 0)
+	{
+		mEditViewText->ChangeValue(editor->GetValue());
+	}
 }
 
 void MainListWindow::openFile()

@@ -27,8 +27,10 @@ public:
 	void swapRow(int row0, int row1);
 	void save();
 	DECLARE_EVENT_TABLE()
+	void OnEditViewTextChanged(wxCommandEvent& event);
 	void OnCellSelected(wxGridEvent& event);
 	void OnCellChanged(wxGridEvent& event);
+	void OnEditorTextChanged(wxCommandEvent& event);
 	void OnGridLabelRightClick(wxGridEvent& event);
 	void OnDeleteColumn(wxCommandEvent& event);
 	void OnAddColumn(wxCommandEvent& event);
@@ -41,6 +43,7 @@ protected:
 	bool getSelectionRect(int& topRow, int& leftCol, int& bottomRow, int& rightCol);
 protected:
 	wxGrid* mGrid = nullptr;
+	wxTextCtrl* mEditViewText;
 	int mClickedCol = -1;
 	int mClickedRow = -1;
 };
