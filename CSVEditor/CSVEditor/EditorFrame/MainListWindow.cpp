@@ -114,9 +114,11 @@ void MainListWindow::initData(CSVEditor* table)
 	{
 		FOR_J(colList.size())
 		{
-			mGrid->SetCellBackgroundColour(i, j, *wxCYAN);
+			mGrid->SetCellBackgroundColour(i, j, *wxYELLOW);
 		}
 	}
+	// 固定冻结表头行和ID列
+	mGrid->FreezeTo(EditorDefine::HEADER_ROW, 1);
 }
 
 void MainListWindow::OnCellSelected(wxGridEvent& event)
