@@ -10,7 +10,7 @@ void CSVEditor::openFile(const string& file)
 	mFilePath = file;
 	Vector<Vector<string>> result;
 	parseCSV(fileConetent, result);
-	FOR_I(EditorDefine::HEADER_ROW)
+	FOR_I(EditorDefine::HEADER_DATA_ROW)
 	{
 		const Vector<string>& line = result[i];
 		// 表名
@@ -66,7 +66,7 @@ void CSVEditor::openFile(const string& file)
 			}
 		}
 	}
-	for (int i = EditorDefine::HEADER_ROW; i < result.size(); ++i)
+	for (int i = EditorDefine::HEADER_DATA_ROW; i < result.size(); ++i)
 	{
 		const Vector<string>& line = result[i];
 		Vector<GridData*> dataLine;
@@ -125,7 +125,7 @@ bool CSVEditor::save()
 	}
 	string csv;
 	const int colCount = mColumnDataList.size();
-	FOR_I(EditorDefine::HEADER_ROW)
+	FOR_I(EditorDefine::HEADER_DATA_ROW)
 	{
 		// 表名
 		if (i == EditorDefine::ROW_TABLE_NAME)
@@ -341,6 +341,10 @@ string CSVEditor::getCellDataAuto(int row, int col)
 	{
 		return getColumnLinkTable(col);
 	}
+	else if (row == EditorDefine::ROW_COLUMN_FILTER)
+	{
+		return "";
+	}
 	else
 	{
 		return getCellData(row - EditorDefine::HEADER_ROW, col);
@@ -382,6 +386,10 @@ void CSVEditor::setCellDataAuto(int row, int col, const string& value)
 	else if (row == EditorDefine::ROW_COLUMN_LINK_TABLE)
 	{
 		setColumnLinkTable(col, value);
+	}
+	else if (row == EditorDefine::ROW_COLUMN_FILTER)
+	{
+		;
 	}
 	else
 	{

@@ -11,16 +11,17 @@ public:
 	~MainListWindow() = default;
 	void init() {}
 	void initData(CSVEditor* table);
+	void showData(CSVEditor* table);
 	void update(float elapsedTime){}
 	void openFile();
 	void openFile(const string& path);
 	void newFile();
 	void copySelection();
 	void pasteSelection();
-	void setCellValue(int topRow, int leftCol, int bottomRow, int rightCol, const Vector<Vector<string>>& rowList);
+	void setCellValue(const HashMap<Vector2Int, string>& dataList, bool isHeader, bool refreshGrid);
 	void deleteColumn(int col);
 	void addColumn(int col, Vector<GridData*>&& dataList, ColumnData* columnData);
-	void deleteRow(int row);
+	void deleteRow(int dataRow);
 	void addRow(int row, Vector<GridData*>&& dataList);
 	void addRowToEnd(Vector<GridData*>&& dataList);
 	void addRowToFirst(Vector<GridData*>&& dataList);
@@ -28,8 +29,10 @@ public:
 	void save();
 	DECLARE_EVENT_TABLE()
 	void OnEditViewTextChanged(wxCommandEvent& event);
+	void OnCellLeftClick(wxGridEvent& event);
 	void OnCellSelected(wxGridEvent& event);
 	void OnCellChanged(wxGridEvent& event);
+	void OnGridEditorCreated(wxGridEditorCreatedEvent& event);
 	void OnEditorTextChanged(wxCommandEvent& event);
 	void OnGridLabelRightClick(wxGridEvent& event);
 	void OnDeleteColumn(wxCommandEvent& event);
@@ -44,6 +47,8 @@ protected:
 protected:
 	wxGrid* mGrid = nullptr;
 	wxTextCtrl* mEditViewText;
+	Vector<string> mFilterValueList;
+	Vector<int> mGridCoordToDataCoordList;	// 下标是渲染表格的行下标,value是数据的行下标,下标不含表头
 	int mClickedCol = -1;
 	int mClickedRow = -1;
 };

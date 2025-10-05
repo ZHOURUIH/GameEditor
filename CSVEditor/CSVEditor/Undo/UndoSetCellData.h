@@ -5,11 +5,9 @@
 class UndoSetCellData : public Undo
 {
 public:
-	void setData(int row, int col, Vector<Vector<string>>&& data);
-	void setData(int row, int col, const string& data);
+	void setData(const HashMap<Vector2Int, string>& data, bool isHeader);
 	virtual void undo();
 protected:
-	int mStartRow = 0;
-	int mStartCol = 0;
-	Vector<Vector<string>> mData;
+	HashMap<Vector2Int, string> mData;
+	bool mIsHeader = false;
 };

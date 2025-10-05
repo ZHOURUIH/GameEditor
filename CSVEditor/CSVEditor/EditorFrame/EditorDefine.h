@@ -12,6 +12,8 @@ public:
 	static constexpr int ROW_COLUMN_OWNER = 4;
 	static constexpr int ROW_COLUMN_COMMENT = 5;
 	static constexpr int ROW_COLUMN_LINK_TABLE = 6;
-	static constexpr int HEADER_ROW = 7;
+	static constexpr int ROW_COLUMN_FILTER = 7;
+	static constexpr int HEADER_ROW = 8;
+	static constexpr int HEADER_DATA_ROW = 7;
 	static constexpr int MAX_UNDO_COUNT = 100;
 };

@@ -108,8 +108,8 @@ void EditorFrame::CreateToolBar()
 	wxToolBar* toolbar = wxFrame::CreateToolBar(wxTB_HORIZONTAL | wxTB_FLAT);
 	toolbar->AddTool(ID_UNDO, "撤销", wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR).ConvertToDisabled(), wxITEM_NORMAL, "撤销上次操作", "撤销上次操作");
 	toolbar->AddTool(ID_REDO, "重做", wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR).ConvertToDisabled(), wxITEM_NORMAL, "恢复上次撤销的操作", "恢复上次撤销的操作");
-	toolbar->AddTool(ID_ADD_ROW_TO_FIRST, "插入到第一行", wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR));
-	toolbar->AddTool(ID_ADD_ROW_TO_END, "插入到最后一行", wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR));
+	toolbar->AddTool(ID_ADD_ROW_TO_FIRST, "插入到第一行", wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR), "插入到第一行");
+	toolbar->AddTool(ID_ADD_ROW_TO_END, "插入到最后一行", wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR), "插入到最后一行");
 	toolbar->Realize();
 	mAuiManager.Update();
 }

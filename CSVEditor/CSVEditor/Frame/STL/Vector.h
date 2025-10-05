@@ -613,6 +613,12 @@ public:
 		}
 		return elementCount;
 	}
+	void swapIndex(int index0, int index1)
+	{
+		T temp = move(mVector[index0]);
+		mVector[index0] = move(mVector[index1]);
+		mVector[index1] = move(temp);
+	}
 	// 添加克隆函数的目的是为了显式调用拷贝,而非自动调用拷贝,可以避免可以使用移动构造而没有使用的情况
 	void clone(Vector<T>& target) const
 	{

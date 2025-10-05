@@ -1,28 +1,13 @@
 #include "AllHeader.h"
 
-void UndoSetCellData::setData(int row, int col, Vector<Vector<string>>&& data)
+void UndoSetCellData::setData(const HashMap<Vector2Int, string>& data, bool isHeader)
 {
-	mStartRow = row;
-	mStartCol = col;
-	mData = move(data);
-}
-
-void UndoSetCellData::setData(int row, int col, const string& data)
-{
-	mStartRow = row;
-	mStartCol = col;
-	mData.push_back(Vector<string>{ data });
+	data.clone(mData);
+	mIsHeader = isHeader;
 }
 
 void UndoSetCellData::undo()
 {
 	// »Ö¸´Êý¾Ý
-	FOR_VECTOR(mData)
-	{
-		const auto& cols = mData[i];
-		FOR_VECTOR_J(cols)
-		{
-			mMainListWindow->setCellValue(mStartRow, mStartCol, mData.size(), mData[0].size(), mData);
-		}
-	}
+	mMainListWindow->setCellValue(mData, mIsHeader, true);
 }
